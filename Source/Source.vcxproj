@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{926A6201-8481-4C15-B3D2-B367748205CA}</ProjectGuid>
+    <RootNamespace>MeteorApi</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Source</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)Binaries\$(Configuration)-$(Platform)</OutDir>
+    <IntDir>$(SolutionDir)Binaries-int\$(Configuration)-$(Platform)</IntDir>
+    <TargetName>MeteorEngine</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Binaries\$(Configuration)-$(Platform)</OutDir>
+    <IntDir>$(SolutionDir)Binaries-int\$(Configuration)-$(Platform)</IntDir>
+    <TargetName>MeteorEngine</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\;$(SolutionDir)Source\ThirdParty\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>METEOR_DEBUG;METEOR_BUILD_DLL;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableModules>false</EnableModules>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>dwmapi.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\;$(SolutionDir)Source\ThirdParty\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <EnableModules>false</EnableModules>
+      <PreprocessorDefinitions>METEOR_BUILD_DLL;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>dwmapi.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Editor\Console.cpp" />
+    <ClCompile Include="Editor\ContentBrowser.cpp" />
+    <ClCompile Include="Editor\Editor.cpp" />
+    <ClCompile Include="Editor\Entity.cpp" />
+    <ClCompile Include="Editor\ExampleLayer.cpp" />
+    <ClCompile Include="Editor\Scene.cpp" />
+    <ClCompile Include="Editor\SceneHierarchy.cpp" />
+    <ClCompile Include="Engine\Core\Application.cpp" />
+    <ClCompile Include="Engine\Core\Core.cpp" />
+    <ClCompile Include="Engine\Core\Input.cpp" />
+    <ClCompile Include="Engine\Core\Layer.cpp" />
+    <ClCompile Include="Engine\Core\LayerStack.cpp" />
+    <ClCompile Include="Engine\Core\TimeStep.cpp" />
+    <ClCompile Include="Engine\Core\Window.cpp" />
+    <ClCompile Include="Engine\Gui\ImGuiLayer.cpp" />
+    <ClCompile Include="Engine\Math\MathUtils.cpp" />
+    <ClCompile Include="Engine\Math\Matrix3.cpp" />
+    <ClCompile Include="Engine\Math\Matrix4.cpp" />
+    <ClCompile Include="Engine\Math\Quaternion.cpp" />
+    <ClCompile Include="Engine\Platform\Platform.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\OpenGLSupport.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsFile.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsFileSystem.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsInput.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsOpenGL.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsPlatform.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsWindow.cpp" />
+    <ClCompile Include="Engine\Render\Camera.cpp" />
+    <ClCompile Include="Engine\Render\Camera2D.cpp" />
+    <ClCompile Include="Engine\Render\CameraController2D.cpp" />
+    <ClCompile Include="Engine\Render\FrameBuffer.cpp" />
+    <ClCompile Include="Engine\Render\IndexBuffer.cpp" />
+    <ClCompile Include="Engine\Render\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Engine\Render\OpenGL\OpenGLFrameBuffer.cpp" />
+    <ClCompile Include="Engine\Render\OpenGL\OpenGLIndexBuffer.cpp" />
+    <ClCompile Include="Engine\Render\OpenGL\OpenGLRenderer.cpp" />
+    <ClCompile Include="Engine\Render\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="Engine\Render\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="Engine\Render\OpenGL\OpenGLVertexArray.cpp" />
+    <ClCompile Include="Engine\Render\OpenGL\OpenGLVertexBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Renderer.cpp" />
+    <ClCompile Include="Engine\Render\Shader.cpp" />
+    <ClCompile Include="Engine\Render\Texture.cpp" />
+    <ClCompile Include="Engine\Render\VertexArray.cpp" />
+    <ClCompile Include="Engine\Render\VertexBuffer.cpp" />
+    <ClCompile Include="Engine\System\Clock.cpp" />
+    <ClCompile Include="Engine\System\File.cpp" />
+    <ClCompile Include="Engine\System\FileSystem.cpp" />
+    <ClCompile Include="Engine\System\Library.cpp" />
+    <ClCompile Include="Engine\System\Time.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\ImGuizmo.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Editor\Components.h" />
+    <ClInclude Include="Editor\Console.h" />
+    <ClInclude Include="Editor\ContentBrowser.h" />
+    <ClInclude Include="Editor\Editor.h" />
+    <ClInclude Include="Editor\Entity.h" />
+    <ClInclude Include="Editor\ExampleLayer.h" />
+    <ClInclude Include="Editor\Scene.h" />
+    <ClInclude Include="Editor\SceneHierarchy.h" />
+    <ClInclude Include="Editor\ScriptLayer.h" />
+    <ClInclude Include="Engine\Core\Application.h" />
+    <ClInclude Include="Engine\Core\Config.h" />
+    <ClInclude Include="Engine\Core\Core.h" />
+    <ClInclude Include="Engine\Core\EntitySystem.h" />
+    <ClInclude Include="Engine\Core\Event.h" />
+    <ClInclude Include="Engine\Core\Input.h" />
+    <ClInclude Include="Engine\Core\KeyCodes.h" />
+    <ClInclude Include="Engine\Core\Layer.h" />
+    <ClInclude Include="Engine\Core\LayerStack.h" />
+    <ClInclude Include="Engine\Core\MouseCodes.h" />
+    <ClInclude Include="Engine\Core\TimeStep.h" />
+    <ClInclude Include="Engine\Core\Window.h" />
+    <ClInclude Include="Engine\Gui\ImGuiLayer.h" />
+    <ClInclude Include="Engine\Math\MathUtils.h" />
+    <ClInclude Include="Engine\Math\Matrix3.h" />
+    <ClInclude Include="Engine\Math\Matrix4.h" />
+    <ClInclude Include="Engine\Math\Quaternion.h" />
+    <ClInclude Include="Engine\Math\Vector2.h" />
+    <ClInclude Include="Engine\Math\Vector3.h" />
+    <ClInclude Include="Engine\Math\Vector4.h" />
+    <ClInclude Include="Engine\Platform\Platform.h" />
+    <ClInclude Include="Engine\Platform\Win32\OpenGLSupport.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsFile.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsFileSystem.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsInput.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsOpenGL.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsPlatform.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsWindow.h" />
+    <ClInclude Include="Engine\Render\Camera.h" />
+    <ClInclude Include="Engine\Render\Camera2D.h" />
+    <ClInclude Include="Engine\Render\CameraController2D.h" />
+    <ClInclude Include="Engine\Render\FrameBuffer.h" />
+    <ClInclude Include="Engine\Render\IndexBuffer.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGL3ImGui.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGLFrameBuffer.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGLIndexBuffer.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGLRenderer.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGLTexture.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGLVertexArray.h" />
+    <ClInclude Include="Engine\Render\OpenGL\OpenGLVertexBuffer.h" />
+    <ClInclude Include="Engine\Render\Renderer.h" />
+    <ClInclude Include="Engine\Render\Shader.h" />
+    <ClInclude Include="Engine\Render\Texture.h" />
+    <ClInclude Include="Engine\Render\VertexArray.h" />
+    <ClInclude Include="Engine\Render\VertexBuffer.h" />
+    <ClInclude Include="Engine\System\Clock.h" />
+    <ClInclude Include="Engine\System\File.h" />
+    <ClInclude Include="Engine\System\FileBase.h" />
+    <ClInclude Include="Engine\System\FileSystem.h" />
+    <ClInclude Include="Engine\System\Library.h" />
+    <ClInclude Include="Engine\System\Path.h" />
+    <ClInclude Include="Engine\System\Time.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ThirdParty\ImGui\imconfig.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui.h" />
+    <ClInclude Include="ThirdParty\ImGui\ImGuizmo.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_impl_opengl3.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_internal.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_textedit.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_truetype.h" />
+    <ClInclude Include="ThirdParty\stb_image\stb_image.h" />
+    <ClInclude Include="ThirdParty\stb_image\stb_image_write.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Source.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
