@@ -71,7 +71,7 @@ namespace MeteorEngine
         }
 		io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Bold.ttf", 18);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Regular.ttf", 18);
-		ImGui_ImplWin32_EnableDpiAwareness();
+		//ImGui_ImplWin32_EnableDpiAwareness();
 		ImGui_ImplWin32_Init(Application::GetInstance().GetWindow().GetWindowPtr(), Application::GetInstance().GetContext().GetCurrent());
 
 		ImGui_ImplOpenGL3_Init("#version 430 core");	
