@@ -1,6 +1,6 @@
 #ifndef OPENGLTEXTURE_H
 #define OPENGLTEXTURE_H
-#include "../Texture.h"
+#include <Engine/Render/Texture.h>
 namespace MeteorEngine
 {
     class METEOR_API OpenGLTexture2D : public Texture2D
@@ -15,7 +15,7 @@ namespace MeteorEngine
 
     private:
         Vector2u m_size;
-        u32 m_texture;
+		u32 m_texture;
     };
 }
 #endif // OPENGLTEXTURE_H

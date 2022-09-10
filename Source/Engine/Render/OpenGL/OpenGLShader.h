@@ -1,7 +1,6 @@
 #ifndef OPENGLSHADER_H
 #define OPENGLSHADER_H
 #include <Engine/Render/Shader.h>
-
 #include <string>
 namespace  MeteorEngine
 {
@@ -28,7 +27,7 @@ namespace  MeteorEngine
         virtual void UnBind() const;
     private:
         void Compile(const char*,  const char*);
-        u32 m_shaderProgram;
+		u32 m_shaderProgram;
     };
 }
 #endif // OPENGLSHADER_H

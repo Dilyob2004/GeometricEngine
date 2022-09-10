@@ -19,5 +19,10 @@ namespace MeteorEngine
     public:
         static Texture2D * Create(const std::string& );
     };
+	class METEOR_API Texture3D : public Texture
+	{
+	public:
+		static Texture3D* Create(const std::string&) { return NULL; }
+	};
 }
 #endif // TEXTURE_H

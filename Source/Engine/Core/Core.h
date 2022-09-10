@@ -3,7 +3,7 @@
 #include <Engine/Core/Config.h>
 namespace MeteorEngine
 {
-	struct CommandLine
+	struct CommandLineSpec
 	{
 		#ifdef METEOR_DEBUG
 			int argc;
@@ -11,8 +11,15 @@ namespace MeteorEngine
 		#else
 			PSTR lpCmdLine;
 		#endif // DEBUG
-
 	};
-	METEOR_API int Main(CommandLine);
+	class CommandLine
+	{
+	public:
+		CommandLine() = default;
+		~CommandLine() = default;
+
+		static bool Parse(const CommandLineSpec&) { return true; }
+	};
+	METEOR_API int Main(const CommandLineSpec&);
 }
 #endif // ! CORE_H

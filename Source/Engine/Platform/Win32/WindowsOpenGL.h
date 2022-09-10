@@ -3,11 +3,11 @@
 #include <windows.h>
 
 #include <Engine/Core/Config.h>
-#include <Engine/Render/OpenGL/OpenGLContext.h>
+#include <Engine/Render/RenderContext.h>
 
 namespace MeteorEngine
 {
-    class METEOR_API WindowsOpenGL : public OpenGLContext
+    class METEOR_API WindowsOpenGL : public RenderContext
     {
     public:
         WindowsOpenGL(HWND);

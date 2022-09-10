@@ -14,7 +14,7 @@ namespace MeteorEngine
 
         virtual void OnAttach() {}
         virtual void OnDetach() {}
-        virtual void OnUpdate() {}
+        virtual void OnTick() {}
         virtual void OnEvent(Event &) {}
 
         inline const std::string& GetName() const {return m_debugName;}

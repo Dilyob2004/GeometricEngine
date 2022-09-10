@@ -5,11 +5,14 @@
 #include <Engine/Math/MathUtils.h>
 namespace MeteorEngine
 {
-    std::shared_ptr<VertexArray>    m_squareVA;
-    std::shared_ptr<Shader>         m_shader;
     Camera2D                        m_camera2D;
-	Camera							m_cameraC;
+	Camera							m_camera3D;
+
+	std::shared_ptr<Shader>         m_shader;
     std::shared_ptr<Shader>         m_shaderTexture;
+	std::shared_ptr<VertexArray>    m_squareVA;
+
+
     void OpenGLRenderer::InitEngine()
     {
 
@@ -38,6 +41,8 @@ namespace MeteorEngine
 
         std::shared_ptr<IndexBuffer> squareIB;
         squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(u32)));
+
+
         m_squareVA->SetIndexBuffer(squareIB);
         //////////////////////////////////////////////////////////////////////////////
         m_shader.reset(Shader::Create("Assets/Shaders/Quad.glsl"));
@@ -56,36 +61,34 @@ namespace MeteorEngine
     {
         glViewport(x, y, w, h);
     }
-    void OpenGLRenderer::SetCamera(Camera2D camera)
+    void OpenGLRenderer::SetupProjection2D(Camera2D camera)
     {
 		m_camera2D = camera;
     }
-	void OpenGLRenderer::SetCamera(Camera camera)
+	void OpenGLRenderer::SetupProjection3D(Camera camera)
 	{
-		m_cameraC = camera;
+		m_camera3D = camera;
 	}
 	void OpenGLRenderer::DrawQuad(const Matrix4f& transform, const Vector4f& color)
 	{
 		m_shader->Bind();
 		m_shader->SetUniformFloat4("u_Color", color);
-		m_shader->SetUniformMat4("u_ViewProjection", m_cameraC.GetViewProjection());
+		m_shader->SetUniformMat4("u_ViewProjection", m_camera3D.GetViewProjection());
 		m_shader->SetUniformMat4("u_Transform", transform);
 		DrawIndexed(m_squareVA);
 
-	}	
-	void OpenGLRenderer::DrawQuad(const Vector3f& position, const Vector3f& rotation, const Vector3f& scale, const Vector4f& color, bool connectCamera)
+	}
+	void OpenGLRenderer::DrawQuad(const Vector3f& position, const Vector3f& rotation, const Vector3f& scale, const Vector4f& color)
 	{
-		Quaternion q(rotation);
-		Matrix4f rotationm = toMatrix4(q);
+		Quaternion rotator(rotation);
+		Matrix4f rotationM = toMatrix4(rotator);
 
 		m_shader->Bind();
 		m_shader->SetUniformFloat4("u_Color", color);
-		if(connectCamera)
-			m_shader->SetUniformMat4("u_ViewProjection", m_cameraC.GetViewProjection());
+		m_shader->SetUniformMat4("u_ViewProjection", m_camera2D.GetViewProjectionMatrix());
+		m_shader->SetUniformMat4("u_Transform", TranslateMatrix4(Matrix4f::Identity, position) * rotationM * Scale(Matrix4f::Identity, scale));
 
-		m_shader->SetUniformMat4("u_Transform", TranslateMatrix4(Matrix4f::Identity, position) * rotationm * Scale(Matrix4f::Identity, scale));
 		DrawIndexed(m_squareVA);
-
 	}
     void OpenGLRenderer::DrawTextureQuad(const std::shared_ptr<Texture2D> &texture, const Vector3f &position, const Vector2f& size)
     {

@@ -1,5 +1,5 @@
-#include "VertexArray.h"
-#include "OpenGL/OpenGLVertexArray.h"
+#include <Engine/Render/VertexArray.h>
+#include <Engine/Render/OpenGL/OpenGLVertexArray.h>
 namespace MeteorEngine
 {
     VertexArray *VertexArray::Create()

@@ -4,14 +4,16 @@
 #include <Engine/Core/Layer.h>
 namespace MeteorEngine
 {
-    class ImGuiLayer : public Layer
+    class METEOR_API ImGuiLayer : public Layer
     {
     public:
         ImGuiLayer();
         ~ImGuiLayer();
         void OnAttach() override;
         void OnDetach() override;
-        void OnUpdate() override;
+        void OnTick() override;
+
+		static void OnEnableHighDpi();
         static void OnBegin();
         static void OnEnd();
         void OnEvent(Event& ) override;

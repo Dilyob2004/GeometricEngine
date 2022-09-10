@@ -6,19 +6,23 @@ namespace MeteorEngine
 	void WindowsPlatform::PreInit()
 	{
 		WNDCLASSEX wc;
-		wc.cbSize = sizeof(WNDCLASSEX);
-		wc.style = CS_DBLCLKS;
-		wc.lpfnWndProc = &WindowsPlatform::WndProc;
-		wc.hInstance = GetModuleHandleA(NULL);
-		wc.hbrBackground = (HBRUSH)(COLOR_WINDOW);
-		wc.lpszClassName = __TEXT("MeteorEngine");
-		wc.hIcon = 0;
-		wc.hCursor = LoadCursor(GetModuleHandleA(NULL), IDC_ARROW);
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.lpszMenuName = 0;
-		wc.hIconSm = 0;
-		RegisterClassEx(&wc);
+		wc.cbSize			= sizeof(WNDCLASSEX);
+		wc.style			= CS_DBLCLKS;
+		wc.lpfnWndProc		= &WindowsPlatform::WndProc;
+		wc.hInstance		= GetModuleHandle(NULL);
+		wc.hbrBackground	= (HBRUSH)(COLOR_WINDOW);
+		wc.lpszClassName	= __TEXT("MeteorEngine");
+		wc.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
+		wc.hCursor			= LoadCursor(NULL, IDC_ARROW);
+		wc.cbClsExtra		= 0;
+		wc.cbWndExtra		= 0;
+		wc.lpszMenuName		= 0;
+		wc.hIconSm			= 0;
+		if (!RegisterClassEx(&wc))
+		{
+			LOG("Failed to Register class platform!");
+			exit(-1);
+		}
 		
 	}
 
@@ -30,6 +34,11 @@ namespace MeteorEngine
 		return Microseconds(m_time.QuadPart * 1000000 / m_highPerformanceFreq.QuadPart);
 	}
 
+	void* WindowsPlatform::GetDllFunction(const char* moduleName, const char* name)
+	{
+		void* adress = reinterpret_cast<void*>(GetProcAddress(GetModuleHandleA(moduleName), name));
+		return (adress != NULL) ? adress : NULL;
+	}
 	void WindowsPlatform::Tick()
 	{
 		MSG msg;
@@ -46,10 +55,8 @@ namespace MeteorEngine
 			return true;
 		if (msg == WM_CREATE)
 		{
-			/// Get Windows window instance (it was passed as the last argument of CreateWindow)
-			LONG_PTR window = (LONG_PTR)reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;
-			/// Set as the "user data" parameter of the window
-			SetWindowLongPtrA(hWnd, GWLP_USERDATA, window);
+			LONG_PTR window = (LONG_PTR)reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;			
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, window);
 		}
 		WindowsWindow* window = hWnd ? reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA)) : NULL;
 		if (window)

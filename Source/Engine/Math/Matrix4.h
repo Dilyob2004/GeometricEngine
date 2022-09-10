@@ -14,6 +14,7 @@ namespace MeteorEngine
 
         Matrix4f(const Matrix4f& x);
         Matrix4f(const Matrix3f& x);
+
         Matrix4f(const Vector4f &column1,
                  const Vector4f &column2,
                  const Vector4f &column3,

@@ -7,22 +7,26 @@ namespace MeteorEngine
     {
         renderer->InitEngine();
     }
-    void RendererCommand::SetCamera(Camera2D camera)
+    void RendererCommand::SetupProjection2D(Camera2D camera)
     {
-        renderer->SetCamera(camera);
+        renderer->SetupProjection2D(camera);
     }
-	void RendererCommand::SetCamera(Camera camera)
+	void RendererCommand::SetupProjection3D(Camera camera)
 	{
-		renderer->SetCamera(camera);
+		renderer->SetupProjection3D(camera);
 	}
     void RendererCommand::DrawQuad(const Matrix4f& transform, const Vector4f& color)
     {
         renderer->DrawQuad(transform, color);
     }    
 
-	void RendererCommand::DrawQuad(const Vector3f& position, const Vector3f& rotation, const Vector3f& scale, const Vector4f& color, bool connectCamera)
+	void RendererCommand::DrawQuad(const Vector3f& position, const Vector3f& rotation, const Vector3f& scale, const Vector4f& color)
 	{
-		renderer->DrawQuad(position, rotation, scale, color, connectCamera);
+		renderer->DrawQuad(position, rotation, scale, color);
+	}
+	void RendererCommand::DrawQuad2D(const Vector2f& position, const Vector2f& rotation, const Vector2f& scale, const Vector4f& color)
+	{
+		renderer->DrawQuad({ position.x, position.y, 0 }, { rotation.x, rotation.y, 0 }, { scale.x, scale.y, 0 }, color);
     }
     void RendererCommand::DrawTextureQuad(const std::shared_ptr<Texture2D> &texture, const Vector3f &position, const Vector2f& size)
     {

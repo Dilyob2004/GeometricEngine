@@ -18,28 +18,47 @@
 
 namespace MeteorEngine
 {
+	void SetHighDpiAwarenessEnabled(bool enable)
+	{
+		const HMODULE shCoreDll = LoadLibraryW(L"Shcore.dll");
+		if (!shCoreDll)
+			return;
+		typedef enum _PROCESS_DPI_AWARENESS
+		{
+			PROCESS_DPI_UNAWARE = 0,
+			PROCESS_SYSTEM_DPI_AWARE = 1,
+			PROCESS_PER_MONITOR_DPI_AWARE = 2
+		} PROCESS_DPI_AWARENESS;
+		typedef HRESULT(STDAPICALLTYPE* SetProcessDpiAwarenessProc)(PROCESS_DPI_AWARENESS Value);
+		const SetProcessDpiAwarenessProc setProcessDpiAwareness = (SetProcessDpiAwarenessProc)GetProcAddress(shCoreDll, "SetProcessDpiAwareness");
+		if (setProcessDpiAwareness)
+			setProcessDpiAwareness(enable ? PROCESS_PER_MONITOR_DPI_AWARE : PROCESS_DPI_UNAWARE);
+		::FreeLibrary(shCoreDll);
+	}
     WindowsWindow::WindowsWindow(const std::string& title, const Vector2u& size)
     {
         RECT r;
-        r.top = r.left = 0;
+        r.top = r.left = 100;
         r.right = size.x;
         r.bottom = size.y;
         m_lastSize = size;
-        DWORD style = WS_OVERLAPPEDWINDOW;
-        AdjustWindowRect(&r, style, FALSE);
+		
+        DWORD styleEx = WS_EX_APPWINDOW,  style = WS_OVERLAPPEDWINDOW;
+		::AdjustWindowRect(&r, style, false);
+        m_hwnd = CreateWindowExA(	styleEx, 
+									__TEXT("MeteorEngine"), 
+									title.c_str(), 
+									style,
+									r.left, r.top, 
+									r.right, r.bottom,
+									NULL, NULL, 
+									GetModuleHandle(NULL), 
+									this);
+		SetHighDpiAwarenessEnabled(true);
 
-        int posx = (GetSystemMetrics(SM_CXSCREEN) - r.right) / 2;
-        int posy = (GetSystemMetrics(SM_CYSCREEN) - r.bottom) / 2;
-
-        m_hwnd = CreateWindowA(__TEXT("MeteorEngine"), title.c_str(), style,
-                              posx, posy, r.right, r.bottom,
-                              NULL, NULL, GetModuleHandle(NULL), this);
-
-
-		BOOL value = TRUE;
-		::DwmSetWindowAttribute(m_hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &value, sizeof(value));
 
 		Show();
+
 
     }
     WindowsWindow::~WindowsWindow()

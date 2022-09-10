@@ -7,24 +7,23 @@ namespace MeteorEngine
     WindowsOpenGL::WindowsOpenGL(HWND window)
     {
 		WNDCLASSEX wc;
-		wc.cbSize = sizeof(WNDCLASSEX);
-		wc.style = CS_DBLCLKS;
-		wc.lpfnWndProc = DefWindowProcA;
-		wc.hInstance = GetModuleHandle(0);
-		wc.hbrBackground = (HBRUSH)(COLOR_WINDOW);
-		wc.lpszClassName = "DummyOpenGL";
-		wc.hIcon = 0;
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.lpszMenuName = 0;
-		wc.hIconSm = 0;
-
+		wc.cbSize			= sizeof(WNDCLASSEX);
+		wc.style			= CS_OWNDC;
+		wc.lpfnWndProc		= DefWindowProc;
+		wc.hInstance		= GetModuleHandle(0);
+		wc.hbrBackground	= (HBRUSH)(COLOR_WINDOW);
+		wc.lpszClassName	= "DummyOpenGL";
+		wc.hIcon			= 0;
+		wc.hCursor			= LoadCursor(NULL, IDC_ARROW);
+		wc.cbClsExtra		= 0;
+		wc.cbWndExtra		= 0;
+		wc.lpszMenuName		= 0;
+		wc.hIconSm			= 0;
 		RegisterClassEx(&wc);
 
 		HWND dummyWindow = CreateWindowA("DummyOpenGL", "DummyOpenGL", 0,
 			CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-			NULL, NULL, GetModuleHandle(0), 0);
+			NULL, NULL, GetModuleHandleA(0), 0);
 
 
 		HDC dummyDC = GetDC(dummyWindow);
@@ -54,7 +53,6 @@ namespace MeteorEngine
 
 		if (!wglMakeCurrent(dummyDC, dummyRC))
 			LOG("Failed to make current context\n");
-
 
 
 
@@ -127,7 +125,7 @@ namespace MeteorEngine
     void WindowsOpenGL::MakeCurrent(bool enabled)
     {
 		if (!wglMakeCurrent(m_hdc, enabled ? m_hrc : NULL))
-			LOG("Failed to make current context ARB\n");
+			LOG("Failed to make current context\n");
     }
     void WindowsOpenGL::SetVSync(bool enabled)
     {

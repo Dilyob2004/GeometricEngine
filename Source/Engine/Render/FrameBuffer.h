@@ -7,7 +7,7 @@ namespace MeteorEngine
     struct FrameBufferSpecification
     {
         Vector2u size;
-        u32 samples = 1;
+        u32 samples = 2;
         bool swapChainTarget = false;
     };
     class METEOR_API FrameBuffer

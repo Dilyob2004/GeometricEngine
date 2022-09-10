@@ -1,8 +1,8 @@
 #include <Engine/Render/OpenGL/OpenGLShader.h>
+#include <Engine/Platform/Win32/OpenGLSupport.h>
 #include <fstream>
 #include <vector>
 #include <map>
-#include <Engine/Platform/Win32/OpenGLSupport.h>
 namespace MeteorEngine
 {
     bool ReadFileToBuffer(const std::string& filename, std::string& buffer)
@@ -48,7 +48,8 @@ namespace MeteorEngine
     {
 
     }
-    OpenGLShader::OpenGLShader(const std::string & shader, ShaderType type)
+    OpenGLShader::OpenGLShader(const std::string & shader, ShaderType type) :
+		m_shaderProgram(0)
     {
         switch(type)
         {
@@ -57,7 +58,8 @@ namespace MeteorEngine
             default: break;
         }
     }
-    OpenGLShader::OpenGLShader(const std::string &shader)
+    OpenGLShader::OpenGLShader(const std::string &shader) :
+		m_shaderProgram(0)
     {
         std::string buffer;
         if(ReadFileToBuffer(shader, buffer))
@@ -71,7 +73,8 @@ namespace MeteorEngine
         else
             std::cerr << "Failed to load asset file: " << shader << "\n";
     }
-    OpenGLShader::OpenGLShader(const std::string &fragment, const std::string &vertex)
+    OpenGLShader::OpenGLShader(const std::string &fragment, const std::string &vertex) :
+		m_shaderProgram(0)
     {
         Compile(fragment.c_str(), vertex.c_str());
     }

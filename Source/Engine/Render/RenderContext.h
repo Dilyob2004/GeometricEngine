@@ -1,14 +1,17 @@
 #ifndef OPENGLCONTEXT_H
 #define OPENGLCONTEXT_H
-#include "../../Core/Window.h"
+#include <Engine/Core/Window.h>
+
+
+
 namespace MeteorEngine
 {
-    class METEOR_API OpenGLContext
+    class METEOR_API RenderContext
     {
     public:
-        virtual ~OpenGLContext(){}
+        virtual ~RenderContext(){}
         virtual void SetVSync(bool) = 0;
-        static OpenGLContext *Create(const Window *);
+        static RenderContext*Create(const Window *);
         virtual void MakeCurrent(bool) = 0;
         virtual void *GetCurrent() = 0;
         virtual void Renderer() = 0;

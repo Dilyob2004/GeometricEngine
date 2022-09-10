@@ -3,12 +3,7 @@
 #include <OpenGL/glext.h>
 #include <OpenGL/wglext.h>
 #include <Engine/Core/Config.h>
-#define GL_TEXTURE_BINDING_2D 0x8069
-#define GL_MAJOR_VERSION 0x821B
-#define GL_MINOR_VERSION 0x821C
-#define GL_NUM_EXTENSIONS 0x821D
-#define GL_EXTENSIONS 0x1F03
-#define GL_CLAMP 0x2900
+
 #define ENUM_GL_ENTRYPOINTS_DLL(EnumMacro) \
 	EnumMacro(PFNGLBINDTEXTUREPROC,glBindTexture) \
 	EnumMacro(PFNGLBLENDFUNCPROC,glBlendFunc) \
@@ -388,20 +383,27 @@
 	EnumMacro(PFNGLGETPROGRAMBINARYPROC, glGetProgramBinary) \
 	EnumMacro(PFNGLPROGRAMBINARYPROC, glProgramBinary)
 
+#define ENUM_WGL_ENTRYPOINTS(EnumMacro) \
+	EnumMacro(PFNWGLCREATECONTEXTATTRIBSARBPROC, wglCreateContextAttribsARB) \
+	EnumMacro(PFNWGLCHOOSEPIXELFORMATARBPROC, wglChoosePixelFormatARB) \
+	EnumMacro(PFNWGLSWAPINTERVALEXTPROC, wglSwapIntervalEXT) 
+
+
+
 /** List of all OpenGL entry points. */
 
 #define ENUM_GL_ENTRYPOINTS_ALL(EnumMacro) \
 	ENUM_GL_ENTRYPOINTS_DLL(EnumMacro) \
 	ENUM_GL_ENTRYPOINTS(EnumMacro) \
-	ENUM_GL_ENTRYPOINTS_OPTIONAL(EnumMacro)
+	ENUM_GL_ENTRYPOINTS_OPTIONAL(EnumMacro) \
+	ENUM_WGL_ENTRYPOINTS(EnumMacro)
 
 
 #define DECLARE_GL_ENTRYPOINTS(Type,Func) extern Type Func;
 ENUM_GL_ENTRYPOINTS_ALL(DECLARE_GL_ENTRYPOINTS);
 #undef DECLARE_GL_ENTRYPOINTS
 
-extern void InitPlatformGL();
 
-extern PFNWGLCREATECONTEXTATTRIBSARBPROC	wglCreateContextAttribsARB;
-extern PFNWGLCHOOSEPIXELFORMATARBPROC		wglChoosePixelFormatARB;
-extern PFNWGLSWAPINTERVALEXTPROC			wglSwapIntervalEXT;
+namespace MeteorEngine {
+	METEOR_API void InitPlatformGL();
+}

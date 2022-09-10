@@ -13,7 +13,7 @@ namespace MeteorEngine
             static Vector2f GetMousePosition (const Window&);
 
             static void SetMousePosition (const Vector2i&);
-            static void SetMousePosition (const Vector2i&, const Window*);
+            static void SetMousePosition (const Vector2i&, const Window&);
 
             static bool     GetMouseButtonDown (MouseCode);
             static bool     GetKeyDown         (KeyCode);

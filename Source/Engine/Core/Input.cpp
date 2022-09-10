@@ -17,9 +17,9 @@ namespace MeteorEngine
     {
         WindowsInput::SetMousePosition(position);
     }
-    void Input::SetMousePosition (const Vector2i& position, const Window* window)
+    void Input::SetMousePosition (const Vector2i& position, const Window& window)
     {
-        WindowsInput::SetMousePosition(position, reinterpret_cast<HWND>(window->GetWindowPtr()));
+        WindowsInput::SetMousePosition(position, reinterpret_cast<HWND>(window.GetWindowPtr()));
     }
     bool Input::GetMouseButtonDown (MouseCode code)
     {

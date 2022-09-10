@@ -18,4 +18,8 @@ namespace MeteorEngine
 	{
 		return WindowsPlatform::GetTime();
 	}
+	void* Platform::GetDllFunction(const char* module, const char* name)
+	{
+		return WindowsPlatform::GetDllFunction(module, name);
+	}
 }

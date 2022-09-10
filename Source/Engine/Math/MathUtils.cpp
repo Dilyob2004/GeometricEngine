@@ -71,19 +71,6 @@ namespace MeteorEngine
 		Result[3][1] = -(top + bottom) / (top - bottom);
 		return Result;
 	}
-	Matrix4f OrthoLH_ZO(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
-	{
-		Matrix4f Result(1);
-
-		Result[0][0] = static_cast<f32>(2) / (right - left);
-		Result[1][1] = static_cast<f32>(2) / (top - bottom);
-		Result[2][2] = static_cast<f32>(1) / (zFar - zNear);
-		Result[3][0] = -(right + left) / (right - left);
-		Result[3][1] = -(top + bottom) / (top - bottom);
-		Result[3][2] = -zNear / (zFar - zNear);
-
-		return Result;
-	}
 	Matrix4f Rotate(const Matrix4f & m, f32 angle, const Vector3f & v)
 	{
 		f32 const a = angle;
@@ -117,41 +104,6 @@ namespace MeteorEngine
 	{
 		Matrix4f Result(m);
 		Result[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[3];
-		return Result;
-	}
-	Matrix4f orthoLH_NO(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
-	{
-		Matrix4f Result(1);
-		Result[0][0] = static_cast<f32>(2) / (right - left);
-		Result[1][1] = static_cast<f32>(2) / (top - bottom);
-		Result[2][2] = static_cast<f32>(2) / (zFar - zNear);
-		Result[3][0] = -(right + left) / (right - left);
-		Result[3][1] = -(top + bottom) / (top - bottom);
-		Result[3][2] = -(zFar + zNear) / (zFar - zNear);
-		return Result;
-	}
-
-	Matrix4f orthoRH_ZO(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
-	{
-		Matrix4f Result(1);
-		Result[0][0] = static_cast<f32>(2) / (right - left);
-		Result[1][1] = static_cast<f32>(2) / (top - bottom);
-		Result[2][2] = -static_cast<f32>(1) / (zFar - zNear);
-		Result[3][0] = -(right + left) / (right - left);
-		Result[3][1] = -(top + bottom) / (top - bottom);
-		Result[3][2] = -zNear / (zFar - zNear);
-		return Result;
-	}
-
-	Matrix4f orthoRH_NO(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
-	{
-		Matrix4f Result(1);
-		Result[0][0] = static_cast<f32>(2) / (right - left);
-		Result[1][1] = static_cast<f32>(2) / (top - bottom);
-		Result[2][2] = -static_cast<f32>(2) / (zFar - zNear);
-		Result[3][0] = -(right + left) / (right - left);
-		Result[3][1] = -(top + bottom) / (top - bottom);
-		Result[3][2] = -(zFar + zNear) / (zFar - zNear);
 		return Result;
 	}
 	Matrix4f Scale(const Matrix4f & m, const Vector3f & v)

@@ -1,6 +1,6 @@
 #ifndef OPENGLFRAMEBUFFER_H
 #define OPENGLFRAMEBUFFER_H
-#include "../FrameBuffer.h"
+#include <Engine/Render/FrameBuffer.h>
 namespace MeteorEngine
 {
     class METEOR_API OpenGLFrameBuffer: public FrameBuffer
@@ -15,7 +15,7 @@ namespace MeteorEngine
         virtual void Resize(const Vector2u &) override;
     private:
         void Invalidate();
-        FrameBufferSpecification m_specification;
+		FrameBufferSpecification m_specification{};
         u32 m_frameBuffer = 0, m_colorAttachment = 0, m_depthAttachment = 0;
     };
 }

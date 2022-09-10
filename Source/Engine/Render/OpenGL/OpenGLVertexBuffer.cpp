@@ -14,15 +14,6 @@ namespace MeteorEngine
         if(m_buffer)
             glDeleteBuffers(1, &m_buffer);
     }
-    void OpenGLVertexBuffer::SetBufferLayout(const BufferLayout& layout)
-    {
-        m_bufferLayout = layout;
-    }
-
-    const BufferLayout& OpenGLVertexBuffer::GetBufferLayout() const
-    {
-        return m_bufferLayout;
-    }
     void OpenGLVertexBuffer::Bind() const
     {
         glBindBuffer(GL_ARRAY_BUFFER, m_buffer);

@@ -71,7 +71,7 @@ namespace MeteorEngine
 
 
 
-            RendererCommand::SetCamera(m_cameraController);
+            RendererCommand::SetupProjection3D(m_cameraController);
 			m_scene->OnUpdate(time);
 
         m_frameBuffer->UnBind();

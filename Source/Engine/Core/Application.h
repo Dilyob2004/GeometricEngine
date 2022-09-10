@@ -3,8 +3,7 @@
 #include <Engine/Core/Config.h>
 #include <Engine/Core/Window.h>
 #include <Engine/Core/LayerStack.h>
-#include <Engine/Render/OpenGL/OpenGLContext.h>
-#include <Engine/Render/OpenGL/OpenGLShader.h>
+#include <Engine/Render/RenderContext.h>
 #include <Engine/Core/Core.h>
 #include <memory>
 namespace MeteorEngine
@@ -19,20 +18,18 @@ namespace MeteorEngine
 		u32 GetWidth() const;
 		u32 GetHeight() const;
 
-
+		bool ShouldExit();
 		void Run();
 		void OnEvent(Event& );
 		Window& GetWindow() { return *m_window; }
-		OpenGLContext& GetContext() { return *m_context; }
+		RenderContext& GetContext() { return *m_context; }
 
 		void PushLayer(Layer*);
 		void PushOverlay(Layer*);
 	private:
-		std::shared_ptr<OpenGLContext>  m_context;
+		std::shared_ptr<RenderContext>  m_context;
 		std::shared_ptr<Window>         m_window;
 	private:
-		Event                           m_event {};
-        LayerStack                      m_layerStack;
         static Application *            m_instance;
     };
 }

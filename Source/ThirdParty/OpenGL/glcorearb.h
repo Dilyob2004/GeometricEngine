@@ -1214,6 +1214,12 @@ typedef unsigned short GLhalf;
 #define GL_RG32I                          0x823B
 #define GL_RG32UI                         0x823C
 #define GL_VERTEX_ARRAY_BINDING           0x85B5
+#define GL_TEXTURE_BINDING_2D 		      0x8069
+#define GL_MAJOR_VERSION                  0x821B
+#define GL_MINOR_VERSION 				  0x821C
+#define GL_NUM_EXTENSIONS 				  0x821D
+#define GL_EXTENSIONS 					  0x1F03
+#define GL_CLAMP 						  0x2900
 typedef void (APIENTRYP PFNGLCOLORMASKIPROC) (GLuint index, GLboolean r, GLboolean g, GLboolean b, GLboolean a);
 typedef void (APIENTRYP PFNGLGETBOOLEANI_VPROC) (GLenum target, GLuint index, GLboolean *data);
 typedef void (APIENTRYP PFNGLGETINTEGERI_VPROC) (GLenum target, GLuint index, GLint *data);
