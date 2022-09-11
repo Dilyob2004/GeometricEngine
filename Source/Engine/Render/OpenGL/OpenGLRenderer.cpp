@@ -21,7 +21,7 @@ namespace MeteorEngine
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
         m_squareVA.reset(VertexArray::Create());
-        float squareVertices[] = {
+        f32 squareVertices[] = {
 
              -1.f,  -1.f,  0.0f, 0.0f, 0.0f,
 			  1.f,  -1.f,  0.0f, 1.0f, 0.0f,
@@ -82,7 +82,6 @@ namespace MeteorEngine
 	{
 		Quaternion rotator(rotation);
 		Matrix4f rotationM = toMatrix4(rotator);
-
 		m_shader->Bind();
 		m_shader->SetUniformFloat4("u_Color", color);
 		m_shader->SetUniformMat4("u_ViewProjection", m_camera2D.GetViewProjectionMatrix());
@@ -90,13 +89,15 @@ namespace MeteorEngine
 
 		DrawIndexed(m_squareVA);
 	}
-    void OpenGLRenderer::DrawTextureQuad(const std::shared_ptr<Texture2D> &texture, const Vector3f &position, const Vector2f& size)
+    void OpenGLRenderer::DrawTextureQuad(const std::shared_ptr<Texture2D> &texture, const Vector3f &position, const Vector3f & rotation, const Vector2f& size)
     {
+		Quaternion rotator(rotation);
+		Matrix4f rotationM = toMatrix4(rotator);
         texture->Bind(0);
         m_shaderTexture->Bind();
         m_shaderTexture->SetUniformInt("u_Texture", 0);
         m_shaderTexture->SetUniformMat4("u_ViewProjection", m_camera2D.GetViewProjectionMatrix());
-        m_shaderTexture->SetUniformMat4("u_Transform", TranslateMatrix4(Matrix4f::Identity, position) * Scale(Matrix4f::Identity, {size.x, size.y, 0}));
+        m_shaderTexture->SetUniformMat4("u_Transform", TranslateMatrix4(Matrix4f::Identity, position)* rotationM * Scale(Matrix4f::Identity, {size.x, size.y, 0}));
         DrawIndexed(m_squareVA);
     }
     void OpenGLRenderer::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)

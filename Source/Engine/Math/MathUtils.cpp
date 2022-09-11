@@ -62,13 +62,13 @@ namespace MeteorEngine
 	}
 	Matrix4f Ortho(f32 left, f32 right, f32 bottom, f32 top)
 	{
-		Matrix4f Result(static_cast<f32>(1));
+		Matrix4f Result(1.f);
 
-		Result[0][0] = static_cast<f32>(2) / (right - left);
-		Result[1][1] = static_cast<f32>(2) / (top - bottom);
-		Result[2][2] = -static_cast<f32>(1);
-		Result[3][0] = -(right + left) / (right - left);
-		Result[3][1] = -(top + bottom) / (top - bottom);
+		Result[0][0] = 2.f / (right - left);
+		Result[1][1] = 2.f / (top - bottom);
+		Result[2][2] = -1.f;
+		Result[3][0] = (right + left) / (left - right);
+		Result[3][1] = (top + bottom) / (bottom - top);
 		return Result;
 	}
 	Matrix4f Rotate(const Matrix4f & m, f32 angle, const Vector3f & v)

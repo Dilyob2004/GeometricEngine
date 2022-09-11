@@ -43,9 +43,9 @@ namespace MeteorEngine
         r.bottom = size.y;
         m_lastSize = size;
 		
-        DWORD styleEx = WS_EX_APPWINDOW,  style = WS_OVERLAPPEDWINDOW;
+        DWORD styleEx = WS_EX_APPWINDOW | WS_EX_TOPMOST,  style = WS_OVERLAPPEDWINDOW;
 		::AdjustWindowRect(&r, style, false);
-        m_hwnd = CreateWindowExA(	styleEx, 
+        m_hwnd = CreateWindowA(	 
 									__TEXT("MeteorEngine"), 
 									title.c_str(), 
 									style,
@@ -54,7 +54,6 @@ namespace MeteorEngine
 									NULL, NULL, 
 									GetModuleHandle(NULL), 
 									this);
-		SetHighDpiAwarenessEnabled(true);
 
 
 		Show();

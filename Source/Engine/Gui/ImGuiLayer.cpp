@@ -91,7 +91,7 @@ namespace MeteorEngine
 		ImGui::GetStyle().WindowRounding = 5.0f;
 		ImGui::GetStyle().FramePadding = ImVec2(5, 5);
 		ImGui::GetStyle().FrameRounding = 4.0f;
-		ImGui::GetStyle().ItemSpacing = ImVec2(12, 8);
+		ImGui::GetStyle().ItemSpacing = ImVec2(12, 13);
 		ImGui::GetStyle().ItemInnerSpacing = ImVec2(8, 6);
 		ImGui::GetStyle().IndentSpacing = 25.0f;
 		ImGui::GetStyle().ScrollbarSize = 15.0f;

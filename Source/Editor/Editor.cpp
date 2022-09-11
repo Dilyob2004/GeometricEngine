@@ -52,7 +52,7 @@ namespace MeteorEngine
     }
 
 
-    void Editor::OnUpdate()
+    void Editor::OnTick()
     {
 
 		

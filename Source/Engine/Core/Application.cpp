@@ -15,6 +15,7 @@ namespace MeteorEngine
     Application* Application::m_instance = NULL;
     Application::Application()
     {
+		ImGuiLayer::OnEnableHighDpi();
 		m_instance = this;
         m_window    = std::unique_ptr<Window>( Window::Create("Meteor Engine, OpenGL Build 4.3.0", Vector2u(1280, 720) ) );
         m_context   = std::unique_ptr<RenderContext>(RenderContext::Create(m_window.get()));
@@ -25,23 +26,15 @@ namespace MeteorEngine
 		///Initizlize 
 		RendererCommand::InitEngine();
 
-        //PushLayer(new ImGuiLayer());
-        //PushLayer(new Editor());
-        PushLayer(new ExampleLayer());
+        PushLayer(new ImGuiLayer());
+        PushLayer(new Editor());
+        //PushLayer(new ExampleLayer());
     }
     Application::~Application()
     {
         for(auto i = layerStack.begin(); i != layerStack.end(); i++)
             (*i)->OnDetach();
 
-    }
-    u32 Application::GetWidth() const
-    {
-        return m_window->GetSize().x;
-    }
-    u32 Application::GetHeight() const
-    {
-        return m_window->GetSize().y;
     }
 	bool Application::ShouldExit()
 	{
@@ -56,9 +49,6 @@ namespace MeteorEngine
 			m_window->Quit();
 			break;
 
-		case Event::Resized:
-			RendererCommand::SetViewPort(0, 0, event.size.width, event.size.height);
-				break;
 			
 		}
 
@@ -90,12 +80,12 @@ namespace MeteorEngine
             RendererCommand::SetClearColor({0.08f, 0.08f, 0.08f, 1.f});
             RendererCommand::Clear();
 
-            //ImGuiLayer::OnBegin();
+            ImGuiLayer::OnBegin();
 
                 for(Layer *layer: layerStack)
                     layer->OnTick();
 			
-            //ImGuiLayer::OnEnd();
+            ImGuiLayer::OnEnd();
 
 
             m_context->Renderer();

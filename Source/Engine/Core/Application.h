@@ -15,8 +15,10 @@ namespace MeteorEngine
 		Application();
 		virtual ~Application();
 
-		u32 GetWidth() const;
-		u32 GetHeight() const;
+		u32 GetX() const { return m_window->GetPosition().x; }
+		u32 GetY() const { return m_window->GetPosition().y; }
+		u32 GetWidth() const { return m_window->GetSize().x; }
+		u32 GetHeight() const { return m_window->GetSize().y; }
 
 		bool ShouldExit();
 		void Run();

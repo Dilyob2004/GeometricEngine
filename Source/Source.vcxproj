@@ -122,6 +122,8 @@
     <ClCompile Include="Engine\Render\Camera2D.cpp" />
     <ClCompile Include="Engine\Render\CameraController2D.cpp" />
     <ClCompile Include="Engine\Render\FrameBuffer.cpp" />
+    <ClCompile Include="Engine\Render\ImageCore.cpp" />
+    <ClCompile Include="Engine\Render\ImageLoader.cpp" />
     <ClCompile Include="Engine\Render\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Render\OpenGL\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="Engine\Render\OpenGL\OpenGLIndexBuffer.cpp" />
@@ -190,6 +192,8 @@
     <ClInclude Include="Engine\Render\Camera2D.h" />
     <ClInclude Include="Engine\Render\CameraController2D.h" />
     <ClInclude Include="Engine\Render\FrameBuffer.h" />
+    <ClInclude Include="Engine\Render\ImageCore.h" />
+    <ClInclude Include="Engine\Render\ImageLoader.h" />
     <ClInclude Include="Engine\Render\IndexBuffer.h" />
     <ClInclude Include="Engine\Render\OpenGL\OpenGLFrameBuffer.h" />
     <ClInclude Include="Engine\Render\OpenGL\OpenGLIndexBuffer.h" />

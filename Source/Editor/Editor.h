@@ -19,7 +19,7 @@ namespace MeteorEngine
         ~Editor();
         virtual void OnAttach();
         virtual void OnDetach();
-        virtual void OnUpdate();
+        virtual void OnTick();
         virtual void OnEvent(Event &);
 
 

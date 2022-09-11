@@ -21,7 +21,7 @@ namespace MeteorEngine
 		wc.hIconSm			= 0;
 		RegisterClassEx(&wc);
 
-		HWND dummyWindow = CreateWindowA("DummyOpenGL", "DummyOpenGL", 0,
+		HWND dummyWindow = CreateWindowA("DummyOpenGL", "DummyOpenGL", WS_POPUP,
 			CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 			NULL, NULL, GetModuleHandleA(0), 0);
 

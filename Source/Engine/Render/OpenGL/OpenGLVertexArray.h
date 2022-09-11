@@ -1,8 +1,7 @@
 #ifndef OPENGLVERTEXARRAY_H
 #define OPENGLVERTEXARRAY_H
 
-#include "../../Core/Config.h"
-#include "../VertexArray.h"
+#include <Engine/Render/VertexArray.h>
 namespace MeteorEngine
 {
     class METEOR_API OpenGLVertexArray : public VertexArray
