@@ -133,16 +133,24 @@ namespace MeteorEngine
 	}
 	void SceneHierarchy::DrawComponentUI(Entity entity)
 	{
+		ImGui::Separator();
+
 		//Tag
 		if(entity.HasComponent<Tag>())
 		{
-			auto& tag = entity.GetComponent<Tag>().tag;
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
-				tag = std::string(buffer);
+			if (ImGui::TreeNodeEx((void*)typeid(Tag).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Tag"))
+			{
+				auto& tag = entity.GetComponent<Tag>().tag;
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				strcpy_s(buffer, sizeof(buffer), tag.c_str());
+				if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+					tag = std::string(buffer);
+
+				ImGui::TreePop();
+			}
 		}
+		ImGui::Separator();
 
 		//Transform
 		if (entity.HasComponent<Transform>())
@@ -227,7 +235,6 @@ namespace MeteorEngine
 				if (ImGui::Button("Add Component"))
 					ImGui::OpenPopup("AddComponent");
 
-				ImGui::SameLine();
 
 
 				if (ImGui::BeginPopup("AddComponent"))
