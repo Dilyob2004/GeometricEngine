@@ -157,7 +157,8 @@ namespace MeteorEngine
 			{
 				case Event::KeyPressed:
 				{
-					if (e.keyEvent.code == KeyCode::LAlt) {
+					if (e.keyEvent.code == KeyCode::LControl) {
+						
 						if (e.keyEvent.code == KeyCode::Q) typeGizmo = ImGuizmo::OPERATION::TRANSLATE;
 						if (e.keyEvent.code == KeyCode::W) typeGizmo = ImGuizmo::OPERATION::ROTATE;
 						if (e.keyEvent.code == KeyCode::E) typeGizmo = ImGuizmo::OPERATION::SCALE;

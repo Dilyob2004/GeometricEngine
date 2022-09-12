@@ -15,8 +15,8 @@ namespace MeteorEngine
     Application* Application::m_instance = NULL;
     Application::Application()
     {
-		ImGuiLayer::OnEnableHighDpi();
 		m_instance = this;
+		ImGuiLayer::OnEnableHighDpi();
         m_window    = std::unique_ptr<Window>( Window::Create("Meteor Engine, OpenGL Build 4.3.0", Vector2u(1280, 720) ) );
         m_context   = std::unique_ptr<RenderContext>(RenderContext::Create(m_window.get()));
 
@@ -77,14 +77,9 @@ namespace MeteorEngine
 
 			Platform::Tick();
 
-            RendererCommand::SetClearColor({ 0.09f, 0.09f, 0.09f, 1.f});
-            RendererCommand::Clear();
-
             ImGuiLayer::OnBegin();
-
                 for(Layer *layer: layerStack)
                     layer->OnTick();
-			
             ImGuiLayer::OnEnd();
 
 

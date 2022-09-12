@@ -18,23 +18,6 @@
 
 namespace MeteorEngine
 {
-	void SetHighDpiAwarenessEnabled(bool enable)
-	{
-		const HMODULE shCoreDll = LoadLibraryW(L"Shcore.dll");
-		if (!shCoreDll)
-			return;
-		typedef enum _PROCESS_DPI_AWARENESS
-		{
-			PROCESS_DPI_UNAWARE = 0,
-			PROCESS_SYSTEM_DPI_AWARE = 1,
-			PROCESS_PER_MONITOR_DPI_AWARE = 2
-		} PROCESS_DPI_AWARENESS;
-		typedef HRESULT(STDAPICALLTYPE* SetProcessDpiAwarenessProc)(PROCESS_DPI_AWARENESS Value);
-		const SetProcessDpiAwarenessProc setProcessDpiAwareness = (SetProcessDpiAwarenessProc)GetProcAddress(shCoreDll, "SetProcessDpiAwareness");
-		if (setProcessDpiAwareness)
-			setProcessDpiAwareness(enable ? PROCESS_PER_MONITOR_DPI_AWARE : PROCESS_DPI_UNAWARE);
-		::FreeLibrary(shCoreDll);
-	}
     WindowsWindow::WindowsWindow(const std::string& title, const Vector2u& size)
     {
         RECT r;
@@ -458,60 +441,6 @@ namespace MeteorEngine
             {
 				int x = static_cast<s16>(LOWORD(lParam));
 				int y = static_cast<s16>(HIWORD(lParam));
-                /// Extract the mouse local coordinates
-                /**
-
-
-                /// Get the client area of the window
-                RECT area;
-                GetClientRect(m_hwnd, &area);
-
-                /// Capture the mouse in case the user wants to drag it outside
-                if ((wParam & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2)) == 0)
-                {
-                    /// Only release the capture if we really have it
-                    if (GetCapture() == m_hwnd)
-                        ReleaseCapture();
-                }
-                else if (GetCapture() != m_hwnd)
-                {
-                    /// Set the capture to continue receiving mouse events
-                    SetCapture(m_hwnd);
-                }
-
-                /// If the cursor is outside the client area...
-                if ((x < area.left) || (x > area.right) || (y < area.top) || (y > area.bottom))
-                {
-                    /// and it used to be inside, the mouse left it.
-                    if (m_mouseInside)
-                    {
-                        m_mouseInside = false;
-
-                        /// No longer care for the mouse leaving the window
-                        setTracking(false);
-
-                        /// Generate a MouseLeft event
-                        Event event;
-                        event.type = Event::MouseLeft;
-                        pushEvent(event);
-                    }
-                }
-                else
-                {
-                    /// and vice-versa
-                    if (!m_mouseInside)
-                    {
-                        m_mouseInside = true;
-
-                        /// Look for the mouse leaving the window
-                        setTracking(true);
-
-                        /// Generate a MouseEntered event
-                        Event event;
-                        event.type = Event::MouseEntered;
-                        pushEvent(event);
-                    }
-                }*/
 
                 /// Generate a MouseMove event
                 Event event;
