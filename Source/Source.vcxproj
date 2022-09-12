@@ -215,6 +215,7 @@
     <ClInclude Include="Engine\System\Path.h" />
     <ClInclude Include="Engine\System\Time.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ThirdParty\entt\entt.hpp" />
     <ClInclude Include="ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="ThirdParty\ImGui\ImGuizmo.h" />

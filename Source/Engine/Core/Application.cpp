@@ -77,7 +77,7 @@ namespace MeteorEngine
 
 			Platform::Tick();
 
-            RendererCommand::SetClearColor({0.08f, 0.08f, 0.08f, 1.f});
+            RendererCommand::SetClearColor({ 0.09f, 0.09f, 0.09f, 1.f});
             RendererCommand::Clear();
 
             ImGuiLayer::OnBegin();

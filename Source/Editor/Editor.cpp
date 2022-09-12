@@ -66,7 +66,7 @@ namespace MeteorEngine
 		/////////////////////////////////////////////////////////////////////////
         m_frameBuffer->Bind();
 
-            RendererCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.f});
+            RendererCommand::SetClearColor({ 0.09, 0.09, 0.09, 1.f});
             RendererCommand::Clear();
 
 
