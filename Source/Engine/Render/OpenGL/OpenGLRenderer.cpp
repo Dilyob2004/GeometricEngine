@@ -43,7 +43,7 @@ namespace MeteorEngine
         u32 squareIndices [] = {0, 1, 2, 2, 3, 0};
 
         std::shared_ptr<IndexBuffer> squareIB;
-        squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(u32)));
+        squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices)));
 
 
 		m_Pipeline->SetIndexBuffer(squareIB);

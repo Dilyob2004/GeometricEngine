@@ -19,7 +19,7 @@ namespace MeteorEngine
 	ImGuizmo::OPERATION typeGizmo = ImGuizmo::OPERATION::TRANSLATE;
     Editor::Editor():
         Layer("Editor"),
-        m_cameraController(30, 1.778f, 0.1, 1000)
+        m_cameraController(30, 1.778f, 0.1f, 1000)
     {
 		//File* file = File::Open("Assets/Scene.scene", FileMode::CreateNew, FileAccess::ReadWrite, FileShare::ReadWrite);
 		/////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,10 @@ namespace MeteorEngine
     }
     void Editor::OnDetach()
     {
-
+		m_console.reset();
+		m_scene.reset();
+		m_hierarchy.reset();
+		m_contentBrowser.reset();
     }
 
 
@@ -64,7 +67,7 @@ namespace MeteorEngine
 		/////////////////////////////////////////////////////////////////////////
         m_frameBuffer->Bind();
 
-            RendererCommand::SetClearColor({ 0.09, 0.09, 0.09, 1.f});
+            RendererCommand::SetClearColor({ 0.09f, 0.09f, 0.09f, 1.f});
             RendererCommand::Clear();
 
 

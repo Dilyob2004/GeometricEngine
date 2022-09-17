@@ -44,8 +44,8 @@ namespace MeteorEngine
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorAttachment, 0);
 
 
-		const GLenum buffers[] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, buffers);
+		//const GLenum buffers[] = { GL_COLOR_ATTACHMENT0 };
+		//glDrawBuffers(1, buffers);
 
 		/**glCreateTextures(GL_TEXTURE_2D, 1, &m_depthAttachment);
 		glBindTexture(GL_TEXTURE_2D, m_depthAttachment);

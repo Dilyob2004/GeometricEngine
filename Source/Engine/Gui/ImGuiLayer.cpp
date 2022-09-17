@@ -2,10 +2,11 @@
 #include <Editor/Editor.h>
 #include <Engine/Gui/ImGuiLayer.h>
 #include <Engine/System/Time.h>
-
+#include <Engine/MaterialDesign.inl>
 #include <ImGui/imgui_impl_opengl3.h>
 #include <ImGui/imgui_impl_win32.h>
 #include <ImGui/imgui_internal.h>
+#include <Engine/IconsMaterialDesignIcons.h>
 namespace MeteorEngine
 {
     LRESULT WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -153,11 +154,23 @@ namespace MeteorEngine
             style.WindowRounding = 0.0f;
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
+
 		io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Bold.ttf", 18);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Regular.ttf", 18);
 		ImGui_ImplWin32_Init(Application::GetInstance().GetWindow().GetWindowPtr(), Application::GetInstance().GetContext().GetCurrent());
 
 		ImGui_ImplOpenGL3_Init("#version 430 core");	
+		static const ImWchar icons_ranges[] = { 0x30, 0xFE7D, 0 };
+		ImFontConfig icons_config;
+		// merge in icons from Font Awesome
+		icons_config.MergeMode = true;
+		icons_config.PixelSnapH = true;
+		icons_config.GlyphOffset.y = 4.0f;
+		icons_config.OversampleH = icons_config.OversampleV = 1;
+		icons_config.GlyphMinAdvanceX = 4.0f;
+		icons_config.SizePixels = 12.0f;
+
+		io.Fonts->AddFontFromMemoryCompressedTTF(MaterialDesign_compressed_data, MaterialDesign_compressed_size, 28, &icons_config, icons_ranges);
 
     }
     void ImGuiLayer::OnDetach()
@@ -254,7 +267,16 @@ namespace MeteorEngine
 				if (ImGui::MenuItem("Content Browser"))
 					Editor::SetContentBrowser(true);
                 ImGui::EndMenu();
-            }
+            }           
+			ImGui::SameLine((ImGui::GetWindowContentRegionMax().x* 0.5f) - (1.5f * (ImGui::GetFontSize() + ImGui::GetStyle().ItemSpacing.x)));
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.2f, 0.7f, 0.0f));
+
+			if (ImGui::Button(ICON_MDI_PLAY))
+			{
+
+			}
+			ImGui::PopStyleColor();
             ImGui::EndMenuBar();
         }
         ImGui::End();

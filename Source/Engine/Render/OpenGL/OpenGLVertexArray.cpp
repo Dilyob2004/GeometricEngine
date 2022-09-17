@@ -56,7 +56,7 @@ namespace MeteorEngine
 									  ShaderDataTypeSizeToOpenGLBaseType(element.m_type) ,
 									  element.m_normalized ? GL_TRUE : GL_FALSE,
 									  layout.GetStride(),
-									  (const p0)(s32*)element.m_offset);
+									  (const p0)(const s32*)element.m_offset);
 
 				index++;
 			}

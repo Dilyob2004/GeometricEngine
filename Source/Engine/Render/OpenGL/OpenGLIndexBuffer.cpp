@@ -10,7 +10,7 @@ namespace MeteorEngine
     {
         glCreateBuffers(1, &m_buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(u32), indices, GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, count, indices, GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     OpenGLIndexBuffer::~OpenGLIndexBuffer()

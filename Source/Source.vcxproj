@@ -172,6 +172,7 @@
     <ClInclude Include="Engine\Core\MouseCodes.h" />
     <ClInclude Include="Engine\Core\Window.h" />
     <ClInclude Include="Engine\Gui\ImGuiLayer.h" />
+    <ClInclude Include="Engine\IconsMaterialDesignIcons.h" />
     <ClInclude Include="Engine\Math\MathUtils.h" />
     <ClInclude Include="Engine\Math\Matrix3.h" />
     <ClInclude Include="Engine\Math\Matrix4.h" />
@@ -229,6 +230,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\MaterialDesign.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
