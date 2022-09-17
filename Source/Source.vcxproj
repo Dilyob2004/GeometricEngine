@@ -144,7 +144,6 @@
     <ClCompile Include="Engine\System\Time.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="ThirdParty\ImGui\ImGuizmo.cpp" />
-    <ClCompile Include="ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_impl_win32.cpp" />

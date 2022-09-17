@@ -55,8 +55,8 @@ namespace MeteorEngine
     {
         return m_texture;
     }
-    void OpenGLTexture2D::UnBind()   const
+    void OpenGLTexture2D::UnBind(u32 slot)   const
     {
-
+		glBindTextureUnit(slot, 0);
     }
 }

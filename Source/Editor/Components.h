@@ -18,7 +18,7 @@ namespace MeteorEngine
 		{
 			Quaternion q(rotation);
 			Matrix4f rotation = toMatrix4(q);
-			return TranslateMatrix4(Matrix4f::Identity, position)* rotation* Scale(Matrix4f::Identity, scale);
+			return Translate(Matrix4f::Identity, position)* rotation* Scale(Matrix4f::Identity, scale);
 		}
 		Vector3f position{ 0, 0, 0 };
 		Vector3f rotation{ 0, 0, 0 };

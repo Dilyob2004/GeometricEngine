@@ -26,6 +26,8 @@
 #define MATH_RADIANS				0.01745329251994329576923690768489f
 #define MIN(a, b) (( (a) < (b) ) ? (a) : (b))
 #define MAX(a, b) (( (a) > (b) ) ? (a) : (b))
+typedef void	s0;
+typedef void*	p0;
 
 typedef signed char     s8;
 typedef signed short    s16;
@@ -40,6 +42,49 @@ typedef unsigned long     u64;
 
 typedef float f32;
 typedef double f64;
+
+enum class RHIFormat : u32
+{
+	NONE = 0,
+
+	R8_U32NORM,
+	R8G8_U32NORM,
+	R8G8B8_U32NORM,
+	R8G8B8A8_U32NORM,
+	R8_U32,
+
+	R11G11B10_F32,
+	R10G10B10A2_U32,
+
+	R32_S32, 
+	R32G32_S32, 
+	R32G32B32_S32, 
+	R32G32B32A32_S32, 
+
+	R32_U32,
+	R32G32_U32,
+	R32G32B32_U32,
+	R32G32B32A32_U32,
+
+	R32_F16,
+	R32G32_F16,
+	R32G32B32_F16,
+	R32G32B32A32_F16,
+
+	R32_F32,
+	R32G32_F32,
+	R32G32B32_F32,
+	R32G32B32A32_F32,
+
+
+
+	D16_U32NORM,
+	D32_F32,
+
+	D16_U32NORM_S8_U32,
+	D24_U32NORM_S8_U32,
+	D32_F32NORM_S8_U32
+};
 enum class ShaderType
 {
     FragmentShader,

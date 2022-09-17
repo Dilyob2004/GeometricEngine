@@ -40,12 +40,17 @@ namespace MeteorEngine
 	{
 		return isExitApplication;
 	}
+	void Application::Exit()
+	{
+		isExitApplication = true;
+		exit(0);
+	}
     void Application::OnEvent(Event& event)
     {
 		switch (event.type)
 		{
 		case Event::Closed:
-			isExitApplication = true;
+			Exit();
 			m_window->Quit();
 			break;
 

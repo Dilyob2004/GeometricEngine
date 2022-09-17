@@ -10,9 +10,9 @@ namespace MeteorEngine
     public:
         virtual ~Texture() {}
         virtual Vector2u     GetSize()   const = 0;
-        virtual u32 GetTexture() const = 0;
+        virtual u32			GetTexture() const = 0;
         virtual void        Bind(u32 slot = 0) const = 0;
-        virtual void        UnBind()    const = 0;
+        virtual void        UnBind(u32 slot = 0)    const = 0;
     };
     class METEOR_API Texture2D: public Texture
     {

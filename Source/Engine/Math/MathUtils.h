@@ -7,23 +7,21 @@ namespace MeteorEngine
 	METEOR_API Matrix4f Inverse(const Matrix4f& m);
 
 	METEOR_API Matrix4f Ortho(f32 left, f32 right, f32 bottom, f32 top);
-	METEOR_API Matrix4f OrthoLH_ZO(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
-	METEOR_API Matrix4f orthoLH_NO(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
-	METEOR_API Matrix4f orthoRH_ZO(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
-	METEOR_API Matrix4f orthoRH_NO(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
 	METEOR_API Matrix4f Perspective(f32 fovy, f32 aspect, f32 zNear, f32 zFar);
 
 	METEOR_API Matrix4f Rotate(const Matrix4f& m, f32 angle, const Vector3f& v);
 
 	METEOR_API Matrix4f Rotate(f32 angle, Vector3f const& v);
-	METEOR_API Matrix4f TranslateMatrix4(const Matrix4f& m, const Vector3f& v);
+	METEOR_API Matrix4f Translate(const Matrix4f& m, const Vector3f& v);
 	METEOR_API Matrix4f Scale(const Matrix4f& m, const Vector3f& v);
 
 	METEOR_API Vector3f Cross(Vector3f const& x, Vector3f const& y);
 
 	METEOR_API Vector3f operator*(Quaternion const& q, Vector3f const& v);
+
 	METEOR_API Matrix3f toMatrix3(const Quaternion& q);
 	METEOR_API Matrix4f toMatrix4(const Quaternion& q);
+
 	METEOR_API Quaternion Rotate(const Quaternion& q, const f32& angle, const Vector3f& v);
 	METEOR_API Vector3f Rotate(Quaternion const& q, Vector3f const& v);
 

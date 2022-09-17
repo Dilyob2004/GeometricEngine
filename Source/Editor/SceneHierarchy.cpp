@@ -38,13 +38,30 @@ namespace MeteorEngine
 	{
 		auto& tag = entity.GetComponent<Tag>().tag;
 		ImGuiTreeNodeFlags flags = (m_selectionScene == entity) ? ImGuiTreeNodeFlags_Selected : 0 | ImGuiTreeNodeFlags_OpenOnArrow;
+		if(1)
+			flags |= ImGuiTreeNodeFlags_Leaf;
 
 
 		bool opened = ImGui::TreeNodeEx((void*)(u64)(u32)entity, flags, tag.c_str());
-
-		if (ImGui::IsItemClicked()) 
 		{
-			m_selectionScene = entity;
+			if (ImGui::IsItemClicked())
+			{
+				m_selectionScene = entity;
+			}
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				m_selectionScene = {};
+		}
+		
+		if (ImGui::IsMouseDoubleClicked(0))
+		{
+			ImGui::PushItemWidth(-1);
+			auto& tag = entity.GetComponent<Tag>().tag;
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			strcpy_s(buffer, sizeof(buffer), tag.c_str());
+			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+				tag = std::string(buffer);
+
 		}
 		bool entityDestroyed = false;
 		if (ImGui::BeginPopupContextItem())
@@ -157,8 +174,6 @@ namespace MeteorEngine
 				Entity newEntity{ entity , m_scene.get() };
 				DrawEntity(newEntity);
 			});
-			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-				m_selectionScene = {};
 
 			ImGui::End();
 		}

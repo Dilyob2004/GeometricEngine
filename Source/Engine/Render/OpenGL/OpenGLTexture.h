@@ -11,7 +11,7 @@ namespace MeteorEngine
         virtual u32 GetTexture() const;
         virtual Vector2u GetSize()   const override { return m_size; }
         virtual void Bind(u32 slot)     const override;
-        virtual void UnBind()   const override;
+        virtual void UnBind(u32 slot)   const override;
 
     private:
         Vector2u m_size;

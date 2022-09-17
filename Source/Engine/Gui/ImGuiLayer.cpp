@@ -214,7 +214,7 @@ namespace MeteorEngine
 
 				}
                 if (ImGui::MenuItem("Exit")) 
-					Application::GetInstance().GetWindow().Quit();
+					Application::GetInstance().Exit();
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Edit"))

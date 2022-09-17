@@ -100,7 +100,7 @@ namespace MeteorEngine
 		Result[3] = m[3];
 		return Result;
 	}
-	Matrix4f TranslateMatrix4(const Matrix4f & m, const Vector3f & v)
+	Matrix4f Translate(const Matrix4f & m, const Vector3f & v)
 	{
 		Matrix4f Result(m);
 		Result[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[3];

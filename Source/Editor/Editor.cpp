@@ -21,7 +21,7 @@ namespace MeteorEngine
         Layer("Editor"),
         m_cameraController(30, 1.778f, 0.1, 1000)
     {
-		File* file = File::Open("Assets/Scene.scene", FileMode::CreateNew, FileAccess::ReadWrite, FileShare::ReadWrite);
+		//File* file = File::Open("Assets/Scene.scene", FileMode::CreateNew, FileAccess::ReadWrite, FileShare::ReadWrite);
 		/////////////////////////////////////////////////////////////////////////
         FrameBufferSpecification spec;
         spec.size.x = Application::GetInstance().GetWindow().GetSize().x;
@@ -33,8 +33,6 @@ namespace MeteorEngine
     Editor::~Editor()
     {
     }
-
-
 	void Editor::OnAttach()
 	{
 
@@ -169,6 +167,8 @@ namespace MeteorEngine
 		}
     }
 
+
+
 	void Editor::SetViewPort(bool active)
 	{
 		isOpenViewport = active;
@@ -178,7 +178,6 @@ namespace MeteorEngine
 	{
 		SceneHierarchy::SetActiveHierarchy(active);
 	}
-
 	void Editor::SetProperties(bool active)
 	{
 		SceneHierarchy::SetActiveProperties(active);

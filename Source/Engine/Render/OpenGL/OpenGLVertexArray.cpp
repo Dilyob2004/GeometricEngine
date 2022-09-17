@@ -46,27 +46,30 @@ namespace MeteorEngine
     void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer> &vertexBuffer)
     {
         glBindVertexArray(m_vertexArray);
-        vertexBuffer->Bind();
-        u32 index = 0;
-        const auto& layout = vertexBuffer->GetBufferLayout();
-        for(const auto& element: layout)
-        {
-            glEnableVertexAttribArray(index);
-            glVertexAttribPointer(index, element.GetComponentCount(),
-                                  ShaderDataTypeSizeToOpenGLBaseType(element.m_type) ,
-                                  element.m_normalized ? GL_TRUE : GL_FALSE,
-                                  layout.GetStride(),
-                                  (const void*)element.m_offset);
+			vertexBuffer->Bind();
+			u32 index = 0;
+			const auto& layout = vertexBuffer->GetBufferLayout();
+			for(const auto& element: layout)
+			{
+				glEnableVertexAttribArray(index);
+				glVertexAttribPointer(index, element.GetComponentCount(),
+									  ShaderDataTypeSizeToOpenGLBaseType(element.m_type) ,
+									  element.m_normalized ? GL_TRUE : GL_FALSE,
+									  layout.GetStride(),
+									  (const p0)(s32*)element.m_offset);
 
-            index++;
-        }
-        m_vertexBuffer.push_back(vertexBuffer);
+				index++;
+			}
+			m_vertexBuffer.push_back(vertexBuffer);
+			vertexBuffer->UnBind();
+        glBindVertexArray(0);
     }
     void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer> &indexBuffer)
     {
         glBindVertexArray(m_vertexArray);
-        indexBuffer->Bind();
-        m_indexBuffer = indexBuffer;
+			indexBuffer->Bind();
+			m_indexBuffer = indexBuffer;
+		glBindVertexArray(0);
     }
     void OpenGLVertexArray::Bind() const
     {

@@ -117,9 +117,6 @@
     <ClCompile Include="ThirdParty\ImGui\imgui.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\imgui_demo.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>

@@ -16,7 +16,7 @@ namespace MeteorEngine
     }
     void Camera2D::RecalculateVewMatrix()
     {
-        Matrix4f transformC = TranslateMatrix4(Matrix4f::Identity, m_position) *
+        Matrix4f transformC = Translate(Matrix4f::Identity, m_position) *
                                 Rotate(Matrix4f::Identity, m_rotation, Vector3f(0, 0, 1));
 
 
