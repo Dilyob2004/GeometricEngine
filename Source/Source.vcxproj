@@ -112,6 +112,7 @@
     <ClCompile Include="Engine\Math\Quaternion.cpp" />
     <ClCompile Include="Engine\Platform\Platform.cpp" />
     <ClCompile Include="Engine\Platform\Win32\OpenGLSupport.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\VulkanSupport.cpp" />
     <ClCompile Include="Engine\Platform\Win32\WindowsFile.cpp" />
     <ClCompile Include="Engine\Platform\Win32\WindowsFileSystem.cpp" />
     <ClCompile Include="Engine\Platform\Win32\WindowsInput.cpp" />
@@ -138,6 +139,9 @@
     <ClCompile Include="Engine\Render\Texture.cpp" />
     <ClCompile Include="Engine\Render\VertexArray.cpp" />
     <ClCompile Include="Engine\Render\VertexBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkSwapchain.cpp" />
     <ClCompile Include="Engine\System\Clock.cpp" />
     <ClCompile Include="Engine\System\File.cpp" />
     <ClCompile Include="Engine\System\FileSystem.cpp" />
@@ -182,6 +186,7 @@
     <ClInclude Include="Engine\Math\Vector4.h" />
     <ClInclude Include="Engine\Platform\Platform.h" />
     <ClInclude Include="Engine\Platform\Win32\OpenGLSupport.h" />
+    <ClInclude Include="Engine\Platform\Win32\VulkanSupport.h" />
     <ClInclude Include="Engine\Platform\Win32\WindowsFile.h" />
     <ClInclude Include="Engine\Platform\Win32\WindowsFileSystem.h" />
     <ClInclude Include="Engine\Platform\Win32\WindowsInput.h" />
@@ -208,6 +213,10 @@
     <ClInclude Include="Engine\Render\Texture.h" />
     <ClInclude Include="Engine\Render\VertexArray.h" />
     <ClInclude Include="Engine\Render\VertexBuffer.h" />
+    <ClInclude Include="Engine\Render\Vulkan\Vk.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkSwapchain.h" />
     <ClInclude Include="Engine\System\Clock.h" />
     <ClInclude Include="Engine\System\File.h" />
     <ClInclude Include="Engine\System\FileBase.h" />

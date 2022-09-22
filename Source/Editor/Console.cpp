@@ -1,4 +1,5 @@
 #include <Editor/Console.h>
+#include <Engine/IconsMaterialDesignIcons.h>
 #include <ImGui/imgui.h>
 #include <queue>
 namespace MeteorEngine
@@ -21,8 +22,9 @@ namespace MeteorEngine
 	{
 		if (isActive)
 		{
-			ImGui::Begin("Console", &isActive);
-			ImGui::Text("Meteor Engine v1.0, GPU API: OpenGL v4.3");
+			
+			ImGui::Begin(ICON_MDI_CONSOLE " Console", &isActive);
+			ImGui::Text("Meteor Engine v1.0");
 			for(auto i: messages)
 			{
 				ImVec4 color = { messages.front().first.x,

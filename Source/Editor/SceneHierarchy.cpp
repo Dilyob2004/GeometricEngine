@@ -5,6 +5,7 @@
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
+#include <Engine/IconsMaterialDesignIcons.h>
 
 namespace MeteorEngine
 {
@@ -41,8 +42,9 @@ namespace MeteorEngine
 		if(1)
 			flags |= ImGuiTreeNodeFlags_Leaf;
 
-
-		bool opened = ImGui::TreeNodeEx((void*)(u64)(u32)entity, flags, tag.c_str());
+		
+		std::string icon = ICON_MDI_CUBE_OUTLINE;
+		bool opened = ImGui::TreeNodeEx((void*)(u64)(u32)entity, flags, "%s  %s", icon.c_str(),tag.c_str());
 		{
 			if (ImGui::IsItemClicked())
 			{
@@ -90,7 +92,7 @@ namespace MeteorEngine
 		//Tag
 		if(entity.HasComponent<Tag>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(Tag).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Tag"))
+			if (ImGui::TreeNodeEx((void*)typeid(Tag).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, ICON_MDI_TAG "Tag"))
 			{
 				auto& tag = entity.GetComponent<Tag>().tag;
 				char buffer[256];
@@ -107,7 +109,7 @@ namespace MeteorEngine
 		//Transform
 		if (entity.HasComponent<Transform>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(Transform).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			if (ImGui::TreeNodeEx((void*)typeid(Transform).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, ICON_MDI_VECTOR_LINE " Transform"))
 			{
 
 				auto& transform = entity.GetComponent<Transform>();
@@ -122,7 +124,7 @@ namespace MeteorEngine
 		//SpriteRenderer
 		if (entity.HasComponent<SpriteRenderer>())
 		{
-			bool open = ImGui::TreeNodeEx((void*)typeid(SpriteRenderer).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer");
+			bool open = ImGui::TreeNodeEx((void*)typeid(SpriteRenderer).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, ICON_MDI_IMAGE " Sprite Renderer");
 
 			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
@@ -159,7 +161,7 @@ namespace MeteorEngine
 
 
 		if (isActiveHierarchy) {
-			ImGui::Begin("Hierarchy", &isActiveHierarchy);
+			ImGui::Begin(ICON_MDI_VIEW_LIST " Hierarchy", &isActiveHierarchy);
 
 			if (ImGui::BeginPopupContextWindow(0, 1, false))
 			{
@@ -179,7 +181,7 @@ namespace MeteorEngine
 		}
 		if(isActiveProperties)
 		{
-			ImGui::Begin("Properties", &isActiveProperties);
+			ImGui::Begin(ICON_MDI_INFORMATION " Properties", &isActiveProperties);
 
 			if (m_selectionScene) {
 

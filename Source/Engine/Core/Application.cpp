@@ -4,30 +4,32 @@
 #include <Engine/Render/Renderer.h>
 #include <Engine/Core/Application.h>
 #include <Engine/Platform/Platform.h>
-#include <Engine/Platform/Win32/OpenGLSupport.h>
+#include <Engine/Render/Vulkan/VkContext.h>
 #include <Editor/ExampleLayer.h>
 #include <Editor/Editor.h>
-
 namespace MeteorEngine
 {
+
+
 	LayerStack layerStack;
 	bool isExitApplication = false;
     Application* Application::m_instance = NULL;
+
     Application::Application()
     {
 		m_instance = this;
-		ImGuiLayer::OnEnableHighDpi();
+		//ImGuiLayer::OnEnableHighDpi();
         m_window    = std::unique_ptr<Window>( Window::Create("Meteor Engine, OpenGL Build 4.3.0", Vector2u(1280, 720) ) );
-        m_context   = std::unique_ptr<RenderContext>(RenderContext::Create(m_window.get()));
+       // m_context   = std::unique_ptr<RenderContext>(RenderContext::Create(m_window.get()));
 
-
-
-        m_context->SetVSync(true);
+		InitPlatformVulkan();
+		VulkanContext* context = new VulkanContext();
+       // m_context->SetVSync(true);
 		///Initizlize 
-		RendererCommand::InitEngine();
+		//RendererCommand::InitEngine();
 
-        PushLayer(new ImGuiLayer());
-        PushLayer(new Editor());
+        //PushLayer(new ImGuiLayer());
+        //PushLayer(new Editor());
         //PushLayer(new ExampleLayer());
     }
     Application::~Application()
@@ -81,14 +83,13 @@ namespace MeteorEngine
                 OnEvent(event);
 
 			Platform::Tick();
-
-            ImGuiLayer::OnBegin();
+            /**ImGuiLayer::OnBegin();
                 for(Layer *layer: layerStack)
                     layer->OnTick();
             ImGuiLayer::OnEnd();
 
 
-            m_context->Renderer();
+            m_context->Renderer();*/
         }
     }
 }

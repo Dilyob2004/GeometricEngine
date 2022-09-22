@@ -2,24 +2,45 @@
 #define FRAMEBUFFER_H
 #include <Engine/Math/Vector2.h>
 #include <Engine/Core/Config.h>
+#include <Engine/Render/Texture.h>
+#include <vector>
 namespace MeteorEngine
 {
-    struct FrameBufferSpecification
+	struct FrameBufferTextureSpec
+	{
+		FrameBufferTextureSpec() = default;
+		FrameBufferTextureSpec(Texture2D* texure) :
+			m_Texture(texure)
+		{
+		}
+		Texture2D *m_Texture;
+	};
+	struct FrameBufferAttachmentSpec
+	{
+		FrameBufferAttachmentSpec() = default;
+		FrameBufferAttachmentSpec(std::initializer_list<FrameBufferTextureSpec> attachments):
+			Attachments(attachments)
+		{
+		}
+		std::vector<FrameBufferTextureSpec> Attachments;
+	};
+    struct FrameBufferSpec
     {
-        Vector2u size;
-        u32 samples = 2;
-        bool swapChainTarget = false;
+		FrameBufferSpec()		= default;
+		FrameBufferAttachmentSpec   Attachments;
+        Vector2u					Size;
+        u32							Samples = 2;
     };
     class METEOR_API FrameBuffer
     {
-    public:
+    public: 
         virtual ~FrameBuffer() {}
         virtual void Bind()     const = 0;
         virtual void UnBind()   const = 0;
         virtual void Resize(const Vector2u &) = 0;
-        virtual u32 GetColorAttachmentFrameBuffer() const  = 0;
-        virtual const FrameBufferSpecification& GetSpecification() const = 0;
-        static FrameBuffer* Create(const FrameBufferSpecification&);
+        virtual u32 GetFrameBuffer() const  = 0;
+        virtual const FrameBufferSpec& GetSpecification() const = 0;
+        static FrameBuffer* Create(const FrameBufferSpec&);
     };
 }
 #endif // FRAMEBUFFER_H

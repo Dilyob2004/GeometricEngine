@@ -155,8 +155,8 @@ namespace MeteorEngine
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-		io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Bold.ttf", 18);
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Regular.ttf", 18);
+		io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Bold.ttf", 20);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Regular.ttf", 20);
 		ImGui_ImplWin32_Init(Application::GetInstance().GetWindow().GetWindowPtr(), Application::GetInstance().GetContext().GetCurrent());
 
 		ImGui_ImplOpenGL3_Init("#version 430 core");	
@@ -170,7 +170,7 @@ namespace MeteorEngine
 		icons_config.GlyphMinAdvanceX = 4.0f;
 		icons_config.SizePixels = 12.0f;
 
-		io.Fonts->AddFontFromMemoryCompressedTTF(MaterialDesign_compressed_data, MaterialDesign_compressed_size, 28, &icons_config, icons_ranges);
+		io.Fonts->AddFontFromMemoryCompressedTTF(MaterialDesign_compressed_data, MaterialDesign_compressed_size, 26, &icons_config, icons_ranges);
 
     }
     void ImGuiLayer::OnDetach()
@@ -268,7 +268,7 @@ namespace MeteorEngine
 					Editor::SetContentBrowser(true);
                 ImGui::EndMenu();
             }           
-			ImGui::SameLine((ImGui::GetWindowContentRegionMax().x* 0.5f) - (1.5f * (ImGui::GetFontSize() + ImGui::GetStyle().ItemSpacing.x)));
+			ImGui::SameLine((ImGui::GetWindowContentRegionMax().x* 0.6f) - ( (ImGui::GetFontSize() + ImGui::GetStyle().ItemSpacing.x)));
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.2f, 0.7f, 0.0f));
 
@@ -276,6 +276,19 @@ namespace MeteorEngine
 			{
 
 			}
+			if (ImGui::Button(ICON_MDI_PAUSE))
+			{
+
+			}
+			if (ImGui::Button(ICON_MDI_STEP_FORWARD))
+			{
+
+			}
+			float sizeOfGfxAPIDropDown = ImGui::GetFontSize() * 4;
+			ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x * 2.0f - sizeOfGfxAPIDropDown);
+
+
+			ImGui::Text("RHI: OpenGL");
 			ImGui::PopStyleColor();
             ImGui::EndMenuBar();
         }

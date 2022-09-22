@@ -36,8 +36,14 @@ namespace MeteorEngine
 
 	void* WindowsPlatform::GetDllFunction(const char* moduleName, const char* name)
 	{
-		void* adress = reinterpret_cast<void*>(GetProcAddress(GetModuleHandleA(moduleName), name));
-		return (adress != NULL) ? adress : NULL;
+		HMODULE module = LoadLibraryA(moduleName);
+		void* adress = (module != NULL) ? reinterpret_cast<void*>(GetProcAddress(module, name)) : NULL;
+		if (!adress)
+		{
+			return NULL;
+		}
+		FreeLibrary(module);
+		return adress;
 	}
 	void WindowsPlatform::Tick()
 	{
@@ -51,8 +57,8 @@ namespace MeteorEngine
 	extern LRESULT WndProcHandler(HWND, UINT, WPARAM, LPARAM aram);
 	LRESULT WindowsPlatform::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-		if (WndProcHandler(hWnd, msg, wParam, lParam))
-			return true;
+		//if (WndProcHandler(hWnd, msg, wParam, lParam))
+			//return true;
 		if (msg == WM_CREATE)
 		{
 			LONG_PTR window = (LONG_PTR)reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;			

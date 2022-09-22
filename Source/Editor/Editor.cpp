@@ -6,6 +6,7 @@
 #include <Engine/Math/MathUtils.h>
 #include <Editor/Components.h>
 #include <Engine/System/File.h>
+#include <Engine/IconsMaterialDesignIcons.h>
 #include <ImGui/imgui.h>
 #include <ImGui/ImGuizmo.h>
 #include <entt/entt.hpp>
@@ -22,12 +23,13 @@ namespace MeteorEngine
         m_cameraController(30, 1.778f, 0.1f, 1000)
     {
 		//File* file = File::Open("Assets/Scene.scene", FileMode::CreateNew, FileAccess::ReadWrite, FileShare::ReadWrite);
-		/////////////////////////////////////////////////////////////////////////
-        FrameBufferSpecification spec;
-        spec.size.x = Application::GetInstance().GetWindow().GetSize().x;
-        spec.size.y = Application::GetInstance().GetWindow().GetSize().y;
+
+
+        FrameBufferSpec spec;
+		spec.Size = Vector2u(Application::GetInstance().GetWidth(), Application::GetInstance().GetHeight());
+		//spec.Attachments = { {Texture2D::Create(RHITextureFormat::RGB8_UNORM, spec.Size.x, spec.Size.y)} };
+
         m_frameBuffer.reset(FrameBuffer::Create(spec));
-		/////////////////////////////////////////////////////////////////////////
 		
     }
     Editor::~Editor()
@@ -86,7 +88,7 @@ namespace MeteorEngine
 		if (isOpenViewport)
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0 ,0 });
-			ImGui::Begin("ViewPort", &isOpenViewport);
+			ImGui::Begin(ICON_MDI_GAMEPAD_VARIANT " Scene", &isOpenViewport);
 			if ((ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()))
 				isHovered = true;
 
@@ -98,7 +100,7 @@ namespace MeteorEngine
 				m_viewPortSize = Vector2u((u32)viewportPanelSize.x, (u32)viewportPanelSize.y);
 				m_cameraController.OnResize(m_viewPortSize);
 			}
-			ImGui::Image((ImTextureID)m_frameBuffer->GetColorAttachmentFrameBuffer(), { (f32)m_viewPortSize.x, (f32)m_viewPortSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::Image((ImTextureID)m_frameBuffer->GetFrameBuffer(), { (f32)m_viewPortSize.x, (f32)m_viewPortSize.y }, ImVec2(0, 1), ImVec2(1, 0));
 
 
 

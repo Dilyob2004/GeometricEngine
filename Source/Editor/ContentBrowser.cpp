@@ -1,5 +1,6 @@
 #include <Editor/ContentBrowser.h>
 #include <Engine/System/FileSystem.h>
+#include <Engine/IconsMaterialDesignIcons.h>
 
 #include <ImGui/imgui.h>
 namespace MeteorEngine
@@ -33,9 +34,10 @@ namespace MeteorEngine
 	void ContentBrowser::OnUpdate()
 	{
 		if (isActive) {
-			ImGui::Begin("Content Browser", &isActive);
+			
+			ImGui::Begin(ICON_MDI_FOLDER_STAR " Content Browser", &isActive);
 			if (m_currentPath != pathAsset.m_path)
-				if (ImGui::Button("Back"))
+				if (ImGui::Button(ICON_MDI_BACKSPACE))
 				{
 					pathAsset = lastPathAsset;
 					isNextDir = true;
@@ -61,7 +63,7 @@ namespace MeteorEngine
 				if (i.isDirectory) {
 					ImGui::PushID(i.fileName.c_str());
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-					ImGui::ImageButton((ImTextureID)m_DirectoryIcon->GetTexture(), { thumbnailSize, thumbnailSize });
+					ImGui::ImageButton((ImTextureID)m_DirectoryIcon->GetTexture(), { thumbnailSize-20, thumbnailSize-20 });
 					ImGui::PopStyleColor();
 					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					{
@@ -69,7 +71,7 @@ namespace MeteorEngine
 						pathAsset = Path("Assets/" + i.fileName + "/*");
 						isNextDir = true;
 					}
-					ImGui::Text(i.fileName.c_str());
+					ImGui::Text((" " + i.fileName).c_str());
 					ImGui::NextColumn();
 					ImGui::PopID();
 				}
@@ -79,7 +81,7 @@ namespace MeteorEngine
 				if (!i.isDirectory) {
 					ImGui::PushID(i.fileName.c_str());
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-					ImGui::ImageButton((ImTextureID)m_FileIcon->GetTexture(), { thumbnailSize, thumbnailSize });
+					ImGui::ImageButton((ImTextureID)m_FileIcon->GetTexture(), { thumbnailSize-20, thumbnailSize-20 });
 					ImGui::PopStyleColor();
 					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					{

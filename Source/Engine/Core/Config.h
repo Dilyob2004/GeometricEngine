@@ -43,60 +43,19 @@ typedef unsigned long     u64;
 typedef float f32;
 typedef double f64;
 
-enum class RHIFormat : u32
-{
-	NONE = 0,
 
-	R8_U32NORM,
-	R8G8_U32NORM,
-	R8G8B8_U32NORM,
-	R8G8B8A8_U32NORM,
-	R8_U32,
-
-	R11G11B10_F32,
-	R10G10B10A2_U32,
-
-	R32_S32, 
-	R32G32_S32, 
-	R32G32B32_S32, 
-	R32G32B32A32_S32, 
-
-	R32_U32,
-	R32G32_U32,
-	R32G32B32_U32,
-	R32G32B32A32_U32,
-
-	R32_F16,
-	R32G32_F16,
-	R32G32B32_F16,
-	R32G32B32A32_F16,
-
-	R32_F32,
-	R32G32_F32,
-	R32G32B32_F32,
-	R32G32B32A32_F32,
-
-
-
-	D16_U32NORM,
-	D32_F32,
-
-	D16_U32NORM_S8_U32,
-	D24_U32NORM_S8_U32,
-	D32_F32NORM_S8_U32
-};
 enum class ShaderType
 {
-    FragmentShader,
-    VertexShader,
-    NoneShader
+	FragmentShader,
+	VertexShader,
+	NoneShader
 };
 enum class ShaderDataType
 {
-    None = 0,
-    Float,  Float2, Float3, Float4,
-    Mat,    Mat2,   Mat3,   Mat4,
-    Int,    Int2,   Int3,   Int4,
-    Bool
+	None = 0,
+	Float, Float2, Float3, Float4,
+	Mat, Mat2, Mat3, Mat4,
+	Int, Int2, Int3, Int4,
+	Bool
 };
 #endif // CONFIG_H
