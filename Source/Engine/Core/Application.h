@@ -19,7 +19,7 @@ namespace MeteorEngine
 		u32 GetY() const { return m_window->GetPosition().y; }
 		u32 GetWidth() const { return m_window->GetSize().x; }
 		u32 GetHeight() const { return m_window->GetSize().y; }
-		static void Exit();
+		static void Close();
 		bool ShouldExit();
 		void Run();
 		void OnEvent(Event& );

@@ -3,139 +3,243 @@
 
 namespace MeteorEngine
 {
-	VulkanContext::VulkanContext()
+
+	VulkanContext::VulkanContext() :
+		m_CommandPool(0),
+		m_Fences(0),
+		m_MaxFramesInFlight(2),
+		m_Instance(0),
+		m_ImageAvailableSemaphores(),
+		m_RenderFinishedSemaphores(),
+		m_CommandBuffers()
 	{
-		Init();
+		if (!CreateInstance(true))
+			LOG("Failed to Create a Instance!\n");
+		m_VulkanDevice		= new VulkanDevice();
+		m_VulkanSwapChain	= new VulkanSwapChain();
+
 	}
 
 	VulkanContext::~VulkanContext()
 	{
+		for (VkFence fence : m_Fences)
+			vkDestroyFence(m_VulkanDevice->GetLogicalDevice(), fence, 0);
 
+		for (VkSemaphore renderFinishedSemaphore : m_RenderFinishedSemaphores)
+			vkDestroySemaphore(m_VulkanDevice->GetLogicalDevice(), renderFinishedSemaphore, 0);
+
+		for (VkSemaphore imageAvailableSemaphore : m_ImageAvailableSemaphores)
+			vkDestroySemaphore(m_VulkanDevice->GetLogicalDevice(), imageAvailableSemaphore, 0);
+		
+		if (m_CommandPool)
+			vkDestroyCommandPool(m_VulkanDevice->GetLogicalDevice(), m_CommandPool, 0);
+
+		if (m_Instance)
+			vkDestroyInstance(m_Instance, 0);
 	}
-	bool VulkanContext::Init()
+	void VulkanContext::Create(Window * window)
 	{
-		CreateInstance(true);
-		uint32_t gpuCount = 0;
-		// Get number of available physical devices
-		vkEnumeratePhysicalDevices(m_Instance, &gpuCount, nullptr);
-		if (gpuCount == 0) {
-			LOG("No device with Vulkan support found");
-			return false;
-		}
-		// Enumerate devices
-		std::vector<VkPhysicalDevice> physicalDevices(gpuCount);
-		VkResult err = vkEnumeratePhysicalDevices(m_Instance, &gpuCount, physicalDevices.data());
-		if (err) {
-			LOG("Could not enumerate physical devices : \n");
-			return false;
+		if (!m_VulkanDevice->CreateDevice())
+		{
+			LOG("Failed to Create a Device!\n");
+			return;
 		}
 
-		// GPU selection
+		if (!m_VulkanDevice->CreateSurface(window->GetWindowPtr()))
+		{
+			LOG("Failed to Create a Surface!\n");
+			return;
+		}
 
-		// Select physical device to be used for the Vulkan example
-		// Defaults to the first device unless specified by command line
-		uint32_t selectedDevice = 0;
-		m_PhysicalDevice = physicalDevices[selectedDevice];
+		if (!m_VulkanSwapChain->CreateSwapChain(window->GetSize().x, window->GetSize().y))
+		{
+			LOG("Failed to Create a Swap Chain!\n");
+			return;
+		}
 
+		if (!CreateCommandPool())
+		{
+			LOG("Failed to Create a Command Pool!\n");
+			return;
+		}
 
+		if (!AllocateCommandBuffer())
+		{
+			LOG("Failed to Allocate a Command Buffer!\n");
+			return;
+		}
 
-		m_VulkanDevice = new VulkanDevice(m_PhysicalDevice);
-		m_VulkanDevice->CreateDevice(m_EnabledFeatures, m_EnabledDeviceExtensions, NULL);
+		if (!CreateSemaphores())
+		{
+			LOG("Failed to Create a Semaphores!\n");
+			return;
+		}
 
-
-		VkDevice device = *m_VulkanDevice;
-		vkGetDeviceQueue(device, m_VulkanDevice->queueFamilyIndices.graphics, 0, &m_Queue);
-
-		m_VulkanSwapChain = new VulkanSwapChain();
-		m_VulkanSwapChain->Connect(m_Instance, m_PhysicalDevice, device);
-		m_VulkanSwapChain->InitSurface(Application::GetInstance().GetWindow().GetWindowPtr());
-		u32 w = 1280, h = 720;
-
-		m_VulkanSwapChain->Create(&w, &h, true);
+		if (!CreateFences())
+		{
+			LOG("Failed to Create a Fences!\n");
+			return;
+		}
 	}
-	void VulkanContext::CreateInstance(bool enableValidation)
+	bool VulkanContext::CreateInstance(bool isDebug)
 	{
+		u32 objectCount = 0;
+		if (vkEnumerateInstanceLayerProperties(&objectCount, 0) != VK_SUCCESS)
+			return false;
+
+		std::vector<VkLayerProperties> layers(objectCount);
+
+		if (vkEnumerateInstanceLayerProperties(&objectCount, layers.data()) != VK_SUCCESS)
+			return false;
+
+		// Activate the layers we are interested in
+		std::vector<const char*> validationLayers;
+
+		for (VkLayerProperties& layer : layers)
+		{
+			// VK_LAYER_LUNARG_standard_validation, meta-layer for the following layers:
+			// -- VK_LAYER_GOOGLE_threading
+			// -- VK_LAYER_LUNARG_parameter_validation
+			// -- VK_LAYER_LUNARG_device_limits
+			// -- VK_LAYER_LUNARG_object_tracker
+			// -- VK_LAYER_LUNARG_image
+			// -- VK_LAYER_LUNARG_core_validation
+			// -- VK_LAYER_LUNARG_swapchain
+			// -- VK_LAYER_GOOGLE_unique_objects
+			// These layers perform error checking and warn about bad or sub-optimal Vulkan API usage
+			// VK_LAYER_LUNARG_monitor appends an FPS counter to the window title
+			if (!std::strcmp(layer.layerName, "VK_LAYER_LUNARG_standard_validation"))
+				validationLayers.push_back("VK_LAYER_LUNARG_standard_validation");
+			else if (!std::strcmp(layer.layerName, "VK_LAYER_LUNARG_monitor"))
+				validationLayers.push_back("VK_LAYER_LUNARG_monitor");
+		}
+
+
+		std::vector<const char*> requiredExtentions;
+
+		requiredExtentions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+		requiredExtentions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+
+		if (isDebug)
+			requiredExtentions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+
+		// Register our application information
 		VkApplicationInfo applicationInfo = VkApplicationInfo();
 		applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		applicationInfo.pApplicationName = "Runtime";
+		applicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 		applicationInfo.pEngineName = "Meteor";
+		applicationInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+		applicationInfo.apiVersion = VK_API_VERSION_1_2;
 
-
-		std::vector<const char*> instanceExtensions;
-		instanceExtensions.emplace_back(VK_KHR_SURFACE_EXTENSION_NAME );
-		instanceExtensions.emplace_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-
-
-
-		// Get extensions supported by the instance and store for later use
-		uint32_t extCount = 0;
-		vkEnumerateInstanceExtensionProperties(nullptr, &extCount, nullptr);
-		if (extCount > 0)
-		{
-			std::vector<VkExtensionProperties> extensions(extCount);
-			if (vkEnumerateInstanceExtensionProperties(nullptr, &extCount, &extensions.front()) == VK_SUCCESS)
-				for (VkExtensionProperties extension : extensions)
-					m_SupportedInstanceExtensions.push_back(extension.extensionName);
-		}
-
-		// Enabled requested instance extensions
-		if (m_EnabledInstanceExtensions.size() > 0)
-			for (const char* enabledExtension : m_EnabledInstanceExtensions)
-			{
-				// Output message if requested extension is not available
-				if (std::find(m_SupportedInstanceExtensions.begin(), m_SupportedInstanceExtensions.end(), enabledExtension) == m_SupportedInstanceExtensions.end())
-					std::cerr << "Enabled instance extension \"" << enabledExtension << "\" is not present at instance level\n";
-				instanceExtensions.push_back(enabledExtension);
-			}
 		VkInstanceCreateInfo instanceCreateInfo = VkInstanceCreateInfo();
 		instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		instanceCreateInfo.pNext = NULL;
 		instanceCreateInfo.pApplicationInfo = &applicationInfo;
+		instanceCreateInfo.enabledLayerCount = static_cast<u32>(validationLayers.size());
+		instanceCreateInfo.ppEnabledLayerNames = validationLayers.data();
+		instanceCreateInfo.enabledExtensionCount = static_cast<u32>(requiredExtentions.size());
+		instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
 
-		if (instanceExtensions.size() > 0)
+		VkResult result = vkCreateInstance(&instanceCreateInfo, 0, &m_Instance);
+
+		// If an extension is missing, try disabling debug report
+		if (result == VK_ERROR_EXTENSION_NOT_PRESENT)
 		{
-			if (enableValidation)
+			requiredExtentions.pop_back();
+
+			instanceCreateInfo.enabledExtensionCount = static_cast<u32>(requiredExtentions.size());
+			instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();
+
+			result = vkCreateInstance(&instanceCreateInfo, 0, &m_Instance);
+		}
+
+		if (result != VK_SUCCESS)
+			return false;
+
+
+
+		return true;
+	}
+	bool VulkanContext::CreateCommandPool()
+	{
+
+		// We want to be able to reset command buffers after submitting them
+		VkCommandPoolCreateInfo commandPoolCreateInfo = VkCommandPoolCreateInfo();
+		commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		commandPoolCreateInfo.queueFamilyIndex = static_cast<u32>(m_VulkanDevice->GetQueueFamilyIndex());
+		commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+		// Create our command pool
+		if (vkCreateCommandPool(m_VulkanDevice->GetLogicalDevice(), &commandPoolCreateInfo, 0, &m_CommandPool) != VK_SUCCESS)
+			return false;
+	}
+	bool VulkanContext::AllocateCommandBuffer()
+	{
+		// We need a command buffer for every frame in flight
+		//m_CommandBuffers.resize(swapchainFramebuffers.size());
+
+		// These are primary command buffers
+		VkCommandBufferAllocateInfo commandBufferAllocateInfo = VkCommandBufferAllocateInfo();
+		commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		commandBufferAllocateInfo.commandPool = m_CommandPool;
+		commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		commandBufferAllocateInfo.commandBufferCount = static_cast<u32>(m_CommandBuffers.size());
+
+		// Allocate the command buffers from our command pool
+		if (vkAllocateCommandBuffers(m_VulkanDevice->GetLogicalDevice(), &commandBufferAllocateInfo, m_CommandBuffers.data()) != VK_SUCCESS)
+		{
+			m_CommandBuffers.clear();
+			return false;
+		}
+
+	}
+	bool VulkanContext::CreateSemaphores()
+	{
+
+		VkSemaphoreCreateInfo semaphoreCreateInfo = VkSemaphoreCreateInfo();
+		semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		// Create a semaphore to track when an swapchain image is available for each frame in flight
+		for (u32 i = 0; i < m_MaxFramesInFlight; i++)
+		{
+			m_ImageAvailableSemaphores.push_back(0);
+
+			if (vkCreateSemaphore(m_VulkanDevice->GetLogicalDevice(), &semaphoreCreateInfo, 0, &m_ImageAvailableSemaphores[i]) != VK_SUCCESS)
 			{
-				instanceExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);	// SRS - Dependency when VK_EXT_DEBUG_MARKER is enabled
-				instanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+				m_ImageAvailableSemaphores.pop_back();
+				return false;
 			}
-			instanceCreateInfo.enabledExtensionCount = (u32)instanceExtensions.size();
-			instanceCreateInfo.ppEnabledExtensionNames = instanceExtensions.data();
 		}
 
-		// The VK_LAYER_KHRONOS_validation contains all current validation functionality.
-		// Note that on Android this layer requires at least NDK r20
-		const char* validationLayerName = "VK_LAYER_KHRONOS_validation";
-		if (enableValidation)
+		// Create a semaphore to track when rendering is complete for each frame in flight
+		for (u32 i = 0; i < m_MaxFramesInFlight; i++)
 		{
-			// Check if this layer is available at instance level
-			uint32_t instanceLayerCount;
-			vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr);
+			m_RenderFinishedSemaphores.push_back(0);
 
-
-			std::vector<VkLayerProperties> instanceLayerProperties(instanceLayerCount);
-			vkEnumerateInstanceLayerProperties(&instanceLayerCount, instanceLayerProperties.data());
-
-
-			bool validationLayerPresent = false;
-			for (VkLayerProperties layer : instanceLayerProperties) 
-				if (strcmp(layer.layerName, validationLayerName) == 0) {
-					validationLayerPresent = true;
-					break;
-				}
-
-			if (validationLayerPresent) {
-				instanceCreateInfo.ppEnabledLayerNames = &validationLayerName;
-				instanceCreateInfo.enabledLayerCount = 1;
+			if (vkCreateSemaphore(m_VulkanDevice->GetLogicalDevice(), &semaphoreCreateInfo, 0, &m_RenderFinishedSemaphores[i]) != VK_SUCCESS)
+			{
+				m_RenderFinishedSemaphores.pop_back();
+				return false;
 			}
-			else 
-				std::cerr << "Validation layer VK_LAYER_KHRONOS_validation not present, validation is disabled";
-
-			
-			VK_CHECK(vkCreateInstance(&instanceCreateInfo, 0, &m_Instance), "vkCreateInstance");
 		}
+	}
+	bool VulkanContext::CreateFences()
+	{
 
+		// Create the fences in the signaled state
+		VkFenceCreateInfo fenceCreateInfo = VkFenceCreateInfo();
+		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-
+		// Create a fence to track when queue submission is complete for each frame in flight
+		for (u32 i = 0; i < m_MaxFramesInFlight; i++)
+		{
+			m_Fences.push_back(0);
+			if (vkCreateFence(m_VulkanDevice->GetLogicalDevice(), &fenceCreateInfo, 0, &m_Fences[i]) != VK_SUCCESS)
+			{
+				m_Fences.pop_back();
+				return false;
+			}
+		}
 	}
 }

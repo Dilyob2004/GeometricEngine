@@ -9,7 +9,7 @@ namespace MeteorEngine
 		wc.cbSize			= sizeof(WNDCLASSEX);
 		wc.style			= CS_DBLCLKS;
 		wc.lpfnWndProc		= &WindowsPlatform::WndProc;
-		wc.hInstance		= GetModuleHandle(NULL);
+		wc.hInstance		= (HINSTANCE)GetModuleHandle(NULL);
 		wc.hbrBackground	= (HBRUSH)(COLOR_WINDOW);
 		wc.lpszClassName	= __TEXT("MeteorEngine");
 		wc.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
@@ -63,13 +63,13 @@ namespace MeteorEngine
 		{
 			LONG_PTR window = (LONG_PTR)reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;			
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, window);
+
 		}
 		WindowsWindow* window = hWnd ? reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA)) : NULL;
-		if (window)
+		if (window) 
 			window->OnEvent(msg, wParam, lParam);
 
-
-		if (msg == WM_CLOSE || (msg == WM_SYSCOMMAND) && (wParam == SC_KEYMENU))
+		if (msg == WM_DESTROY)
 		{
 			PostQuitMessage(0);
 			return 0;

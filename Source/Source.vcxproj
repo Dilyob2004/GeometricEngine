@@ -141,7 +141,7 @@
     <ClCompile Include="Engine\Render\VertexBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
-    <ClCompile Include="Engine\Render\Vulkan\VkSwapchain.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkSwapChain.cpp" />
     <ClCompile Include="Engine\System\Clock.cpp" />
     <ClCompile Include="Engine\System\File.cpp" />
     <ClCompile Include="Engine\System\FileSystem.cpp" />
@@ -174,6 +174,7 @@
     <ClInclude Include="Engine\Core\Layer.h" />
     <ClInclude Include="Engine\Core\LayerStack.h" />
     <ClInclude Include="Engine\Core\MouseCodes.h" />
+    <ClInclude Include="Engine\Core\Singleton.h" />
     <ClInclude Include="Engine\Core\Window.h" />
     <ClInclude Include="Engine\Gui\ImGuiLayer.h" />
     <ClInclude Include="Engine\IconsMaterialDesignIcons.h" />
@@ -216,7 +217,7 @@
     <ClInclude Include="Engine\Render\Vulkan\Vk.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
-    <ClInclude Include="Engine\Render\Vulkan\VkSwapchain.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkSwapChain.h" />
     <ClInclude Include="Engine\System\Clock.h" />
     <ClInclude Include="Engine\System\File.h" />
     <ClInclude Include="Engine\System\FileBase.h" />

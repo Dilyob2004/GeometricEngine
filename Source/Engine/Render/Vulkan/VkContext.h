@@ -2,37 +2,41 @@
 #define VKCONTEXT_H
 #include <Engine/Render/Vulkan/Vk.h>
 #include <Engine/Render/Vulkan/VkDevice.h>
-#include <Engine/Render/Vulkan/VkSwapchain.h>
+#include <Engine/Render/Vulkan/VkSwapChain.h>
+#include <Engine/Core/Singleton.h>
 #include <vector>
 
 namespace MeteorEngine
 {
-	class METEOR_API VulkanContext
+	class METEOR_API VulkanContext : public Singleton<VulkanContext>
 	{
 	public:
 		VulkanContext();
 		~VulkanContext();
 
-		bool Init();
+		void Create(Window*);
 
+		VkInstance GetVkInstance() const { return m_Instance;  }
 
 	private:
-		void CreateInstance(bool);
+		bool CreateInstance(bool);
+		bool CreateSemaphores();
+		bool CreateFences();
+		bool CreateCommandPool();
+		bool AllocateCommandBuffer();
 
-		VkInstance		m_Instance;
-		VulkanDevice	*m_VulkanDevice;
-		VulkanSwapChain *m_VulkanSwapChain;
-		VkPhysicalDevice m_PhysicalDevice;
+	private:
+		VulkanDevice*	m_VulkanDevice;
+		VulkanSwapChain* m_VulkanSwapChain;
 
-		VkQueue m_Queue;
-		VkPhysicalDeviceFeatures m_EnabledFeatures{};
+		VkInstance						m_Instance;
+		VkCommandPool					m_CommandPool;
 
-		/** @brief Optional pNext structure for passing extension structures to device creation */
-		void* m_DeviceCreatepNextChain = nullptr;
-		std::vector<std::string> m_SupportedInstanceExtensions;
-
-		std::vector<const char*> m_EnabledDeviceExtensions;
-		std::vector<const char*> m_EnabledInstanceExtensions;
+		const u32						m_MaxFramesInFlight;
+		std::vector<VkFence>			m_Fences;
+		std::vector<VkSemaphore>		m_ImageAvailableSemaphores;
+		std::vector<VkSemaphore>		m_RenderFinishedSemaphores;
+		std::vector<VkCommandBuffer>	m_CommandBuffers;
 	};
 }
 #endif // !VKCONTEXT_Hâ

@@ -20,22 +20,23 @@ namespace MeteorEngine
 {
     WindowsWindow::WindowsWindow(const std::string& title, const Vector2u& size)
     {
-        RECT r;
-        r.top = r.left = 100;
-        r.right = size.x;
-        r.bottom = size.y;
+        RECT rect;
+		rect.right = size.x;
+		rect.bottom = size.y;
+
+		rect.left = GetSystemMetrics(SM_CXSCREEN) / 2  - rect.right/2;
+		rect.top = GetSystemMetrics(SM_CYSCREEN) / 2 - rect.bottom/2;
         m_lastSize = size;
 		
-        DWORD styleEx = WS_EX_APPWINDOW | WS_EX_TOPMOST,  style = WS_OVERLAPPEDWINDOW;
-		::AdjustWindowRect(&r, style, false);
-        m_hwnd = CreateWindowA(	 
-									__TEXT("MeteorEngine"), 
-									title.c_str(), 
+        DWORD styleEx = WS_EX_APPWINDOW,  style = WS_OVERLAPPEDWINDOW;
+		AdjustWindowRectEx(&rect, style, false, styleEx);
+        m_hwnd = CreateWindowExA(	styleEx,	
+									__TEXT("MeteorEngine"), title.c_str(),
 									style,
-									r.left, r.top, 
-									r.right, r.bottom,
+									rect.left, rect.top,
+									rect.right, rect.bottom,
 									NULL, NULL, 
-									GetModuleHandle(NULL), 
+									(HINSTANCE)GetModuleHandle(NULL), 
 									this);
 
 
@@ -230,11 +231,12 @@ namespace MeteorEngine
         {
 			case WM_SETCURSOR:
 			{
+				SetCursor(LoadCursor(NULL, IDC_ARROW));
 				break;
 			}
             case WM_CLOSE:
             {
-                Event event;
+				Event event;
                 event.type        = Event::Closed;
                 m_events.push(event);
                 break;
@@ -480,12 +482,6 @@ namespace MeteorEngine
                 m_events.push(event);
                 break;
             }
-			case WM_DPICHANGED:
-				if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports)
-				{
-					const RECT* suggested_rect = (RECT*)lParam;
-					::SetWindowPos(m_hwnd, NULL, suggested_rect->left, suggested_rect->top, suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, SWP_NOZORDER | SWP_NOACTIVATE);
-				}
         }
 
     }

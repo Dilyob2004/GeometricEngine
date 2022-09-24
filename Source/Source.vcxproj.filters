@@ -195,7 +195,7 @@
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkSwapchain.cpp">
+    <ClCompile Include="Engine\Render\Vulkan\VkSwapChain.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -437,10 +437,13 @@
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkSwapchain.h">
+    <ClInclude Include="Engine\Render\Vulkan\Vk.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\Vk.h">
+    <ClInclude Include="Engine\Render\Vulkan\VkSwapChain.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Singleton.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
