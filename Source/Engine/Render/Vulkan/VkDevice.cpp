@@ -3,14 +3,16 @@
 #include <assert.h>
 namespace MeteorEngine
 {
+	VulkanDevice* VulkanDevice::thisInstance = NULL;
 	VulkanDevice::VulkanDevice():
 		m_DepthFormat(),
-		m_QueueFamilyIndex(0),
+		m_QueueFamilyIndex(-1),
 		m_PhysicalDevice(0),
 		m_Device(0),
 		m_Queue(0),
 		m_Surface(0)
 	{
+		thisInstance = this;
 	}	
 	VulkanDevice::~VulkanDevice()
 	{
@@ -31,12 +33,13 @@ namespace MeteorEngine
 		surfaceCreateInfo.hwnd							= (HWND) window;
 		if (vkCreateWin32SurfaceKHR(VulkanContext::GetInstance()->GetVkInstance(), &surfaceCreateInfo, nullptr, &m_Surface) != VK_SUCCESS)
 			return false;
+
+
+		return true;
 	}
 	bool VulkanDevice::CreateDevice()
 	{
 		VkInstance instance = VulkanContext::GetInstance()->GetVkInstance();
-		if (!instance)
-			return false;
 		// Retrieve list of GPUs
 		u32 objectCount = 0;
 

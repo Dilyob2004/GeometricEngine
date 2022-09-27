@@ -6,19 +6,22 @@
 
 namespace MeteorEngine
 {
-	class METEOR_API VulkanDevice : public Singleton<VulkanDevice>
+	class METEOR_API VulkanDevice 
 	{
 	public:
+		static VulkanDevice* GetInstance() { return thisInstance; }
 		VulkanDevice();
 		~VulkanDevice();
 		VkPhysicalDevice	GetPhysicalDevice() const { return m_PhysicalDevice; }
 		VkDevice			GetLogicalDevice() const { return m_Device; }
 		VkSurfaceKHR		GetSurface() const { return m_Surface; }
-
+		VkFormat			GetSupportDepthFormat() const { return m_DepthFormat; }
+		VkQueue				GetQueue() const { return m_Queue; }
 		s32					GetQueueFamilyIndex() const { return m_QueueFamilyIndex; }
 		bool CreateSurface(void*);
 		bool CreateDevice();
 	private:
+		static VulkanDevice* thisInstance;
 		s32								m_QueueFamilyIndex;
 		VkPhysicalDevice				m_PhysicalDevice;
 		VkDevice						m_Device;

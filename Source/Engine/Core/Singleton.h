@@ -7,11 +7,11 @@ namespace MeteorEngine
 	class Singleton
 	{
 	public:
-		Singleton() = default;
-		static T* GetInstance()
+		static T* GetInstance() 
 		{
-			static T* instance;
-			return instance;
+
+			static T* instance = new T();
+			return instance; 
 		}
 	};
 }

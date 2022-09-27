@@ -1,9 +1,10 @@
 #include <Engine/Render/Vulkan/VkSwapchain.h>
 #include <Engine/Render/Vulkan/VkDevice.h>
-#define	VKDI VulkanDevice::GetInstance()
 #include <cassert>
+#define	VKDI VulkanDevice::GetInstance()
 namespace MeteorEngine
 {
+	VulkanSwapChain* VulkanSwapChain::thisInstance = NULL;
 
 	VulkanSwapChain::VulkanSwapChain():
 		m_SwapChain(0),
@@ -11,7 +12,7 @@ namespace MeteorEngine
 		m_SwapchainImages(),
 		m_SwapchainImageViews()
 	{
-
+		thisInstance = this;
 	}
 	VulkanSwapChain::~VulkanSwapChain()
 	{
@@ -147,6 +148,8 @@ namespace MeteorEngine
 		imageViewCreateInfo.subresourceRange.baseArrayLayer	= 0;
 		imageViewCreateInfo.subresourceRange.layerCount		= 1;
 
+
+		//return VulkanTexture::CreateImageViews(imageViewCreateInfo, m_SwapchainImages, m_SwapchainImageViews);
 		// Create an image view for each swapchain image
 		for (std::size_t i = 0; i < m_SwapchainImages.size(); ++i)
 		{
@@ -155,5 +158,9 @@ namespace MeteorEngine
 			if (vkCreateImageView(VKDI->GetLogicalDevice(), &imageViewCreateInfo, 0, &m_SwapchainImageViews[i]) != VK_SUCCESS)
 				return false;
 		}
+
+
+		return true;
 	}
 }
+

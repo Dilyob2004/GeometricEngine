@@ -6,6 +6,7 @@
 #include <Engine/Platform/Platform.h>
 #include <Engine/Platform/Win32/VulkanSupport.h>
 #include <Engine/Render/ImageCore.h>
+#include <Engine/Render/Vulkan/VkContext.h>
 #include <Editor/ExampleLayer.h>
 #include <Editor/Editor.h>
 #include <limits>
@@ -295,18 +296,18 @@ namespace MeteorEngine
 
 			//if (vulkanAvailable)
 			//	setupPipelineLayout();
-			if (vulkanAvailable)
-				setupRenderpass();
+			//if (vulkanAvailable)
+				//setupRenderpass();
 
 			//if (vulkanAvailable)
 				//setupPipeline();
 
-			if (vulkanAvailable)
+			/**if (vulkanAvailable)
 				setupDepthImage();
 
 			if (vulkanAvailable)
 				setupDepthImageView();
-
+				*/
 			if (vulkanAvailable)
 				setupFramebuffers();
 
@@ -975,6 +976,137 @@ namespace MeteorEngine
 			}
 		}
 
+		// Create our depth image and transition it into the proper layout
+		void setupDepthImage()
+		{
+			// Create our depth image
+			if (!createImage(swapchainExtent.width,
+				swapchainExtent.height,
+				depthFormat,
+				VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+				depthImage,
+				depthImageMemory))
+			{
+				vulkanAvailable = false;
+				return;
+			}
+
+			// Allocate a command buffer
+			VkCommandBufferAllocateInfo commandBufferAllocateInfo = VkCommandBufferAllocateInfo();
+			commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+			commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+			commandBufferAllocateInfo.commandPool = commandPool;
+			commandBufferAllocateInfo.commandBufferCount = 1;
+
+			VkCommandBuffer commandBuffer;
+
+			if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, &commandBuffer) != VK_SUCCESS)
+			{
+				vulkanAvailable = false;
+				return;
+			}
+
+			// Begin the command buffer
+			VkCommandBufferBeginInfo commandBufferBeginInfo = VkCommandBufferBeginInfo();
+			commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+			VkSubmitInfo submitInfo = VkSubmitInfo();
+			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			submitInfo.commandBufferCount = 1;
+			submitInfo.pCommandBuffers = &commandBuffer;
+
+			if (vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) != VK_SUCCESS)
+			{
+				vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+
+				vulkanAvailable = false;
+				return;
+			}
+
+			// Submit a barrier to transition the image layout to depth stencil optimal
+			VkImageMemoryBarrier barrier = VkImageMemoryBarrier();
+			barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			barrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			barrier.image = depthImage;
+			barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT |
+				((depthFormat == VK_FORMAT_D32_SFLOAT) ? 0 : VK_IMAGE_ASPECT_STENCIL_BIT);
+			barrier.subresourceRange.baseMipLevel = 0;
+			barrier.subresourceRange.levelCount = 1;
+			barrier.subresourceRange.baseArrayLayer = 0;
+			barrier.subresourceRange.layerCount = 1;
+			barrier.srcAccessMask = 0;
+			barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+			vkCmdPipelineBarrier(commandBuffer,
+				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+				0,
+				0,
+				0,
+				0,
+				0,
+				1,
+				&barrier);
+
+			// End and subm0it the command buffer
+			if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
+			{
+				vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+
+				vulkanAvailable = false;
+				return;
+			}
+
+			if (vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
+			{
+				vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+
+				vulkanAvailable = false;
+				return;
+			}
+
+			// Ensure the command buffer has been processed
+			if (vkQueueWaitIdle(queue) != VK_SUCCESS)
+			{
+				vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+
+				vulkanAvailable = false;
+				return;
+			}
+
+			// Free the command buffer
+			vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+		}
+
+		// Create an image view for our depth image
+		void setupDepthImageView()
+		{
+			VkImageViewCreateInfo imageViewCreateInfo = VkImageViewCreateInfo();
+			imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			imageViewCreateInfo.image = depthImage;
+			imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			imageViewCreateInfo.format = depthFormat;
+			imageViewCreateInfo.subresourceRange
+				.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT |
+				((depthFormat == VK_FORMAT_D32_SFLOAT) ? 0 : VK_IMAGE_ASPECT_STENCIL_BIT);
+			imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+			imageViewCreateInfo.subresourceRange.levelCount = 1;
+			imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+			imageViewCreateInfo.subresourceRange.layerCount = 1;
+
+			// Create the depth image view
+			if (vkCreateImageView(device, &imageViewCreateInfo, 0, &depthImageView) != VK_SUCCESS)
+			{
+				vulkanAvailable = false;
+				return;
+			}
+		}
 		// Set up rendering pipeline
 		void setupPipeline()
 		{
@@ -1469,14 +1601,14 @@ namespace MeteorEngine
 		}*/
 
 		// Helper to create a generic image with the specified size, format, usage and memory flags
-		bool createImage(std::uint32_t         width,
-			std::uint32_t         height,
-			VkFormat              format,
-			VkImageTiling         tiling,
-			VkImageUsageFlags     usage,
-			VkMemoryPropertyFlags properties,
-			VkImage & image,
-			VkDeviceMemory & imageMemory)
+		bool createImage(u32         width,
+						u32         height,
+						VkFormat              format,
+						VkImageTiling         tiling,
+						VkImageUsageFlags     usage,
+						VkMemoryPropertyFlags properties,
+						VkImage & image,
+						VkDeviceMemory & imageMemory)
 		{
 			// We only have a single queue so we can request exclusive access
 			VkImageCreateInfo imageCreateInfo = VkImageCreateInfo();
@@ -1506,7 +1638,7 @@ namespace MeteorEngine
 			VkPhysicalDeviceMemoryProperties memoryProperties = VkPhysicalDeviceMemoryProperties();
 			vkGetPhysicalDeviceMemoryProperties(gpu, &memoryProperties);
 
-			std::uint32_t memoryType = 0;
+			u32 memoryType = 0;
 
 			for (; memoryType < memoryProperties.memoryTypeCount; ++memoryType)
 			{
@@ -1534,137 +1666,6 @@ namespace MeteorEngine
 			return true;
 		}
 
-		// Create our depth image and transition it into the proper layout
-		void setupDepthImage()
-		{
-			// Create our depth image
-			if (!createImage(swapchainExtent.width,
-				swapchainExtent.height,
-				depthFormat,
-				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				depthImage,
-				depthImageMemory))
-			{
-				vulkanAvailable = false;
-				return;
-			}
-
-			// Allocate a command buffer
-			VkCommandBufferAllocateInfo commandBufferAllocateInfo = VkCommandBufferAllocateInfo();
-			commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-			commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-			commandBufferAllocateInfo.commandPool = commandPool;
-			commandBufferAllocateInfo.commandBufferCount = 1;
-
-			VkCommandBuffer commandBuffer;
-
-			if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, &commandBuffer) != VK_SUCCESS)
-			{
-				vulkanAvailable = false;
-				return;
-			}
-
-			// Begin the command buffer
-			VkCommandBufferBeginInfo commandBufferBeginInfo = VkCommandBufferBeginInfo();
-			commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-			VkSubmitInfo submitInfo = VkSubmitInfo();
-			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			submitInfo.commandBufferCount = 1;
-			submitInfo.pCommandBuffers = &commandBuffer;
-
-			if (vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo) != VK_SUCCESS)
-			{
-				vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-
-				vulkanAvailable = false;
-				return;
-			}
-
-			// Submit a barrier to transition the image layout to depth stencil optimal
-			VkImageMemoryBarrier barrier = VkImageMemoryBarrier();
-			barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			barrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			barrier.image = depthImage;
-			barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT |
-				((depthFormat == VK_FORMAT_D32_SFLOAT) ? 0 : VK_IMAGE_ASPECT_STENCIL_BIT);
-			barrier.subresourceRange.baseMipLevel = 0;
-			barrier.subresourceRange.levelCount = 1;
-			barrier.subresourceRange.baseArrayLayer = 0;
-			barrier.subresourceRange.layerCount = 1;
-			barrier.srcAccessMask = 0;
-			barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-
-			vkCmdPipelineBarrier(commandBuffer,
-				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
-				0,
-				0,
-				0,
-				0,
-				0,
-				1,
-				&barrier);
-
-			// End and submit the command buffer
-			if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
-			{
-				vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-
-				vulkanAvailable = false;
-				return;
-			}
-
-			if (vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
-			{
-				vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-
-				vulkanAvailable = false;
-				return;
-			}
-
-			// Ensure the command buffer has been processed
-			if (vkQueueWaitIdle(queue) != VK_SUCCESS)
-			{
-				vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-
-				vulkanAvailable = false;
-				return;
-			}
-
-			// Free the command buffer
-			vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-		}
-
-		// Create an image view for our depth image
-		void setupDepthImageView()
-		{
-			VkImageViewCreateInfo imageViewCreateInfo = VkImageViewCreateInfo();
-			imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-			imageViewCreateInfo.image = depthImage;
-			imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-			imageViewCreateInfo.format = depthFormat;
-			imageViewCreateInfo.subresourceRange
-				.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT |
-				((depthFormat == VK_FORMAT_D32_SFLOAT) ? 0 : VK_IMAGE_ASPECT_STENCIL_BIT);
-			imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-			imageViewCreateInfo.subresourceRange.levelCount = 1;
-			imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-			imageViewCreateInfo.subresourceRange.layerCount = 1;
-
-			// Create the depth image view
-			if (vkCreateImageView(device, &imageViewCreateInfo, 0, &depthImageView) != VK_SUCCESS)
-			{
-				vulkanAvailable = false;
-				return;
-			}
-		}
 
 		// Create an image for our texture data
 		void setupTextureImage()
@@ -2380,6 +2381,7 @@ namespace MeteorEngine
 				// Check if we need to re-create the swapchain (e.g. if the window was resized)
 				if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR) || swapchainOutOfDate)
 				{
+					LOG("Recreate");
 					recreateSwapchain();
 					swapchainOutOfDate = false;
 				}
@@ -2455,15 +2457,19 @@ namespace MeteorEngine
 	bool isExitApplication = false;
     Application* Application::m_instance = NULL;
 	VulkanExample* vkApi;
+	VulkanContext* vkContext;
     Application::Application()
     {
 		m_instance = this;
 		//ImGuiLayer::OnEnableHighDpi();
         m_window    = std::unique_ptr<Window>( Window::Create("Meteor Engine", Vector2u(1280, 720) ) );
-       // m_context   = std::unique_ptr<RenderContext>(RenderContext::Create(m_window.get()));
+        //m_context   = std::unique_ptr<RenderContext>(RenderContext::Create(m_window.get()));
 
 		InitPlatformVulkan();
-		vkApi = new VulkanExample(m_window.get());
+		//vkApi = new VulkanExample(m_window.get());
+		vkContext = new VulkanContext();
+
+		vkContext->Create(m_window.get());
        // m_context->SetVSync(true);
 		///Initizlize 
 		//RendererCommand::InitEngine();
@@ -2525,7 +2531,9 @@ namespace MeteorEngine
                 for(Layer *layer: layerStack)
                     layer->OnTick();
             ImGuiLayer::OnEnd();*/
-			vkApi->draw();
+			//vkApi->draw();
+			
+			vkContext->Present();
 			Sleep(1);
         }
     }

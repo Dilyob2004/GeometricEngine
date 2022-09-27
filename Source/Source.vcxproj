@@ -142,6 +142,8 @@
     <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkSwapChain.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkFrameBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkTexture.cpp" />
     <ClCompile Include="Engine\System\Clock.cpp" />
     <ClCompile Include="Engine\System\File.cpp" />
     <ClCompile Include="Engine\System\FileSystem.cpp" />
@@ -218,6 +220,8 @@
     <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkSwapChain.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkFrameBuffer.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkTexture.h" />
     <ClInclude Include="Engine\System\Clock.h" />
     <ClInclude Include="Engine\System\File.h" />
     <ClInclude Include="Engine\System\FileBase.h" />
