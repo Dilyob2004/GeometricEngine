@@ -9,11 +9,11 @@ namespace MeteorEngine
 	struct FrameBufferTextureSpec
 	{
 		FrameBufferTextureSpec() = default;
-		FrameBufferTextureSpec(Texture2D* texure) :
+		FrameBufferTextureSpec(Texture* texure) :
 			m_Texture(texure)
 		{
 		}
-		Texture2D *m_Texture;
+		Texture *m_Texture;
 	};
 	struct FrameBufferAttachmentSpec
 	{

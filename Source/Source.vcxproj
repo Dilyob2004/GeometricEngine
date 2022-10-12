@@ -139,8 +139,13 @@
     <ClCompile Include="Engine\Render\Texture.cpp" />
     <ClCompile Include="Engine\Render\VertexArray.cpp" />
     <ClCompile Include="Engine\Render\VertexBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkCommandBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkCommandPool.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkFence.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkRenderPass.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkSurface.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkSwapChain.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkFrameBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkTexture.cpp" />
@@ -152,6 +157,7 @@
     <ClCompile Include="ThirdParty\ImGui\ImGuizmo.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp" />
@@ -217,8 +223,13 @@
     <ClInclude Include="Engine\Render\VertexArray.h" />
     <ClInclude Include="Engine\Render\VertexBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\Vk.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkCommandBuffer.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkCommandPool.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkFence.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkRenderPass.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkSurface.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkSwapChain.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkFrameBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkTexture.h" />
@@ -234,6 +245,7 @@
     <ClInclude Include="ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="ThirdParty\ImGui\ImGuizmo.h" />
     <ClInclude Include="ThirdParty\ImGui\imgui_impl_opengl3.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_impl_vulkan.h" />
     <ClInclude Include="ThirdParty\ImGui\imgui_impl_win32.h" />
     <ClInclude Include="ThirdParty\ImGui\imgui_internal.h" />
     <ClInclude Include="ThirdParty\ImGui\imstb_rectpack.h" />

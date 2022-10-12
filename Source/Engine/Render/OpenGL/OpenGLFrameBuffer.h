@@ -14,7 +14,7 @@ namespace MeteorEngine
         virtual void UnBind()   const override;
         virtual void Resize(const Vector2u &) override;
     private:
-		void AddTextureAttachment(Texture2D* );
+		void AddTextureAttachment(Texture* );
         void Invalidate();
 
 

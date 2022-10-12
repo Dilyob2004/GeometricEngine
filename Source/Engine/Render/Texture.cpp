@@ -1,22 +1,21 @@
 #include <Engine/Render/Texture.h>
-#include <Engine/Render/OpenGL/OpenGLTexture.h>
+#include <Engine/Render/Vulkan/VkTexture.h>
 namespace MeteorEngine
 {
-    Texture2D * Texture2D::Create(const std::string& path)
+	Texture* Texture::Create(const std::string& path)
     {
-        return new OpenGLTexture2D(path);
+		return new VulkanTexture(path);
     }
-    Texture2D * Texture2D::Create(const TextureDesc& desc, u32 width, u32 height)
+	Texture* Texture::Create(const TextureDesc& desc, u32 width, u32 height)
     {
-        return new OpenGLTexture2D( desc, width, height);
+		return new VulkanTexture(desc, width, height);
     }
-
-	Texture2D* Texture2D::Create(const std::string& path, const TextureDesc& desc)
+	Texture* Texture::Create(const std::string& path, const TextureDesc& desc)
 	{
-		return new OpenGLTexture2D(path, desc);
+		return new VulkanTexture(path, desc);
 	}
-	Texture2D* Texture2D::Create(const TextureDesc& desc, u32 width, u32 height, u8* data)
+	Texture* Texture::Create(const TextureDesc& desc, u32 width, u32 height, u8* data)
 	{
-		return new OpenGLTexture2D(desc, width, height, data);
+		return new VulkanTexture(desc, width, height, data);
 	}
 }

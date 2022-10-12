@@ -3,7 +3,7 @@
 #include <Engine/Render/Texture.h>
 namespace MeteorEngine
 {
-    class METEOR_API OpenGLTexture2D : public Texture2D
+    class METEOR_API OpenGLTexture2D : public Texture
     {
     public:
         OpenGLTexture2D(const std::string& path);

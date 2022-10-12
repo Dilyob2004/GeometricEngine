@@ -37,7 +37,7 @@ namespace MeteorEngine
 		countAttachment++;
 		return value;
 	}
-	void OpenGLFrameBuffer::AddTextureAttachment(Texture2D* texture)
+	void OpenGLFrameBuffer::AddTextureAttachment(Texture* texture)
 	{
 		GLenum attachment = GetAttachments(texture->GetFormat());
 		if (attachment != GL_DEPTH_STENCIL_ATTACHMENT ||
@@ -57,7 +57,7 @@ namespace MeteorEngine
         glCreateFramebuffers(1, &m_frameBuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
 
-		AddTextureAttachment(Texture2D::Create(RHITextureFormat::RGB8_UNORM, m_specification.Size.x, m_specification.Size.y));
+		AddTextureAttachment(Texture::Create(RHITextureFormat::RGB8_UNORM, m_specification.Size.x, m_specification.Size.y));
 		if(m_AttachmentData.size())
 			glDrawBuffers(m_AttachmentData.size(), m_AttachmentData.data());
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -28,7 +28,7 @@ namespace MeteorEngine
 	{
 		renderer->DrawQuad({ position.x, position.y, 0 }, { rotation.x, rotation.y, 1 }, { scale.x, scale.y, 0 }, color);
     }
-    void RendererCommand::DrawTextureQuad(const std::shared_ptr<Texture2D> &texture, const Vector3f &position, const Vector3f& rotation, const Vector2f& size)
+    void RendererCommand::DrawTextureQuad(const std::shared_ptr<Texture> &texture, const Vector3f &position, const Vector3f& rotation, const Vector2f& size)
     {
         renderer->DrawTextureQuad(texture, position, rotation, size);
 

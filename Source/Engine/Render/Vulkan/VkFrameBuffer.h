@@ -2,6 +2,7 @@
 #define VKFRAMEBUFFER_H
 #include <Engine/Core/Config.h>
 #include <Engine/Render/Vulkan/Vk.h>
+#include <Engine/Math/Vector2.h>
 #include <vector>
 namespace MeteorEngine
 {
@@ -11,13 +12,14 @@ namespace MeteorEngine
 		static VulkanFrameBuffer* GetInstance() { return thisInstance; }
 		VulkanFrameBuffer();
 		~VulkanFrameBuffer();
-		bool CreateFrameBuffer(u32, u32);
-		std::vector<VkFramebuffer> GetFrameBuffer() const { return  m_SwapchainFramebuffers; }
+		bool Create(VkDevice, VkRenderPass, std::vector<VkImageView>, const Vector2u&);
+		VkFramebuffer GetFrameBuffer() const { return  m_SwapchainFramebuffers; }
+		u32 GetAttachmentCount() const { return m_AttachmentCount; }
 	private:
 		static VulkanFrameBuffer* thisInstance;
-
-
-		std::vector<VkFramebuffer>      m_SwapchainFramebuffers;
+		u32				m_AttachmentCount;
+		VkDevice		m_Device;
+		VkFramebuffer	m_SwapchainFramebuffers;
 
 	};
 }

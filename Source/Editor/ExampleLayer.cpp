@@ -7,11 +7,11 @@
 namespace MeteorEngine
 {
 
-	std::shared_ptr<Texture2D> texture;
+	std::shared_ptr<Texture> texture;
     ExampleLayer::ExampleLayer():
         Layer("ExampleLayer")
     {
-		texture.reset(Texture2D::Create("Assets/Texture/logo.png")) ;
+		texture.reset(Texture::Create("Assets/Texture/logo.png")) ;
     }
     ExampleLayer::~ExampleLayer()
     {
@@ -42,7 +42,7 @@ namespace MeteorEngine
 		RendererCommand::DrawQuad2D(newPosition, { 0, 0}, newSize, newColor);
 
 	}
-	void DrawTextureUI(const std::shared_ptr<Texture2D>& textureUI, const Vector2u& size, const Vector2i& position)
+	void DrawTextureUI(const std::shared_ptr<Texture>& textureUI, const Vector2u& size, const Vector2i& position)
 	{
 		Vector2f newSize = Vector2f((f32)size.x / (f32)Application::GetInstance().GetWidth(), (f32)size.y / (f32)Application::GetInstance().GetHeight());
 		Vector2f newPosition = Vector2f((f32)position.x / (f32)Application::GetInstance().GetWidth(), (f32)position.y / (f32)Application::GetInstance().GetHeight());

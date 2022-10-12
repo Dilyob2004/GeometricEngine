@@ -16,8 +16,8 @@ namespace MeteorEngine
 	private:
 
 		std::string m_currentPath;
-		Texture2D* m_DirectoryIcon;
-		Texture2D* m_FileIcon;
+		Texture* m_DirectoryIcon;
+		Texture* m_FileIcon;
 
 	};
 }

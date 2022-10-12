@@ -81,6 +81,14 @@ namespace MeteorEngine
     class METEOR_API Texture
     {
     public:
+
+		static Texture* Create(const std::string&);
+		static Texture* Create(const std::string&, const TextureDesc&);
+
+
+		static Texture* Create(const TextureDesc&, u32, u32);
+		static Texture* Create(const TextureDesc&, u32, u32, u8*);
+
         virtual ~Texture() {}
         virtual u32			GetTexture() const = 0;
         virtual void        Bind(u32 slot = 0) const = 0;
@@ -107,16 +115,6 @@ namespace MeteorEngine
 		{
 			return IsDepthStencilFormat(format);
 		}
-    };
-    class METEOR_API Texture2D: public Texture
-    {
-    public:
-        static Texture2D*	Create(const std::string& );
-		static Texture2D*	Create(const TextureDesc&, u32, u32);
-
-
-		static Texture2D*	Create(const std::string&, const TextureDesc&);
-		static Texture2D*	Create(const TextureDesc&, u32, u32, u8*);
     };
 }
 #endif // TEXTURE_H

@@ -3,7 +3,6 @@
 #include <Engine/Gui/ImGuiLayer.h>
 #include <Engine/System/Time.h>
 #include <Engine/MaterialDesign.inl>
-#include <ImGui/imgui_impl_opengl3.h>
 #include <ImGui/imgui_impl_win32.h>
 #include <ImGui/imgui_internal.h>
 #include <Engine/IconsMaterialDesignIcons.h>
@@ -159,7 +158,6 @@ namespace MeteorEngine
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Regular.ttf", 20);
 		ImGui_ImplWin32_Init(Application::GetInstance().GetWindow().GetWindowPtr(), Application::GetInstance().GetContext().GetCurrent());
 
-		ImGui_ImplOpenGL3_Init("#version 430 core");	
 		static const ImWchar icons_ranges[] = { 0x30, 0xFE7D, 0 };
 		ImFontConfig icons_config;
 		// merge in icons from Font Awesome
@@ -175,13 +173,11 @@ namespace MeteorEngine
     }
     void ImGuiLayer::OnDetach()
     {
-        ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplWin32_Shutdown();
         ImGui::DestroyContext();
     }
     void ImGuiLayer::OnBegin()
     {
-        ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
@@ -298,7 +294,7 @@ namespace MeteorEngine
     void ImGuiLayer::OnEnd()
     {
         ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             ImGui::UpdatePlatformWindows();

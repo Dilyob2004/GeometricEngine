@@ -1,7 +1,7 @@
 #ifndef VKDEVICE_H
 #define VKDEVICE_H
 #include <Engine/Render/Vulkan/Vk.h>
-#include <Engine/Core/Singleton.h>
+#include <Engine/Render/Vulkan/VkCommandPool.h>
 #include <vector>
 
 namespace MeteorEngine
@@ -9,26 +9,33 @@ namespace MeteorEngine
 	class METEOR_API VulkanDevice 
 	{
 	public:
-		static VulkanDevice* GetInstance() { return thisInstance; }
+		static VulkanDevice* GetInstance() { return m_ThisInstance; }
 		VulkanDevice();
 		~VulkanDevice();
 		VkPhysicalDevice	GetPhysicalDevice() const { return m_PhysicalDevice; }
 		VkDevice			GetLogicalDevice() const { return m_Device; }
-		VkSurfaceKHR		GetSurface() const { return m_Surface; }
-		VkFormat			GetSupportDepthFormat() const { return m_DepthFormat; }
 		VkQueue				GetQueue() const { return m_Queue; }
-		s32					GetQueueFamilyIndex() const { return m_QueueFamilyIndex; }
-		bool CreateSurface(void*);
-		bool CreateDevice();
+		u32					GetQueueFamilyIndex() const { return m_QueueFamilyIndex; }
+
+		VkPipelineCache GetPipelineCache() const  { return m_PipelineCache; }
+		VulkanCommandPool* GetCommandPool() const { return m_CommandPool; }
+		bool Create(); 
+		void WaitIdle()
+		{
+			vkDeviceWaitIdle(m_Device);
+		}
 	private:
-		static VulkanDevice* thisInstance;
-		s32								m_QueueFamilyIndex;
+		void CreateTracyContext();
+		void CreatePipelineCache();
+		static VulkanDevice*			m_ThisInstance;
+
+
+		VkPipelineCache					m_PipelineCache;
+		VulkanCommandPool*				m_CommandPool;
+		u32								m_QueueFamilyIndex;
 		VkPhysicalDevice				m_PhysicalDevice;
 		VkDevice						m_Device;
-		VkFormat						m_DepthFormat;
 		VkQueue							m_Queue;
-		VkSurfaceKHR					m_Surface;
-
 
 	};
 }

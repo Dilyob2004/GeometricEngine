@@ -95,7 +95,7 @@ namespace MeteorEngine
 		DrawIndexed(m_Pipeline);		
 		m_shader->UnBind();
 	}
-    void OpenGLRenderer::DrawTextureQuad(const std::shared_ptr<Texture2D> &texture, const Vector3f &position, const Vector3f & rotation, const Vector2f& size)
+    void OpenGLRenderer::DrawTextureQuad(const std::shared_ptr<Texture> &texture, const Vector3f &position, const Vector3f & rotation, const Vector2f& size)
     {
 		Quaternion rotator(rotation);
 		Matrix4f rotationM = toMatrix4(rotator);
