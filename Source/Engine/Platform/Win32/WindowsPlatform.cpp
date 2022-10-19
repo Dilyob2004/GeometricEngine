@@ -31,7 +31,7 @@ namespace MeteorEngine
 		static LARGE_INTEGER m_time, m_highPerformanceFreq;
 		QueryPerformanceFrequency(&m_highPerformanceFreq);
 		QueryPerformanceCounter(&m_time);
-		return Microseconds(m_time.QuadPart * 1000000 / m_highPerformanceFreq.QuadPart);
+		return Microseconds(m_time.QuadPart * (s64)1000000 / m_highPerformanceFreq.QuadPart);
 	}
 
 	void* WindowsPlatform::GetDllFunction(const char* moduleName, const char* name)

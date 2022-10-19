@@ -10,7 +10,7 @@ namespace MeteorEngine
 {
     LRESULT WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
+		return 0;///ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
     }
     ImGuiLayer::ImGuiLayer():
         Layer("ImGuiLayer")
@@ -156,7 +156,7 @@ namespace MeteorEngine
 
 		io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Bold.ttf", 20);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Font/OpenSans-Regular.ttf", 20);
-		ImGui_ImplWin32_Init(Application::GetInstance().GetWindow().GetWindowPtr(), Application::GetInstance().GetContext().GetCurrent());
+		ImGui_ImplWin32_Init(Application::GetInstance().GetWindow().GetWindowPtr());
 
 		static const ImWchar icons_ranges[] = { 0x30, 0xFE7D, 0 };
 		ImFontConfig icons_config;
@@ -299,7 +299,7 @@ namespace MeteorEngine
         {
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
-            Application::GetInstance().GetContext().MakeCurrent(true);
+            //Application::GetInstance().GetContext().MakeCurrent(true);
         }
     }
 

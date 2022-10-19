@@ -5,6 +5,7 @@ namespace MeteorEngine
 {
 	VulkanDevice* VulkanDevice::m_ThisInstance = NULL;
 	VulkanDevice::VulkanDevice():
+		m_DeviceProperties(),
 		m_PipelineCache(0),
 		m_CommandPool(0),
 		m_QueueFamilyIndex(-1),
@@ -89,11 +90,14 @@ namespace MeteorEngine
 
 			if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 			{
+				m_DeviceProperties = deviceProperties;
 				m_PhysicalDevice = i;
 				break;
 			}
-			else if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
+			else if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
 				m_PhysicalDevice = i;
+				m_DeviceProperties = deviceProperties;
+			}
 		}
 
 		if (!m_PhysicalDevice)

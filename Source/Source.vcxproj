@@ -66,7 +66,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>dwmapi.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwmapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -111,12 +111,10 @@
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
     <ClCompile Include="Engine\Math\Quaternion.cpp" />
     <ClCompile Include="Engine\Platform\Platform.cpp" />
-    <ClCompile Include="Engine\Platform\Win32\OpenGLSupport.cpp" />
     <ClCompile Include="Engine\Platform\Win32\VulkanSupport.cpp" />
     <ClCompile Include="Engine\Platform\Win32\WindowsFile.cpp" />
     <ClCompile Include="Engine\Platform\Win32\WindowsFileSystem.cpp" />
     <ClCompile Include="Engine\Platform\Win32\WindowsInput.cpp" />
-    <ClCompile Include="Engine\Platform\Win32\WindowsOpenGL.cpp" />
     <ClCompile Include="Engine\Platform\Win32\WindowsPlatform.cpp" />
     <ClCompile Include="Engine\Platform\Win32\WindowsWindow.cpp" />
     <ClCompile Include="Engine\Render\Camera.cpp" />
@@ -126,13 +124,6 @@
     <ClCompile Include="Engine\Render\ImageCore.cpp" />
     <ClCompile Include="Engine\Render\ImageLoader.cpp" />
     <ClCompile Include="Engine\Render\IndexBuffer.cpp" />
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLFrameBuffer.cpp" />
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLIndexBuffer.cpp" />
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLRenderer.cpp" />
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLShader.cpp" />
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLTexture.cpp" />
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLVertexArray.cpp" />
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLVertexBuffer.cpp" />
     <ClCompile Include="Engine\Render\RenderContext.cpp" />
     <ClCompile Include="Engine\Render\Renderer.cpp" />
     <ClCompile Include="Engine\Render\Shader.cpp" />
@@ -144,11 +135,13 @@
     <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkFence.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkRenderer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkRenderPass.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkSurface.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkSwapChain.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkFrameBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkTexture.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkUtilities.cpp" />
     <ClCompile Include="Engine\System\Clock.cpp" />
     <ClCompile Include="Engine\System\File.cpp" />
     <ClCompile Include="Engine\System\FileSystem.cpp" />
@@ -156,7 +149,6 @@
     <ClCompile Include="ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="ThirdParty\ImGui\ImGuizmo.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="ThirdParty\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp" />
@@ -194,12 +186,10 @@
     <ClInclude Include="Engine\Math\Vector3.h" />
     <ClInclude Include="Engine\Math\Vector4.h" />
     <ClInclude Include="Engine\Platform\Platform.h" />
-    <ClInclude Include="Engine\Platform\Win32\OpenGLSupport.h" />
     <ClInclude Include="Engine\Platform\Win32\VulkanSupport.h" />
     <ClInclude Include="Engine\Platform\Win32\WindowsFile.h" />
     <ClInclude Include="Engine\Platform\Win32\WindowsFileSystem.h" />
     <ClInclude Include="Engine\Platform\Win32\WindowsInput.h" />
-    <ClInclude Include="Engine\Platform\Win32\WindowsOpenGL.h" />
     <ClInclude Include="Engine\Platform\Win32\WindowsPlatform.h" />
     <ClInclude Include="Engine\Platform\Win32\WindowsWindow.h" />
     <ClInclude Include="Engine\Render\Camera.h" />
@@ -209,13 +199,6 @@
     <ClInclude Include="Engine\Render\ImageCore.h" />
     <ClInclude Include="Engine\Render\ImageLoader.h" />
     <ClInclude Include="Engine\Render\IndexBuffer.h" />
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLFrameBuffer.h" />
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLIndexBuffer.h" />
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLRenderer.h" />
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLShader.h" />
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLTexture.h" />
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLVertexBuffer.h" />
     <ClInclude Include="Engine\Render\RenderContext.h" />
     <ClInclude Include="Engine\Render\Renderer.h" />
     <ClInclude Include="Engine\Render\Shader.h" />
@@ -228,11 +211,13 @@
     <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkFence.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkRenderer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkRenderPass.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkSurface.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkSwapChain.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkFrameBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkTexture.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkUtilities.h" />
     <ClInclude Include="Engine\System\Clock.h" />
     <ClInclude Include="Engine\System\File.h" />
     <ClInclude Include="Engine\System\FileBase.h" />
@@ -244,7 +229,6 @@
     <ClInclude Include="ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="ThirdParty\ImGui\ImGuizmo.h" />
-    <ClInclude Include="ThirdParty\ImGui\imgui_impl_opengl3.h" />
     <ClInclude Include="ThirdParty\ImGui\imgui_impl_vulkan.h" />
     <ClInclude Include="ThirdParty\ImGui\imgui_impl_win32.h" />
     <ClInclude Include="ThirdParty\ImGui\imgui_internal.h" />

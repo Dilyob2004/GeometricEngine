@@ -1,20 +1,24 @@
 #include <Engine/Render/Vulkan/VkContext.h>
-#include <Engine/Core/Application.h>
 
 namespace MeteorEngine
 {
 
-	VulkanContext* VulkanContext::thisInstance = NULL;
+	VulkanContext* VulkanContext::m_ThisInstance = NULL;
 	VulkanContext::VulkanContext():
-		m_Instance(0)
+		m_Instance(0),
+		m_VulkanDevice(0),
+		m_Surface(0)
+
 	{
-		thisInstance = this;
-
-
-		m_VulkanDevice		= new VulkanDevice();
-		m_VulkanSwapChain	= new VulkanSwapChain();
-		m_VulkanFrameBuffer = new VulkanFrameBuffer();
-
+		m_ThisInstance = this;
+	}
+	VulkanContext::VulkanContext(Window* window):
+		m_Instance(0),
+		m_Surface(0)
+	{
+		m_ThisInstance = this;
+		m_VulkanDevice = new VulkanDevice();
+		Create(window);
 	}
 
 	VulkanContext::~VulkanContext()
@@ -22,7 +26,7 @@ namespace MeteorEngine
 		if (m_Instance)
 			vkDestroyInstance(m_Instance, 0);
 	}
-	void VulkanContext::Create(Window * window)
+	void VulkanContext::Create(Window* window)
 	{
 		if (!CreateInstance(true)) 
 		{
@@ -33,22 +37,16 @@ namespace MeteorEngine
 		{
 			LOG("Failed to Create a Device!\n");
 			return;
-		}	
-		if (m_VulkanSwapChain->Create ( window->GetWindowPtr(), window->GetSize(), true))
-		{
-			m_VulkanSwapChain->CreateFrameData();
 		}
-		else
-		{
-			LOG("Failed to Create a Swap Chain!\n");
-			return;
+		VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = VkWin32SurfaceCreateInfoKHR();
+		surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+		surfaceCreateInfo.hinstance = GetModuleHandle(NULL);
+		surfaceCreateInfo.hwnd = static_cast<HWND>(window->GetWindowPtr());
+		if (vkCreateWin32SurfaceKHR(m_Instance, &surfaceCreateInfo, 0, &m_Surface) != VK_SUCCESS) {
+			LOG("Failed to Create a Surface!\n");
+			return ;
 		}
-
-		/**if (!m_VulkanFrameBuffer->Create(m_VulkanDevice->GetLogicalDevice(), 0, m_VulkanSwapChain->GetSwapChainImageViews(), window->GetSize()))
-		{
-			LOG("Failed to Create a Frame Buffer!\n");
-			return;
-		}*/
+		return;
 	}
 	bool VulkanContext::CreateInstance(bool isDebug)
 	{
@@ -117,15 +115,5 @@ namespace MeteorEngine
 
 
 		return true;
-	}
-	void VulkanContext::Present()
-	{
-		m_VulkanSwapChain->Begin();
-
-		m_VulkanSwapChain->End();
-
-		m_VulkanSwapChain->QueueSubmit();
-
-		m_VulkanSwapChain->Present(m_VulkanSwapChain->GetCurrentFrameData().PresentSemaphore);
 	}
 }

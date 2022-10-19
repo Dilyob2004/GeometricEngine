@@ -1,18 +1,17 @@
 #include <Engine/Render/Shader.h>
-#include <Engine/Render/OpenGL/OpenGLShader.h>
 namespace MeteorEngine
 {
     Shader *Shader::Create(const std::string &fragment, const std::string &vertex)
     {
-        return new OpenGLShader(fragment, vertex);
+		return NULL;
     }
     Shader *Shader::CreateType(const std::string &shader, ShaderType type)
     {
-        return new OpenGLShader(shader, type);
+		return NULL;
     }
 
     Shader *Shader::Create(const std::string &shader)
     {
-        return new OpenGLShader(shader);
+		return NULL;
     }
 }

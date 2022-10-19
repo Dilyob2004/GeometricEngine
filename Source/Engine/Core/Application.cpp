@@ -1,12 +1,10 @@
 
 #include <Engine/Core/Input.h>
 #include <Engine/Gui/ImGuiLayer.h>
-#include <Engine/Render/Renderer.h>
 #include <Engine/Core/Application.h>
 #include <Engine/Platform/Platform.h>
 #include <Engine/Platform/Win32/VulkanSupport.h>
-#include <Engine/Render/ImageCore.h>
-#include <Engine/Render/Vulkan/VkContext.h>
+#include <Engine/Render/RenderContext.h>
 #include <Editor/ExampleLayer.h>
 #include <Editor/Editor.h>
 #include <limits>
@@ -14,43 +12,32 @@
 namespace MeteorEngine
 {
 
-	LayerStack layerStack;
-	bool isExitApplication = false;
-    Application* Application::m_instance = NULL;
-	VulkanContext* vkContext;
+	bool	m_HasExitApplication = false;
+    Application* Application::m_ThisInstance = NULL;
     Application::Application()
     {
-		m_instance = this;
+		m_ThisInstance = this;
 		//ImGuiLayer::OnEnableHighDpi();
-        m_window    = std::unique_ptr<Window>( Window::Create("Meteor Engine", Vector2u(1280, 720) ) );
-        //m_context   = std::unique_ptr<RenderContext>(RenderContext::Create(m_window.get()));
+		m_Window = std::unique_ptr<Window>( Window::Create("Meteor Engine", Vector2u(1280, 720) ) );
 
 		InitPlatformVulkan();
-		//vkApi = new VulkanExample(m_window.get());
-		vkContext = new VulkanContext();
 
-		vkContext->Create(m_window.get());
-       // m_context->SetVSync(true);
-		///Initizlize 
-		//RendererCommand::InitEngine();
-
-        //PushLayer(new ImGuiLayer());
-        //PushLayer(new Editor());
-        //PushLayer(new ExampleLayer());
+		m_Context = std::unique_ptr<RenderContext>(RenderContext::Create(m_Window.get()));
+		RendererCommand::Init(m_Context.get(), m_Window->GetSize(), true);
     }
     Application::~Application()
     {
-        for(auto i = layerStack.begin(); i != layerStack.end(); i++)
+        for(auto i = m_LayerStack.begin(); i != m_LayerStack.end(); i++)
             (*i)->OnDetach();
 
     }
 	bool Application::ShouldExit()
 	{
-		return isExitApplication;
+		return m_HasExitApplication;
 	}
 	void Application::Close()
 	{
-		isExitApplication = true;
+		m_HasExitApplication = true;
 	}
     void Application::OnEvent(Event& event)
     {
@@ -58,7 +45,11 @@ namespace MeteorEngine
 		{
 			case Event::Closed:
 					Application::Close();
-					m_window->Quit();
+					m_Window->Quit();
+				break;
+
+			case Event::Resized:
+				RendererCommand::Resize({ event.size.width, event.size.height });
 				break;
 		}
 
@@ -68,13 +59,13 @@ namespace MeteorEngine
     }
     void Application::PushLayer(Layer *layer)
     {
-		layerStack.PushLayer(layer);
+		m_LayerStack.PushLayer(layer);
         layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer *overlay)
     {
-		layerStack.PushOverlay(overlay);
+		m_LayerStack.PushOverlay(overlay);
         overlay->OnAttach();
     }
     void Application::Run()
@@ -82,19 +73,16 @@ namespace MeteorEngine
         while(!ShouldExit())
         {
 			Event event;
-            while(m_window->PeekEvents(event))
+            while(m_Window->PeekEvents(event))
                 OnEvent(event);
 
 			Platform::Tick();
-
+			RendererCommand::Begin();
             /**ImGuiLayer::OnBegin();
                 for(Layer *layer: layerStack)
                     layer->OnTick();
             ImGuiLayer::OnEnd();*/
-			//vkApi->draw();
-			
-			vkContext->Present();
-			Sleep(1);
+			RendererCommand::Present();
         }
     }
 }

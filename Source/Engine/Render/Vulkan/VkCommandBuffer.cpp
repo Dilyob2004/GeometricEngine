@@ -5,7 +5,7 @@ namespace MeteorEngine
 {
 
 	VulkanCommandBuffer::VulkanCommandBuffer() :
-		m_State(CommandBufferState::Idle),
+		m_State(CommandBufferState::ReadyForBegin),
 		m_Semaphore(0),
 		m_VulkanFence(0),
 		m_CommandBuffer(0),
@@ -25,7 +25,7 @@ namespace MeteorEngine
 	}
 	void VulkanCommandBuffer::Begin()
 	{
-		m_State = CommandBufferState::Recording;
+		m_State = CommandBufferState::IsInsideBegin;
 		VkCommandBufferBeginInfo beginCreateInfo = VkCommandBufferBeginInfo();
 		beginCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginCreateInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -36,7 +36,7 @@ namespace MeteorEngine
 	{
 
 		vkEndCommandBuffer(m_CommandBuffer);
-		m_State = CommandBufferState::Ended;
+		m_State = CommandBufferState::HasEnded;
 	}
 	void VulkanCommandBuffer::Submit(VkQueue queue, VkSemaphore waitSemaphore)
 	{
@@ -118,7 +118,7 @@ namespace MeteorEngine
 
 		m_VulkanFence->Wait();
 		m_VulkanFence->Reset();
-		m_State = CommandBufferState::Idle;
+		m_State = CommandBufferState::ReadyForBegin;
 
 		return true;
 	}
@@ -129,7 +129,7 @@ namespace MeteorEngine
 	bool VulkanCommandBuffer::Flush()
 	{
 
-		if (m_State == CommandBufferState::Idle)
+		if (m_State == CommandBufferState::ReadyForBegin)
 			return true;
 
 		//VKUtilities::WaitIdle();

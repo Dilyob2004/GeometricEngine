@@ -1,37 +1,27 @@
 #ifndef VKCONTEXT_H
 #define VKCONTEXT_H
 #include <Engine/Render/Vulkan/VkDevice.h>
-#include <Engine/Render/Vulkan/VkSwapChain.h>
-#include <Engine/Render/Vulkan/VkFrameBuffer.h>
-#include <Engine/Render/Vulkan/VkCommandPool.h>
-#include <Engine/Render/Vulkan/VkFence.h>
-#include <vector>
-
+#include <Engine/Core/Window.h>
+#include <Engine/Render/RenderContext.h>
 namespace MeteorEngine
 {
-	class METEOR_API VulkanContext
+	class METEOR_API VulkanContext : public RenderContext
 	{
 	public:
 		VulkanContext();
+		VulkanContext(Window*);
 		~VulkanContext();
-		static VulkanContext* GetInstance() { return thisInstance; }
+		static VulkanContext* GetInstance() { return m_ThisInstance; }
 		void Create(Window*);
-
 		VkInstance GetVulkanInstance() const { return m_Instance;  }
-
-		void Present();
+		VkSurfaceKHR GetSurface() const { return m_Surface; }
 	private:
 		bool CreateInstance(bool);
-	private:
 
-		static VulkanContext* thisInstance;
-
-		unsigned int       currentFrame = 0;
-		bool               swapchainOutOfDate = false;
-		VulkanFrameBuffer*		m_VulkanFrameBuffer;
+		static VulkanContext*	m_ThisInstance;
 		VulkanDevice*			m_VulkanDevice;
-		VulkanSwapChain*		m_VulkanSwapChain;
-		VkInstance						m_Instance;
+		VkInstance				m_Instance;
+		VkSurfaceKHR			m_Surface;
 	};
 }
 #endif // !VKCONTEXT_Hâ

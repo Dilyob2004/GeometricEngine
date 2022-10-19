@@ -6,27 +6,71 @@
 #include <vector>
 namespace MeteorEngine
 {
-	class METEOR_API VulkanTexture : public Texture
+	class METEOR_API VulkanTexture2D : public Texture2D
 	{
 	public:
-		VulkanTexture();
-		VulkanTexture(const std::string&){}
-		VulkanTexture(const std::string&, const TextureDesc&){}
-		VulkanTexture(const TextureDesc&, u32, u32){}
-		VulkanTexture(const TextureDesc&, u32, u32, u8*){}
-		~VulkanTexture();
+		VulkanTexture2D();
+		VulkanTexture2D(const TextureDesc&, const Vector2u&);
+		VulkanTexture2D(VkImage, VkImageView, VkFormat, const Vector2u&);
+		~VulkanTexture2D();
+		virtual void Resize(const Vector2u&) override;
 
-		virtual u32			GetTexture() const override { return 0; }
+		virtual void*		GetTexture() const override { return (void*)this; }
 		virtual void        Bind(u32 slot = 0) const override{}
 		virtual void        UnBind(u32 slot = 0)    const override{}
 
 
-		virtual RHITextureFormat GetFormat() const override { return m_Format; }
+		virtual RHIPixelFormat GetFormat() const override { return m_Format; }
 		virtual Vector2u GetSize()	const override { return m_Size; }
 
+
+
+		VkImage GetImage() const
+		{
+			return m_Image;
+		};
+		VkDeviceMemory GetDeviceMemory() const
+		{
+			return m_ImageMemory;
+		}
+		VkImageView GetImageView() const
+		{
+			return m_ImageView;
+		}
+		VkSampler GetSampler() const
+		{
+			return m_Sampler;
+		}
+
+		VkFormat GetVKFormat()
+		{
+			return m_VKFormat;
+		}
+		void TransitionImage(VkImageLayout newLayout, VkCommandBuffer commandBuffer = NULL);
+
+		void UpdateDescriptor()
+		{
+			m_Descriptor.sampler = m_Sampler;
+			m_Descriptor.imageView = m_ImageView;
+			m_Descriptor.imageLayout = m_ImageLayout;
+		}
+
+		void BuildTexture();
+		void Cleanup();
 	private:
-		Vector2u m_Size;
-		RHITextureFormat m_Format;
+		bool					m_DeleteImage{ false };
+		TextureDesc				m_Parameters;
+		Vector2u				m_Size;
+		RHIPixelFormat			m_Format = RHIPixelFormat::RGB8_UNORM;
+		u32						m_MipLevels = 1;
+		VkImage					m_Image{};
+		VkImageLayout			m_ImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		VkDeviceMemory			m_ImageMemory{};
+		VkImageView				m_ImageView{};
+		VkSampler				m_Sampler{};
+		VkDescriptorImageInfo	m_Descriptor{};
+		VkFormat				m_VKFormat = VK_FORMAT_R8G8B8A8_UNORM;
+
 	};
 }
 #endif // !VULKANTEXTURE_H

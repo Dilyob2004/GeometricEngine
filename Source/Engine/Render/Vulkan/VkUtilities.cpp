@@ -1,0 +1,552 @@
+#include <Engine/Render/Vulkan/VkUtilities.h>
+namespace MeteorEngine
+{
+
+	VkSamplerAddressMode TextureWrapToVK(const TextureWrap wrap)
+	{
+		switch (wrap)
+		{
+		case TextureWrap::CLAMP:
+			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+			//case TextureWrap::CLAMP_TO_BORDER:
+				//return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		case TextureWrap::CLAMP_TO_EDGE:
+			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		case TextureWrap::REPEAT:
+			return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+			//case TextureWrap::MIRRORED_REPEAT:
+				//return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+		default:
+			LOG("[Texture] Unsupported wrap type!");
+			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		}
+	}
+
+	VkFilter TextureFilterToVK(const TextureFilter filter)
+	{
+		switch (filter)
+		{
+		case TextureFilter::NEAREST:
+			return VK_FILTER_NEAREST;
+		case TextureFilter::LINEAR:
+			return VK_FILTER_LINEAR;
+		case TextureFilter::NONE:
+			return VK_FILTER_LINEAR;
+		default:
+			LOG("[Texture] Unsupported TextureFilter type!");
+			return VK_FILTER_LINEAR;
+		}
+	}
+	u32 FindMemoryType(VkPhysicalDevice device, u32 typeFilter, VkMemoryPropertyFlags properties)
+	{
+		VkPhysicalDeviceMemoryProperties memProperties;
+		vkGetPhysicalDeviceMemoryProperties(device, &memProperties);
+
+		for (u32 i = 0; i < memProperties.memoryTypeCount; i++)
+			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+				return i;
+
+		return 0;
+	}
+
+	void CreateImageDefault(VkDevice device, VkPhysicalDevice physicalDevice, const VkImageCreateInfo& imageInfo, VkImage& image, VkDeviceMemory& imageMemory, VkMemoryPropertyFlags properties)
+	{
+		vkCreateImage(device, &imageInfo, nullptr, &image);
+
+		VkMemoryRequirements memRequirements;
+		vkGetImageMemoryRequirements(device, image, &memRequirements);
+
+		VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo();
+		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		allocInfo.allocationSize = memRequirements.size;
+		allocInfo.memoryTypeIndex = FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties);
+
+		vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory);
+		vkBindImageMemory(device, image, imageMemory, 0);
+	}
+	void CreateImage(VkDevice device, VkPhysicalDevice physicalDevice, u32 width, u32 height, u32 mipLevels,
+		VkFormat format, VkImageType imageType, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, 
+		VkImage& image, VkDeviceMemory& imageMemory, u32 arrayLayers, VkImageCreateFlags flags)
+	{
+		VkImageCreateInfo imageInfo = VkImageCreateInfo();
+		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		imageInfo.imageType = imageType;
+		imageInfo.extent = { width, height, 1 };
+		imageInfo.mipLevels = mipLevels;
+		imageInfo.format = format;
+		imageInfo.tiling = tiling;
+		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageInfo.usage = usage;
+		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		imageInfo.arrayLayers = arrayLayers;
+		imageInfo.flags = flags;
+
+		CreateImageDefault(device, physicalDevice, imageInfo, image, imageMemory, properties);
+	}
+
+	VkPipelineStageFlags AccessFlagsToPipelineStage(VkAccessFlags accessFlags, const VkPipelineStageFlags stageFlags)
+	{
+		VkPipelineStageFlags stages = 0;
+
+		while (accessFlags != 0)
+		{
+			VkAccessFlagBits AccessFlag = static_cast<VkAccessFlagBits>(accessFlags & (~(accessFlags - 1)));
+			//ASSERT(AccessFlag != 0 && (AccessFlag & (AccessFlag - 1)) == 0, "Error");
+			accessFlags &= ~AccessFlag;
+
+			switch (AccessFlag)
+			{
+			case VK_ACCESS_INDIRECT_COMMAND_READ_BIT:
+				stages |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
+				break;
+
+			case VK_ACCESS_INDEX_READ_BIT:
+				stages |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+				break;
+
+			case VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT:
+				stages |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+				break;
+
+			case VK_ACCESS_UNIFORM_READ_BIT:
+				stages |= stageFlags | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+				break;
+
+			case VK_ACCESS_INPUT_ATTACHMENT_READ_BIT:
+				stages |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+				break;
+
+			case VK_ACCESS_SHADER_READ_BIT:
+				stages |= stageFlags | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+				break;
+
+			case VK_ACCESS_SHADER_WRITE_BIT:
+				stages |= stageFlags | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+				break;
+
+			case VK_ACCESS_COLOR_ATTACHMENT_READ_BIT:
+				stages |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+				break;
+
+			case VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT:
+				stages |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+				break;
+
+			case VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT:
+				stages |= VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+				break;
+
+			case VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT:
+				stages |= VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+				break;
+
+			case VK_ACCESS_TRANSFER_READ_BIT:
+				stages |= VK_PIPELINE_STAGE_TRANSFER_BIT;
+				break;
+
+			case VK_ACCESS_TRANSFER_WRITE_BIT:
+				stages |= VK_PIPELINE_STAGE_TRANSFER_BIT;
+				break;
+
+			case VK_ACCESS_HOST_READ_BIT:
+				stages |= VK_PIPELINE_STAGE_HOST_BIT;
+				break;
+
+			case VK_ACCESS_HOST_WRITE_BIT:
+				stages |= VK_PIPELINE_STAGE_HOST_BIT;
+				break;
+
+			case VK_ACCESS_MEMORY_READ_BIT:
+				break;
+
+			case VK_ACCESS_MEMORY_WRITE_BIT:
+				break;
+
+			default:
+				LOG("Unknown access flag");
+				break;
+			}
+		}
+		return stages;
+	}
+	VkPipelineStageFlags LayoutToAccessMask(const VkImageLayout layout, const bool isDestination)
+	{
+		VkPipelineStageFlags accessMask = 0;
+
+		switch (layout)
+		{
+		case VK_IMAGE_LAYOUT_UNDEFINED:
+			if (isDestination)
+			{
+				LOG("The new layout used in a transition must not be VK_IMAGE_LAYOUT_UNDEFINED.");
+			}
+			break;
+
+		case VK_IMAGE_LAYOUT_GENERAL:
+			accessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+			accessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+			accessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+			accessMask = VK_ACCESS_SHADER_READ_BIT; // VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+			accessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+			accessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+			accessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_PREINITIALIZED:
+			if (!isDestination)
+			{
+				accessMask = VK_ACCESS_HOST_WRITE_BIT;
+			}
+			else
+			{
+				LOG("The new layout used in a transition must not be VK_IMAGE_LAYOUT_PREINITIALIZED.");
+			}
+			break;
+
+		case VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL:
+			accessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL:
+			accessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_PRESENT_SRC_KHR:
+			accessMask = VK_ACCESS_MEMORY_READ_BIT;
+			break;
+
+		default:
+			LOG("Unexpected image layout");
+			break;
+		}
+
+		return accessMask;
+	}
+
+	bool IsDepthFormat(VkFormat format)
+	{
+		switch (format)
+		{
+		case VK_FORMAT_D16_UNORM:
+		case VK_FORMAT_D32_SFLOAT:
+		case VK_FORMAT_D32_SFLOAT_S8_UINT:
+		case VK_FORMAT_D24_UNORM_S8_UINT:
+		case VK_FORMAT_D16_UNORM_S8_UINT:
+			return true;
+		}
+		return false;
+	}
+
+	bool IsStencilFormat(VkFormat format)
+	{
+		switch (format)
+		{
+		case VK_FORMAT_D32_SFLOAT_S8_UINT:
+		case VK_FORMAT_D24_UNORM_S8_UINT:
+			return true;
+		}
+		return false;
+	}
+	VkFormat RHIPixelFormatToVK(const RHIPixelFormat format, bool srgb)
+	{
+		if (srgb)
+		{
+			switch (format)
+			{
+				case RHIPixelFormat::R8_UNORM:
+					return VK_FORMAT_R8_SRGB;
+				case RHIPixelFormat::RG8_UNORM:
+					return VK_FORMAT_R8G8_SRGB;
+				case RHIPixelFormat::RGB8_UNORM:
+					return VK_FORMAT_R8G8B8_SRGB;
+				case RHIPixelFormat::RGBA8_UNORM:
+					return VK_FORMAT_R8G8B8A8_SRGB;
+
+
+				case RHIPixelFormat::RGB16_F32:
+					return VK_FORMAT_R16G16B16_SFLOAT;
+				case RHIPixelFormat::RGBA16_F32:
+					return VK_FORMAT_R16G16B16A16_SFLOAT;
+
+
+				case RHIPixelFormat::RGB32_F32:
+					return VK_FORMAT_R32G32B32_SFLOAT;
+
+				case RHIPixelFormat::RGBA32_F32:
+					return VK_FORMAT_R32G32B32A32_SFLOAT;
+
+
+				default:
+					LOG("[Texture] Unsupported image bit-depth!");
+					return VK_FORMAT_R8G8B8A8_SRGB;
+			}
+		}
+		else
+		{
+			switch (format)
+			{
+
+				case RHIPixelFormat::R8_UNORM:
+					return VK_FORMAT_R8_UNORM;
+
+				case RHIPixelFormat::RG8_UNORM:
+					return VK_FORMAT_R8G8_UNORM;
+
+				case RHIPixelFormat::RGB8_UNORM:
+					return VK_FORMAT_R8G8B8A8_UNORM;
+
+				case RHIPixelFormat::RGBA8_UNORM:
+					return VK_FORMAT_R8G8B8A8_UNORM;
+
+
+
+				case RHIPixelFormat::RG11B10_F32:
+					return VK_FORMAT_B10G11R11_UFLOAT_PACK32;
+
+				case RHIPixelFormat::RGB10A2_UNORM:
+					return VK_FORMAT_A2R10G10B10_UNORM_PACK32;
+
+
+
+				case RHIPixelFormat::R16_F32:
+					return VK_FORMAT_R16_SFLOAT;
+
+				case RHIPixelFormat::RG16_F32:
+					return VK_FORMAT_R16G16_SFLOAT;
+
+				case RHIPixelFormat::RGB16_F32:
+					return VK_FORMAT_R16G16B16_SFLOAT;
+
+				case RHIPixelFormat::RGBA16_F32:
+					return VK_FORMAT_R16G16B16A16_SFLOAT;
+
+
+
+
+				case RHIPixelFormat::R32_F32:
+					return VK_FORMAT_R32_SFLOAT;
+
+				case RHIPixelFormat::RG32_F32:
+					return VK_FORMAT_R32G32_SFLOAT;
+
+				case RHIPixelFormat::RGB32_F32:
+					return VK_FORMAT_R32G32B32_SFLOAT;
+
+				case RHIPixelFormat::RGBA32_F32:
+					return VK_FORMAT_R32G32B32A32_SFLOAT;
+
+
+
+
+				case RHIPixelFormat::DEPTH16_UNORM:
+					return VK_FORMAT_D16_UNORM;
+
+				case RHIPixelFormat::DEPTH32_F32:
+					return VK_FORMAT_D32_SFLOAT;
+
+				case RHIPixelFormat::DEPTH24_UNORM_STENCIL8_U32:
+					return VK_FORMAT_D24_UNORM_S8_UINT;
+
+				case RHIPixelFormat::DEPTH32_F32_STENCIL8_U32:
+					return VK_FORMAT_D32_SFLOAT_S8_UINT;
+
+
+				default:
+					LOG("[Texture] Unsupported image bit-depth!");
+					return VK_FORMAT_R8G8B8A8_UNORM;
+			}
+		}
+	}
+	VkCommandBuffer BeginSingleTimeCommands(VkDevice device, VkCommandPool commandPool)
+	{
+		VkCommandBufferAllocateInfo allocInfo = {};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool = commandPool;
+		allocInfo.commandBufferCount = 1;
+		VkCommandBuffer commandBuffer;
+		vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+		VkCommandBufferBeginInfo beginInfo = {};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+		vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+		return commandBuffer;
+	}
+
+	void EndSingleTimeCommands(VkDevice device, VkQueue queue, VkCommandPool commandPool,VkCommandBuffer commandBuffer)
+	{
+		vkEndCommandBuffer(commandBuffer);
+
+		VkSubmitInfo submitInfo;
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+		submitInfo.pSignalSemaphores = nullptr;
+		submitInfo.pNext = nullptr;
+		submitInfo.pWaitDstStageMask = nullptr;
+		submitInfo.signalSemaphoreCount = 0;
+		submitInfo.waitSemaphoreCount = 0;
+
+		vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+		vkQueueWaitIdle(queue);
+
+		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+	}
+	void TransitionImageLayout(VkDevice device, VkQueue queue, VkCommandPool commandPool, 
+		VkImage image, VkFormat format, VkImageLayout oldImageLayout, VkImageLayout newImageLayout,
+		u32 mipLevels, u32 layerCount, VkCommandBuffer commandBuffer)
+	{
+
+		bool singleTimeCommand = false;
+
+		if (!commandBuffer)
+		{
+			commandBuffer = BeginSingleTimeCommands(device, commandPool);
+			singleTimeCommand = true;
+		}
+
+		VkImageSubresourceRange subresourceRange = {};
+		subresourceRange.aspectMask = IsDepthFormat(format) ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+
+		if (IsStencilFormat(format))
+			subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+
+		subresourceRange.baseMipLevel = 0;
+		subresourceRange.levelCount = mipLevels;
+		subresourceRange.baseArrayLayer = 0;
+		subresourceRange.layerCount = layerCount;
+
+		// Create an image barrier object
+		VkImageMemoryBarrier imageMemoryBarrier = VkImageMemoryBarrier();
+		imageMemoryBarrier.oldLayout = oldImageLayout;
+		imageMemoryBarrier.newLayout = newImageLayout;
+		imageMemoryBarrier.image = image;
+		imageMemoryBarrier.subresourceRange = subresourceRange;
+		imageMemoryBarrier.srcAccessMask = LayoutToAccessMask(oldImageLayout, false);
+		imageMemoryBarrier.dstAccessMask = LayoutToAccessMask(newImageLayout, true);
+		imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+
+		VkPipelineStageFlags sourceStage = 0;
+		{
+			if (imageMemoryBarrier.oldLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
+			{
+				sourceStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+			}
+			else if (imageMemoryBarrier.srcAccessMask != 0)
+			{
+				sourceStage = AccessFlagsToPipelineStage(imageMemoryBarrier.srcAccessMask, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
+			}
+			else
+			{
+				sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			}
+		}
+
+		VkPipelineStageFlags destinationStage = 0;
+		{
+			if (imageMemoryBarrier.newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
+			{
+				destinationStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			}
+			else if (imageMemoryBarrier.dstAccessMask != 0)
+			{
+				destinationStage = AccessFlagsToPipelineStage(imageMemoryBarrier.dstAccessMask, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
+			}
+			else
+			{
+				destinationStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+			}
+		}
+
+		// Put barrier inside setup command buffer
+		vkCmdPipelineBarrier(
+			commandBuffer,
+			sourceStage,
+			destinationStage,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imageMemoryBarrier);
+
+		if (singleTimeCommand)
+			EndSingleTimeCommands(device, queue, commandPool, commandBuffer);
+	}
+
+
+	VkImageView CreateImageViews(VkDevice device, VkImage image, VkFormat format, u32 mipLevels, VkImageViewType viewType, 
+		VkImageAspectFlags aspectMask, u32 layerCount, u32 baseArrayLayer, u32 baseMipLevel)
+	{
+
+		VkImageViewCreateInfo imageViewCreateInfo = VkImageViewCreateInfo();
+		imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		imageViewCreateInfo.image = image;
+		imageViewCreateInfo.viewType = viewType;
+		imageViewCreateInfo.format = format;
+		imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+		imageViewCreateInfo.subresourceRange.aspectMask = aspectMask;
+		imageViewCreateInfo.subresourceRange.baseMipLevel = baseMipLevel;
+		imageViewCreateInfo.subresourceRange.levelCount = mipLevels;
+		imageViewCreateInfo.subresourceRange.baseArrayLayer = baseArrayLayer;
+		imageViewCreateInfo.subresourceRange.layerCount = layerCount;
+		VkImageView imageView;
+		if (vkCreateImageView(device, &imageViewCreateInfo, 0, &imageView) != VK_SUCCESS)
+		{
+			LOG("Failed to create Texture View");
+			return NULL;
+		}
+
+		return imageView;
+	}
+
+	VkSampler CreateTextureSampler(VkDevice device, VkFilter magFilter, VkFilter minFilter, float minLod, float maxLod, bool anisotropyEnable, float maxAnisotropy, 
+		VkSamplerAddressMode modeU, VkSamplerAddressMode modeV, VkSamplerAddressMode modeW)
+	{
+		VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo();
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		samplerInfo.magFilter = magFilter;
+		samplerInfo.minFilter = minFilter;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		samplerInfo.addressModeU = modeU;
+		samplerInfo.addressModeV = modeV;
+		samplerInfo.addressModeW = modeW;
+		samplerInfo.maxAnisotropy = maxAnisotropy;
+		samplerInfo.anisotropyEnable = anisotropyEnable;
+		samplerInfo.unnormalizedCoordinates = VK_FALSE;
+		samplerInfo.compareEnable = VK_FALSE;
+		samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+		samplerInfo.mipLodBias = 0.0f;
+		samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
+		samplerInfo.minLod = minLod;
+		samplerInfo.maxLod = maxLod;
+
+		VkSampler sampler;
+		if (vkCreateSampler(device, &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
+			LOG("Failed to create texture sampler!");
+
+		return sampler;
+	}
+
+}

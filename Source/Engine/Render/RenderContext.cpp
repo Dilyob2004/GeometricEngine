@@ -1,9 +1,9 @@
 #include <Engine/Render/RenderContext.h>
-#include <Engine/Platform/Win32/WindowsOpenGL.h>
+#include <Engine/Render/Vulkan/VkContext.h>
 namespace MeteorEngine
 {
-	RenderContext* RenderContext::Create(const Window* window)
+	RenderContext* RenderContext::Create(Window* window)
     {
-         return new WindowsOpenGL((HWND)window->GetWindowPtr());
+         return new VulkanContext(window);
     }
 }

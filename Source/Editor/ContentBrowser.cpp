@@ -22,8 +22,8 @@ namespace MeteorEngine
 		findPath = FileSystem::FindDirectory(pathAsset);
 		findPath.erase(findPath.begin());
 
-		m_DirectoryIcon = Texture::Create("Assets/Texture/DirectoryIcon.png");
-		m_FileIcon = Texture::Create("Assets/Texture/FileIcon.png");
+		//m_DirectoryIcon = Texture::Create("Assets/Texture/DirectoryIcon.png");
+		//m_FileIcon = Texture::Create("Assets/Texture/FileIcon.png");
 	}
 	ContentBrowser::~ContentBrowser()
 	{

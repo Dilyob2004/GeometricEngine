@@ -1,97 +1,90 @@
 #include <Engine/Render/Vulkan/VkTexture.h>
-
-
+#include <Engine/Render/Vulkan/VkDevice.h>
+#include <Engine/Render/Vulkan/VkUtilities.h>
 namespace MeteorEngine
 {
 
-	bool CreateImage(	VkDevice				device,
-						VkPhysicalDevice		physicalDevice,
-						u32						width,
-						u32						height,
-						VkFormat				format,
-						VkImageTiling			tiling,
-						VkImageUsageFlags		usage,
-						VkMemoryPropertyFlags	properties,
-						VkImage&				image,
-						VkDeviceMemory&			imageMemory)
+	VulkanTexture2D::VulkanTexture2D()
 	{
-		// We only have a single queue so we can request exclusive access
-		VkImageCreateInfo imageCreateInfo = VkImageCreateInfo();
-		imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageCreateInfo.extent.width = width;
-		imageCreateInfo.extent.height = height;
-		imageCreateInfo.extent.depth = 1;
-		imageCreateInfo.mipLevels = 1;
-		imageCreateInfo.arrayLayers = 1;
-		imageCreateInfo.format = format;
-		imageCreateInfo.tiling = tiling;
-		imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		imageCreateInfo.usage = usage;
-		imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-		imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-		// Create the image, this does not allocate any memory for it yet
-		if (vkCreateImage(device, &imageCreateInfo, 0, &image) != VK_SUCCESS)
-			return false;
+	}	
+	VulkanTexture2D::VulkanTexture2D(const TextureDesc& parametes, const Vector2u& size):
+		m_Size(size),
+		m_DeleteImage(true),
+		m_Parameters(parametes),
+		m_Format(parametes.Format),
+		m_VKFormat(RHIPixelFormatToVK(parametes.Format, parametes.IsSRGB))
+	{
+		BuildTexture();
+	}
+	VulkanTexture2D::VulkanTexture2D(VkImage image, VkImageView imageView, VkFormat format, const Vector2u& size) :
+		m_Image(image), 
+		m_ImageView(imageView) , 
+		m_Sampler(VK_NULL_HANDLE), 
+		m_Size(size), 
+		m_VKFormat(format), 
+		m_DeleteImage(false),
+		m_ImageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
+	{
+		m_ImageMemory = VK_NULL_HANDLE;
+		UpdateDescriptor();
+	}
+	VulkanTexture2D::~VulkanTexture2D()
+	{
+		Cleanup();
+	}
+	void VulkanTexture2D::BuildTexture()
+	{
 
-		// Check what kind of memory we need to request from the GPU
-		VkMemoryRequirements memoryRequirements = VkMemoryRequirements();
-		vkGetImageMemoryRequirements(device, image, &memoryRequirements);
+		if (m_Flags & TextureFlags::Texture_CreateMips)
+			m_MipLevels = static_cast<u32>(std::floor(std::log2(max(m_Size.x, m_Size.y)))) + 1;
+		CreateImage(VulkanDevice::GetInstance()->GetLogicalDevice(), VulkanDevice::GetInstance()->GetPhysicalDevice(),
+			m_Size.x, m_Size.y, m_MipLevels, m_VKFormat, VK_IMAGE_TYPE_2D, VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			m_Image, m_ImageMemory, 1, 0);
 
-		// Check what GPU memory type is available for us to allocate out of
-		VkPhysicalDeviceMemoryProperties memoryProperties = VkPhysicalDeviceMemoryProperties();
-		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+		m_ImageView = CreateImageViews(VulkanDevice::GetInstance()->GetLogicalDevice(), m_Image, m_VKFormat, m_MipLevels,
+			VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 
-		u32 memoryType = 0;
+		m_Sampler = CreateTextureSampler(VulkanDevice::GetInstance()->GetLogicalDevice(),
+			TextureFilterToVK(m_Parameters.MinFilter),
+			TextureFilterToVK(m_Parameters.MagFilter),
+			0.0f, static_cast<f32>(m_MipLevels), false, VulkanDevice::GetInstance()->GetProperties().limits.maxSamplerAnisotropy,
+			TextureWrapToVK(m_Parameters.WrapMode),
+			TextureWrapToVK(m_Parameters.WrapMode),
+			TextureWrapToVK(m_Parameters.WrapMode));
 
-		for (; memoryType < memoryProperties.memoryTypeCount; ++memoryType)
-		{
-			if ((memoryRequirements.memoryTypeBits & static_cast<unsigned int>(1 << memoryType)) &&
-				((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties))
-				break;
+		m_ImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		TransitionImage(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		UpdateDescriptor();
+	}
+	void VulkanTexture2D::Cleanup()
+	{
+		if(m_Sampler)
+			vkDestroySampler(VulkanDevice::GetInstance()->GetLogicalDevice(), m_Sampler, NULL);
+
+		if(m_ImageView)
+			vkDestroyImageView(VulkanDevice::GetInstance()->GetLogicalDevice(), m_ImageView, NULL);
+
+
+		if (m_DeleteImage) {
+			vkDestroyImage(VulkanDevice::GetInstance()->GetLogicalDevice(), m_Image, NULL);
+			vkFreeMemory(VulkanDevice::GetInstance()->GetLogicalDevice(), m_ImageMemory, NULL);
 		}
-
-		if (memoryType == memoryProperties.memoryTypeCount)
-			return false;
-
-		VkMemoryAllocateInfo memoryAllocateInfo = VkMemoryAllocateInfo();
-		memoryAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		memoryAllocateInfo.allocationSize = memoryRequirements.size;
-		memoryAllocateInfo.memoryTypeIndex = memoryType;
-
-		// Allocate the memory out of the GPU pool for the required memory type
-		if (vkAllocateMemory(device, &memoryAllocateInfo, 0, &imageMemory) != VK_SUCCESS)
-			return false;
-
-		// Bind the allocated memory to our image object
-		if (vkBindImageMemory(device, image, imageMemory, 0) != VK_SUCCESS)
-			return false;
-
-		return true;
 	}
-
-
-
-	bool CreateImageViews(VkDevice device, VkImageViewCreateInfo imageViewCreateInfo, std::vector<VkImage> swapchainImages, std::vector<VkImageView>& swapchainImageViews)
+	void VulkanTexture2D::Resize(const Vector2u& size)
 	{
-		for (u32 i = 0; i < swapchainImages.size(); ++i)
-		{
-			imageViewCreateInfo.image = swapchainImages[i];
-			if (vkCreateImageView(device, &imageViewCreateInfo, 0, &swapchainImageViews[i]) != VK_SUCCESS)
-				return false;
-		}
-
-		return true;
+		Cleanup();
+		m_Size = size;
+		m_Image = VkImage();
+		BuildTexture();
 	}
-
-
-	VulkanTexture::VulkanTexture()
+	void VulkanTexture2D::TransitionImage(VkImageLayout newLayout, VkCommandBuffer commandBuffer)
 	{
-
-	}
-	VulkanTexture::~VulkanTexture()
-	{
-
+		
+		if (newLayout != m_ImageLayout)
+			TransitionImageLayout(VulkanDevice::GetInstance()->GetLogicalDevice(), VulkanDevice::GetInstance()->GetQueue(), VulkanDevice::GetInstance()->GetCommandPool()->GetCommandPool(), m_Image, m_VKFormat, m_ImageLayout, newLayout, m_MipLevels, 1, commandBuffer);
+		m_ImageLayout = newLayout;
+		UpdateDescriptor();
 	}
 }

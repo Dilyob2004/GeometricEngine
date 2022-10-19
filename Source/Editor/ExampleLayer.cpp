@@ -11,7 +11,7 @@ namespace MeteorEngine
     ExampleLayer::ExampleLayer():
         Layer("ExampleLayer")
     {
-		texture.reset(Texture::Create("Assets/Texture/logo.png")) ;
+//		texture.reset(Texture::Create("Assets/Texture/logo.png")) ;
     }
     ExampleLayer::~ExampleLayer()
     {

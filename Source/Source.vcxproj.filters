@@ -1,508 +1,156 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Исходные файлы">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Файлы заголовков">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Файлы ресурсов">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="Editor\Console.cpp" />
+    <ClCompile Include="Editor\ContentBrowser.cpp" />
+    <ClCompile Include="Editor\Editor.cpp" />
+    <ClCompile Include="Editor\Entity.cpp" />
+    <ClCompile Include="Editor\ExampleLayer.cpp" />
+    <ClCompile Include="Editor\Scene.cpp" />
+    <ClCompile Include="Editor\SceneHierarchy.cpp" />
+    <ClCompile Include="Engine\Core\Application.cpp" />
+    <ClCompile Include="Engine\Core\Core.cpp" />
+    <ClCompile Include="Engine\Core\Input.cpp" />
+    <ClCompile Include="Engine\Core\Layer.cpp" />
+    <ClCompile Include="Engine\Core\LayerStack.cpp" />
+    <ClCompile Include="Engine\Core\Window.cpp" />
+    <ClCompile Include="Engine\Gui\ImGuiLayer.cpp" />
+    <ClCompile Include="Engine\Math\MathUtils.cpp" />
+    <ClCompile Include="Engine\Math\Matrix3.cpp" />
+    <ClCompile Include="Engine\Math\Matrix4.cpp" />
+    <ClCompile Include="Engine\Math\Quaternion.cpp" />
+    <ClCompile Include="Engine\Platform\Platform.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\VulkanSupport.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsFile.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsFileSystem.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsInput.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsPlatform.cpp" />
+    <ClCompile Include="Engine\Platform\Win32\WindowsWindow.cpp" />
+    <ClCompile Include="Engine\Render\Camera.cpp" />
+    <ClCompile Include="Engine\Render\Camera2D.cpp" />
+    <ClCompile Include="Engine\Render\CameraController2D.cpp" />
+    <ClCompile Include="Engine\Render\FrameBuffer.cpp" />
+    <ClCompile Include="Engine\Render\ImageCore.cpp" />
+    <ClCompile Include="Engine\Render\ImageLoader.cpp" />
+    <ClCompile Include="Engine\Render\IndexBuffer.cpp" />
+    <ClCompile Include="Engine\Render\RenderContext.cpp" />
+    <ClCompile Include="Engine\Render\Renderer.cpp" />
+    <ClCompile Include="Engine\Render\Shader.cpp" />
+    <ClCompile Include="Engine\Render\Texture.cpp" />
+    <ClCompile Include="Engine\Render\VertexArray.cpp" />
+    <ClCompile Include="Engine\Render\VertexBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkCommandBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkCommandPool.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkFence.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkRenderPass.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkSurface.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkSwapChain.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkFrameBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkTexture.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkUtilities.cpp" />
+    <ClCompile Include="Engine\System\Clock.cpp" />
+    <ClCompile Include="Engine\System\File.cpp" />
+    <ClCompile Include="Engine\System\FileSystem.cpp" />
+    <ClCompile Include="Engine\System\Time.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\ImGuizmo.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Core\Application.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Input.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Layer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\LayerStack.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Window.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Gui\ImGuiLayer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix4.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Win32\WindowsInput.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Win32\WindowsOpenGL.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Win32\WindowsWindow.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Camera2D.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\CameraController2D.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\FrameBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\IndexBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Renderer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Shader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Texture.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\VertexArray.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\VertexBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLFrameBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLIndexBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLRenderer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLShader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLTexture.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLVertexArray.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\OpenGL\OpenGLVertexBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\System\Clock.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\System\FileSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\System\Time.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\Editor.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\Entity.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\ExampleLayer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\Scene.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\imgui.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\imgui_impl_win32.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\imgui_impl_opengl3.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\SceneHierarchy.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\ImGuizmo.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\ContentBrowser.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Quaternion.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix3.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Camera.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Win32\OpenGLSupport.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Math\MathUtils.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Core.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Win32\WindowsFileSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\Console.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Win32\WindowsFile.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\System\File.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Win32\WindowsPlatform.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Platform.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\RenderContext.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\ImageCore.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\ImageLoader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Platform\Win32\VulkanSupport.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkSwapChain.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkTexture.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkFrameBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\ImGui\imgui_impl_vulkan.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkFence.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkCommandPool.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkSurface.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkCommandBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Render\Vulkan\VkRenderPass.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
+    <ClInclude Include="Editor\Components.h" />
+    <ClInclude Include="Editor\Console.h" />
+    <ClInclude Include="Editor\ContentBrowser.h" />
+    <ClInclude Include="Editor\Editor.h" />
+    <ClInclude Include="Editor\Entity.h" />
+    <ClInclude Include="Editor\ExampleLayer.h" />
+    <ClInclude Include="Editor\Scene.h" />
+    <ClInclude Include="Editor\SceneHierarchy.h" />
+    <ClInclude Include="Editor\ScriptLayer.h" />
+    <ClInclude Include="Engine\Core\Application.h" />
+    <ClInclude Include="Engine\Core\Config.h" />
+    <ClInclude Include="Engine\Core\Core.h" />
+    <ClInclude Include="Engine\Core\EntitySystem.h" />
+    <ClInclude Include="Engine\Core\Event.h" />
+    <ClInclude Include="Engine\Core\Input.h" />
+    <ClInclude Include="Engine\Core\KeyCodes.h" />
+    <ClInclude Include="Engine\Core\Layer.h" />
+    <ClInclude Include="Engine\Core\LayerStack.h" />
+    <ClInclude Include="Engine\Core\MouseCodes.h" />
+    <ClInclude Include="Engine\Core\Singleton.h" />
+    <ClInclude Include="Engine\Core\Window.h" />
+    <ClInclude Include="Engine\Gui\ImGuiLayer.h" />
+    <ClInclude Include="Engine\IconsMaterialDesignIcons.h" />
+    <ClInclude Include="Engine\Math\MathUtils.h" />
+    <ClInclude Include="Engine\Math\Matrix3.h" />
+    <ClInclude Include="Engine\Math\Matrix4.h" />
+    <ClInclude Include="Engine\Math\Quaternion.h" />
+    <ClInclude Include="Engine\Math\Vector2.h" />
+    <ClInclude Include="Engine\Math\Vector3.h" />
+    <ClInclude Include="Engine\Math\Vector4.h" />
+    <ClInclude Include="Engine\Platform\Platform.h" />
+    <ClInclude Include="Engine\Platform\Win32\VulkanSupport.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsFile.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsFileSystem.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsInput.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsPlatform.h" />
+    <ClInclude Include="Engine\Platform\Win32\WindowsWindow.h" />
+    <ClInclude Include="Engine\Render\Camera.h" />
+    <ClInclude Include="Engine\Render\Camera2D.h" />
+    <ClInclude Include="Engine\Render\CameraController2D.h" />
+    <ClInclude Include="Engine\Render\FrameBuffer.h" />
+    <ClInclude Include="Engine\Render\ImageCore.h" />
+    <ClInclude Include="Engine\Render\ImageLoader.h" />
+    <ClInclude Include="Engine\Render\IndexBuffer.h" />
+    <ClInclude Include="Engine\Render\RenderContext.h" />
+    <ClInclude Include="Engine\Render\Renderer.h" />
+    <ClInclude Include="Engine\Render\Shader.h" />
+    <ClInclude Include="Engine\Render\Texture.h" />
+    <ClInclude Include="Engine\Render\VertexArray.h" />
+    <ClInclude Include="Engine\Render\VertexBuffer.h" />
+    <ClInclude Include="Engine\Render\Vulkan\Vk.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkCommandBuffer.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkCommandPool.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkFence.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkRenderPass.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkSurface.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkSwapChain.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkFrameBuffer.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkTexture.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkUtilities.h" />
+    <ClInclude Include="Engine\System\Clock.h" />
+    <ClInclude Include="Engine\System\File.h" />
+    <ClInclude Include="Engine\System\FileBase.h" />
+    <ClInclude Include="Engine\System\FileSystem.h" />
+    <ClInclude Include="Engine\System\Path.h" />
+    <ClInclude Include="Engine\System\Time.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ThirdParty\entt\entt.hpp" />
+    <ClInclude Include="ThirdParty\ImGui\imconfig.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui.h" />
+    <ClInclude Include="ThirdParty\ImGui\ImGuizmo.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_impl_vulkan.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_internal.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_textedit.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_truetype.h" />
+    <ClInclude Include="ThirdParty\stb_image\stb_image.h" />
+    <ClInclude Include="ThirdParty\stb_image\stb_image_write.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Core\Application.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Config.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Event.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Input.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\KeyCodes.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Layer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\LayerStack.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\MouseCodes.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Window.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Gui\ImGuiLayer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix4.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector2.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector3.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Vector4.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Win32\WindowsInput.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Win32\WindowsOpenGL.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Win32\WindowsWindow.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Camera2D.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\CameraController2D.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\FrameBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\IndexBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Renderer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Shader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Texture.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\VertexArray.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\VertexBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLFrameBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLIndexBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLRenderer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLShader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLTexture.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLVertexArray.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\OpenGL\OpenGLVertexBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\System\Clock.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\System\FileSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\System\Time.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\Editor.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\Entity.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\ExampleLayer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\Scene.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imconfig.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imgui.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imgui_impl_win32.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imgui_internal.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imstb_rectpack.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imstb_textedit.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imstb_truetype.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\stb_image\stb_image.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\stb_image\stb_image_write.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imgui_impl_opengl3.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\EntitySystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\SceneHierarchy.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\ImGuizmo.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\ContentBrowser.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Quaternion.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix3.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Camera.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Win32\OpenGLSupport.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Math\MathUtils.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Core.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\Components.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\ScriptLayer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\System\Path.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Win32\WindowsFileSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\Console.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Win32\WindowsFile.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\System\File.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\System\FileBase.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Win32\WindowsPlatform.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Platform.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Файлы ресурсов</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\RenderContext.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\ImageCore.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\ImageLoader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\entt\entt.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\IconsMaterialDesignIcons.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Platform\Win32\VulkanSupport.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkContext.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkDevice.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\Vk.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkSwapChain.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Singleton.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkTexture.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkFrameBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\ImGui\imgui_impl_vulkan.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkFence.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkCommandPool.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkSurface.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkCommandBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Render\Vulkan\VkRenderPass.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
+    <ResourceCompile Include="Source.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Source.rc">
-      <Filter>Файлы ресурсов</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Engine\MaterialDesign.inl">
-      <Filter>Файлы заголовков</Filter>
-    </None>
+    <None Include="Engine\MaterialDesign.inl" />
   </ItemGroup>
 </Project>

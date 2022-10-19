@@ -5,7 +5,7 @@
 #include <string>
 namespace MeteorEngine
 {
-	enum class RHITextureFormat : u32
+	enum class RHIPixelFormat : u32
 	{
 		NONE = 0,
 
@@ -59,11 +59,20 @@ namespace MeteorEngine
 		LINEAR,
 		NEAREST
 	};
-
+	enum TextureFlags : u16
+	{
+		Texture_Sampled					= (0),
+		Texture_Storage					= (1),
+		Texture_RenderTarget			= (2),
+		Texture_DepthStencil			= (3),
+		Texture_DepthStencilReadOnly	= (4),
+		Texture_CreateMips				= (5),
+		Texture_MipViews				= (6)
+	};
 	struct TextureDesc
 	{
 		TextureDesc() = default;
-		TextureDesc(const RHITextureFormat & format, const TextureFilter& minFilter = TextureFilter::LINEAR, 
+		TextureDesc(const RHIPixelFormat & format, const TextureFilter& minFilter = TextureFilter::LINEAR, 
 					const TextureFilter& magFilter = TextureFilter::LINEAR, const TextureWrap& wrapMode = TextureWrap::CLAMP, bool isSRGB = false):
 			Format(format),
 			MinFilter(minFilter),
@@ -72,49 +81,64 @@ namespace MeteorEngine
 			IsSRGB(isSRGB)
 		{
 		}
-		RHITextureFormat Format;
-		TextureFilter MinFilter;
-		TextureFilter MagFilter;
-		TextureWrap WrapMode;
-		bool IsSRGB;
+		u16				Flags		= TextureFlags::Texture_CreateMips;
+		u16				MsaaLevel	= 1;
+		RHIPixelFormat	Format		= RHIPixelFormat::RGB8_UNORM;
+		TextureFilter	MinFilter	= TextureFilter::NEAREST;
+		TextureFilter	MagFilter	= TextureFilter::NEAREST;
+		TextureWrap		WrapMode	= TextureWrap::CLAMP_TO_EDGE;
+		bool			IsSRGB		= false;
 	};
     class METEOR_API Texture
     {
     public:
-
-		static Texture* Create(const std::string&);
-		static Texture* Create(const std::string&, const TextureDesc&);
-
-
-		static Texture* Create(const TextureDesc&, u32, u32);
-		static Texture* Create(const TextureDesc&, u32, u32, u8*);
-
         virtual ~Texture() {}
-        virtual u32			GetTexture() const = 0;
+        virtual void*		GetTexture() const = 0;
         virtual void        Bind(u32 slot = 0) const = 0;
         virtual void        UnBind(u32 slot = 0)    const = 0;
 
 
-		virtual RHITextureFormat GetFormat() const = 0;
+		virtual RHIPixelFormat GetFormat() const = 0;
 		virtual Vector2u GetSize()	const = 0;
 
-		static bool IsDepthStencilFormat(RHITextureFormat format)
+		static bool IsDepthStencilFormat(RHIPixelFormat format)
 		{
-			return (format == RHITextureFormat::DEPTH16_UNORM_STENCIL8_U32 ||
-					format == RHITextureFormat::DEPTH24_UNORM_STENCIL8_U32 ||
-					format == RHITextureFormat::DEPTH32_F32_STENCIL8_U32);
+			return (format == RHIPixelFormat::DEPTH16_UNORM_STENCIL8_U32 ||
+					format == RHIPixelFormat::DEPTH24_UNORM_STENCIL8_U32 ||
+					format == RHIPixelFormat::DEPTH32_F32_STENCIL8_U32);
 		}		
-		static bool IsDepthFormat(RHITextureFormat format)
+		static bool IsDepthFormat(RHIPixelFormat format)
 		{
-			return (format == RHITextureFormat::DEPTH16_UNORM ||
-					format == RHITextureFormat::DEPTH32_F32   ||
-					format == RHITextureFormat::DEPTH16_UNORM_STENCIL8_U32 ||
-					format == RHITextureFormat::DEPTH32_F32_STENCIL8_U32);
+			return (format == RHIPixelFormat::DEPTH16_UNORM ||
+					format == RHIPixelFormat::DEPTH32_F32   ||
+					format == RHIPixelFormat::DEPTH16_UNORM_STENCIL8_U32 ||
+					format == RHIPixelFormat::DEPTH32_F32_STENCIL8_U32);
 		}
-		static bool IsStencilFormat(RHITextureFormat format)
+		static bool IsStencilFormat(RHIPixelFormat format)
 		{
 			return IsDepthStencilFormat(format);
 		}
+	protected:
+		u16			m_Flags = 0;
+
     };
+	class METEOR_API Texture2D : public Texture
+	{
+	public:
+		static Texture2D* Create(const TextureDesc&, const Vector2u&);
+		virtual void Resize(const Vector2u&) = 0;
+	};
+	class METEOR_API TextureDepth : public Texture
+	{
+	public:
+		static TextureDepth* Create(const Vector2u&);
+		virtual void Resize(const Vector2u&) = 0;
+	};
+	class METEOR_API TextureDepthArray : public Texture
+	{
+	public:
+		static TextureDepth* Create(u32, u32, u32);
+		virtual void Resize(u32, u32) = 0;
+	};
 }
 #endif // TEXTURE_H

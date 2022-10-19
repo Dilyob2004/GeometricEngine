@@ -15,8 +15,8 @@
 
 #pragma once
 #include "imgui.h"      // IMGUI_IMPL_API
-#include <windows.h>
-IMGUI_IMPL_API bool     ImGui_ImplWin32_Init(void* hwnd, void* glcontext);
+
+IMGUI_IMPL_API bool     ImGui_ImplWin32_Init(void* hwnd);
 IMGUI_IMPL_API void     ImGui_ImplWin32_Shutdown();
 IMGUI_IMPL_API void     ImGui_ImplWin32_NewFrame();
 
@@ -25,8 +25,9 @@ IMGUI_IMPL_API void     ImGui_ImplWin32_NewFrame();
 // - You should COPY the line below into your .cpp code to forward declare the function and then you can call it.
 // - Call from your application's message handler. Keep calling your message handler unless this function returns TRUE.
 
+#if 0
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
+#endif
 
 // DPI-related helpers (optional)
 // - Use to enable DPI awareness without having to create an application manifest.

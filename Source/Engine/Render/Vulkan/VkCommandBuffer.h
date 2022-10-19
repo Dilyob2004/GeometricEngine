@@ -10,9 +10,10 @@ namespace MeteorEngine
 {
 	enum class CommandBufferState
 	{
-		Idle,
-		Recording,
-		Ended,
+		ReadyForBegin,
+		IsInsideBegin,
+		IsInsideRenderPass,
+		HasEnded,
 		Submitted
 	};
 

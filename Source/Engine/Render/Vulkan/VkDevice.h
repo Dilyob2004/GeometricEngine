@@ -24,12 +24,15 @@ namespace MeteorEngine
 		{
 			vkDeviceWaitIdle(m_Device);
 		}
+
+		VkPhysicalDeviceProperties		GetProperties() const { return m_DeviceProperties;  }
 	private:
 		void CreateTracyContext();
 		void CreatePipelineCache();
 		static VulkanDevice*			m_ThisInstance;
 
 
+		VkPhysicalDeviceProperties		m_DeviceProperties;
 		VkPipelineCache					m_PipelineCache;
 		VulkanCommandPool*				m_CommandPool;
 		u32								m_QueueFamilyIndex;
