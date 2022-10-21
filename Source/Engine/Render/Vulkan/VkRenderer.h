@@ -16,6 +16,7 @@ namespace MeteorEngine
 		virtual void Begin() override;
 		virtual void Present() override;
 		virtual void Resize(const Vector2u& size) override;
+		virtual void ClearSwapChainImages() const override;
 
 		VulkanSwapChain* GetMainSwapChain() const { return m_SwapChain; }
 	private:

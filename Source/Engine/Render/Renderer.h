@@ -18,7 +18,7 @@ namespace MeteorEngine
 		virtual void Begin() = 0;
 		virtual void Present() = 0;
 		virtual void Resize(const Vector2u& size) = 0;
-
+		virtual void ClearSwapChainImages() const = 0;
 
 		void DrawIndexed(const std::shared_ptr<VertexArray>&) {}
 		void SetupProjection2D(Camera2D) {}
@@ -37,6 +37,7 @@ namespace MeteorEngine
 		static void Begin();
 		static void Present();
 		static void Resize(const Vector2u& size);
+		static void ClearSwapChainImages();
 
 
 

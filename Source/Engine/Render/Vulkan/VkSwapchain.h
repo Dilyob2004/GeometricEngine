@@ -33,6 +33,7 @@ namespace MeteorEngine
 		Texture* GetImage(u32 index) { return (Texture*)m_SwapChainBuffers[index]; };
 		VkFormat GetSwapChainFormat() const { return m_ColourFormat; }
 		VkSwapchainKHR GetSwapChain() const { return m_SwapChain; }
+		u32 GetSwapChainBufferCount() const { return m_SwapChainBufferCount; }
 		void Begin();
 		void Present();
 		void End();

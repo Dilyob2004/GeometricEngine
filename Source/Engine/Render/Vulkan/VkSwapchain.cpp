@@ -34,27 +34,29 @@ namespace MeteorEngine
 
 	void VulkanSwapChain::AcquireNextImage()
 	{
-		VkResult result = vkAcquireNextImageKHR(VulkanDevice::GetInstance()->GetLogicalDevice(),
-			m_SwapChain,
-			UINT64_MAX,
-			m_FramesBackBuffer[m_CurrentBuffer].PresentSemaphore,
-			VK_NULL_HANDLE,
-			&m_AcquireImageIndex);
+		if (m_SwapChain) {
+				VkResult result = vkAcquireNextImageKHR(VulkanDevice::GetInstance()->GetLogicalDevice(),
+					m_SwapChain,
+					UINT64_MAX,
+					m_FramesBackBuffer[m_CurrentBuffer].PresentSemaphore,
+					VK_NULL_HANDLE,
+					&m_AcquireImageIndex);
+			if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
 
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-
-			LOG("Acquire Image result : {0}");
-			LOG( (result == VK_ERROR_OUT_OF_DATE_KHR) ? "Out of Date" : "SubOptimal");
-			if (result == VK_ERROR_OUT_OF_DATE_KHR)
+				LOG("[Vulkan] Acquire Image result : 0 ");
+				LOG( ((result == VK_ERROR_OUT_OF_DATE_KHR) ? "Out of Date" : "SubOptimal") );
+				if (result == VK_ERROR_OUT_OF_DATE_KHR)
+				{
+					Resize(m_Size);
+					return;
+				}
+			}
+			else if (result != VK_SUCCESS)
 			{
-				Resize(m_Size);
-				return;
+				LOG("[Vulkan] Failed to acquire swap chain image!");
 			}
 		}
-		else if (result != VK_SUCCESS)
-		{
-			LOG("[VULKAN] Failed to acquire swap chain image!");
-		}
+		return;
 
 	}
 	void VulkanSwapChain::FindSwapChainFormat()
@@ -100,7 +102,8 @@ namespace MeteorEngine
 	void VulkanSwapChain::Present()
 	{
 		VkSemaphore waitSemaphore = GetCurrentBackBuffer().CommandBuffer->GetSemaphore();
-		if (m_SwapChain != NULL) {
+		if (m_SwapChain) 
+		{
 			VkPresentInfoKHR presentInfo = VkPresentInfoKHR();
 			presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 			presentInfo.waitSemaphoreCount = 1;
@@ -319,7 +322,7 @@ namespace MeteorEngine
 	}
 	void VulkanSwapChain::QueueSubmit()
 	{
-		m_FramesBackBuffer[m_CurrentBuffer].CommandBuffer->Submit(VulkanDevice::GetInstance()->GetQueue(), m_FramesBackBuffer[m_CurrentBuffer].PresentSemaphore);
+		m_FramesBackBuffer[m_CurrentBuffer].CommandBuffer->Submit(m_FramesBackBuffer[m_CurrentBuffer].PresentSemaphore);
 	}
 	void VulkanSwapChain::End()
 	{
@@ -347,7 +350,7 @@ namespace MeteorEngine
 
 
 				m_FramesBackBuffer[i].CommandBuffer = new VulkanCommandBuffer();
-				m_FramesBackBuffer[i].CommandBuffer->Create(VulkanDevice::GetInstance()->GetLogicalDevice(), true, m_FramesBackBuffer[i].CommandPool->GetCommandPool());
+				m_FramesBackBuffer[i].CommandBuffer->Init(true, m_FramesBackBuffer[i].CommandPool->GetCommandPool());
 
 			}
 		}

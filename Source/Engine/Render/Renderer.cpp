@@ -19,4 +19,9 @@ namespace MeteorEngine
 	{
 		m_Renderer->Resize(size);
 	}
+
+	void RendererCommand::ClearSwapChainImages()
+	{
+		m_Renderer->ClearSwapChainImages();
+	}
 }

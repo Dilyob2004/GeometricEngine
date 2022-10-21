@@ -28,7 +28,6 @@ namespace MeteorEngine
 		void PushLayer(Layer*);
 		void PushOverlay(Layer*);
 	private:
-		std::shared_ptr<RenderContext>	m_Context;
 		std::shared_ptr<Window>		m_Window;
 	private:
         static Application *            m_ThisInstance;

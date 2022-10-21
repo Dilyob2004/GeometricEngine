@@ -53,6 +53,11 @@ namespace MeteorEngine
 		CLAMP,
 		CLAMP_TO_EDGE
 	};
+	enum class TextureType
+	{
+		COLOR,
+		DEPTH
+	};
 	enum class TextureFilter
 	{
 		NONE,
@@ -93,6 +98,7 @@ namespace MeteorEngine
     {
     public:
         virtual ~Texture() {}
+		virtual void*		GetTextureHande() const = 0;
         virtual void*		GetTexture() const = 0;
         virtual void        Bind(u32 slot = 0) const = 0;
         virtual void        UnBind(u32 slot = 0)    const = 0;

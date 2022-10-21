@@ -4,39 +4,34 @@
 
 #include <Engine/Render/Vulkan/Vk.h>
 #include <Engine/Render/Vulkan/VkFence.h>
+#include <Engine/Render/CommandBuffer.h>
 #include <Engine/Math/Vector2.h>
 
 namespace MeteorEngine
 {
-	enum class CommandBufferState
-	{
-		ReadyForBegin,
-		IsInsideBegin,
-		IsInsideRenderPass,
-		HasEnded,
-		Submitted
-	};
 
-	class METEOR_API VulkanCommandBuffer
+
+	class METEOR_API VulkanCommandBuffer : public CommandBuffer
 	{
 	public:
 		VulkanCommandBuffer();
 		~VulkanCommandBuffer();
 
-		CommandBufferState	GetState() const { return m_State; }
-		bool Create(VkDevice, bool, VkCommandPool);
-		void Begin();
-		void Submit(VkQueue, VkSemaphore);
-		void End();
-		void UpdateViewport(const Vector2u&, bool);
-		bool Wait();
-		void Reset();
-		bool Flush();
+		virtual CommandBufferState	GetState() const override{ return m_State; }
+		virtual bool Init(bool, VkCommandPool);
+		virtual bool Init(bool) override;
+		virtual void Begin() override;
+		virtual void Submit(VkSemaphore);
+		virtual void Submit() override;
+		virtual void End() override;
+		virtual void UpdateViewport(const Vector2u&, bool) override;
+		virtual bool Wait() ;
+		virtual void Reset();
+		virtual bool Flush() override;
 		VkCommandBuffer		GetCommandBuffer() const { return m_CommandBuffer; }
 		VkSemaphore			GetSemaphore() const { return m_Semaphore; }
 	private:
 		CommandBufferState	m_State;
-		VkDevice			m_Device;
 		VkCommandBuffer		m_CommandBuffer;
 		VkSemaphore			m_Semaphore;
 		VkCommandPool		m_CommandPool;

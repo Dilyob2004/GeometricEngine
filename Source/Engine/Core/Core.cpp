@@ -6,11 +6,11 @@ namespace MeteorEngine
 	int Main(const CommandLineSpec& cmdLine)
 	{
 		Platform::PreInit();
-		if (!CommandLine::Parse(cmdLine))
+		/**if (!CommandLine::Parse(cmdLine))
 		{
 			LOG("Failed to Parse command line!");
 			return -1;
-		}
+		}*/
 		Application* app = new Application();
 		app->Run();
 		delete app;

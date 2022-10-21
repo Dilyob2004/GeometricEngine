@@ -22,8 +22,9 @@ namespace MeteorEngine
 
 		InitPlatformVulkan();
 
-		m_Context = std::unique_ptr<RenderContext>(RenderContext::Create(m_Window.get()));
-		RendererCommand::Init(m_Context.get(), m_Window->GetSize(), true);
+
+		RenderContext* Context = RenderContext::Create(m_Window.get());
+		RendererCommand::Init(Context, m_Window.get()->GetSize(), true);
     }
     Application::~Application()
     {
@@ -77,6 +78,7 @@ namespace MeteorEngine
                 OnEvent(event);
 
 			Platform::Tick();
+			RendererCommand::ClearSwapChainImages();
 			RendererCommand::Begin();
             /**ImGuiLayer::OnBegin();
                 for(Layer *layer: layerStack)

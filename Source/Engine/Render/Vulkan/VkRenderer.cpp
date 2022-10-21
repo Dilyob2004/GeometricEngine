@@ -1,4 +1,5 @@
 #include <Engine/Render/Vulkan/VkRenderer.h>
+#include <Engine/Render/Vulkan/VkUtilities.h>
 
 namespace MeteorEngine
 {
@@ -11,6 +12,26 @@ namespace MeteorEngine
 	VulkanRenderer::~VulkanRenderer()
 	{
 
+	}
+
+	void VulkanRenderer::ClearSwapChainImages() const
+	{
+		for (int i = 0; i < m_SwapChain->GetSwapChainBufferCount(); i++)
+		{
+			auto cmd = BeginSingleTimeCommands(VulkanDevice::GetInstance()->GetLogicalDevice(), VulkanDevice::GetInstance()->GetCommandPool()->GetCommandPool());
+
+			VkImageSubresourceRange subresourceRange = {};
+			subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			subresourceRange.baseMipLevel = 0;
+			subresourceRange.layerCount = 1;
+			subresourceRange.levelCount = 1;
+
+			VkClearColorValue clearColourValue{ { 0.0f, 0.0f, 0.0f, 0.0f } };
+
+			vkCmdClearColorImage(cmd, static_cast<VulkanTexture2D*>(m_SwapChain->GetImage(i))->GetImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, &clearColourValue, 1, &subresourceRange);
+
+			EndSingleTimeCommands(VulkanDevice::GetInstance()->GetLogicalDevice(), VulkanDevice::GetInstance()->GetQueue(),VulkanDevice::GetInstance()->GetCommandPool()->GetCommandPool(), cmd);
+		}
 	}
 	void VulkanRenderer::Init(RenderContext* context, const Vector2u& size, bool vsync)
 	{
@@ -55,7 +76,7 @@ namespace MeteorEngine
 		poolCreateInfo.maxSets = m_DescriptorCapacity;
 
 		// Pool
-		vkCreateDescriptorPool(VulkanDevice::GetInstance()->GetLogicalDevice(), &pool_info, nullptr, &s_DescriptorPool);
+		//vkCreateDescriptorPool(VulkanDevice::GetInstance()->GetLogicalDevice(), &pool_info, nullptr, &s_DescriptorPool);
 	}
 	void VulkanRenderer::Begin()
 	{

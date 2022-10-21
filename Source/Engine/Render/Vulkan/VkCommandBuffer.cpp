@@ -1,4 +1,6 @@
 #include <Engine/Render/Vulkan/VkCommandBuffer.h>
+#include <Engine/Render/Vulkan/VkDevice.h>
+#include <Engine/Render/Vulkan/VkUtilities.h>
 
 
 namespace MeteorEngine
@@ -9,7 +11,6 @@ namespace MeteorEngine
 		m_Semaphore(0),
 		m_VulkanFence(0),
 		m_CommandBuffer(0),
-		m_Device(0),
 		m_CommandPool(0)
 	{
 
@@ -18,10 +19,10 @@ namespace MeteorEngine
 	{
 
 		if(m_Semaphore)
-			vkDestroySemaphore(m_Device, m_Semaphore, 0);
+			vkDestroySemaphore(VulkanDevice::GetInstance()->GetLogicalDevice(), m_Semaphore, 0);
 
 		if(m_CommandBuffer)
-			vkFreeCommandBuffers(m_Device, m_CommandPool, 1, &m_CommandBuffer);
+			vkFreeCommandBuffers(VulkanDevice::GetInstance()->GetLogicalDevice(), m_CommandPool, 1, &m_CommandBuffer);
 	}
 	void VulkanCommandBuffer::Begin()
 	{
@@ -38,7 +39,11 @@ namespace MeteorEngine
 		vkEndCommandBuffer(m_CommandBuffer);
 		m_State = CommandBufferState::HasEnded;
 	}
-	void VulkanCommandBuffer::Submit(VkQueue queue, VkSemaphore waitSemaphore)
+	void VulkanCommandBuffer::Submit()
+	{
+		Submit(NULL);
+	}
+	void VulkanCommandBuffer::Submit(VkSemaphore waitSemaphore)
 	{
 		VkPipelineStageFlags waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
@@ -54,13 +59,33 @@ namespace MeteorEngine
 		submitInfo.pSignalSemaphores		= &m_Semaphore;
 
 		m_VulkanFence->Reset();
-		if (vkQueueSubmit(queue, 1, &submitInfo, m_VulkanFence->GetFence()) != VK_SUCCESS)
+		if (vkQueueSubmit(VulkanDevice::GetInstance()->GetQueue(), 1, &submitInfo, m_VulkanFence->GetFence()) != VK_SUCCESS)
 			return;
 	}
-	bool VulkanCommandBuffer::Create(VkDevice device, bool primary, VkCommandPool commandPool)
+	bool VulkanCommandBuffer::Init(bool primary)
 	{
+		m_CommandPool = VulkanDevice::GetInstance()->GetCommandPool()->GetCommandPool();
+		VkCommandBufferAllocateInfo commandBufferAllocateInfo = VkCommandBufferAllocateInfo();
+		commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		commandBufferAllocateInfo.commandPool = m_CommandPool;
+		commandBufferAllocateInfo.level = primary ? VK_COMMAND_BUFFER_LEVEL_PRIMARY : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+		commandBufferAllocateInfo.commandBufferCount = 1;
+		(vkAllocateCommandBuffers(VulkanDevice::GetInstance()->GetLogicalDevice(), &commandBufferAllocateInfo, &m_CommandBuffer));
 
-		m_Device = device;
+		VkSemaphoreCreateInfo semaphoreInfo = VkSemaphoreCreateInfo();
+		semaphoreInfo.pNext = nullptr;
+
+		(vkCreateSemaphore(VulkanDevice::GetInstance()->GetLogicalDevice(), &semaphoreInfo, nullptr, &m_Semaphore));
+
+		m_VulkanFence = new VulkanFence();
+		if (!m_VulkanFence->Create(VulkanDevice::GetInstance()->GetLogicalDevice()))
+			return false;
+
+		return true;
+	}
+
+	bool VulkanCommandBuffer::Init( bool primary, VkCommandPool commandPool)
+	{
 		m_CommandPool = commandPool;
 		// These are primary command buffers
 		VkCommandBufferAllocateInfo commandBufferAllocateInfo	= VkCommandBufferAllocateInfo();
@@ -70,16 +95,16 @@ namespace MeteorEngine
 		commandBufferAllocateInfo.commandBufferCount			= 1;
 
 		// Allocate the command buffers from our command pool
-		if (vkAllocateCommandBuffers(m_Device, &commandBufferAllocateInfo, &m_CommandBuffer) != VK_SUCCESS)
+		if (vkAllocateCommandBuffers(VulkanDevice::GetInstance()->GetLogicalDevice(), &commandBufferAllocateInfo, &m_CommandBuffer) != VK_SUCCESS)
 			return false;
 
 		VkSemaphoreCreateInfo semaphoreCreateInfo = VkSemaphoreCreateInfo();
 		semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-		if (vkCreateSemaphore(m_Device, &semaphoreCreateInfo, 0, &m_Semaphore) != VK_SUCCESS)
+		if (vkCreateSemaphore(VulkanDevice::GetInstance()->GetLogicalDevice(), &semaphoreCreateInfo, 0, &m_Semaphore) != VK_SUCCESS)
 			return false;
 		m_VulkanFence = new VulkanFence();
-		if (!m_VulkanFence->Create(m_Device))
+		if (!m_VulkanFence->Create(VulkanDevice::GetInstance()->GetLogicalDevice()))
 			return false;
 
 
@@ -132,7 +157,7 @@ namespace MeteorEngine
 		if (m_State == CommandBufferState::ReadyForBegin)
 			return true;
 
-		//VKUtilities::WaitIdle();
+		VulkanDevice::GetInstance()->WaitIdle();
 
 		if (m_State == CommandBufferState::Submitted)
 			return Wait();

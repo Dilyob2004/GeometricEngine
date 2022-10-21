@@ -62,6 +62,8 @@
     <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkRenderer.cpp" />
+    <ClCompile Include="Engine\Render\CommandBuffer.cpp" />
+    <ClCompile Include="Engine\Render\RenderPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Components.h" />
@@ -146,6 +148,8 @@
     <ClInclude Include="ThirdParty\stb_image\stb_image.h" />
     <ClInclude Include="ThirdParty\stb_image\stb_image_write.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkRenderer.h" />
+    <ClInclude Include="Engine\Render\CommandBuffer.h" />
+    <ClInclude Include="Engine\Render\RenderPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source.rc" />
