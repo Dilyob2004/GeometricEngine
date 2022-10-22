@@ -3,15 +3,17 @@
 
 #include <Engine/Core/Config.h>
 #include <Engine/Render/Texture.h>
+#include <Engine/Render/CommandBuffer.h>
 namespace MeteorEngine
 { 
+	class FrameBuffer;
 	struct RenderPassDesc
 	{
 		Texture**		Attachments;
 		TextureType*	AttachmentTypes;
 		u32				AttachmentCount;
 		bool			Clear = true;
-		bool			ClearSwapChainTarget = false;
+		bool			SwapChainTarget = false;
 	};
 	class METEOR_API RenderPass
 	{
@@ -19,6 +21,8 @@ namespace MeteorEngine
 		virtual ~RenderPass() {}
 		static RenderPass* Create(const RenderPassDesc&);
 
+		virtual void BeginRenderpass(CommandBuffer* commandBuffer, float* clearColour, FrameBuffer* frame, SubPassContents contents, const Vector2u&) const = 0;
+		virtual void EndRenderpass(CommandBuffer* commandBuffer) = 0;
 	};
 }
 #endif

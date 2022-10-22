@@ -1,6 +1,8 @@
 #include <Engine/Render/Vulkan/VkRenderPass.h>
 #include <Engine/Render/Vulkan/VkTexture.h>
 #include <Engine/Render/Vulkan/VkDevice.h>
+#include <Engine/Render/Vulkan/VkFrameBuffer.h>
+#include <Engine/Render/Vulkan/VkCommandBuffer.h>
 #include <vector>
 
 namespace MeteorEngine
@@ -68,7 +70,7 @@ namespace MeteorEngine
 				colorAttachmentRef.attachment = u32(i);
 				colorAttachmentRef.layout = (layout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) ? VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL : layout;
 				colorAttachmentReferences.push_back(colorAttachmentRef);
-				//m_DepthOnly = false;
+				m_DepthOnly = false;
 			}
 			else if (desc.AttachmentTypes[i] == TextureType::DEPTH)
 			{
@@ -76,7 +78,7 @@ namespace MeteorEngine
 				depthAttachmentRef.attachment = uint32_t(i);
 				depthAttachmentRef.layout = ((VulkanTextureDepth*)desc.Attachments[i])->GetImageLayout();
 				depthAttachmentReferences.push_back(depthAttachmentRef);
-				//m_ClearDepth = desc.Clear;
+				m_ClearDepth = desc.Clear;
 			}
 		}
 
@@ -100,6 +102,9 @@ namespace MeteorEngine
 			return false;
 
 		m_ClearValue = new VkClearValue[desc.AttachmentCount];
+		m_ClearCount = desc.AttachmentCount;
+		m_SwapChainTarget = desc.SwapChainTarget;
+
 	}
 	VkSubpassContents SubPassContentsToVK(SubPassContents contents)
 	{
@@ -112,5 +117,39 @@ namespace MeteorEngine
 		default:
 			return VK_SUBPASS_CONTENTS_INLINE;
 		}
+	}
+	void VulkanRenderPass::BeginRenderpass(CommandBuffer* commandBuffer, float* clearColour, FrameBuffer* frame, SubPassContents contents, const Vector2u& size) const
+	{
+		if (!m_DepthOnly)
+			for (int i = 0; i < m_ClearCount; i++)
+			{
+				m_ClearValue[i].color.float32[0] = clearColour[0];
+				m_ClearValue[i].color.float32[1] = clearColour[1];
+				m_ClearValue[i].color.float32[2] = clearColour[2];
+				m_ClearValue[i].color.float32[3] = clearColour[3];
+			}
+
+		if (m_ClearDepth)
+			m_ClearValue[m_ClearCount - 1].depthStencil = VkClearDepthStencilValue{ 1.0f, 0 };
+
+		VkRenderPassBeginInfo rpBegin = VkRenderPassBeginInfo();
+		rpBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		rpBegin.pNext = NULL;
+		rpBegin.renderPass = m_RenderPass;
+		rpBegin.framebuffer = dynamic_cast<VulkanFrameBuffer*>(frame)->GetFrameBuffer();
+		rpBegin.renderArea.offset.x = 0;
+		rpBegin.renderArea.offset.y = 0;
+		rpBegin.renderArea.extent.width = size.x;
+		rpBegin.renderArea.extent.height = size.y;
+		rpBegin.clearValueCount = u32(m_ClearCount);
+		rpBegin.pClearValues = m_ClearValue;
+
+		vkCmdBeginRenderPass(dynamic_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), &rpBegin, SubPassContentsToVK(contents));
+		commandBuffer->UpdateViewport(size, m_SwapChainTarget);
+	}
+
+	void VulkanRenderPass::EndRenderpass(CommandBuffer* commandBuffer)
+	{
+		vkCmdEndRenderPass(dynamic_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer());
 	}
 }
