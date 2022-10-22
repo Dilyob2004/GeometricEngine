@@ -44,11 +44,81 @@ typedef float f32;
 typedef double f64;
 
 
+
+enum class RHIPixelFormat : u32
+{
+	NONE = 0,
+
+	R8_UNORM,
+	RG8_UNORM,
+	RGB8_UNORM,
+	RGBA8_UNORM,
+
+	R8_U32,
+
+	RG11B10_F32,
+	RGB10A2_UNORM,
+
+	R32_S32,
+	RG32_S32,
+	RGB32_S32,
+	RGBA32_S32,
+
+	R32_U32,
+	RG32_U32,
+	RGB32_U32,
+	RGBA32_U32,
+
+	R16_F32,
+	RG16_F32,
+	RGB16_F32,
+	RGBA16_F32,
+
+	R32_F32,
+	RG32_F32,
+	RGB32_F32,
+	RGBA32_F32,
+
+	DEPTH16_UNORM,
+	DEPTH32_F32,
+
+	DEPTH16_UNORM_STENCIL8_U32,
+	DEPTH24_UNORM_STENCIL8_U32,
+	DEPTH32_F32_STENCIL8_U32
+};
+enum class TextureWrap
+{
+	NONE,
+	REPEAT,
+	CLAMP,
+	CLAMP_TO_EDGE
+};
+enum class TextureType
+{
+	COLOR = 0,
+	DEPTH
+};
+enum class TextureFilter
+{
+	NONE,
+	LINEAR,
+	NEAREST
+};
+enum TextureFlags : u16
+{
+	Texture_Sampled = (0),
+	Texture_Storage = (1),
+	Texture_RenderTarget = (2),
+	Texture_DepthStencil = (3),
+	Texture_DepthStencilReadOnly = (4),
+	Texture_CreateMips = (5),
+	Texture_MipViews = (6)
+};
 enum class ShaderType
 {
-	FragmentShader,
-	VertexShader,
-	NoneShader
+	FRAGMENT,
+	VERTEX,
+	NONE
 };
 enum class ShaderDataType
 {

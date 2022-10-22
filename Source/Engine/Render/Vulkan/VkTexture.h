@@ -85,6 +85,8 @@ namespace MeteorEngine
 		virtual RHIPixelFormat GetFormat() const override { return m_Format; }
 		virtual Vector2u GetSize()	const override { return m_Size; }
 
+		virtual void        Bind(u32 slot = 0) const override {}
+		virtual void        UnBind(u32 slot = 0)    const override {}
 
 		virtual void Resize(const Vector2u&) override;
 

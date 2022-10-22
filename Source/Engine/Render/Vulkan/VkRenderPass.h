@@ -6,11 +6,6 @@
 #include <Engine/Render/FrameBuffer.h>
 namespace MeteorEngine
 {
-	enum SubPassContents
-	{
-		INLINE,
-		SECONDARY
-	};
 	class METEOR_API VulkanRenderPass : public RenderPass
 	{
 	public:
@@ -22,7 +17,7 @@ namespace MeteorEngine
 
 		virtual void BeginRenderpass(CommandBuffer* commandBuffer, float* clearColour, FrameBuffer* frame, SubPassContents contents, const Vector2u&) const override;
 		virtual void EndRenderpass(CommandBuffer* commandBuffer) override;
-		virtual s32 GetAttachmentCount() const = 0;
+		virtual s32 GetAttachmentCount() const override { return m_ColorAttachmentCount; }
 	private:
 		VkRenderPass	m_RenderPass;
 		VkClearValue*	m_ClearValue;

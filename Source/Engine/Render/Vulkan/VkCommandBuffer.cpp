@@ -87,14 +87,12 @@ namespace MeteorEngine
 	bool VulkanCommandBuffer::Init( bool primary, VkCommandPool commandPool)
 	{
 		m_CommandPool = commandPool;
-		// These are primary command buffers
 		VkCommandBufferAllocateInfo commandBufferAllocateInfo	= VkCommandBufferAllocateInfo();
 		commandBufferAllocateInfo.sType							= VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		commandBufferAllocateInfo.commandPool					= commandPool;
 		commandBufferAllocateInfo.level							= primary ? VK_COMMAND_BUFFER_LEVEL_PRIMARY : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
 		commandBufferAllocateInfo.commandBufferCount			= 1;
 
-		// Allocate the command buffers from our command pool
 		if (vkAllocateCommandBuffers(VulkanDevice::GetInstance()->GetLogicalDevice(), &commandBufferAllocateInfo, &m_CommandBuffer) != VK_SUCCESS)
 			return false;
 

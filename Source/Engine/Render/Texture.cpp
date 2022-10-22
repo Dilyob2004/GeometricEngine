@@ -6,4 +6,9 @@ namespace MeteorEngine
 	{
 		return new VulkanTexture2D(parameters, size);
 	}
+
+	TextureDepth* TextureDepth::Create(const Vector2u& size)
+	{
+		return new VulkanTextureDepth(size);
+	}
 }

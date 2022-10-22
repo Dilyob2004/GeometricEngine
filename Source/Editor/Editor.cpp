@@ -25,7 +25,7 @@ namespace MeteorEngine
 		//File* file = File::Open("Assets/Scene.scene", FileMode::CreateNew, FileAccess::ReadWrite, FileShare::ReadWrite);
 
 
-        FrameBufferSpec spec;
+        FrameBufferDesc spec;
 		spec.Size = Vector2u(Application::GetInstance().GetWidth(), Application::GetInstance().GetHeight());
 		//spec.Attachments = { {Texture2D::Create(RHITextureFormat::RGB8_UNORM, spec.Size.x, spec.Size.y)} };
 
@@ -67,7 +67,7 @@ namespace MeteorEngine
 			m_cameraController.OnUpdate(time);
 
 		/////////////////////////////////////////////////////////////////////////
-        m_frameBuffer->Bind();
+        //m_frameBuffer->Bind();
 
             RendererCommand::SetClearColor({ 0.09f, 0.09f, 0.09f, 1.f});
             RendererCommand::Clear();
@@ -77,7 +77,7 @@ namespace MeteorEngine
             RendererCommand::SetupProjection3D(m_cameraController);
 			m_scene->OnUpdate(time);
 
-        m_frameBuffer->UnBind();
+        //m_frameBuffer->UnBind();
 		/////////////////////////////////////////////////////////////////////////
 
 
@@ -96,11 +96,11 @@ namespace MeteorEngine
 			if ((m_viewPortSize.x != viewportPanelSize.x || m_viewPortSize.y != viewportPanelSize.y))
 			{
 
-				m_frameBuffer->Resize({ (u32)viewportPanelSize.x, (u32)viewportPanelSize.y });
+				//m_frameBuffer->Resize({ (u32)viewportPanelSize.x, (u32)viewportPanelSize.y });
 				m_viewPortSize = Vector2u((u32)viewportPanelSize.x, (u32)viewportPanelSize.y);
 				m_cameraController.OnResize(m_viewPortSize);
 			}
-			ImGui::Image((ImTextureID)m_frameBuffer->GetFrameBuffer(), { (f32)m_viewPortSize.x, (f32)m_viewPortSize.y }, ImVec2(0, 1), ImVec2(1, 0));
+			//ImGui::Image((ImTextureID)m_frameBuffer->GetFrameBuffer(), { (f32)m_viewPortSize.x, (f32)m_viewPortSize.y }, ImVec2(0, 1), ImVec2(1, 0));
 
 
 

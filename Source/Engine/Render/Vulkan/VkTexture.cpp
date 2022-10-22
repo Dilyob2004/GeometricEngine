@@ -4,6 +4,109 @@
 namespace MeteorEngine
 {
 
+
+	VkSamplerAddressMode TextureWrapToVK(const TextureWrap wrap)
+	{
+		switch (wrap)
+		{
+		case TextureWrap::CLAMP:
+			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+			//case TextureWrap::CLAMP_TO_BORDER:
+				//return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		case TextureWrap::CLAMP_TO_EDGE:
+			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		case TextureWrap::REPEAT:
+			return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+			//case TextureWrap::MIRRORED_REPEAT:
+				//return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+		default:
+			LOG("[Texture] Unsupported wrap type!");
+			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		}
+	}
+
+	VkFilter TextureFilterToVK(const TextureFilter filter)
+	{
+		switch (filter)
+		{
+		case TextureFilter::NEAREST:
+			return VK_FILTER_NEAREST;
+		case TextureFilter::LINEAR:
+			return VK_FILTER_LINEAR;
+		case TextureFilter::NONE:
+			return VK_FILTER_LINEAR;
+		default:
+			LOG("[Texture] Unsupported TextureFilter type!");
+			return VK_FILTER_LINEAR;
+		}
+	}
+	VkImageView CreateImageViews(	VkDevice device, 
+									VkImage image, 
+									VkFormat format, 
+									u32 mipLevels, 
+									VkImageViewType viewType,
+									VkImageAspectFlags aspectMask, 
+									u32 layerCount, 
+									u32 baseArrayLayer = 0, 
+									u32 baseMipLevel = 0)
+	{
+
+		VkImageViewCreateInfo imageViewCreateInfo = VkImageViewCreateInfo();
+		imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		imageViewCreateInfo.image = image;
+		imageViewCreateInfo.viewType = viewType;
+		imageViewCreateInfo.format = format;
+		imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+		imageViewCreateInfo.subresourceRange.aspectMask = aspectMask;
+		imageViewCreateInfo.subresourceRange.baseMipLevel = baseMipLevel;
+		imageViewCreateInfo.subresourceRange.levelCount = mipLevels;
+		imageViewCreateInfo.subresourceRange.baseArrayLayer = baseArrayLayer;
+		imageViewCreateInfo.subresourceRange.layerCount = layerCount;
+		VkImageView imageView;
+		if (vkCreateImageView(device, &imageViewCreateInfo, 0, &imageView) != VK_SUCCESS)
+		{
+			LOG("Failed to create Texture View");
+			return 0;
+		}
+
+		return imageView;
+	}
+
+	VkSampler CreateTextureSampler(	VkDevice device, 
+									VkFilter magFilter = VK_FILTER_LINEAR, 
+									VkFilter minFilter = VK_FILTER_LINEAR, 
+									f32 minLod = 0.0f, 
+									f32 maxLod = 1.0f, 
+									bool anisotropyEnable = false, 
+									f32 maxAnisotropy = 1.0f, 
+									VkSamplerAddressMode modeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
+									VkSamplerAddressMode modeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
+									VkSamplerAddressMode modeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE)
+	{
+		VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo();
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		samplerInfo.magFilter = magFilter;
+		samplerInfo.minFilter = minFilter;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		samplerInfo.addressModeU = modeU;
+		samplerInfo.addressModeV = modeV;
+		samplerInfo.addressModeW = modeW;
+		samplerInfo.maxAnisotropy = maxAnisotropy;
+		samplerInfo.anisotropyEnable = anisotropyEnable;
+		samplerInfo.unnormalizedCoordinates = VK_FALSE;
+		samplerInfo.compareEnable = VK_FALSE;
+		samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+		samplerInfo.mipLodBias = 0.0f;
+		samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
+		samplerInfo.minLod = minLod;
+		samplerInfo.maxLod = maxLod;
+
+		VkSampler sampler;
+		if (vkCreateSampler(device, &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
+			LOG("Failed to create texture sampler!");
+
+		return sampler;
+	}
 	VulkanTexture2D::VulkanTexture2D()
 	{
 

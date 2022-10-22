@@ -20,16 +20,17 @@ namespace MeteorEngine
 		VkAttachmentDescription attachment = VkAttachmentDescription();
 		switch (type)
 		{
-			case TextureType::COLOR:
-				VulkanTexture2D* colourTexture = ((VulkanTexture2D*)texture);
-				attachment.format = colourTexture->GetVKFormat();
-				attachment.initialLayout = colourTexture->GetImageLayout();
-				attachment.finalLayout = attachment.initialLayout;
+		case TextureType::COLOR: {
+			VulkanTexture2D* colorTexture = dynamic_cast<VulkanTexture2D*>(texture);
+			attachment.format = colorTexture->GetVKFormat();
+			attachment.initialLayout = colorTexture->GetImageLayout();
+			attachment.finalLayout = attachment.initialLayout;
+		}
 			break;
 			case TextureType::DEPTH:
-				attachment.format = ((VulkanTextureDepth*)texture)->GetVKFormat();
-				attachment.initialLayout = ((VulkanTextureDepth*)texture)->GetImageLayout();
-				attachment.finalLayout = attachment.initialLayout;
+				attachment.format			= dynamic_cast<VulkanTextureDepth*>(texture)->GetVKFormat();
+				attachment.initialLayout	= dynamic_cast<VulkanTextureDepth*>(texture)->GetImageLayout();
+				attachment.finalLayout		= attachment.initialLayout;
 				break;
 			default:
 				LOG("[Vulkan] - Unsupported TextureType - {0}", static_cast<int>(type));
@@ -132,17 +133,17 @@ namespace MeteorEngine
 		if (m_ClearDepth)
 			m_ClearValue[m_ClearCount - 1].depthStencil = VkClearDepthStencilValue{ 1.0f, 0 };
 
-		VkRenderPassBeginInfo rpBegin = VkRenderPassBeginInfo();
-		rpBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		rpBegin.pNext = NULL;
-		rpBegin.renderPass = m_RenderPass;
-		rpBegin.framebuffer = dynamic_cast<VulkanFrameBuffer*>(frame)->GetFrameBuffer();
-		rpBegin.renderArea.offset.x = 0;
-		rpBegin.renderArea.offset.y = 0;
-		rpBegin.renderArea.extent.width = size.x;
-		rpBegin.renderArea.extent.height = size.y;
-		rpBegin.clearValueCount = u32(m_ClearCount);
-		rpBegin.pClearValues = m_ClearValue;
+		VkRenderPassBeginInfo rpBegin		= VkRenderPassBeginInfo();
+		rpBegin.sType						= VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		rpBegin.pNext						= NULL;
+		rpBegin.renderPass					= m_RenderPass;
+		rpBegin.framebuffer					= dynamic_cast<VulkanFrameBuffer*>(frame)->GetFrameBuffer();
+		rpBegin.renderArea.offset.x			= 0; 
+		rpBegin.renderArea.offset.y			= 0;
+		rpBegin.renderArea.extent.width		= size.x;
+		rpBegin.renderArea.extent.height	= size.y;
+		rpBegin.clearValueCount				= u32(m_ClearCount);
+		rpBegin.pClearValues				= m_ClearValue;
 
 		vkCmdBeginRenderPass(dynamic_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), &rpBegin, SubPassContentsToVK(contents));
 		commandBuffer->UpdateViewport(size, m_SwapChainTarget);

@@ -1,40 +1,47 @@
 #include <Engine/Render/Vulkan/VkUtilities.h>
 namespace MeteorEngine
 {
-
-	VkSamplerAddressMode TextureWrapToVK(const TextureWrap wrap)
+	RHIPixelFormat VKToFormat(VkFormat format)
 	{
-		switch (wrap)
+		switch (format)
 		{
-		case TextureWrap::CLAMP:
-			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-			//case TextureWrap::CLAMP_TO_BORDER:
-				//return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-		case TextureWrap::CLAMP_TO_EDGE:
-			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		case TextureWrap::REPEAT:
-			return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-			//case TextureWrap::MIRRORED_REPEAT:
-				//return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+		case VK_FORMAT_R8_SRGB:
+			return RHIPixelFormat::R8_UNORM;
+		case VK_FORMAT_R8G8_SRGB:
+			return RHIPixelFormat::RG8_UNORM;
+		case VK_FORMAT_R8G8B8_SRGB:
+			return RHIPixelFormat::RGB8_UNORM;
+		case VK_FORMAT_R8G8B8A8_SRGB:
+			return RHIPixelFormat::RGBA8_UNORM;
+		case VK_FORMAT_R16G16B16_SFLOAT:
+			return RHIPixelFormat::RGB16_F32;
+		case VK_FORMAT_R16G16B16A16_SFLOAT:
+			return RHIPixelFormat::RGBA16_F32;
+		case VK_FORMAT_R32G32B32_SFLOAT:
+			return RHIPixelFormat::RGB32_F32;
+		case VK_FORMAT_R32G32B32A32_SFLOAT:
+			return RHIPixelFormat::RGBA32_F32;
+		case VK_FORMAT_R8_UNORM:
+			return RHIPixelFormat::R8_UNORM;
+		case VK_FORMAT_R8G8_UNORM:
+			return RHIPixelFormat::RG8_UNORM;
+		case VK_FORMAT_R8G8B8A8_UNORM:
+			return RHIPixelFormat::RGBA8_UNORM;
+		case VK_FORMAT_B10G11R11_UFLOAT_PACK32:
+			return RHIPixelFormat::RG11B10_F32;
+		case VK_FORMAT_A2R10G10B10_UNORM_PACK32:
+			return RHIPixelFormat::RGB10A2_UNORM;
+		case VK_FORMAT_D16_UNORM:
+			return RHIPixelFormat::DEPTH16_UNORM;
+		case VK_FORMAT_D32_SFLOAT:
+			return RHIPixelFormat::DEPTH32_F32;
+		case VK_FORMAT_D24_UNORM_S8_UINT:
+			return RHIPixelFormat::DEPTH24_UNORM_STENCIL8_U32;
+		case VK_FORMAT_D32_SFLOAT_S8_UINT:
+			return RHIPixelFormat::DEPTH32_F32_STENCIL8_U32;
 		default:
-			LOG("[Texture] Unsupported wrap type!");
-			return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		}
-	}
-
-	VkFilter TextureFilterToVK(const TextureFilter filter)
-	{
-		switch (filter)
-		{
-		case TextureFilter::NEAREST:
-			return VK_FILTER_NEAREST;
-		case TextureFilter::LINEAR:
-			return VK_FILTER_LINEAR;
-		case TextureFilter::NONE:
-			return VK_FILTER_LINEAR;
-		default:
-			LOG("[Texture] Unsupported TextureFilter type!");
-			return VK_FILTER_LINEAR;
+			LOG("[Texture] Unsupported texture type!");
+			return RHIPixelFormat::RGBA8_UNORM;
 		}
 	}
 	u32 FindMemoryType(VkPhysicalDevice device, u32 typeFilter, VkMemoryPropertyFlags properties)
@@ -524,57 +531,5 @@ namespace MeteorEngine
 	}
 
 
-	VkImageView CreateImageViews(VkDevice device, VkImage image, VkFormat format, u32 mipLevels, VkImageViewType viewType, 
-		VkImageAspectFlags aspectMask, u32 layerCount, u32 baseArrayLayer, u32 baseMipLevel)
-	{
-
-		VkImageViewCreateInfo imageViewCreateInfo = VkImageViewCreateInfo();
-		imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		imageViewCreateInfo.image = image;
-		imageViewCreateInfo.viewType = viewType;
-		imageViewCreateInfo.format = format;
-		imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
-		imageViewCreateInfo.subresourceRange.aspectMask = aspectMask;
-		imageViewCreateInfo.subresourceRange.baseMipLevel = baseMipLevel;
-		imageViewCreateInfo.subresourceRange.levelCount = mipLevels;
-		imageViewCreateInfo.subresourceRange.baseArrayLayer = baseArrayLayer;
-		imageViewCreateInfo.subresourceRange.layerCount = layerCount;
-		VkImageView imageView;
-		if (vkCreateImageView(device, &imageViewCreateInfo, 0, &imageView) != VK_SUCCESS)
-		{
-			LOG("Failed to create Texture View");
-			return NULL;
-		}
-
-		return imageView;
-	}
-
-	VkSampler CreateTextureSampler(VkDevice device, VkFilter magFilter, VkFilter minFilter, float minLod, float maxLod, bool anisotropyEnable, float maxAnisotropy, 
-		VkSamplerAddressMode modeU, VkSamplerAddressMode modeV, VkSamplerAddressMode modeW)
-	{
-		VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo();
-		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		samplerInfo.magFilter = magFilter;
-		samplerInfo.minFilter = minFilter;
-		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		samplerInfo.addressModeU = modeU;
-		samplerInfo.addressModeV = modeV;
-		samplerInfo.addressModeW = modeW;
-		samplerInfo.maxAnisotropy = maxAnisotropy;
-		samplerInfo.anisotropyEnable = anisotropyEnable;
-		samplerInfo.unnormalizedCoordinates = VK_FALSE;
-		samplerInfo.compareEnable = VK_FALSE;
-		samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-		samplerInfo.mipLodBias = 0.0f;
-		samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
-		samplerInfo.minLod = minLod;
-		samplerInfo.maxLod = maxLod;
-
-		VkSampler sampler;
-		if (vkCreateSampler(device, &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
-			LOG("Failed to create texture sampler!");
-
-		return sampler;
-	}
 
 }
