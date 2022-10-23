@@ -64,6 +64,7 @@
     <ClCompile Include="Engine\Render\Vulkan\VkRenderer.cpp" />
     <ClCompile Include="Engine\Render\CommandBuffer.cpp" />
     <ClCompile Include="Engine\Render\RenderPass.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Components.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="Engine\Render\Vulkan\VkRenderer.h" />
     <ClInclude Include="Engine\Render\CommandBuffer.h" />
     <ClInclude Include="Engine\Render\RenderPass.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source.rc" />

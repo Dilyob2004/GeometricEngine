@@ -62,6 +62,7 @@ namespace MeteorEngine
 	class METEOR_API Texture2D : public Texture
 	{
 	public:
+		static Texture2D* Create(const std::string& , const TextureDesc& desc = TextureDesc());
 		static Texture2D* Create(const TextureDesc&, const Vector2u&);
 		virtual void Resize(const Vector2u&) = 0;
 	};

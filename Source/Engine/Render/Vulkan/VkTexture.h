@@ -10,6 +10,7 @@ namespace MeteorEngine
 	{
 	public:
 		VulkanTexture2D();
+		VulkanTexture2D(const std::string&, const TextureDesc&);
 		VulkanTexture2D(const TextureDesc&, const Vector2u&);
 		VulkanTexture2D(VkImage, VkImageView, VkFormat, const Vector2u&);
 		~VulkanTexture2D();
@@ -62,6 +63,7 @@ namespace MeteorEngine
 		void BuildTexture();
 		void Cleanup();
 	private:
+		u8* m_Pointer = NULL;
 		bool					m_DeleteImage{ false };
 		TextureDesc				m_Parameters;
 		Vector2u				m_Size;

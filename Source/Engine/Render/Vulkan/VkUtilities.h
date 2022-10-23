@@ -28,5 +28,20 @@ namespace MeteorEngine
 
 
 	RHIPixelFormat VKToFormat(VkFormat format);
+
+
+
+	void CopyBufferToImage(VkDevice device, VkQueue queue, VkCommandPool commandPool, VkBuffer buffer, VkImage image, u32 width, u32 height);
+
+	/**void CopyBuffer(VkDevice device, VkQueue queue, VkCommandPool commandPool, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+	{
+		VkCommandBuffer commandBuffer = BeginSingleTimeCommands(device, commandPool);
+
+		VkBufferCopy copyRegion = VkBufferCopy();
+		copyRegion.size = size;
+		vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+		EndSingleTimeCommands(device, queue, commandPool, commandBuffer);
+	}*/
 }
 #endif // !VKUTILITIES_H
