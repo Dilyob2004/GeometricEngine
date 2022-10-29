@@ -18,7 +18,7 @@ namespace MeteorEngine
 		virtual void Resize(const Vector2u& size) override;
 		virtual void ClearSwapChainImages() const override;
 
-		VulkanSwapChain* GetMainSwapChain() const { return m_SwapChain; }
+		virtual VulkanSwapChain* GetMainSwapChain() const override { return m_SwapChain; }
 	private:
 		VulkanSwapChain* m_SwapChain;
 		u32 m_DescriptorCapacity = 0;

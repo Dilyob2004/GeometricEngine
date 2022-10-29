@@ -28,8 +28,10 @@ namespace MeteorEngine
 		void Resize(const Vector2u&);
 		void CreateFrameData();
 		VulkanBackBuffer& GetCurrentBackBuffer();
+		CommandBuffer* GetCurrentCommandBuffer() { return GetCurrentBackBuffer().CommandBuffer; }
 
 		Texture* GetCurrentImage() { return (Texture*)m_SwapChainBuffers[m_AcquireImageIndex]; };
+		u32 GetCurrentImageIndex() const { return m_AcquireImageIndex; }
 		Texture* GetImage(u32 index) { return (Texture*)m_SwapChainBuffers[index]; };
 		VkFormat GetSwapChainFormat() const { return m_ColourFormat; }
 		VkSwapchainKHR GetSwapChain() const { return m_SwapChain; }

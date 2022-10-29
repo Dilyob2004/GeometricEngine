@@ -14,7 +14,7 @@ namespace MeteorEngine
 	};
 	struct RenderPassDesc
 	{
-		Texture2D**		Attachments;
+		Texture**		Attachments;
 		TextureType*	AttachmentTypes;
 		u32				AttachmentCount;
 		bool			Clear = true;

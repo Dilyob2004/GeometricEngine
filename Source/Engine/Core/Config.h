@@ -28,6 +28,12 @@
 #define MAX(a, b) (( (a) > (b) ) ? (a) : (b))
 typedef void	s0;
 typedef void*	p0;
+typedef const void* cp0;
+
+typedef char     i8;
+typedef short    i16;
+typedef int      i32;
+typedef long     i64;
 
 typedef signed char     s8;
 typedef signed short    s16;

@@ -129,6 +129,7 @@
     <ClCompile Include="Engine\Render\Renderer.cpp" />
     <ClCompile Include="Engine\Render\RenderPass.cpp" />
     <ClCompile Include="Engine\Render\Shader.cpp" />
+    <ClCompile Include="Engine\Render\SwapChain.cpp" />
     <ClCompile Include="Engine\Render\Texture.cpp" />
     <ClCompile Include="Engine\Render\VertexArray.cpp" />
     <ClCompile Include="Engine\Render\VertexBuffer.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkFence.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkPipeline.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkRenderer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkRenderPass.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkSurface.cpp" />
@@ -145,6 +147,7 @@
     <ClCompile Include="Engine\Render\Vulkan\VkFrameBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkTexture.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkUtilities.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkVertexBuffer.cpp" />
     <ClCompile Include="Engine\System\Clock.cpp" />
     <ClCompile Include="Engine\System\File.cpp" />
     <ClCompile Include="Engine\System\FileSystem.cpp" />
@@ -207,6 +210,7 @@
     <ClInclude Include="Engine\Render\Renderer.h" />
     <ClInclude Include="Engine\Render\RenderPass.h" />
     <ClInclude Include="Engine\Render\Shader.h" />
+    <ClInclude Include="Engine\Render\SwapChain.h" />
     <ClInclude Include="Engine\Render\Texture.h" />
     <ClInclude Include="Engine\Render\VertexArray.h" />
     <ClInclude Include="Engine\Render\VertexBuffer.h" />
@@ -217,6 +221,7 @@
     <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkFence.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkPipeline.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkRenderer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkRenderPass.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkSurface.h" />
@@ -224,6 +229,7 @@
     <ClInclude Include="Engine\Render\Vulkan\VkFrameBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkTexture.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkUtilities.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkVertexBuffer.h" />
     <ClInclude Include="Engine\System\Clock.h" />
     <ClInclude Include="Engine\System\File.h" />
     <ClInclude Include="Engine\System\FileBase.h" />

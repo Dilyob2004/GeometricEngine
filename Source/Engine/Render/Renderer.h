@@ -7,6 +7,7 @@
 #include <Engine/Render/Camera.h>
 #include <Engine/Render/Camera2D.h>
 #include <Engine/Render/RenderContext.h>
+#include <Engine/Render/Vulkan/VkSwapChain.h>
 namespace MeteorEngine
 {
 	class METEOR_API Renderer
@@ -19,6 +20,9 @@ namespace MeteorEngine
 		virtual void Present() = 0;
 		virtual void Resize(const Vector2u& size) = 0;
 		virtual void ClearSwapChainImages() const = 0;
+
+		virtual VulkanSwapChain* GetMainSwapChain() const = 0;
+
 
 		void DrawIndexed(const std::shared_ptr<VertexArray>&) {}
 		void SetupProjection2D(Camera2D) {}
@@ -39,6 +43,7 @@ namespace MeteorEngine
 		static void Resize(const Vector2u& size);
 		static void ClearSwapChainImages();
 
+		static VulkanSwapChain* GetMainSwapChain();
 
 
 

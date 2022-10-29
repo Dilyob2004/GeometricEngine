@@ -27,6 +27,7 @@ namespace MeteorEngine
 		virtual RHIPixelFormat GetFormat() const override { return m_Format; }
 		virtual Vector2u GetSize()	const override { return m_Size; }
 
+		virtual TextureType GetType()	const override { return TextureType::COLOR; }
 
 
 		VkImage GetImage() const
@@ -92,6 +93,7 @@ namespace MeteorEngine
 
 		virtual void Resize(const Vector2u&) override;
 
+		virtual TextureType GetType()	const override { return TextureType::DEPTH; }
 		virtual void* GetTexture() const override { return (void*)this; }
 
 		virtual void* GetTextureHande() const override { return (void*)m_Image; }

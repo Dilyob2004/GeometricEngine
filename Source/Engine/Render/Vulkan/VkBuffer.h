@@ -28,7 +28,7 @@ namespace MeteorEngine
 		void SetMemoryProperyFlags(VkBufferUsageFlags flags) { m_MemoryProperyFlags = flags; }
 
 		const VkDescriptorBufferInfo& GetBufferInfo() const { return m_DesciptorBufferInfo; };
-	private:
+	protected:
 		VkBuffer			m_Buffer{};
 		VkDeviceMemory		m_Memory{};
 		VkDescriptorBufferInfo m_DesciptorBufferInfo{};

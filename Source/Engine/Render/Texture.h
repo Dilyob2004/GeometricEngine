@@ -37,6 +37,7 @@ namespace MeteorEngine
 
 		virtual RHIPixelFormat GetFormat() const = 0;
 		virtual Vector2u GetSize()	const = 0;
+		virtual TextureType GetType()	const = 0;
 
 		static bool IsDepthStencilFormat(RHIPixelFormat format)
 		{

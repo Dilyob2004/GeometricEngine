@@ -7,7 +7,7 @@ namespace MeteorEngine
 {
     struct FrameBufferDesc
     {
-		Texture2D**		Attachments;
+		Texture**		Attachments;
 		TextureType*	AttachmentTypes;
 		RenderPass*		RenderPass;
 		Vector2u		Size;
