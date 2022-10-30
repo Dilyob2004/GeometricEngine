@@ -1,8 +1,7 @@
 #ifndef VKPIPELINE_H
 #define VKPIPELINE_H
 #include <Engine/Render/Vulkan/Vk.h>
-#include <Engine/Render/CommandBuffer.h>
-#include <Engine/Render/Vulkan/VkRenderPass.h>
+#include <Engine/Render/RenderPass.h>
 #include <Engine/Render/Vulkan/VkFrameBuffer.h>
 namespace MeteorEngine
 {
@@ -27,7 +26,7 @@ namespace MeteorEngine
 		void PreInit();
 		void TransitionBackbuffers();
 	private:
-		std::vector<VulkanFrameBuffer*> m_FrameBuffer;
+		std::vector< FrameBuffer* > m_FrameBuffer;
 		RenderPass* m_RenderPass;
 		PipelineInfo m_PipelineInfo;
 	};

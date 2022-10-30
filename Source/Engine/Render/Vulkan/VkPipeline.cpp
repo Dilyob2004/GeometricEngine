@@ -1,21 +1,21 @@
 #include <Engine/Render/Vulkan/VkPipeline.h>
 #include <Engine/Render/Vulkan/VkTexture.h>
 #include <Engine/Render/Renderer.h>
-
+#include <Engine/Render/Vulkan/VkCommandBuffer.h>
 
 namespace MeteorEngine
 {
 	VulkanPipeline::VulkanPipeline():
 		m_PipelineInfo(),
 		m_RenderPass(NULL),
-		m_FrameBuffer(NULL)
+		m_FrameBuffer()
 	{
 
 	}
 	VulkanPipeline::VulkanPipeline(const PipelineInfo& pipelineInfo):
 		m_PipelineInfo(pipelineInfo),
 		m_RenderPass(NULL),
-		m_FrameBuffer(NULL)
+		m_FrameBuffer()
 	{
 		PreInit();
 	}
@@ -25,7 +25,7 @@ namespace MeteorEngine
 	}
 	void VulkanPipeline::Begin(CommandBuffer* commandBuffer, u32 layer)
 	{
-		VulkanFrameBuffer* frameBuffer;
+		FrameBuffer* frameBuffer;
 		if (true)
 		{
 			TransitionBackbuffers();

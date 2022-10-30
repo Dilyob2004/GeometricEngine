@@ -23,6 +23,19 @@ namespace MeteorEngine
 		
 		m_ThisInstance = this;
 	}
+
+	VulkanSwapChain::VulkanSwapChain(VulkanContext* context, const Vector2u& size, bool vsync) :
+		m_ContextWindow(0),
+		m_SwapChainBufferCount(0),
+		m_OldSwapChain(0),
+		m_CurrentBuffer(0),
+		m_SwapChain(0),
+		m_AcquireImageIndex(UINT32_MAX),
+		m_ColourFormat(),
+		m_ColourSpace()
+	{
+		Create(context, size, vsync);
+	}
 	VulkanSwapChain::~VulkanSwapChain()	
 	{
 		if (m_SwapChain)

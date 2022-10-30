@@ -3,7 +3,7 @@
 #include <Engine/Gui/ImGuiLayer.h>
 #include <Engine/Core/Application.h>
 #include <Engine/Platform/Platform.h>
-#include <Engine/Platform/Win32/VulkanSupport.h>
+#include <Engine/Render/Vulkan/Vk.h>
 #include <Engine/Render/RenderContext.h>
 #include <Editor/ExampleLayer.h>
 #include <Editor/Editor.h>
@@ -78,7 +78,6 @@ namespace MeteorEngine
                 OnEvent(event);
 
 			Platform::Tick();
-			RendererCommand::ClearSwapChainImages();
 			RendererCommand::Begin();
             /**ImGuiLayer::OnBegin();
                 for(Layer *layer: layerStack)

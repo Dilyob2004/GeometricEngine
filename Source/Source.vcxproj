@@ -139,6 +139,7 @@
     <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkFence.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkIntexBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkPipeline.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkRenderer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkRenderPass.cpp" />
@@ -146,6 +147,7 @@
     <ClCompile Include="Engine\Render\Vulkan\VkSwapChain.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkFrameBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkTexture.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkUniformBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkUtilities.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkVertexBuffer.cpp" />
     <ClCompile Include="Engine\System\Clock.cpp" />
@@ -159,6 +161,17 @@
     <ClCompile Include="ThirdParty\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp" />
     <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_cfg.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_cpp.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_cross.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_cross_c.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_cross_parsed_ir.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_cross_util.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_glsl.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_hlsl.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_msl.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_parser.cpp" />
+    <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_reflect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Components.h" />
@@ -221,6 +234,7 @@
     <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkFence.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkIntexBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkPipeline.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkRenderer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkRenderPass.h" />
@@ -228,6 +242,7 @@
     <ClInclude Include="Engine\Render\Vulkan\VkSwapChain.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkFrameBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkTexture.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkUniformBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkUtilities.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkVertexBuffer.h" />
     <ClInclude Include="Engine\System\Clock.h" />
@@ -247,6 +262,22 @@
     <ClInclude Include="ThirdParty\ImGui\imstb_rectpack.h" />
     <ClInclude Include="ThirdParty\ImGui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\ImGui\imstb_truetype.h" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv.h" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_cfg.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_common.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_cpp.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_cross.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_cross_c.h" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_cross_containers.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_cross_error_handling.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_cross_parsed_ir.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_cross_util.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_glsl.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_hlsl.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_msl.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_parser.hpp" />
+    <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_reflect.hpp" />
     <ClInclude Include="ThirdParty\stb_image\stb_image.h" />
     <ClInclude Include="ThirdParty\stb_image\stb_image_write.h" />
   </ItemGroup>

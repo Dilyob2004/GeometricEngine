@@ -5,6 +5,7 @@
 #include <Engine/Render/Vulkan/VkCommandBuffer.h>
 #include <Engine/Render/Texture.h>
 #include <Engine/Math/Vector2.h>
+#include <Engine/Render/SwapChain.h>
 #include <Engine/Render/Vulkan/VkContext.h>
 #include <vector>
 namespace MeteorEngine
@@ -15,31 +16,32 @@ namespace MeteorEngine
 		VulkanCommandPool*		CommandPool = NULL;
 		VulkanCommandBuffer*	CommandBuffer = NULL;
 	};
-	class METEOR_API VulkanSwapChain
+	class METEOR_API VulkanSwapChain : public SwapChain
 	{
 	public:
 		static VulkanSwapChain* GetInstance() { return m_ThisInstance; }
 		VulkanSwapChain();
+		VulkanSwapChain(VulkanContext*, const Vector2u&, bool);
 		~VulkanSwapChain();
 
 		bool Create(VulkanContext*, const Vector2u&, bool);
 		bool Create( const Vector2u&, bool);
 
-		void Resize(const Vector2u&);
+		void Resize(const Vector2u&) override;
 		void CreateFrameData();
 		VulkanBackBuffer& GetCurrentBackBuffer();
-		CommandBuffer* GetCurrentCommandBuffer() { return GetCurrentBackBuffer().CommandBuffer; }
+		CommandBuffer* GetCurrentCommandBuffer() override{ return GetCurrentBackBuffer().CommandBuffer; }
 
-		Texture* GetCurrentImage() { return (Texture*)m_SwapChainBuffers[m_AcquireImageIndex]; };
-		u32 GetCurrentImageIndex() const { return m_AcquireImageIndex; }
-		Texture* GetImage(u32 index) { return (Texture*)m_SwapChainBuffers[index]; };
+		Texture* GetCurrentImage() override{ return (Texture*)m_SwapChainBuffers[m_AcquireImageIndex]; };
+		u32 GetCurrentImageIndex()  const override { return m_AcquireImageIndex; }
+		Texture* GetImage(u32 index) override{ return (Texture*)m_SwapChainBuffers[index]; };
+		u32 GetSwapChainBufferCount() const override { return m_SwapChainBufferCount; }
 		VkFormat GetSwapChainFormat() const { return m_ColourFormat; }
 		VkSwapchainKHR GetSwapChain() const { return m_SwapChain; }
-		u32 GetSwapChainBufferCount() const { return m_SwapChainBufferCount; }
-		void Begin();
-		void Present();
-		void End();
-		void QueueSubmit();
+		void Begin() override;
+		void Present()override;
+		void End()override;
+		void QueueSubmit()override;
 	private:
 
 		void AcquireNextImage();

@@ -1,10 +1,11 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
-#include <Engine/Core/Config.h>
-#include <Engine/Render/RenderPass.h>
+#include <Engine/Render/Vulkan/Vk.h>
+#include <Engine/Render/Texture.h>
 #include <vector>
 namespace MeteorEngine
 {
+	class RenderPass;
     struct FrameBufferDesc
     {
 		Texture**		Attachments;

@@ -1,9 +1,9 @@
 #ifndef VKRENDERER_H
 #define VKRENDERER_H
 
-#include <Engine/Render/Vulkan/VkSwapChain.h>
+#include <Engine/Render/Vulkan/Vk.h>
+#include <Engine/Render/SwapChain.h>
 #include <Engine/Render/Renderer.h>
-
 namespace MeteorEngine
 {
 
@@ -18,13 +18,13 @@ namespace MeteorEngine
 		virtual void Resize(const Vector2u& size) override;
 		virtual void ClearSwapChainImages() const override;
 
-		virtual VulkanSwapChain* GetMainSwapChain() const override { return m_SwapChain; }
+		virtual SwapChain* GetMainSwapChain() const override { return m_SwapChain; }
 	private:
-		VulkanSwapChain* m_SwapChain;
+		SwapChain* m_SwapChain;
 		u32 m_DescriptorCapacity = 0;
 
 		static VkDescriptorPool s_DescriptorPool;
-		VkDescriptorSet m_DescriptorSetPool[16] = {};
+		VkDescriptorSet m_DescriptorSetPool[16]{};
 	};
 }
 

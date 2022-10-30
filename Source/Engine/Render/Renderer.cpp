@@ -8,7 +8,7 @@ namespace MeteorEngine
 		m_Renderer->Init(context, size, vsync);
 	}
 
-	VulkanSwapChain* RendererCommand::GetMainSwapChain() 
+	SwapChain* RendererCommand::GetMainSwapChain()
 	{
 		return m_Renderer->GetMainSwapChain();
 	}
