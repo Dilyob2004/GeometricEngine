@@ -24,7 +24,15 @@ namespace MeteorEngine
 	{
 		m_Renderer->Resize(size);
 	}
+	void RendererCommand::ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour)
+	{
+		m_Renderer->ClearRenderTarget(texture, commandBuffer, clearColour);
+	}
 
+	void RendererCommand::DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start)
+	{
+		m_Renderer->DrawIndexed(commandBuffer, type, count, start);
+	}
 	void RendererCommand::ClearSwapChainImages()
 	{
 		m_Renderer->ClearSwapChainImages();

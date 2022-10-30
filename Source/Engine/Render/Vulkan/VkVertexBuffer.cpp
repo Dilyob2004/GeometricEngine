@@ -3,7 +3,7 @@
 namespace MeteorEngine
 {
 
-	VulkanVertexBuffer::VulkanVertexBuffer(cp0 vertexPointer, u32 size): VulkanBuffer(),
+	VulkanVertexBuffer::VulkanVertexBuffer(f32* vertexPointer, u32 size): VulkanBuffer(),
 		m_Size(size),
 		m_MappedBuffer(false)
 	{
@@ -22,13 +22,13 @@ namespace MeteorEngine
 			m_MappedBuffer = false;
 		}
 	}
-	void VulkanVertexBuffer::Bind(CommandBuffer* commandBuffer)
+	void VulkanVertexBuffer::Bind(CommandBuffer* commandBuffer) const
 	{
 		VkDeviceSize offsets[1] = { 0 };
 		if (commandBuffer)
 			vkCmdBindVertexBuffers(dynamic_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), 0, 1, &m_Buffer, offsets);
 	}
-	void VulkanVertexBuffer::SetData(cp0 vertexPointer, u32 size)
+	void VulkanVertexBuffer::SetData(f32* vertexPointer, u32 size)
 	{
 		VulkanBuffer::SetData(size, vertexPointer);
 	}

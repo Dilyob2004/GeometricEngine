@@ -1,6 +1,7 @@
 #include <Engine/Render/Vulkan/VkRenderer.h>
 #include <Engine/Render/Vulkan/VkUtilities.h>
 #include <Engine/Render/Vulkan/VkDevice.h>
+#include <Engine/Render/Vulkan/VkCommandBuffer.h>
 
 namespace MeteorEngine
 {
@@ -14,7 +15,41 @@ namespace MeteorEngine
 	{
 
 	}
+	void VulkanRenderer::ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour)
+	{
+		VkImageSubresourceRange subresourceRange = {}; // TODO: Get from texture
+		subresourceRange.baseMipLevel = 0;
+		subresourceRange.layerCount = 1;
+		subresourceRange.levelCount = 1;
+		subresourceRange.baseArrayLayer = 0;
 
+		if (texture->GetType() == TextureType::COLOR)
+		{
+			VkImageLayout layout = ((VulkanTexture2D*)texture)->GetImageLayout();
+			((VulkanTexture2D*)texture)->TransitionImage(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer());
+
+			subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+
+			VkClearColorValue clearColourValue = VkClearColorValue({ { clearColour.x, clearColour.y, clearColour.z, clearColour.w } });
+			vkCmdClearColorImage(((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer(), 
+				static_cast<VulkanTexture2D*>(texture)->GetImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clearColourValue, 1, &subresourceRange);
+			((VulkanTexture2D*)texture)->TransitionImage(layout, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer();
+		}
+		else if (texture->GetType() == TextureType::DEPTH)
+		{
+			VkClearDepthStencilValue clear_depth_stencil = { 1.0f, 1 };
+
+			subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+			((VulkanTextureDepth*)texture)->TransitionImage(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer());
+			vkCmdClearDepthStencilImage(((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer(), 
+				static_cast<VulkanTextureDepth*>(texture)->GetImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clear_depth_stencil, 1, &subresourceRange);
+		}
+	}
+	void VulkanRenderer::DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start) const
+	{
+		//Engine::Get().Statistics().NumDrawCalls++;
+		vkCmdDrawIndexed(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), count, 1, 0, 0, 0);
+	}
 	void VulkanRenderer::ClearSwapChainImages() const
 	{
 		for (int i = 0; i < m_SwapChain->GetSwapChainBufferCount(); i++)

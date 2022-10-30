@@ -1,6 +1,7 @@
 #ifndef INDEXBUFFER_H
 #define INDEXBUFFER_H
 #include <Engine/Core/Config.h>
+#include <Engine/Render/CommandBuffer.h>
 namespace MeteorEngine
 {
     class METEOR_API IndexBuffer
@@ -8,9 +9,10 @@ namespace MeteorEngine
     public:
         virtual ~IndexBuffer() {}
 
-        virtual void Bind()     const   = 0;
+        virtual void Bind(CommandBuffer*)     const   = 0;
         virtual void UnBind()   const   = 0;
         virtual u32 GetCount()  const   = 0;
+        virtual u32 GetSize()  const   = 0;
 
         static IndexBuffer *Create(u32* , u32);
     };

@@ -18,11 +18,12 @@ namespace MeteorEngine
 		virtual void Resize(const Vector2u& size) override;
 		virtual void ClearSwapChainImages() const override;
 
+		virtual void DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start) const override;
+		virtual void ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour)override;
 		virtual SwapChain* GetMainSwapChain() const override { return m_SwapChain; }
 	private:
 		SwapChain* m_SwapChain;
 		u32 m_DescriptorCapacity = 0;
-
 		static VkDescriptorPool s_DescriptorPool;
 		VkDescriptorSet m_DescriptorSetPool[16]{};
 	};

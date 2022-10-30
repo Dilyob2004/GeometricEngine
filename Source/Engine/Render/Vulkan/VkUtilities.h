@@ -6,6 +6,13 @@
 
 namespace MeteorEngine
 {
+	VkCullModeFlags CullModeToVK(CullMode mode);
+	VkPolygonMode PolygonModeToVk(PolygonMode mode);
+
+	VkPrimitiveTopology DrawTypeToVk(DrawType type);
+	VkDescriptorType DescriptorTypeToVK(DescriptorType type);
+
+	VkShaderStageFlagBits ShaderTypeToVK(const ShaderType& shaderName);
 	u32 FindMemoryType(VkPhysicalDevice device, u32 typeFilter, VkMemoryPropertyFlags properties);
 	VkPipelineStageFlags AccessFlagsToPipelineStage(VkAccessFlags accessFlags, const VkPipelineStageFlags stageFlags);
 	VkPipelineStageFlags LayoutToAccessMask(const VkImageLayout layout, const bool isDestination);

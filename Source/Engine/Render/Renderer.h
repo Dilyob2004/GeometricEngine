@@ -19,7 +19,9 @@ namespace MeteorEngine
 		virtual void Present() = 0;
 		virtual void Resize(const Vector2u& size) = 0;
 		virtual void ClearSwapChainImages() const = 0;
+		virtual void ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour) = 0;
 
+		virtual void DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start) const = 0;
 		virtual SwapChain* GetMainSwapChain() const = 0;
 
 
@@ -41,7 +43,9 @@ namespace MeteorEngine
 		static void Present();
 		static void Resize(const Vector2u& size);
 		static void ClearSwapChainImages();
+		static void ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour = {0, 0, 0, 1});
 
+		static void DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start);
 		static SwapChain* GetMainSwapChain();
 
 

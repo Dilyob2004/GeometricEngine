@@ -8,10 +8,10 @@
 #include <Editor/ExampleLayer.h>
 #include <Editor/Editor.h>
 #include <limits>
+#include <fstream>
 
 namespace MeteorEngine
 {
-
 	bool	m_HasExitApplication = false;
     Application* Application::m_ThisInstance = NULL;
     Application::Application()
@@ -19,9 +19,11 @@ namespace MeteorEngine
 		m_ThisInstance = this;
 		//ImGuiLayer::OnEnableHighDpi();
 		m_Window = std::unique_ptr<Window>( Window::Create("Meteor Engine", Vector2u(1280, 720) ) );
-
+		LOGLN(sizeof(s32));
+		LOGLN(sizeof(u32));
 		InitPlatformVulkan();
-
+		Vector2f p(1.1f, 1.32f);
+		LOG(sizeof(p));
 
 		RenderContext* Context = RenderContext::Create(m_Window.get());
 		RendererCommand::Init(Context, m_Window.get()->GetSize(), true);

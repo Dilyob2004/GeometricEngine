@@ -8,8 +8,8 @@ namespace MeteorEngine
 	struct TextureDesc
 	{
 		TextureDesc() = default;
-		TextureDesc(const RHIPixelFormat & format, const TextureFilter& minFilter = TextureFilter::LINEAR, 
-					const TextureFilter& magFilter = TextureFilter::LINEAR, const TextureWrap& wrapMode = TextureWrap::CLAMP, bool isSRGB = false):
+		TextureDesc(const RHIPixelFormat& format, const TextureFilter& minFilter = TextureFilter::LINEAR,
+			const TextureFilter& magFilter = TextureFilter::LINEAR, const TextureWrap& wrapMode = TextureWrap::CLAMP, bool isSRGB = false) :
 			Format(format),
 			MinFilter(minFilter),
 			MagFilter(magFilter),
@@ -17,13 +17,13 @@ namespace MeteorEngine
 			IsSRGB(isSRGB)
 		{
 		}
-		u16				Flags		= TextureFlags::Texture_CreateMips;
-		u16				MsaaLevel	= 1;
-		RHIPixelFormat	Format		= RHIPixelFormat::RGB8_UNORM;
-		TextureFilter	MinFilter	= TextureFilter::NEAREST;
-		TextureFilter	MagFilter	= TextureFilter::NEAREST;
-		TextureWrap		WrapMode	= TextureWrap::CLAMP_TO_EDGE;
-		bool			IsSRGB		= false;
+		u16				Flags = TextureFlags::Texture_CreateMips;
+		u16				MsaaLevel = 1;
+		RHIPixelFormat	Format = RHIPixelFormat::RGB8_UNORM;
+		TextureFilter	MinFilter = TextureFilter::NEAREST;
+		TextureFilter	MagFilter = TextureFilter::NEAREST;
+		TextureWrap		WrapMode = TextureWrap::CLAMP_TO_EDGE;
+		bool			IsSRGB = false;
 	};
     class METEOR_API Texture
     {

@@ -1,6 +1,90 @@
 #include <Engine/Render/Vulkan/VkUtilities.h>
 namespace MeteorEngine
 {
+
+	VkCullModeFlags CullModeToVK(CullMode mode)
+	{
+		switch (mode)
+		{
+		case CullMode::BACK:
+			return VK_CULL_MODE_BACK_BIT;
+		case CullMode::FRONT:
+			return VK_CULL_MODE_FRONT_BIT;
+		case CullMode::FRONTANDBACK:
+			return VK_CULL_MODE_FRONT_AND_BACK;
+		case CullMode::NONE:
+			return VK_CULL_MODE_NONE;
+		}
+
+		return VK_CULL_MODE_BACK_BIT;
+	}
+	VkPolygonMode PolygonModeToVk(PolygonMode mode)
+	{
+		switch (mode)
+		{
+		case PolygonMode::FILL:
+			return VK_POLYGON_MODE_FILL;
+			break;
+		case PolygonMode::LINE:
+			return VK_POLYGON_MODE_LINE;
+			break;
+		case PolygonMode::POINT:
+			return VK_POLYGON_MODE_POINT;
+			break;
+		default:
+			LOGLN("Unknown Polygon Mode");
+			return VK_POLYGON_MODE_FILL;
+			break;
+		}
+	}
+
+	VkPrimitiveTopology DrawTypeToVk(DrawType type)
+	{
+		switch (type)
+		{
+		case DrawType::TRIANGLE:
+			return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+			break;
+		case DrawType::LINES:
+			return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+			break;
+		case DrawType::POINT:
+			return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+			break;
+		default:
+			LOGLN("Unknown Draw Type");
+			return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+			break;
+		}
+	}
+	VkDescriptorType DescriptorTypeToVK(DescriptorType type)
+	{
+		switch (type)
+		{
+		case DescriptorType::UNIFORM_BUFFER:
+			return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		case DescriptorType::UNIFORM_BUFFER_DYNAMIC:
+			return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+		case DescriptorType::IMAGE_SAMPLER:
+			return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		case DescriptorType::IMAGE_STORAGE:
+			return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		}
+
+		LOGLN("Unsupported Descriptor Type");
+		return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	}
+	VkShaderStageFlagBits ShaderTypeToVK(const ShaderType& shaderName)
+	{
+		switch (shaderName)
+		{
+		case ShaderType::VERTEX: return VK_SHADER_STAGE_VERTEX_BIT;
+		case ShaderType::FRAGMENT: return VK_SHADER_STAGE_FRAGMENT_BIT;
+		default:
+			LOG("Unknown Shader Type");
+			return VK_SHADER_STAGE_VERTEX_BIT;
+		}
+	}
 	void CopyBufferToImage(VkDevice device, VkQueue queue, VkCommandPool commandPool, VkBuffer buffer, VkImage image, u32 width, u32 height)
 	{
 		VkCommandBuffer commandBuffer = BeginSingleTimeCommands(device, commandPool);

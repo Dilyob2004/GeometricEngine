@@ -4,6 +4,7 @@
 #include <Engine/Render/VertexBuffer.h>
 #include <Engine/Render/IndexBuffer.h>
 #include <memory>
+#include <vector>
 namespace MeteorEngine
 {
     class METEOR_API VertexArray

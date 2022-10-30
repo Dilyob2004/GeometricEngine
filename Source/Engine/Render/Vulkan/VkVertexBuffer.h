@@ -2,19 +2,19 @@
 #define VKVERTEXBUFFER_H
 #include <Engine/Render/Vulkan/Vk.h>
 #include <Engine/Render/Vulkan/VkBuffer.h>
-#include <Engine/Render/CommandBuffer.h>
+#include <Engine/Render/VertexBuffer.h>
 namespace MeteorEngine
 {
-	class METEOR_API VulkanVertexBuffer : public VulkanBuffer
+	class METEOR_API VulkanVertexBuffer : public VertexBuffer, public VulkanBuffer
 	{
 	public:
-		VulkanVertexBuffer(cp0, u32 );
+		VulkanVertexBuffer(f32*, u32 );
 		~VulkanVertexBuffer();
-		void Bind(CommandBuffer*);
-		void UnBind(){}
-		void SetData(cp0, u32);
-		void Resize(u32);
-		u32 GetSize() const { return m_Size; }
+		void Bind(CommandBuffer*) const override;
+		void UnBind() const override {}
+		void SetData(f32*, u32) override;
+		void Resize(u32) override;
+		u32 GetSize() const override { return m_Size; }
 	protected:
 		u32 m_Size;
 		bool m_MappedBuffer;

@@ -81,6 +81,9 @@
     <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_msl.cpp" />
     <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_parser.cpp" />
     <ClCompile Include="ThirdParty\SPIRV-Cross\spirv_reflect.cpp" />
+    <ClCompile Include="Engine\Render\UniformBuffer.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkShader.cpp" />
+    <ClCompile Include="Engine\Render\Pipeline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Components.h" />
@@ -189,6 +192,10 @@
     <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_msl.hpp" />
     <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_parser.hpp" />
     <ClInclude Include="ThirdParty\SPIRV-Cross\spirv_reflect.hpp" />
+    <ClInclude Include="Engine\Render\UniformBuffer.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkShader.h" />
+    <ClInclude Include="Engine\Render\Structs.h" />
+    <ClInclude Include="Engine\Render\Pipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source.rc" />

@@ -21,11 +21,11 @@ namespace MeteorEngine
 		}
 	}
 
-	void VulkanIndexBuffer::Bind(CommandBuffer* commandBuffer)
+	void VulkanIndexBuffer::Bind(CommandBuffer* commandBuffer) const
 	{
 		vkCmdBindIndexBuffer(dynamic_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), m_Buffer, 0, VK_INDEX_TYPE_UINT32);
 	}
-	void VulkanIndexBuffer::UnBind()
+	void VulkanIndexBuffer::UnBind() const
 	{
 
 	}

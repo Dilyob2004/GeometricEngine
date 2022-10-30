@@ -132,6 +132,43 @@ enum class ShaderDataType
 	Float, Float2, Float3, Float4,
 	Mat, Mat2, Mat3, Mat4,
 	Int, Int2, Int3, Int4,
-	Bool
+	Bool, Struct
 };
+enum class CullMode
+{
+	FRONT,
+	BACK,
+	FRONTANDBACK,
+	NONE
+};
+
+enum class PolygonMode
+{
+	FILL,
+	LINE,
+	POINT
+};
+
+enum class BlendMode
+{
+	None = 0,
+	OneZero,
+	ZeroSrcColor,
+	SrcAlphaOneMinusSrcAlpha,
+};
+enum class DescriptorType
+{
+	UNIFORM_BUFFER,
+	UNIFORM_BUFFER_DYNAMIC,
+	IMAGE_SAMPLER,
+	IMAGE_STORAGE
+};
+
+enum class DrawType
+{
+	POINT,
+	TRIANGLE,
+	LINES
+};
+
 #endif // CONFIG_H

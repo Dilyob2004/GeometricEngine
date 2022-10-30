@@ -27,21 +27,21 @@ namespace MeteorEngine
 		bool Create(VulkanContext*, const Vector2u&, bool);
 		bool Create( const Vector2u&, bool);
 
-		void Resize(const Vector2u&) override;
+		virtual void Resize(const Vector2u&) override;
 		void CreateFrameData();
 		VulkanBackBuffer& GetCurrentBackBuffer();
-		CommandBuffer* GetCurrentCommandBuffer() override{ return GetCurrentBackBuffer().CommandBuffer; }
+		virtual CommandBuffer* GetCurrentCommandBuffer() override{ return GetCurrentBackBuffer().CommandBuffer; }
 
-		Texture* GetCurrentImage() override{ return (Texture*)m_SwapChainBuffers[m_AcquireImageIndex]; };
-		u32 GetCurrentImageIndex()  const override { return m_AcquireImageIndex; }
-		Texture* GetImage(u32 index) override{ return (Texture*)m_SwapChainBuffers[index]; };
-		u32 GetSwapChainBufferCount() const override { return m_SwapChainBufferCount; }
+		virtual Texture* GetCurrentImage() override{ return (Texture*)m_SwapChainBuffers[m_AcquireImageIndex]; };
+		virtual u32 GetCurrentImageIndex()  const override { return m_AcquireImageIndex; }
+		virtual Texture* GetImage(u32 index) override{ return (Texture*)m_SwapChainBuffers[index]; };
+		virtual u32 GetSwapChainBufferCount() const override { return m_SwapChainBufferCount; }
 		VkFormat GetSwapChainFormat() const { return m_ColourFormat; }
 		VkSwapchainKHR GetSwapChain() const { return m_SwapChain; }
-		void Begin() override;
-		void Present()override;
-		void End()override;
-		void QueueSubmit()override;
+		virtual void Begin() override;
+		virtual void Present()override;
+		virtual void End()override;
+		virtual void QueueSubmit()override;
 	private:
 
 		void AcquireNextImage();

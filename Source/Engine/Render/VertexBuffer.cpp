@@ -1,8 +1,9 @@
 #include <Engine/Render/VertexBuffer.h>
+#include <Engine/Render/Vulkan/VkVertexBuffer.h>
 namespace MeteorEngine
 {
-    VertexBuffer *VertexBuffer::Create(float *vertices, u32 size)
+    VertexBuffer *VertexBuffer::Create(f32 *vertices, u32 size)
     {
-		return NULL;
+		return new VulkanVertexBuffer(vertices, size);
     }
 }
