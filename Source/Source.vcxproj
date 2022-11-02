@@ -121,6 +121,7 @@
     <ClCompile Include="Engine\Render\Camera2D.cpp" />
     <ClCompile Include="Engine\Render\CameraController2D.cpp" />
     <ClCompile Include="Engine\Render\CommandBuffer.cpp" />
+    <ClCompile Include="Engine\Render\DescriptorSet.cpp" />
     <ClCompile Include="Engine\Render\FrameBuffer.cpp" />
     <ClCompile Include="Engine\Render\ImageCore.cpp" />
     <ClCompile Include="Engine\Render\ImageLoader.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="Engine\Render\Vulkan\VkCommandBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkCommandPool.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkContext.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkDescriptorSet.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkFence.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkIntexBuffer.cpp" />
@@ -218,6 +220,7 @@
     <ClInclude Include="Engine\Render\Camera2D.h" />
     <ClInclude Include="Engine\Render\CameraController2D.h" />
     <ClInclude Include="Engine\Render\CommandBuffer.h" />
+    <ClInclude Include="Engine\Render\DescriptorSet.h" />
     <ClInclude Include="Engine\Render\FrameBuffer.h" />
     <ClInclude Include="Engine\Render\ImageCore.h" />
     <ClInclude Include="Engine\Render\ImageLoader.h" />
@@ -238,6 +241,7 @@
     <ClInclude Include="Engine\Render\Vulkan\VkCommandBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkCommandPool.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkContext.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkDescriptorSet.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkFence.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkIntexBuffer.h" />

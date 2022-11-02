@@ -10,6 +10,7 @@ namespace MeteorEngine
 		static UniformBuffer* Create(cp0*, u32);
 		virtual ~UniformBuffer() {}
 		virtual void SetData(cp0*, u32) = 0;
+		virtual void SetData(cp0* data) = 0;
 	};
 }
 #endif // !UNIFORMBUFFER_H

@@ -84,6 +84,8 @@
     <ClCompile Include="Engine\Render\UniformBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkShader.cpp" />
     <ClCompile Include="Engine\Render\Pipeline.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkDescriptorSet.cpp" />
+    <ClCompile Include="Engine\Render\DescriptorSet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Components.h" />
@@ -196,6 +198,8 @@
     <ClInclude Include="Engine\Render\Vulkan\VkShader.h" />
     <ClInclude Include="Engine\Render\Structs.h" />
     <ClInclude Include="Engine\Render\Pipeline.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkDescriptorSet.h" />
+    <ClInclude Include="Engine\Render\DescriptorSet.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source.rc" />

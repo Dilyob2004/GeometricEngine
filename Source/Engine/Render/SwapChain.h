@@ -17,6 +17,7 @@ namespace MeteorEngine
 		virtual Texture* GetImage(u32 index) = 0;
 		virtual u32 GetSwapChainBufferCount()const = 0;
 
+		virtual u32 GetCurrentBufferIndex() = 0;
 
 		virtual void Resize(const Vector2u&) = 0;
 		virtual void Begin() = 0;

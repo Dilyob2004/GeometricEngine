@@ -1,12 +1,13 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
-#include <Engine/Render/Texture.h>
-#include <Engine/Render/UniformBuffer.h>
+#include <Engine/core/Config.h>
 #include <vector>
 namespace MeteorEngine
 {
-
+	class Texture;
+	class Shader;
+	class UniformBuffer;
 	
 	struct BufferMemberInfo
 	{
@@ -46,6 +47,12 @@ namespace MeteorEngine
 	struct DescriptorSetInfo
 	{
 		std::vector<Descriptor> descriptors;
+	};
+	struct DescriptorInfo
+	{
+		u32 layoutIndex;
+		Shader* shader;
+		u32 count = 1;
 	};
 	struct PushConstant
 	{

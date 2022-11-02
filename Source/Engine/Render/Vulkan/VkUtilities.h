@@ -6,6 +6,7 @@
 
 namespace MeteorEngine
 {
+	VkDescriptorType DescriptorTypeToVK(DescriptorType type);
 	VkCullModeFlags CullModeToVK(CullMode mode);
 	VkPolygonMode PolygonModeToVk(PolygonMode mode);
 

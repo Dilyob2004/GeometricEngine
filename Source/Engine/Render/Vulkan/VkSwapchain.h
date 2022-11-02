@@ -35,6 +35,7 @@ namespace MeteorEngine
 		virtual Texture* GetCurrentImage() override{ return (Texture*)m_SwapChainBuffers[m_AcquireImageIndex]; };
 		virtual u32 GetCurrentImageIndex()  const override { return m_AcquireImageIndex; }
 		virtual Texture* GetImage(u32 index) override{ return (Texture*)m_SwapChainBuffers[index]; };
+		virtual u32 GetCurrentBufferIndex() override { return m_CurrentBuffer; }
 		virtual u32 GetSwapChainBufferCount() const override { return m_SwapChainBufferCount; }
 		VkFormat GetSwapChainFormat() const { return m_ColourFormat; }
 		VkSwapchainKHR GetSwapChain() const { return m_SwapChain; }

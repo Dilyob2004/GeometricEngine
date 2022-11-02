@@ -2,8 +2,10 @@
 #define VKSHADER_H
 
 #include <Engine/Render/Vulkan/Vk.h>
+#include <Engine/Render/Structs.h>
 #include <Engine/Render/Shader.h>
 #include <map>
+#include <unordered_map>
 #include <vector>
 namespace MeteorEngine
 {
@@ -22,7 +24,7 @@ namespace MeteorEngine
 			{
 				return m_DescriptorInfos[index];
 			}
-			LOG("DescriptorDesc not found. Index = {0}", index);
+			//LOG("DescriptorDesc not found. Index = {0}", index);
 			return DescriptorSetInfo();
 		}
 		const std::vector<ShaderType> GetShaderTypes() const override { return std::vector<ShaderType>(); }

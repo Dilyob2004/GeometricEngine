@@ -7,6 +7,7 @@
 #include <Engine/Render/Camera.h>
 #include <Engine/Render/Camera2D.h>
 #include <Engine/Render/SwapChain.h>
+#include <Engine/Render/DescriptorSet.h>
 namespace MeteorEngine
 {
 	class METEOR_API Renderer
@@ -20,6 +21,7 @@ namespace MeteorEngine
 		virtual void Resize(const Vector2u& size) = 0;
 		virtual void ClearSwapChainImages() const = 0;
 		virtual void ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour) = 0;
+		virtual void BindDescriptorSets(Pipeline* pipeline, CommandBuffer* commandBuffer, u32 dynamicOffset, DescriptorSet** descriptorSets, u32 descriptorCount) = 0;
 
 		virtual void DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start) const = 0;
 		virtual SwapChain* GetMainSwapChain() const = 0;
@@ -45,6 +47,7 @@ namespace MeteorEngine
 		static void ClearSwapChainImages();
 		static void ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour = {0, 0, 0, 1});
 
+		static void BindDescriptorSets(Pipeline* pipeline, CommandBuffer* commandBuffer, u32 dynamicOffset, DescriptorSet** descriptorSets, u32 descriptorCount);
 		static void DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start);
 		static SwapChain* GetMainSwapChain();
 

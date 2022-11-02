@@ -2,6 +2,8 @@
 #include <Engine/Render/Vulkan/VkUtilities.h>
 #include <Engine/Render/Vulkan/VkDevice.h>
 #include <Engine/Render/Vulkan/VkCommandBuffer.h>
+#include <Engine/Render/Vulkan/VkPipeline.h>
+#include <Engine/Render/Vulkan/VkDescriptorSet.h>
 
 namespace MeteorEngine
 {
@@ -33,7 +35,7 @@ namespace MeteorEngine
 			VkClearColorValue clearColourValue = VkClearColorValue({ { clearColour.x, clearColour.y, clearColour.z, clearColour.w } });
 			vkCmdClearColorImage(((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer(), 
 				static_cast<VulkanTexture2D*>(texture)->GetImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clearColourValue, 1, &subresourceRange);
-			((VulkanTexture2D*)texture)->TransitionImage(layout, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer();
+			((VulkanTexture2D*)texture)->TransitionImage(layout, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer());
 		}
 		else if (texture->GetType() == TextureType::DEPTH)
 		{
@@ -45,6 +47,32 @@ namespace MeteorEngine
 				static_cast<VulkanTextureDepth*>(texture)->GetImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clear_depth_stencil, 1, &subresourceRange);
 		}
 	}
+	void VulkanRenderer::BindDescriptorSets(Pipeline* pipeline, CommandBuffer* commandBuffer, u32 dynamicOffset, DescriptorSet** descriptorSets, u32 descriptorCount)
+	{
+		uint32_t numDynamicDescriptorSets = 0;
+		uint32_t numDesciptorSets = 0;
+
+		for (uint32_t i = 0; i < descriptorCount; i++)
+		{
+			if (descriptorSets[i])
+			{
+				auto vkDesSet = static_cast<VulkanDescriptorSet*>(descriptorSets[i]);
+				if (vkDesSet->IsDynamic())
+					numDynamicDescriptorSets++;
+
+				m_DescriptorSetPool[numDesciptorSets] = vkDesSet->GetDescriptorSet();
+
+				//LUMOS_ASSERT(vkDesSet->GetHasUpdated(Renderer::GetMainSwapChain()->GetCurrentBufferIndex()), "Descriptor Set has not been updated before");
+				numDesciptorSets++;
+			}
+		}
+
+		vkCmdBindDescriptorSets(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), /*static_cast<VulkanPipeline*>(pipeline)->IsCompute() ? VK_PIPELINE_BIND_POINT_COMPUTE :*/ VK_PIPELINE_BIND_POINT_GRAPHICS, static_cast<VulkanPipeline*>(pipeline)->GetPipelineLayout(), 0, numDesciptorSets, m_DescriptorSetPool, numDynamicDescriptorSets, &dynamicOffset);
+
+
+	}
+
+
 	void VulkanRenderer::DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start) const
 	{
 		//Engine::Get().Statistics().NumDrawCalls++;

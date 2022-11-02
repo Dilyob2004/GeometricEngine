@@ -1,7 +1,6 @@
 #include <Engine/Render/Vulkan/VkUtilities.h>
 namespace MeteorEngine
 {
-
 	VkCullModeFlags CullModeToVK(CullMode mode)
 	{
 		switch (mode)

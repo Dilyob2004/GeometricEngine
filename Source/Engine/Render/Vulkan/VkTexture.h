@@ -4,6 +4,8 @@
 #include <Engine/Render/Texture.h>
 #include <Engine/Core/Config.h>
 #include <vector>
+#include <map>
+#include <unordered_map>
 namespace MeteorEngine
 {
 	class METEOR_API VulkanTexture2D : public Texture2D
@@ -16,6 +18,7 @@ namespace MeteorEngine
 		~VulkanTexture2D();
 		virtual void Resize(const Vector2u&) override;
 
+		VkImageView GetMipImageView(u32 mip);
 		virtual void*		GetTexture() const override { return (void*)this; }
 
 		virtual void* GetTextureHande() const override { return (void*)m_Image; }
@@ -46,7 +49,14 @@ namespace MeteorEngine
 		{
 			return m_Sampler;
 		}
-
+		virtual void* GetDescriptorInfo() const override
+		{
+			return (void*)GetDescriptor();
+		}
+		const VkDescriptorImageInfo* GetDescriptor() const
+		{
+			return &m_Descriptor;
+		}
 		VkFormat GetVKFormat()
 		{
 			return m_VKFormat;
@@ -77,7 +87,7 @@ namespace MeteorEngine
 		VkSampler				m_Sampler{};
 		VkDescriptorImageInfo	m_Descriptor{};
 		VkFormat				m_VKFormat = VK_FORMAT_R8G8B8A8_UNORM;
-
+		std::unordered_map<u32, VkImageView> m_MipImageViews;
 	};
 	class METEOR_API VulkanTextureDepth :  public TextureDepth
 	{
@@ -104,6 +114,14 @@ namespace MeteorEngine
 		VkSampler GetSampler() const { return m_Sampler; }
 		VkFormat GetVKFormat() { return m_VKFormat; }
 
+		virtual void* GetDescriptorInfo() const override
+		{
+			return (void*)GetDescriptor();
+		}
+		const VkDescriptorImageInfo* GetDescriptor() const
+		{
+			return &m_Descriptor;
+		}
 		void UpdateDescriptor()
 		{
 			m_Descriptor.sampler = m_Sampler;

@@ -259,6 +259,16 @@ namespace MeteorEngine
 		TransitionImage(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		UpdateDescriptor();
 	}
+
+
+	VkImageView VulkanTexture2D::GetMipImageView(u32 mip)
+	{
+		if (m_MipImageViews.find(mip) == m_MipImageViews.end())
+		{
+			m_MipImageViews[mip] = CreateImageViews(VulkanDevice::GetInstance()->GetLogicalDevice(), m_Image, m_VKFormat, 1, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT, 1, 0, mip);
+		}
+		return m_MipImageViews.at(mip);
+	}
 	void VulkanTexture2D::Cleanup()
 	{
 		if(m_Sampler)

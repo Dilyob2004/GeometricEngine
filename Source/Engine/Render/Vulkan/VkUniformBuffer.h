@@ -9,7 +9,8 @@ namespace MeteorEngine
 	public:
 		VulkanUniformBuffer(cp0*, u32);
 		virtual ~VulkanUniformBuffer();
-		void SetData(cp0*, u32) override;
+		virtual void SetData(cp0*, u32) override;
+		virtual void SetData(cp0* data) override { SetData(data, m_Size); }
 
 		VkBuffer* GetBuffer() { return &m_Buffer; }
 		VkDeviceMemory* GetMemory() { return &m_Memory; }

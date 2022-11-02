@@ -33,6 +33,11 @@ namespace MeteorEngine
 	{
 		m_Renderer->DrawIndexed(commandBuffer, type, count, start);
 	}
+	void RendererCommand::BindDescriptorSets(Pipeline* pipeline, CommandBuffer* commandBuffer, u32 dynamicOffset, DescriptorSet** descriptorSets, u32 descriptorCount)
+	{
+		m_Renderer->BindDescriptorSets(pipeline, commandBuffer, dynamicOffset, descriptorSets, descriptorCount);
+	}
+
 	void RendererCommand::ClearSwapChainImages()
 	{
 		m_Renderer->ClearSwapChainImages();

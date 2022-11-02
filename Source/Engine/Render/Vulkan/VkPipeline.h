@@ -19,6 +19,7 @@ namespace MeteorEngine
 		virtual Shader* GetShader() override { return m_Shader; }
 		void PreInit();
 		void TransitionBackbuffers();
+		VkPipelineLayout GetPipelineLayout() const{ return m_PipelineLayout; }
 	private:
 		Shader* m_Shader;
 		RenderPass* m_RenderPass;

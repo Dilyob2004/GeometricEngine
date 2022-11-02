@@ -34,6 +34,7 @@ namespace MeteorEngine
         virtual void        Bind(u32 slot = 0) const = 0;
         virtual void        UnBind(u32 slot = 0)    const = 0;
 
+		virtual void* GetDescriptorInfo() const = 0;
 
 		virtual RHIPixelFormat GetFormat() const = 0;
 		virtual Vector2u GetSize()	const = 0;
