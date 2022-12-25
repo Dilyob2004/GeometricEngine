@@ -100,7 +100,7 @@ namespace MeteorEngine
 		VulkanDescriptorSet(const DescriptorInfo&);
 		virtual ~VulkanDescriptorSet();
 
-		bool IsDynamic() const { return IsDynamic; }
+		bool IsDynamic() const { return m_Dynamic; }
 		VkDescriptorSet GetDescriptorSet()
 		{
 			u32 currentFrame = RendererCommand::GetMainSwapChain()->GetCurrentBufferIndex();

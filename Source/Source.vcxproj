@@ -5,8 +5,12 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
+    <ProjectConfiguration Include="Development|x64">
+      <Configuration>Development</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|x64">
+      <Configuration>Shipping</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -24,12 +28,15 @@
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -39,7 +46,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -48,7 +55,7 @@
     <IntDir>$(SolutionDir)Binaries-int\$(Configuration)-$(Platform)</IntDir>
     <TargetName>MeteorEngine</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
     <OutDir>$(SolutionDir)Binaries\$(Configuration)-$(Platform)</OutDir>
     <IntDir>$(SolutionDir)Binaries-int\$(Configuration)-$(Platform)</IntDir>
     <TargetName>MeteorEngine</TargetName>
@@ -66,11 +73,11 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>dwmapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>shaderc_sharedd.lib;dwmapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\hp\Documents\GitHub\MeteorEngine\Libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
@@ -125,6 +132,7 @@
     <ClCompile Include="Engine\Render\FrameBuffer.cpp" />
     <ClCompile Include="Engine\Render\ImageCore.cpp" />
     <ClCompile Include="Engine\Render\ImageLoader.cpp" />
+    <ClCompile Include="Engine\Render\ImGuiRenderer.cpp" />
     <ClCompile Include="Engine\Render\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Render\Pipeline.cpp" />
     <ClCompile Include="Engine\Render\RenderContext.cpp" />
@@ -143,6 +151,7 @@
     <ClCompile Include="Engine\Render\Vulkan\VkDescriptorSet.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDevice.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkFence.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkImGuiRenderer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkIntexBuffer.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkPipeline.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkRenderer.cpp" />
@@ -224,6 +233,7 @@
     <ClInclude Include="Engine\Render\FrameBuffer.h" />
     <ClInclude Include="Engine\Render\ImageCore.h" />
     <ClInclude Include="Engine\Render\ImageLoader.h" />
+    <ClInclude Include="Engine\Render\ImGuiRenderer.h" />
     <ClInclude Include="Engine\Render\IndexBuffer.h" />
     <ClInclude Include="Engine\Render\Pipeline.h" />
     <ClInclude Include="Engine\Render\RenderContext.h" />
@@ -244,6 +254,7 @@
     <ClInclude Include="Engine\Render\Vulkan\VkDescriptorSet.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDevice.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkFence.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkImGuiRenderer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkIntexBuffer.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkPipeline.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkRenderer.h" />

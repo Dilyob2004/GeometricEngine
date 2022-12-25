@@ -86,6 +86,8 @@
     <ClCompile Include="Engine\Render\Pipeline.cpp" />
     <ClCompile Include="Engine\Render\Vulkan\VkDescriptorSet.cpp" />
     <ClCompile Include="Engine\Render\DescriptorSet.cpp" />
+    <ClCompile Include="Engine\Render\Vulkan\VkImGuiRenderer.cpp" />
+    <ClCompile Include="Engine\Render\ImGuiRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Components.h" />
@@ -200,6 +202,8 @@
     <ClInclude Include="Engine\Render\Pipeline.h" />
     <ClInclude Include="Engine\Render\Vulkan\VkDescriptorSet.h" />
     <ClInclude Include="Engine\Render\DescriptorSet.h" />
+    <ClInclude Include="Engine\Render\Vulkan\VkImGuiRenderer.h" />
+    <ClInclude Include="Engine\Render\ImGuiRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source.rc" />

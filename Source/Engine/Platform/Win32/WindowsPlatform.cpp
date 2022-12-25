@@ -1,6 +1,6 @@
 #include <Engine/Platform/Win32/WindowsPlatform.h>
 #include <Engine/System/Time.h>
-
+#include <ImGui/imgui.h>
 namespace MeteorEngine
 {
 	void WindowsPlatform::PreInit()
@@ -57,8 +57,8 @@ namespace MeteorEngine
 	extern LRESULT WndProcHandler(HWND, UINT, WPARAM, LPARAM aram);
 	LRESULT WindowsPlatform::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-		//if (WndProcHandler(hWnd, msg, wParam, lParam))
-			//return true;
+		if (WndProcHandler(hWnd, msg, wParam, lParam))
+			return true;
 		if (msg == WM_CREATE)
 		{
 			LONG_PTR window = (LONG_PTR)reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;			

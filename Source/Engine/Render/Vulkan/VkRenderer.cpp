@@ -49,10 +49,9 @@ namespace MeteorEngine
 	}
 	void VulkanRenderer::BindDescriptorSets(Pipeline* pipeline, CommandBuffer* commandBuffer, u32 dynamicOffset, DescriptorSet** descriptorSets, u32 descriptorCount)
 	{
-		uint32_t numDynamicDescriptorSets = 0;
-		uint32_t numDesciptorSets = 0;
+		u32 numDynamicDescriptorSets = 0, numDesciptorSets = 0;
 
-		for (uint32_t i = 0; i < descriptorCount; i++)
+		for (u32 i = 0; i < descriptorCount; i++)
 		{
 			if (descriptorSets[i])
 			{
@@ -75,8 +74,7 @@ namespace MeteorEngine
 
 	void VulkanRenderer::DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start) const
 	{
-		//Engine::Get().Statistics().NumDrawCalls++;
-		vkCmdDrawIndexed(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), count, 1, 0, 0, 0);
+		vkCmdDraw(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), count, 1, 0, 0);
 	}
 	void VulkanRenderer::ClearSwapChainImages() const
 	{
@@ -90,7 +88,7 @@ namespace MeteorEngine
 			subresourceRange.layerCount = 1;
 			subresourceRange.levelCount = 1;
 
-			VkClearColorValue clearColourValue{ { 0.0f, 0.0f, 0.0f, 0.0f } };
+			VkClearColorValue clearColourValue{ { 0.07f, 0.07f,0.05f, 1.f } };
 
 			vkCmdClearColorImage(cmd, dynamic_cast<VulkanTexture2D*>(m_SwapChain->GetImage(i))->GetImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, &clearColourValue, 1, &subresourceRange);
 
@@ -102,44 +100,32 @@ namespace MeteorEngine
 		m_SwapChain = SwapChain::Create(context, size, vsync);
 
 		// Pool sizes
-		std::vector<VkDescriptorPoolSize> poolSizes;
-		poolSizes.push_back({ VK_DESCRIPTOR_TYPE_SAMPLER, 1024 });
-		poolSizes.push_back({ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1024 });
-		poolSizes.push_back({ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1024 });
-		poolSizes.push_back({ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1024 });
-		poolSizes.push_back({ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1024 });
-		poolSizes.push_back({ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1024 });
 
-		VkDescriptorPoolSize pool_sizes[] = {
-			{ VK_DESCRIPTOR_TYPE_SAMPLER, 100000 },
-			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100000 },
-			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 100000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 100000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 100000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 100000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 100000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 100000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 100000 },
-			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 100000 }
-		};
-		VkDescriptorPoolCreateInfo pool_info = {};
-		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		pool_info.maxSets = 100000 * 11;
-		pool_info.poolSizeCount = (uint32_t)11;
-		pool_info.pPoolSizes = pool_sizes;
+		{
+			VkDescriptorPoolSize pool_sizes[] = {
+				{ VK_DESCRIPTOR_TYPE_SAMPLER, 10000 },
+				{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10000 },
+				{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 10000 },
+				{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 10000 },
+				{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 10000 },
+				{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 10000 },
+				{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10000 },
+				{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10000 },
+				{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10000 },
+				{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 10000 },
+				{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 10000 }
+			};
+			VkDescriptorPoolCreateInfo pool_info = {};
+			pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+			pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+			pool_info.maxSets = 10000 * 11;
+			pool_info.poolSizeCount = (u32)11;
+			pool_info.pPoolSizes = pool_sizes;
 
-		// Create info
-		VkDescriptorPoolCreateInfo poolCreateInfo = {};
-		poolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		poolCreateInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
-		poolCreateInfo.pPoolSizes = poolSizes.data();
-		poolCreateInfo.maxSets = m_DescriptorCapacity;
 
-		// Pool
-		vkCreateDescriptorPool(VulkanDevice::GetInstance()->GetLogicalDevice(), &pool_info, nullptr, &s_DescriptorPool);
+			// Pool
+			vkCreateDescriptorPool(VulkanDevice::GetInstance()->GetLogicalDevice(), &pool_info, nullptr, &s_DescriptorPool);
+		}
 	}
 	void VulkanRenderer::Begin()
 	{

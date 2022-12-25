@@ -9,10 +9,12 @@ namespace MeteorEngine
 	{
 	public:
 		VulkanVertexBuffer(f32*, u32 );
-		~VulkanVertexBuffer();
-		void Bind(CommandBuffer*) const override;
-		void UnBind() const override {}
-		void SetData(f32*, u32) override;
+		virtual ~VulkanVertexBuffer();
+		virtual void Bind(CommandBuffer*) const override;
+		virtual void UnBind() const override {}
+		virtual void SetData(f32*, u32) override;
+		virtual void ReleasePointer()override;
+		virtual void* GetPointer()override;
 		void Resize(u32) override;
 		u32 GetSize() const override { return m_Size; }
 	protected:

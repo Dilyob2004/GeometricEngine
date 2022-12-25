@@ -8,6 +8,7 @@
 #include <string>
 namespace MeteorEngine
 {
+	class Pipeline;
     class METEOR_API Shader
     {
     public:
@@ -15,7 +16,7 @@ namespace MeteorEngine
         static Shader *Create(const std::string &, const std::string &);
 		///static Shader *Create(const std::string &);
 
-		virtual void BindPushConstants(CommandBuffer* commandBuffer) = 0;
+		virtual void BindPushConstants(CommandBuffer* commandBuffer, Pipeline* pipeline) = 0;
 		virtual DescriptorSetInfo GetDescriptorInfo(u32 index) = 0;
 		virtual const std::vector<ShaderType> GetShaderTypes() const = 0;
 		virtual bool IsCompiled() const = 0;

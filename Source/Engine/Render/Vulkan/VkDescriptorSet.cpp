@@ -16,7 +16,6 @@ namespace MeteorEngine
 	}
 	VulkanDescriptorSet::VulkanDescriptorSet(const DescriptorInfo& info)
 	{
-
 		m_FramesInFlight = u32(RendererCommand::GetMainSwapChain()->GetSwapChainBufferCount());
 		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = VkDescriptorSetAllocateInfo();
 		descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -24,10 +23,8 @@ namespace MeteorEngine
 		descriptorSetAllocateInfo.pSetLayouts = static_cast<VulkanShader*>(info.shader)->GetDescriptorLayout(info.layoutIndex);
 		descriptorSetAllocateInfo.descriptorSetCount = info.count;
 		descriptorSetAllocateInfo.pNext = nullptr;
-
 		m_Shader = info.shader;
 		m_Descriptors = m_Shader->GetDescriptorInfo(info.layoutIndex);
-
 		for (auto& descriptor : m_Descriptors.descriptors)
 			if (descriptor.type == DescriptorType::UNIFORM_BUFFER)
 			{
@@ -51,13 +48,14 @@ namespace MeteorEngine
 				m_UniformBuffersData[descriptor.name] = info;
 			}
 
-		for (u32 frame = 0; frame < m_FramesInFlight; frame++)
+		for (u32 i = 0; i < m_FramesInFlight; i++)
 		{
-			m_DescriptorDirty[frame] = true;
-			m_DescriptorUpdated[frame] = false;
-			m_DescriptorSet[frame] = NULL;
+			m_DescriptorDirty[i] = true;
+			m_DescriptorUpdated[i] = false;
+			m_DescriptorSet[i] = NULL;
 			g_DescriptorSetCount++;
-			(vkAllocateDescriptorSets(VulkanDevice::GetInstance()->GetLogicalDevice(), &descriptorSetAllocateInfo, &m_DescriptorSet[frame]));
+			vkAllocateDescriptorSets(VulkanDevice::GetInstance()->GetLogicalDevice(), 
+				&descriptorSetAllocateInfo, &m_DescriptorSet[i]);
 		}
 	}
 	VulkanDescriptorSet::~VulkanDescriptorSet()

@@ -8,6 +8,7 @@
 #include <Engine/Render/Camera2D.h>
 #include <Engine/Render/SwapChain.h>
 #include <Engine/Render/DescriptorSet.h>
+#include <Engine/Render/Pipeline.h>
 namespace MeteorEngine
 {
 	class METEOR_API Renderer

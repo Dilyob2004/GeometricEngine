@@ -46,7 +46,6 @@ namespace MeteorEngine
 			LOG("Failed to Create a Surface!\n");
 			return ;
 		}
-		return;
 	}
 	bool VulkanContext::CreateInstance(bool isDebug)
 	{
@@ -72,12 +71,13 @@ namespace MeteorEngine
 
 
 		std::vector<const char*> requiredExtentions;
+		{
+			requiredExtentions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+			requiredExtentions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 
-		requiredExtentions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-		requiredExtentions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-
-		if (isDebug)
-			requiredExtentions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+			if (isDebug)
+				requiredExtentions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+		}
 
 		// Register our application information
 		VkApplicationInfo applicationInfo	= VkApplicationInfo();
@@ -101,7 +101,7 @@ namespace MeteorEngine
 		// If an extension is missing, try disabling debug report
 		if (result == VK_ERROR_EXTENSION_NOT_PRESENT)
 		{
-			requiredExtentions.pop_back();
+			//requiredExtentions.pop_back();
 
 			instanceCreateInfo.enabledExtensionCount = static_cast<u32>(requiredExtentions.size());
 			instanceCreateInfo.ppEnabledExtensionNames = requiredExtentions.data();

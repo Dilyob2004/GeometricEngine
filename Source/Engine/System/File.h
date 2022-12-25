@@ -11,7 +11,7 @@ namespace MeteorEngine
 	public:
 		File() = default;
 		~File() = default;
-		static File* Open(const std::string&, FileMode, FileAccess, FileShare);
+		static File* Create(const std::string&, FileMode, FileAccess, FileShare);
 
 		virtual bool Read(void*, u32, u32*) = 0;
 		virtual bool Write(const void*, u32, u32*) = 0;

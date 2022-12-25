@@ -17,7 +17,7 @@ namespace MeteorEngine
 
 
 
-		void BindPushConstants(CommandBuffer* commandBuffer) override;
+		void BindPushConstants(CommandBuffer* commandBuffer, Pipeline* pipeline) override;
 		DescriptorSetInfo GetDescriptorInfo(u32 index) override
 		{
 			if (m_DescriptorInfos.find(index) != m_DescriptorInfos.end())
@@ -33,7 +33,16 @@ namespace MeteorEngine
 
 		const std::vector<DescriptorLayoutInfo>& GetDescriptorLayout() const { return m_DescriptorLayoutInfo; }
 		
-		VkDescriptorSetLayout* GetDescriptorLayout(i32 id) { return &m_DescriptorSetLayouts[id]; }
+		VkDescriptorSetLayout* GetDescriptorLayout(i32 id) 
+		{
+			if (id < m_DescriptorSetLayouts.size())
+			{
+				return &m_DescriptorSetLayouts[id];
+			}
+			else
+				return NULL;
+
+		}
 		VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }		
 		
 		const std::vector<VkDescriptorSetLayout>& GetDescriptorLayouts() const { return m_DescriptorSetLayouts; }

@@ -75,8 +75,8 @@ namespace MeteorEngine
 		VkSemaphoreCreateInfo semaphoreInfo = VkSemaphoreCreateInfo();
 		semaphoreInfo.pNext = nullptr;
 
-		(vkCreateSemaphore(VulkanDevice::GetInstance()->GetLogicalDevice(), &semaphoreInfo, nullptr, &m_Semaphore));
-
+		if(vkCreateSemaphore(VulkanDevice::GetInstance()->GetLogicalDevice(), &semaphoreInfo, nullptr, &m_Semaphore) != VK_SUCCESS);
+			return false;
 		m_VulkanFence = new VulkanFence();
 		if (!m_VulkanFence->Create(VulkanDevice::GetInstance()->GetLogicalDevice()))
 			return false;

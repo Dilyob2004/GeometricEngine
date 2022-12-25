@@ -57,16 +57,16 @@ namespace MeteorEngine
 		vi.pNext = NULL;
 		vi.vertexBindingDescriptionCount = stride > 0 ? 1 : 0;
 		vi.pVertexBindingDescriptions = stride > 0 ? &vertexBindingDescription : nullptr;
-		vi.vertexAttributeDescriptionCount = stride > 0 ? uint32_t(vertexInputAttributeDescription.size()) : 0;
+		vi.vertexAttributeDescriptionCount = stride > 0 ? u32(vertexInputAttributeDescription.size()) : 0;
 		vi.pVertexAttributeDescriptions = stride > 0 ? vertexInputAttributeDescription.data() : nullptr;
 
-		VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI{};
+		VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI = VkPipelineInputAssemblyStateCreateInfo();
 		inputAssemblyCI.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		inputAssemblyCI.pNext = NULL;
 		inputAssemblyCI.primitiveRestartEnable = VK_FALSE;
 		inputAssemblyCI.topology = DrawTypeToVk(pipelineInfo.drawType);
 
-		VkPipelineRasterizationStateCreateInfo rs{};
+		VkPipelineRasterizationStateCreateInfo rs = VkPipelineRasterizationStateCreateInfo();
 		rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 		rs.polygonMode = PolygonModeToVk(pipelineInfo.polygonMode);
 		rs.cullMode = CullModeToVK(pipelineInfo.cullMode);
@@ -79,7 +79,7 @@ namespace MeteorEngine
 		rs.depthBiasSlopeFactor = pipelineInfo.DepthBiasSlopeFactor;
 		rs.lineWidth = 1.0f;
 		rs.pNext = NULL;
-		VkPipelineColorBlendStateCreateInfo cb{};
+		VkPipelineColorBlendStateCreateInfo cb = VkPipelineColorBlendStateCreateInfo();
 		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cb.pNext = NULL;
 		cb.flags = 0;
@@ -129,7 +129,7 @@ namespace MeteorEngine
 			}
 		}
 
-		cb.attachmentCount = static_cast<uint32_t>(blendAttachState.size());
+		cb.attachmentCount = static_cast<u32>(blendAttachState.size());
 		cb.pAttachments = blendAttachState.data();
 		cb.logicOpEnable = VK_FALSE;
 		cb.logicOp = VK_LOGIC_OP_NO_OP;
@@ -138,7 +138,7 @@ namespace MeteorEngine
 		cb.blendConstants[2] = 1.0f;
 		cb.blendConstants[3] = 1.0f;
 
-		VkPipelineViewportStateCreateInfo vp{};
+		VkPipelineViewportStateCreateInfo vp = VkPipelineViewportStateCreateInfo();
 		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		vp.pNext = NULL;
 		vp.viewportCount = 1;
@@ -162,7 +162,7 @@ namespace MeteorEngine
 		}
 
 
-		VkPipelineDepthStencilStateCreateInfo ds{};
+		VkPipelineDepthStencilStateCreateInfo ds = VkPipelineDepthStencilStateCreateInfo();
 		ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		ds.pNext = NULL;
 		ds.depthTestEnable = VK_TRUE;
@@ -181,7 +181,7 @@ namespace MeteorEngine
 		ds.maxDepthBounds = 0;
 		ds.front = ds.back;
 
-		VkPipelineMultisampleStateCreateInfo ms{};
+		VkPipelineMultisampleStateCreateInfo ms = VkPipelineMultisampleStateCreateInfo();
 		ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		ms.pNext = NULL;
 		ms.pSampleMask = NULL;
@@ -191,11 +191,11 @@ namespace MeteorEngine
 		ms.alphaToOneEnable = VK_FALSE;
 		ms.minSampleShading = 0.0;
 
-		dynamicStateCI.dynamicStateCount = uint32_t(dynamicStateDescriptors.size());
+		dynamicStateCI.dynamicStateCount = u32(dynamicStateDescriptors.size());
 		dynamicStateCI.pDynamicStates = dynamicStateDescriptors.data();
 
 		auto vkshader = (VulkanShader*)pipelineInfo.PipelineShader;
-		VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo{};
+		VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = VkGraphicsPipelineCreateInfo();
 		graphicsPipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		graphicsPipelineCreateInfo.pNext = NULL;
 		graphicsPipelineCreateInfo.layout = m_PipelineLayout;
@@ -221,9 +221,9 @@ namespace MeteorEngine
 	{
 		vkDestroyPipeline(VulkanDevice::GetInstance()->GetLogicalDevice(), m_Pipeline, VK_NULL_HANDLE);
 	}
-	void VulkanPipeline::Begin(CommandBuffer* commandBuffer, u32 layer)
+	void VulkanPipeline::Begin(CommandBuffer* commandBuffer)
 	{
-		FrameBuffer* frameBuffer;
+		FrameBuffer* frameBuffer = NULL;
 		if (true)
 		{
 			TransitionBackbuffers();
@@ -231,15 +231,21 @@ namespace MeteorEngine
 				frameBuffer = m_FrameBuffer[RendererCommand::GetMainSwapChain()->GetCurrentImageIndex()];
 			else
 				frameBuffer = m_FrameBuffer[0];
-
-			m_RenderPass->BeginRenderpass(commandBuffer, m_PipelineInfo.clearColor, frameBuffer, SubPassContents::INLINE, { Application::GetInstance().GetWidth(), Application::GetInstance().GetHeight() });
+			m_RenderPass->BeginRenderpass(commandBuffer, m_PipelineInfo.clearColor, frameBuffer, 
+				SubPassContents::INLINE, { Application::GetInstance().GetWidth(), Application::GetInstance().GetHeight() });
 
 		}
 		else
-		{
 			commandBuffer->UpdateViewport({ Application::GetInstance().GetWidth(), Application::GetInstance().GetHeight() }, false);
-		}
 
+		vkCmdBindPipeline(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(),  VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+
+		// Bug in moltenVK. Needs to happen after pipeline bound for now.
+		if (m_DepthBiasEnabled)
+			vkCmdSetDepthBias(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(),
+				m_DepthBiasConstant,
+				0.0f,
+				m_DepthBiasSlope);
 	}
 	void VulkanPipeline::End(CommandBuffer* commandBuffer)
 	{
@@ -250,23 +256,20 @@ namespace MeteorEngine
 	{
 
 		if (m_PipelineInfo.SwapChainTarget)
-		{
 			for (u32 i = 0; i < RendererCommand::GetMainSwapChain()->GetSwapChainBufferCount(); i++)
 				RendererCommand::ClearRenderTarget(RendererCommand::GetMainSwapChain()->GetImage(i), commandBuffer);
-		}
-
 		if (m_PipelineInfo.DepthTarget)
-		{
 			RendererCommand::ClearRenderTarget(m_PipelineInfo.DepthTarget, commandBuffer);
-		}
 
-		{
+
+
+		/**{
 			for (auto texture : m_PipelineInfo.ColorTargets)
 			{
 				if (texture != NULL)
 					RendererCommand::ClearRenderTarget(texture, commandBuffer);
 			}
-		}
+		}*/
 	}
 	void VulkanPipeline::PreInit()
 	{
@@ -277,14 +280,14 @@ namespace MeteorEngine
 			attachments.push_back(RendererCommand::GetMainSwapChain()->GetImage(0));
 			attachmentTypes.push_back(TextureType::COLOR);
 		}
-		else
+		/**else {
 			for (auto texture : m_PipelineInfo.ColorTargets)
 				if (texture)
 				{
 					attachments.push_back(texture);
 					attachmentTypes.push_back(texture->GetType());
 				}
-
+		}*/
 		if (m_PipelineInfo.DepthTarget)
 		{
 			attachments.push_back(m_PipelineInfo.DepthTarget);
@@ -299,16 +302,14 @@ namespace MeteorEngine
 		renderPassDesc.SwapChainTarget	= m_PipelineInfo.SwapChainTarget;
 		renderPassDesc.Clear			= m_PipelineInfo.ClearTargets;
 
-		RenderPass* renderPass = RenderPass::Create(renderPassDesc);
-
+		m_RenderPass = RenderPass::Create(renderPassDesc);
 		FrameBufferDesc frameBufferInfo = FrameBufferDesc();
 		frameBufferInfo.Size = Vector2u(Application::GetInstance().GetWidth(), Application::GetInstance().GetHeight());
 		frameBufferInfo.AttachmentCount = u32(attachments.size());
-		frameBufferInfo.RenderPass = renderPass;
+		frameBufferInfo.RenderPass = m_RenderPass;
 		frameBufferInfo.AttachmentTypes = attachmentTypes.data();
 
 		if (m_PipelineInfo.SwapChainTarget)
-		{
 			for(u32 i = 0; i < RendererCommand::GetMainSwapChain()->GetSwapChainBufferCount(); i++)
 			{
 				attachments[0] = RendererCommand::GetMainSwapChain()->GetImage(i);
@@ -316,7 +317,6 @@ namespace MeteorEngine
 				frameBufferInfo.Attachments = attachments.data();
 				m_FrameBuffer.emplace_back(FrameBuffer::Create(frameBufferInfo));
 			}
-		}
 
 	}
 
@@ -324,12 +324,10 @@ namespace MeteorEngine
 	{
 		auto commandBuffer = RendererCommand::GetMainSwapChain()->GetCurrentCommandBuffer();
 		if (m_PipelineInfo.SwapChainTarget)
-		{
 			for (u32 i = 0; i < RendererCommand::GetMainSwapChain()->GetSwapChainBufferCount(); i++)
-				dynamic_cast<VulkanTexture2D*>(RendererCommand::GetMainSwapChain()->GetImage(i))->TransitionImage(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer() );
-		}
+				static_cast<VulkanTexture2D*>(RendererCommand::GetMainSwapChain()->GetImage(i))->TransitionImage(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer() );
 
 		if (m_PipelineInfo.DepthTarget)
-			dynamic_cast<VulkanTextureDepth*>(m_PipelineInfo.DepthTarget)->TransitionImage(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer());
+			static_cast<VulkanTextureDepth*>(m_PipelineInfo.DepthTarget)->TransitionImage(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, ((VulkanCommandBuffer*)commandBuffer)->GetCommandBuffer());
 	}
 }

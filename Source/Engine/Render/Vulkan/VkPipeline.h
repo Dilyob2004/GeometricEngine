@@ -12,7 +12,7 @@ namespace MeteorEngine
 		VulkanPipeline();
 		VulkanPipeline(const PipelineInfo&);
 		virtual ~VulkanPipeline();
-		virtual void Begin(CommandBuffer*, u32 layer) override;
+		virtual void Begin(CommandBuffer*) override;
 		virtual void End(CommandBuffer*) override;
 
 		virtual void ClearRenderTargets(CommandBuffer* commandBuffer) override;

@@ -23,6 +23,9 @@ namespace MeteorEngine
 		Vector3f position{ 0, 0, 0 };
 		Vector3f rotation{ 0, 0, 0 };
 		Vector3f scale{ 1, 1, 1 };
+
+
+		Matrix4f matrixTransform;
 	};
 	struct SpriteRenderer
 	{

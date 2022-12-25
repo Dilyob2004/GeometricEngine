@@ -15,24 +15,18 @@ namespace MeteorEngine
         struct MouseWheelEvent { s32 delta, x, y; };
         struct MouseWheelScrollEvent { MouseWheel wheel; f32 delta; s32 x, y; };
 
-        enum EnumEventType
+        enum Type
         {
             Closed, Resized, KeyPressed, KeyReleased, MouseWheelMoved, MouseWheelScrolled,
             MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseEntered, MouseLeft, MouseLeave
         };
-
-
-
-
-
-
-        SizeEvent             size;
-        MouseMoveEvent        mouseMove;
-        MouseButtonEvent      mouseButton;
-        MouseWheelEvent       mouseWheel;
-        MouseWheelScrollEvent mouseWheelScroll;
-        KeyEvent keyEvent;
-        EnumEventType   type;
+        SizeEvent				size;
+        MouseMoveEvent			mouseMove;
+        MouseButtonEvent		mouseButton;
+        MouseWheelEvent			mouseWheel;
+        MouseWheelScrollEvent	mouseWheelScroll;
+        KeyEvent				keyEvent;
+		Type					type;
     };
 }
 

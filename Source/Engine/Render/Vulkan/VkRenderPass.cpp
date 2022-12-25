@@ -7,7 +7,8 @@
 
 namespace MeteorEngine
 {
-	VulkanRenderPass::VulkanRenderPass(const RenderPassDesc& desc)
+	VulkanRenderPass::VulkanRenderPass(const RenderPassDesc& desc):
+		m_DepthOnly(false)
 	{
 		Init(desc);
 	}
@@ -105,7 +106,6 @@ namespace MeteorEngine
 		m_ClearValue = new VkClearValue[desc.AttachmentCount];
 		m_ClearCount = desc.AttachmentCount;
 		m_SwapChainTarget = desc.SwapChainTarget;
-
 	}
 	VkSubpassContents SubPassContentsToVK(SubPassContents contents)
 	{
@@ -132,12 +132,11 @@ namespace MeteorEngine
 
 		if (m_ClearDepth)
 			m_ClearValue[m_ClearCount - 1].depthStencil = VkClearDepthStencilValue{ 1.0f, 0 };
-
 		VkRenderPassBeginInfo rpBegin		= VkRenderPassBeginInfo();
 		rpBegin.sType						= VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		rpBegin.pNext						= NULL;
 		rpBegin.renderPass					= m_RenderPass;
-		rpBegin.framebuffer					= dynamic_cast<VulkanFrameBuffer*>(frame)->GetFrameBuffer();
+		rpBegin.framebuffer					= static_cast<VulkanFrameBuffer*>(frame)->GetFrameBuffer();
 		rpBegin.renderArea.offset.x			= 0; 
 		rpBegin.renderArea.offset.y			= 0;
 		rpBegin.renderArea.extent.width		= size.x;
@@ -145,12 +144,19 @@ namespace MeteorEngine
 		rpBegin.clearValueCount				= u32(m_ClearCount);
 		rpBegin.pClearValues				= m_ClearValue;
 
-		vkCmdBeginRenderPass(dynamic_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), &rpBegin, SubPassContentsToVK(contents));
+		vkCmdBeginRenderPass(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), &rpBegin, 
+							SubPassContentsToVK(contents));
+
 		commandBuffer->UpdateViewport(size, m_SwapChainTarget);
+
 	}
+
+
+
+
 
 	void VulkanRenderPass::EndRenderpass(CommandBuffer* commandBuffer)
 	{
-		vkCmdEndRenderPass(dynamic_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer());
+		vkCmdEndRenderPass(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer());
 	}
 }

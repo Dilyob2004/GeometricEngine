@@ -14,6 +14,7 @@ namespace MeteorEngine
 		VulkanTexture2D();
 		VulkanTexture2D(const std::string&, const TextureDesc&);
 		VulkanTexture2D(const TextureDesc&, const Vector2u&);
+		VulkanTexture2D(const TextureDesc&, const Vector2u&, void* pixels);
 		VulkanTexture2D(VkImage, VkImageView, VkFormat, const Vector2u&);
 		~VulkanTexture2D();
 		virtual void Resize(const Vector2u&) override;
@@ -70,11 +71,12 @@ namespace MeteorEngine
 			m_Descriptor.imageView = m_ImageView;
 			m_Descriptor.imageLayout = m_ImageLayout;
 		}
-
+		void Load();
 		void BuildTexture();
 		void Cleanup();
 	private:
 		u8* m_Pointer = NULL;
+		std::string					m_Path = "";
 		bool					m_DeleteImage{ false };
 		TextureDesc				m_Parameters;
 		Vector2u				m_Size;

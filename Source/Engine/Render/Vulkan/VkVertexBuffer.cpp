@@ -3,14 +3,15 @@
 namespace MeteorEngine
 {
 
-	VulkanVertexBuffer::VulkanVertexBuffer(f32* vertexPointer, u32 size): VulkanBuffer(),
+	VulkanVertexBuffer::VulkanVertexBuffer(f32* vertexPointer, u32 size): 
+		VulkanBuffer(),
 		m_Size(size),
 		m_MappedBuffer(false)
 	{
 		VulkanBuffer::SetUsage(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
 		VulkanBuffer::SetMemoryProperyFlags(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		
-		SetData(vertexPointer, m_Size);
+		//SetData(vertexPointer, m_Size);
 	}
 	VulkanVertexBuffer::~VulkanVertexBuffer()
 	{
@@ -36,5 +37,24 @@ namespace MeteorEngine
 	{
 		m_Size = size;
 		VulkanBuffer::Resize(m_Size, NULL);
+	}
+	void* VulkanVertexBuffer::GetPointer()
+	{
+		if (!m_MappedBuffer)
+		{
+			VulkanBuffer::Map();
+			m_MappedBuffer = true;
+		}
+
+		return m_Mapped;
+	}
+	void VulkanVertexBuffer::ReleasePointer()
+	{
+		if (m_MappedBuffer)
+		{
+			VulkanBuffer::Flush(m_Size);
+			VulkanBuffer::UnMap();
+			m_MappedBuffer = false;
+		}
 	}
 }

@@ -4,7 +4,7 @@
 namespace MeteorEngine
 {
 
-	File* File::Open(const std::string& path, FileMode mode, FileAccess access, FileShare share)
+	File* File::Create(const std::string& path, FileMode mode, FileAccess access, FileShare share)
 	{
 		return WindowsFile::Open(path, mode, access, share);
 	}

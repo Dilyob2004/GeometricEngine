@@ -1,7 +1,11 @@
 #include <Engine/Render/Vulkan/VkShader.h>
+#include <Engine/Render/Vulkan/VkPipeline.h>
+#include <Engine/Render/Vulkan/VkCommandBuffer.h>
 #include <Engine/Render/Vulkan/VkDevice.h>
 #include <Engine/Render/Vulkan/VkUtilities.h>
 #include <SPIRV-Cross/spirv_cross.hpp>
+#include <shaderc/shaderc.hpp>
+#include <Engine/System/File.h>
 #include <vector>
 #include <fstream>
 namespace MeteorEngine
@@ -396,27 +400,45 @@ namespace MeteorEngine
 		}
 		return 0;
 	}
-
-	bool GetFileContents(const std::string& filename, std::vector<u32>& buffer)
+	static shaderc_shader_kind VulkanShaderStageToShaderC(VkShaderStageFlagBits stage)
 	{
-		std::ifstream file(filename.c_str(), std::ios_base::binary);
-		if (file)
+		switch (stage)
 		{
-			file.seekg(0, std::ios_base::end);
-			std::ifstream::pos_type size = file.tellg();
-			if (size > 0)
-			{
-				file.seekg(0, std::ios_base::beg);
-				buffer.resize(static_cast<std::size_t>(size));
-				file.read((char*)buffer.data(), static_cast<std::streamsize>(size));
-			}
-			return true;
+			case VK_SHADER_STAGE_VERTEX_BIT:   return shaderc_glsl_vertex_shader;
+			case VK_SHADER_STAGE_FRAGMENT_BIT: return shaderc_glsl_fragment_shader;
 		}
-		else
-			return false;
+		return (shaderc_shader_kind)0;
 	}
+	std::string ReadFile(const std::string& fileName)
+	{
+		File* file = File::Create(fileName, FileMode::OpenExisting, FileAccess::Read, FileShare::Read);
+		u32 size = file->GetSize();
+		std::string source;
+		source.resize(size);
+		file->Read(source.data(), source.size(), NULL);
+		return source;
+	}
+	u8* ReadFileData(const std::string& fileName)
+	{
+		File* file = File::Create(fileName, FileMode::OpenExisting, FileAccess::Read, FileShare::Read);
+		u32 size = file->GetSize();
+		u8* source = new u8[size];
+		file->Read(source, size, NULL);
+		return source;
+	}
+	std::vector<u32> CompileGlslToSpirV(const std::string& fileName, VkShaderStageFlagBits stage)
+	{
+		shaderc::Compiler compiler;
+		shaderc::CompileOptions options;
+		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
+		options.SetOptimizationLevel(shaderc_optimization_level_performance);
+		auto module = compiler.CompileGlslToSpv(ReadFile(fileName), VulkanShaderStageToShaderC(stage), fileName.c_str(), options);
 
-
+		if (module.GetCompilationStatus() != shaderc_compilation_status_success)
+			LOGLN(module.GetErrorMessage());
+		
+		return std::vector<u32>(module.cbegin(), module.cend());
+	}
 	VulkanShader::VulkanShader(const std::string& vert, const std::string& frag):
 			m_StageCount(2), 
 			m_PipelineLayout(0), 
@@ -428,11 +450,12 @@ namespace MeteorEngine
 
 		for (u32 i = 0; i < m_StageCount; i++)
 			m_ShaderStages[i] = VkPipelineShaderStageCreateInfo();
-		std::vector<u32> bufferVert, bufferFrag;
-		GetFileContents(vert, bufferVert);
-		GetFileContents(frag, bufferFrag);
-		Load(bufferVert.data(), bufferVert.size(), ShaderType::VERTEX, 0);
-		Load(bufferFrag.data(), bufferFrag.size(), ShaderType::FRAGMENT, 1);
+		//std::vector<u32> pCodeVert(CompileGlslToSpirV(vert, VK_SHADER_STAGE_VERTEX_BIT));
+		//std::vector<u32> pCodeFrag(CompileGlslToSpirV(frag, VK_SHADER_STAGE_FRAGMENT_BIT));
+		std::string pCodeVert = ReadFile(vert);
+		std::string pCodeFrag = ReadFile(frag);
+		Load((u32*)pCodeVert.data(), pCodeVert.size(), ShaderType::VERTEX, 0);
+		Load((u32*)pCodeFrag.data(), pCodeFrag.size(), ShaderType::FRAGMENT, 1);
 		Compile();
 	}
 	VulkanShader::~VulkanShader()
@@ -455,24 +478,18 @@ namespace MeteorEngine
 		m_StageCount = 0;
 	}
 
-	void VulkanShader::BindPushConstants(CommandBuffer* commandBuffer)
+	void VulkanShader::BindPushConstants(CommandBuffer* commandBuffer, Pipeline* pipeline)
 	{
 		uint32_t index = 0;
 		for (auto& pc : m_PushConstants)
 		{
-
+			vkCmdPushConstants(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), 
+			static_cast<VulkanPipeline*>(pipeline)->GetPipelineLayout(), ShaderTypeToVK(pc.shaderStage), index, pc.size, pc.data);
 		}
-		//vkCmdPushConstants(static_cast<VulkanCommandBuffer*>(commandBuffer)->GetCommandBuffer(), 
-		//static_cast<Graphics::VKPipeline*>(pipeline)->GetPipelineLayout(), ShaderTypeToVK(pc.shaderStage), index, pc.size, pc.data);
 	}
 	void VulkanShader::Load(const u32* source, u32 fileSize, ShaderType shaderType, u32 currStage)
 	{
 
-		VkShaderModuleCreateInfo shaderCreateInfo = VkShaderModuleCreateInfo();
-		shaderCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		shaderCreateInfo.codeSize = fileSize;
-		shaderCreateInfo.pCode = source;
-		shaderCreateInfo.pNext = VK_NULL_HANDLE;
 
 		std::vector<u32> spv(source, source + fileSize / sizeof(u32));
 
@@ -491,8 +508,8 @@ namespace MeteorEngine
 				const spirv_cross::SPIRType& InputType = comp.get_type(resource.type_id);
 
 				VkVertexInputAttributeDescription Description = VkVertexInputAttributeDescription();
-				Description.binding = comp.get_decoration(resource.id, spv::DecorationBinding);
 				Description.location = comp.get_decoration(resource.id, spv::DecorationLocation);
+				Description.binding = comp.get_decoration(resource.id, spv::DecorationBinding);
 				Description.offset = m_VertexInputStride;
 				Description.format = GetVulkanFormat(InputType);
 				m_VertexInputAttributeDescriptions.push_back(Description);
@@ -589,8 +606,18 @@ namespace MeteorEngine
 		m_ShaderStages[currStage].stage = ShaderTypeToVK(shaderType);
 		m_ShaderStages[currStage].pName = "main";
 		m_ShaderStages[currStage].pNext = VK_NULL_HANDLE;
+
+		VkShaderModuleCreateInfo shaderCreateInfo = VkShaderModuleCreateInfo();
+		shaderCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		shaderCreateInfo.codeSize = fileSize;
+		shaderCreateInfo.pCode = source;
+		shaderCreateInfo.pNext = VK_NULL_HANDLE;
 		if (vkCreateShaderModule(VulkanDevice::GetInstance()->GetLogicalDevice(), &shaderCreateInfo, nullptr, &m_ShaderStages[currStage].module) == VK_SUCCESS)
 			m_Compiled = true;
+
+
+
+
 	
 	}
 	void VulkanShader::Compile()

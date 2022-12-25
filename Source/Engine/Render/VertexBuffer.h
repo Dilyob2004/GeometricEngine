@@ -10,6 +10,8 @@ namespace MeteorEngine
         virtual void Bind(CommandBuffer*) const = 0;
         virtual void UnBind() const = 0;
 
+		virtual void ReleasePointer() = 0;
+		virtual void* GetPointer() = 0;
 		virtual void SetData(f32*, u32) = 0;
 		virtual void Resize(u32) = 0;
 		virtual u32 GetSize() const = 0;

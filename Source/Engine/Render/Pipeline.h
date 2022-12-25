@@ -1,7 +1,6 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
-#include <Engine/Render/Vulkan/Vk.h>
 #include <Engine/Render/Shader.h>
 #include <Engine/Render/CommandBuffer.h>
 namespace MeteorEngine
@@ -22,7 +21,7 @@ namespace MeteorEngine
 
 		Texture* ColorTargets[10];
 		Texture* DepthTarget = NULL;
-		float clearColor[4] = {};
+		float clearColor[4] = {0, 0, 0, 0};
 		float DepthBiasConstantFactor = 0.0f;
 		float DepthBiasSlopeFactor = 0.0f;
 	};
@@ -31,7 +30,7 @@ namespace MeteorEngine
 	{
 	public:
 		static Pipeline* Create(const PipelineInfo&);
-		virtual void Begin(CommandBuffer*, u32 layer) = 0;
+		virtual void Begin(CommandBuffer*) = 0;
 		virtual void End(CommandBuffer*)= 0;
 
 		virtual void ClearRenderTargets(CommandBuffer* commandBuffer) = 0;
