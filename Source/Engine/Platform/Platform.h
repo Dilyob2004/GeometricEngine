@@ -11,6 +11,7 @@ namespace MeteorEngine
 	public:
 		static void PreInit();
 		static Time GetTime();
+		static void* Memzero(void*, u32);
 		static void* GetDllFunction(const char*, const char*);
 		static void Tick();
 	};

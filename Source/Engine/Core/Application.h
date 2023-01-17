@@ -3,7 +3,6 @@
 #include <Engine/Core/Config.h>
 #include <Engine/Core/Window.h>
 #include <Engine/Core/LayerStack.h>
-#include <Engine/Render/Renderer.h>
 #include <Engine/Core/Core.h>
 #include <memory>
 namespace MeteorEngine

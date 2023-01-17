@@ -2,7 +2,6 @@
 #define PIPELINE_H
 
 #include <Engine/Render/Shader.h>
-#include <Engine/Render/CommandBuffer.h>
 namespace MeteorEngine
 {
 
@@ -30,10 +29,6 @@ namespace MeteorEngine
 	{
 	public:
 		static Pipeline* Create(const PipelineInfo&);
-		virtual void Begin(CommandBuffer*) = 0;
-		virtual void End(CommandBuffer*)= 0;
-
-		virtual void ClearRenderTargets(CommandBuffer* commandBuffer) = 0;
 		virtual Shader* GetShader() = 0;
 	};
 }

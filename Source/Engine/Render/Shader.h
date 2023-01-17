@@ -3,7 +3,6 @@
 
 #include <Engine/Math/Vector2.h>
 #include <Engine/Math/Matrix4.h>
-#include <Engine/Render/CommandBuffer.h>
 #include <Engine/Render/Structs.h>
 #include <string>
 namespace MeteorEngine
@@ -16,7 +15,6 @@ namespace MeteorEngine
         static Shader *Create(const std::string &, const std::string &);
 		///static Shader *Create(const std::string &);
 
-		virtual void BindPushConstants(CommandBuffer* commandBuffer, Pipeline* pipeline) = 0;
 		virtual DescriptorSetInfo GetDescriptorInfo(u32 index) = 0;
 		virtual const std::vector<ShaderType> GetShaderTypes() const = 0;
 		virtual bool IsCompiled() const = 0;

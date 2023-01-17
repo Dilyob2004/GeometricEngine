@@ -2,10 +2,11 @@
 #define CONFIG_H
 #include <windows.h>
 #include <iostream>
+#include <vector>
 #include <string>
 #include <sstream>
 #include <algorithm> 
-
+#include <typeinfo>
 #if defined (METEOR_BUILD_DLL)
 
     #define METEOR_API __declspec(dllexport)
@@ -13,6 +14,7 @@
 
     #define METEOR_API __declspec(dllimport)
 #endif
+
 
 
 #define LOG(x) std::clog << x
@@ -26,6 +28,7 @@
 #define MATH_RADIANS				0.01745329251994329576923690768489f
 #define MIN(a, b) (( (a) < (b) ) ? (a) : (b))
 #define MAX(a, b) (( (a) > (b) ) ? (a) : (b))
+#define ARRAY_COUNT(X) sizeof(X) / sizeof(typeid(X).raw_name())
 typedef void	s0;
 typedef void*	p0;
 typedef const void* cp0;

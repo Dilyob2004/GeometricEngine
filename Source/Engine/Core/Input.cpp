@@ -1,5 +1,5 @@
 #include <Engine/Core/Input.h>
-#include <Engine/Platform/Win32/WindowsInput.h>
+#include <Engine/Platform/Windows/WindowsInput.h>
 
 namespace MeteorEngine
 {

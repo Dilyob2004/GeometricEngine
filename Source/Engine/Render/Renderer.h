@@ -2,12 +2,10 @@
 #define RENDERER_H
 #include <memory>
 #include <Engine/Math/Matrix4.h>
-#include <Engine/Render/VertexArray.h>
 #include <Engine/Render/Texture.h>
 #include <Engine/Render/Camera.h>
 #include <Engine/Render/Camera2D.h>
 #include <Engine/Render/SwapChain.h>
-#include <Engine/Render/DescriptorSet.h>
 #include <Engine/Render/Pipeline.h>
 namespace MeteorEngine
 {
@@ -21,14 +19,9 @@ namespace MeteorEngine
 		virtual void Present() = 0;
 		virtual void Resize(const Vector2u& size) = 0;
 		virtual void ClearSwapChainImages() const = 0;
-		virtual void ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour) = 0;
-		virtual void BindDescriptorSets(Pipeline* pipeline, CommandBuffer* commandBuffer, u32 dynamicOffset, DescriptorSet** descriptorSets, u32 descriptorCount) = 0;
-
-		virtual void DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start) const = 0;
 		virtual SwapChain* GetMainSwapChain() const = 0;
 
 
-		void DrawIndexed(const std::shared_ptr<VertexArray>&) {}
 		void SetupProjection2D(Camera2D) {}
 		void SetupProjection3D(Camera) {}
 		void DrawQuad(const Matrix4f&, const Vector4f&) {}
@@ -41,21 +34,6 @@ namespace MeteorEngine
     class METEOR_API RendererCommand
     {
     public:
-		static void Init(RenderContext*, const Vector2u& size, bool vsync);
-		static void Begin();
-		static void Present();
-		static void Resize(const Vector2u& size);
-		static void ClearSwapChainImages();
-		static void ClearRenderTarget(Texture* texture, CommandBuffer* commandBuffer, const Vector4f& clearColour = {0, 0, 0, 1});
-
-		static void BindDescriptorSets(Pipeline* pipeline, CommandBuffer* commandBuffer, u32 dynamicOffset, DescriptorSet** descriptorSets, u32 descriptorCount);
-		static void DrawIndexed(CommandBuffer* commandBuffer, DrawType type, u32 count, u32 start);
-		static SwapChain* GetMainSwapChain();
-
-
-
-
-        static void DrawIndexed(const std::shared_ptr<VertexArray>&){}
         static void SetupProjection2D(Camera2D){}
 		static void SetupProjection3D(Camera){}
 		static void DrawQuad(const Matrix4f&, const Vector4f&){}

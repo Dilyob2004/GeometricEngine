@@ -1,7 +1,6 @@
 #ifndef SWAPCHAIN_H
 #define SWAPCHAIN_H
 #include <Engine/Render/Texture.h>
-#include <Engine/Render/CommandBuffer.h>
 #include <Engine/Render/RenderContext.h>
 namespace MeteorEngine
 {
@@ -10,7 +9,6 @@ namespace MeteorEngine
 	public:
 		virtual ~SwapChain(){}
 		static SwapChain* Create(RenderContext*, const Vector2u&, bool);
-		virtual CommandBuffer* GetCurrentCommandBuffer() = 0;
 
 		virtual Texture* GetCurrentImage() = 0;
 		virtual u32 GetCurrentImageIndex() const = 0;

@@ -8,7 +8,6 @@
 #include <Engine/System/File.h>
 #include <Engine/IconsMaterialDesignIcons.h>
 #include <ImGui/imgui.h>
-#include <ImGui/ImGuizmo.h>
 #include <entt/entt.hpp>
 #include <iostream>
 namespace MeteorEngine
@@ -17,7 +16,7 @@ namespace MeteorEngine
 
 	bool isHovered = false, isOpenViewport = true;
 
-	ImGuizmo::OPERATION typeGizmo = ImGuizmo::OPERATION::TRANSLATE;
+	//ImGuizmo::OPERATION typeGizmo = ImGuizmo::OPERATION::TRANSLATE;
     Editor::Editor():
         Layer("Editor"),
         m_cameraController(30, 1.778f, 0.1f, 1000)
@@ -59,7 +58,7 @@ namespace MeteorEngine
     {
 
 		
-        f32 time = m_clock.GetTime().GetSeconds();
+        /**f32 time = m_clock.GetTime().GetSeconds();
         m_clock.Restart();
 
 
@@ -145,7 +144,7 @@ namespace MeteorEngine
 		m_console->OnUpdate();
 		m_hierarchy->OnUpdate();
 		m_contentBrowser->OnUpdate();
-
+		*/
     }
     void Editor::OnEvent(Event& e)
     {
@@ -162,10 +161,10 @@ namespace MeteorEngine
 				{
 					if (e.keyEvent.code == KeyCode::LControl) {
 						
-						if (e.keyEvent.code == KeyCode::Q) typeGizmo = ImGuizmo::OPERATION::TRANSLATE;
+						/**if (e.keyEvent.code == KeyCode::Q) typeGizmo = ImGuizmo::OPERATION::TRANSLATE;
 						if (e.keyEvent.code == KeyCode::W) typeGizmo = ImGuizmo::OPERATION::ROTATE;
 						if (e.keyEvent.code == KeyCode::E) typeGizmo = ImGuizmo::OPERATION::SCALE;
-					}
+					*/}
 				}
 				break;
 			}

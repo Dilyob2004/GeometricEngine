@@ -1,6 +1,5 @@
 #ifndef VECTOR4_H
 #define VECTOR4_H
-
 #include <cmath>
 #include <Engine/Core/Config.h>
 namespace MeteorEngine

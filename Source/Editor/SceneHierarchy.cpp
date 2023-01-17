@@ -1,7 +1,7 @@
 #include <Editor/SceneHierarchy.h>
 #include <Editor/Components.h>
 #include <Engine/Math/MathUtils.h>
-#include <Engine/Gui/ImGuiLayer.h>
+#include <Engine/ImGui/ImGuiLayer.h>
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
