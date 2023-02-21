@@ -2,33 +2,33 @@
 
 
 
-namespace MeteorEngine
+namespace GeometricEngine
 {
 	Matrix4f Inverse(const Matrix4f& m)
 	{
-		f32 Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
-		f32 Coef02 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
-		f32 Coef03 = m[1][2] * m[2][3] - m[2][2] * m[1][3];
+		F32 Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
+		F32 Coef02 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
+		F32 Coef03 = m[1][2] * m[2][3] - m[2][2] * m[1][3];
 
-		f32 Coef04 = m[2][1] * m[3][3] - m[3][1] * m[2][3];
-		f32 Coef06 = m[1][1] * m[3][3] - m[3][1] * m[1][3];
-		f32 Coef07 = m[1][1] * m[2][3] - m[2][1] * m[1][3];
+		F32 Coef04 = m[2][1] * m[3][3] - m[3][1] * m[2][3];
+		F32 Coef06 = m[1][1] * m[3][3] - m[3][1] * m[1][3];
+		F32 Coef07 = m[1][1] * m[2][3] - m[2][1] * m[1][3];
 
-		f32 Coef08 = m[2][1] * m[3][2] - m[3][1] * m[2][2];
-		f32 Coef10 = m[1][1] * m[3][2] - m[3][1] * m[1][2];
-		f32 Coef11 = m[1][1] * m[2][2] - m[2][1] * m[1][2];
+		F32 Coef08 = m[2][1] * m[3][2] - m[3][1] * m[2][2];
+		F32 Coef10 = m[1][1] * m[3][2] - m[3][1] * m[1][2];
+		F32 Coef11 = m[1][1] * m[2][2] - m[2][1] * m[1][2];
 
-		f32 Coef12 = m[2][0] * m[3][3] - m[3][0] * m[2][3];
-		f32 Coef14 = m[1][0] * m[3][3] - m[3][0] * m[1][3];
-		f32 Coef15 = m[1][0] * m[2][3] - m[2][0] * m[1][3];
+		F32 Coef12 = m[2][0] * m[3][3] - m[3][0] * m[2][3];
+		F32 Coef14 = m[1][0] * m[3][3] - m[3][0] * m[1][3];
+		F32 Coef15 = m[1][0] * m[2][3] - m[2][0] * m[1][3];
 
-		f32 Coef16 = m[2][0] * m[3][2] - m[3][0] * m[2][2];
-		f32 Coef18 = m[1][0] * m[3][2] - m[3][0] * m[1][2];
-		f32 Coef19 = m[1][0] * m[2][2] - m[2][0] * m[1][2];
+		F32 Coef16 = m[2][0] * m[3][2] - m[3][0] * m[2][2];
+		F32 Coef18 = m[1][0] * m[3][2] - m[3][0] * m[1][2];
+		F32 Coef19 = m[1][0] * m[2][2] - m[2][0] * m[1][2];
 
-		f32 Coef20 = m[2][0] * m[3][1] - m[3][0] * m[2][1];
-		f32 Coef22 = m[1][0] * m[3][1] - m[3][0] * m[1][1];
-		f32 Coef23 = m[1][0] * m[2][1] - m[2][0] * m[1][1];
+		F32 Coef20 = m[2][0] * m[3][1] - m[3][0] * m[2][1];
+		F32 Coef22 = m[1][0] * m[3][1] - m[3][0] * m[1][1];
+		F32 Coef23 = m[1][0] * m[2][1] - m[2][0] * m[1][1];
 
 		Vector4f Fac0(Coef00, Coef00, Coef02, Coef03);
 		Vector4f Fac1(Coef04, Coef04, Coef06, Coef07);
@@ -54,13 +54,13 @@ namespace MeteorEngine
 		Vector4f Row0(mInverse[0][0], mInverse[1][0], mInverse[2][0], mInverse[3][0]);
 
 		Vector4f Dot0(m[0] * Row0);
-		f32 Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
+		F32 Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
 
-		f32 OneOverDeterminant = static_cast<f32>(1) / Dot1;
+		F32 OneOverDeterminant = static_cast<F32>(1) / Dot1;
 
 		return mInverse * OneOverDeterminant;
 	}
-	Matrix4f Ortho(f32 left, f32 right, f32 bottom, f32 top)
+	Matrix4f Ortho(F32 left, F32 right, F32 bottom, F32 top)
 	{
 		Matrix4f Result(1.f);
 
@@ -71,14 +71,14 @@ namespace MeteorEngine
 		Result[3][1] = (top + bottom) / (bottom - top);
 		return Result;
 	}
-	Matrix4f Rotate(const Matrix4f & m, f32 angle, const Vector3f & v)
+	Matrix4f Rotate(const Matrix4f & m, F32 angle, const Vector3f & v)
 	{
-		f32 const a = angle;
-		f32 const c = cos(a);
-		f32 const s = sin(a);
+		F32 const a = angle;
+		F32 const c = cos(a);
+		F32 const s = sin(a);
 
 		Vector3f axis(v.GetNormalized());
-		Vector3f temp((f32(1) - c) * axis);
+		Vector3f temp((F32(1) - c) * axis);
 
 		Matrix4f Rotate;
 		Rotate[0][0] = c + temp[0] * axis[0];
@@ -116,15 +116,15 @@ namespace MeteorEngine
 		return Result;
 	}
 
-	Matrix4f Perspective(f32 fovy, f32 aspect, f32 zNear, f32 zFar)
+	Matrix4f Perspective(F32 fovy, F32 aspect, F32 zNear, F32 zFar)
 	{
-		const f32 tanHalfFovy = tan(fovy / static_cast<f32>(2));
-		Matrix4f Result(static_cast<f32>(0));
+		const F32 tanHalfFovy = tan(fovy / static_cast<F32>(2));
+		Matrix4f Result(static_cast<F32>(0));
 
-		Result[0][0] = static_cast<f32>(1) / (aspect * tanHalfFovy);
-		Result[1][1] = static_cast<f32>(1) / (tanHalfFovy);
+		Result[0][0] = static_cast<F32>(1) / (aspect * tanHalfFovy);
+		Result[1][1] = static_cast<F32>(1) / (tanHalfFovy);
 		Result[2][2] = zFar / (zFar - zNear);
-		Result[2][3] = static_cast<f32>(1);
+		Result[2][3] = static_cast<F32>(1);
 		Result[3][2] = -(zFar * zNear) / (zFar - zNear);
 		return Result;
 	}
@@ -137,8 +137,8 @@ namespace MeteorEngine
 
 		Vector3f Row[3];
 
-		for (u32 i = 0; i < 3; i++)
-			for (u32 j = 0; j < 3; j++)
+		for (U32 i = 0; i < 3; i++)
+			for (U32 j = 0; j < 3; j++)
 				Row[i][j] = LocalMatrix[i][j];
 
 
@@ -171,28 +171,28 @@ namespace MeteorEngine
 
 	Matrix3f toMatrix3(const Quaternion& q)
 	{
-		Matrix3f Result(f32(1));
-		f32 qxx(q.x * q.x);
-		f32 qyy(q.y * q.y);
-		f32 qzz(q.z * q.z);
-		f32 qxz(q.x * q.z);
-		f32 qxy(q.x * q.y);
-		f32 qyz(q.y * q.z);
-		f32 qwx(q.w * q.x);
-		f32 qwy(q.w * q.y);
-		f32 qwz(q.w * q.z);
+		Matrix3f Result(F32(1));
+		F32 qxx(q.x * q.x);
+		F32 qyy(q.y * q.y);
+		F32 qzz(q.z * q.z);
+		F32 qxz(q.x * q.z);
+		F32 qxy(q.x * q.y);
+		F32 qyz(q.y * q.z);
+		F32 qwx(q.w * q.x);
+		F32 qwy(q.w * q.y);
+		F32 qwz(q.w * q.z);
 
-		Result[0][0] = f32(1) - f32(2) * (qyy + qzz);
-		Result[0][1] = f32(2) * (qxy + qwz);
-		Result[0][2] = f32(2) * (qxz - qwy);
+		Result[0][0] = F32(1) - F32(2) * (qyy + qzz);
+		Result[0][1] = F32(2) * (qxy + qwz);
+		Result[0][2] = F32(2) * (qxz - qwy);
 
-		Result[1][0] = f32(2) * (qxy - qwz);
-		Result[1][1] = f32(1) - f32(2) * (qxx + qzz);
-		Result[1][2] = f32(2) * (qyz + qwx);
+		Result[1][0] = F32(2) * (qxy - qwz);
+		Result[1][1] = F32(1) - F32(2) * (qxx + qzz);
+		Result[1][2] = F32(2) * (qyz + qwx);
 
-		Result[2][0] = f32(2) * (qxz + qwy);
-		Result[2][1] = f32(2) * (qyz - qwx);
-		Result[2][2] = f32(1) - f32(2) * (qxx + qyy);
+		Result[2][0] = F32(2) * (qxz + qwy);
+		Result[2][1] = F32(2) * (qyz - qwx);
+		Result[2][2] = F32(1) - F32(2) * (qxx + qyy);
 		return Result;
 	}
 
@@ -208,23 +208,23 @@ namespace MeteorEngine
 			x.z * y.x - y.z * x.x,
 			x.x * y.y - y.x * x.y);
 	}
-	Quaternion Rotate(const Quaternion & q, const f32 & angle, const Vector3f & v)
+	Quaternion Rotate(const Quaternion & q, const F32 & angle, const Vector3f & v)
 	{
 		Vector3f Tmp = v;
 
-		f32 len = Tmp.Length();
-		if (abs(len - static_cast<f32>(1)) > static_cast<f32>(0.001))
+		F32 len = Tmp.Length();
+		if (abs(len - static_cast<F32>(1)) > static_cast<F32>(0.001))
 		{
-			f32 oneOverLen = static_cast<f32>(1) / len;
+			F32 oneOverLen = static_cast<F32>(1) / len;
 			Tmp.x *= oneOverLen;
 			Tmp.y *= oneOverLen;
 			Tmp.z *= oneOverLen;
 		}
 
-		const f32  AngleRad(angle);
-		const f32  Sin = sin(AngleRad * static_cast<f32>(0.5));
+		const F32  AngleRad(angle);
+		const F32  Sin = sin(AngleRad * static_cast<F32>(0.5));
 
-		return q * Quaternion(cos(AngleRad * static_cast<f32>(0.5)), Tmp.x * Sin, Tmp.y * Sin, Tmp.z * Sin);
+		return q * Quaternion(cos(AngleRad * static_cast<F32>(0.5)), Tmp.x * Sin, Tmp.y * Sin, Tmp.z * Sin);
 	}
 	Quaternion operator*(Quaternion const& q, Quaternion const& p)
 	{
@@ -236,7 +236,7 @@ namespace MeteorEngine
 		Vector3f const uv(Cross(QuatVector, v));
 		Vector3f const uuv(Cross(QuatVector, uv));
 
-		return v + ((uv * q.w) + uuv) * static_cast<f32>(2);
+		return v + ((uv * q.w) + uuv) * static_cast<F32>(2);
 	}
 	Vector3f Rotate(Quaternion const& q, Vector3f const& v)
 	{
@@ -269,20 +269,20 @@ namespace MeteorEngine
 		return Result;
 	}
 
-	f32 Angle(const Vector3f& x, const Vector3f& y)
+	F32 Angle(const Vector3f& x, const Vector3f& y)
 	{
 		return acos(std::clamp(Dot(x, y), -1.0f, 1.0f));
 	}
-	Matrix4f Rotate(f32 angle, Vector3f const& v)
+	Matrix4f Rotate(F32 angle, Vector3f const& v)
 	{
-		return Rotate(Matrix4f(static_cast<f32>(1)), angle, v);
+		return Rotate(Matrix4f(static_cast<F32>(1)), angle, v);
 	}
 
 
-	 Vector3f Rotate(Vector3f const& x, f32 const& angle, Vector3f const& normal)
+	 Vector3f Rotate(Vector3f const& x, F32 const& angle, Vector3f const& normal)
 	{
-		const f32 Cos = cos(angle * MATH_RADIANS);
-		const f32 Sin = sin(angle * MATH_RADIANS);
-		return x * Cos + ((x * normal) * (f32(1) - Cos)) * normal + Cross(x, normal) * Sin;
+		const F32 Cos = cos(angle * MATH_RADIANS);
+		const F32 Sin = sin(angle * MATH_RADIANS);
+		return x * Cos + ((x * normal) * (F32(1) - Cos)) * normal + Cross(x, normal) * Sin;
 	}
 }

@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace MeteorEngine
+namespace GeometricEngine
 {
 	const Quaternion Quaternion::Zero = Quaternion(0, 0, 0, 0);
 	const Quaternion Quaternion::Identity = Quaternion();
@@ -14,7 +14,7 @@ namespace MeteorEngine
 		w(1)
 	{
 	}
-	Quaternion::Quaternion(f32 X, f32 Y, f32 Z, f32 W):
+	Quaternion::Quaternion(F32 X, F32 Y, F32 Z, F32 W):
 			x(X),
 			y(Y),
 			z(Z),
@@ -24,7 +24,7 @@ namespace MeteorEngine
 	}	
 	Quaternion::Quaternion(const Vector3f &eulerAngle)
 	{
-		Vector3f valueVec = eulerAngle * f32(0.5);
+		Vector3f valueVec = eulerAngle * F32(0.5);
 
 
 		Vector3f c = Vector3f(std::cos(valueVec.x), std::cos(valueVec.y), std::cos(valueVec.z));
@@ -43,7 +43,7 @@ namespace MeteorEngine
 
 	void Quaternion::Normalize()
 	{
-		f32 n = 1.f / sqrt(x * x + y * y + z * z + w * w);
+		F32 n = 1.f / sqrt(x * x + y * y + z * z + w * w);
 
 		x *= n;
 		y *= n;

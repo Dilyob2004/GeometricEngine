@@ -1,6 +1,6 @@
 #include <Engine/Math/Matrix3.h>
 #include <Engine/Math/Matrix4.h>
-namespace MeteorEngine
+namespace GeometricEngine
 {
 
 	const Matrix3f Matrix3f::Identity = Matrix3f(
@@ -18,7 +18,7 @@ namespace MeteorEngine
 	{
 		*this = Matrix3f::Identity;
 	}
-	Matrix3f::Matrix3f(f32 x)
+	Matrix3f::Matrix3f(F32 x)
 	{
 		m_column[0] = Vector3f(x, 0, 0);
 		m_column[1] = Vector3f(0, x, 0);
@@ -45,9 +45,9 @@ namespace MeteorEngine
 		m_column[1] = column2;
 		m_column[2] = column3;
 	}
-	Matrix3f::Matrix3f( f32 m00, f32 m01, f32 m02,
-						f32 m10, f32 m11, f32 m12,
-					    f32 m20, f32 m21, f32 m22)
+	Matrix3f::Matrix3f( F32 m00, F32 m01, F32 m02,
+						F32 m10, F32 m11, F32 m12,
+					    F32 m20, F32 m21, F32 m22)
 	{
 		m_column[0] = Vector3f(m00, m01, m02);
 		m_column[1] = Vector3f(m10, m11, m12);
@@ -56,23 +56,23 @@ namespace MeteorEngine
 	Matrix3f::~Matrix3f()
 	{
 	}
-	Vector3f& Matrix3f::operator[](const s32& i)
+	Vector3f& Matrix3f::operator[](const S32& i)
 	{
 		return m_column[i];
 	}
 
-	const Vector3f& Matrix3f::operator[](s32 i) const
+	const Vector3f& Matrix3f::operator[](S32 i) const
 	{
 		return m_column[i];
 	}
 
-	Matrix3f operator*(const Matrix3f& m1, const f32& x)
+	Matrix3f operator*(const Matrix3f& m1, const F32& x)
 	{
 		return Matrix3f(m1[0] * x,
 			m1[1] * x,
 			m1[2] * x);
 	}
-	Matrix3f operator*(const f32& x, const Matrix3f& m1)
+	Matrix3f operator*(const F32& x, const Matrix3f& m1)
 	{
 		return Matrix3f(m1[0] * x,
 			m1[1] * x,

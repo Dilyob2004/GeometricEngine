@@ -4,21 +4,23 @@
 #include <Engine/Core/Config.h>
 #include <Engine/RHI/RHIResources.h>
 #include <Engine/RHI/DynamicRHI.h>
-#include <d3d11.h>
-namespace MeteorEngine
+namespace GeometricEngine
 {
 	class DX11DynamicRHI;
-	class METEOR_API DX11Viewport : public RHIViewport
+	class GEOMETRIC_API DX11Viewport : public RHIViewport
 	{
 	public:
 		DX11Viewport();
-		DX11Viewport(const DX11DynamicRHI*, HWND, u32, u32, bool);
+		DX11Viewport(const DX11DynamicRHI*, HWND, U32, U32, bool);
 		~DX11Viewport();
-		void Resize(const DX11DynamicRHI*, u32, u32, bool);
+		void Resize(const DX11DynamicRHI*, U32, U32, bool);
 		void Present(bool);
+
+		U32 GetWidth() const { return Width; }
+		U32 GetHeight() const { return Height; }
 	private:
 		HWND HandleWindow;
-		u32 Width, Height;
+		U32 Width = 0, Height = 0;
 
 		bool EnabledVSync, EnabledFullScreen;
 	};

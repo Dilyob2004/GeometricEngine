@@ -1,12 +1,12 @@
 #include <Engine/RHI/DirectX/DX11DynamicRHI.h>
-
-namespace MeteorEngine
+#include <Engine/Core/Misc/Log.h>
+namespace GeometricEngine
 {
 	static bool SafeTestD3D11CreateDevice(IDXGIAdapter* Adapter, D3D_FEATURE_LEVEL MaxFeatureLevel, D3D_FEATURE_LEVEL* OutFeatureLevel)
 	{
 		ID3D11Device* D3DDevice = NULL;
 		ID3D11DeviceContext* D3DDeviceContext = NULL;
-		u32 DeviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
+		U32 DeviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 
 		// Use a debug device if specified on the command line.
 		/**if (Debug())
@@ -19,8 +19,8 @@ namespace MeteorEngine
 		D3D_FEATURE_LEVEL_10_1,
 		D3D_FEATURE_LEVEL_10_0 };
 
-		i32 FirstAllowedFeatureLevel = 0;
-		i32 NumAllowedFeatureLevels = ARRAY_COUNT(RequestedFeatureLevels);
+		I32 FirstAllowedFeatureLevel = 0;
+		I32 NumAllowedFeatureLevels = ARRAY_COUNT(RequestedFeatureLevels);
 		while (FirstAllowedFeatureLevel < NumAllowedFeatureLevels)
 		{
 			if (RequestedFeatureLevels[FirstAllowedFeatureLevel] == MaxFeatureLevel)
@@ -89,7 +89,7 @@ namespace MeteorEngine
 		}
 		IDXGIAdapter* InAdapter;
 		IDXGIAdapter* SelectedAdapter = NULL;
-		for (u32 i = 0; Factory->EnumAdapters(i, &InAdapter) != DXGI_ERROR_NOT_FOUND; i++)
+		for (U32 i = 0; Factory->EnumAdapters(i, &InAdapter) != DXGI_ERROR_NOT_FOUND; i++)
 		{
 			if (InAdapter)
 			{
@@ -106,7 +106,7 @@ namespace MeteorEngine
 	void DX11DynamicRHI::InitDevice()
 	{
 		D3D_DRIVER_TYPE DriverType			= D3D_DRIVER_TYPE_UNKNOWN;
-		u32 Flags							= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+		U32 Flags							= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 		D3D_FEATURE_LEVEL MaxFeatureLevel	= D3D_FEATURE_LEVEL_11_1;
 		D3D_FEATURE_LEVEL ActualLevel		= (D3D_FEATURE_LEVEL)0;
 		if (FAILED(D3D11CreateDevice(

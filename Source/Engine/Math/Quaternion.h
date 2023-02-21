@@ -2,13 +2,13 @@
 #define QUATERNION_H
 #include <Engine/Math/Matrix4.h>
 
-namespace MeteorEngine
+namespace GeometricEngine
 {
 	class METEOR_API Quaternion
 	{
 	public:
 		Quaternion();
-		Quaternion(f32, f32, f32, f32);
+		Quaternion(F32, F32, F32, F32);
 		Quaternion(const Vector3f& );
 		~Quaternion();
 
@@ -29,7 +29,7 @@ namespace MeteorEngine
 			return *this;
 		}
 
-		f32 x, y, z, w;
+		F32 x, y, z, w;
 	};
 	METEOR_API Quaternion operator*(Quaternion const& q, Quaternion const& p);
 

@@ -3,14 +3,14 @@
 #include <Engine/Core/Config.h>
 #include <Engine/Math/Vector4.h>
 #include <Engine/Math/Matrix3.h>
-namespace MeteorEngine
+namespace GeometricEngine
 {
     class METEOR_API Matrix4f
     {
     public:
         Matrix4f();
 
-        Matrix4f(f32 x);
+        Matrix4f(F32 x);
 
         Matrix4f(const Matrix4f& x);
         Matrix4f(const Matrix3f& x);
@@ -20,14 +20,14 @@ namespace MeteorEngine
                  const Vector4f &column3,
                  const Vector4f &column4);
 
-        Matrix4f(f32 m00, f32 m01, f32 m02, f32 m03,
-                 f32 m10, f32 m11, f32 m12, f32 m13,
-                 f32 m20, f32 m21, f32 m22, f32 m23,
+        Matrix4f(F32 m00, F32 m01, F32 m02, F32 m03,
+                 F32 m10, F32 m11, F32 m12, F32 m13,
+                 F32 m20, F32 m21, F32 m22, F32 m23,
 
-                 f32 m30, f32 m31, f32 m32, f32 m33);
+                 F32 m30, F32 m31, F32 m32, F32 m33);
         ~Matrix4f();
-        Vector4f& operator[](const s32& i);
-        const Vector4f& operator[](s32 i) const;
+        Vector4f& operator[](const S32& i);
+        const Vector4f& operator[](S32 i) const;
 
         Matrix4f& operator=(Matrix4f const& m)
         {
@@ -46,8 +46,8 @@ namespace MeteorEngine
     };
 
 
-	METEOR_API Matrix4f operator*(const Matrix4f& m1, const f32 &x);
-	METEOR_API Matrix4f operator*(const f32 &x, const Matrix4f& m1);
+	METEOR_API Matrix4f operator*(const Matrix4f& m1, const F32 &x);
+	METEOR_API Matrix4f operator*(const F32 &x, const Matrix4f& m1);
 	METEOR_API Matrix4f operator*(const Matrix4f& m1, const Matrix4f &m2);
 
 

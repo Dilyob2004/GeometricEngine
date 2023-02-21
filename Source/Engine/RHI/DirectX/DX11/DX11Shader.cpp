@@ -1,14 +1,15 @@
 #include <Engine/RHI/DirectX/DX11DynamicRHI.h>
 #include <Engine/RHI/DirectX/DX11/DX11Shader.h>
+#include <Engine/Core/Misc/Log.h>
 #include <d3dcompiler.h>
-namespace MeteorEngine
+namespace GeometricEngine
 {
 	DX11PixelShader::DX11PixelShader()
 		: Code()
 		, DXShader(NULL)
 	{
 	}	
-	DX11PixelShader::DX11PixelShader(ID3D11PixelShader* Shader,const std::vector<u32>& pCode)
+	DX11PixelShader::DX11PixelShader(ID3D11PixelShader* Shader,const std::vector<U32>& pCode)
 		: Code(pCode)
 		, DXShader(Shader)
 	{
@@ -24,7 +25,7 @@ namespace MeteorEngine
 		, DXShader(NULL)
 	{
 	}	
-	DX11VertexShader::DX11VertexShader(ID3D11VertexShader* Shader,const std::vector<u32>& pCode)
+	DX11VertexShader::DX11VertexShader(ID3D11VertexShader* Shader,const std::vector<U32>& pCode)
 		: Code(pCode)
 		, DXShader(Shader)
 	{
@@ -36,11 +37,13 @@ namespace MeteorEngine
 	}
 	DX11VertexLayout::DX11VertexLayout()
 		: DXInputLayout(NULL)
+		, VertexLayout()
 	{
 
 	}
-	DX11VertexLayout::DX11VertexLayout(ID3D11InputLayout* InputLayout)
+	DX11VertexLayout::DX11VertexLayout(ID3D11InputLayout* InputLayout, const VertexLayoutGroup& LayoutGoup)
 		: DXInputLayout(InputLayout)
+		, VertexLayout(LayoutGoup)
 	{
 
 	}
@@ -49,22 +52,22 @@ namespace MeteorEngine
 		DXInputLayout->Release();
 	}
 
-	RHIPixelShader* DX11DynamicRHI::RHICreatePixelShader(const std::vector<u32>& Code)
+	RHIPixelShader* DX11DynamicRHI::RHICreatePixelShader(const std::vector<U32>& Code)
 	{
 		ID3D11PixelShader* PixelShader = NULL;
 		if (FAILED(DXDevice->CreatePixelShader(Code.data(), Code.size(), NULL, &PixelShader)))
 		{
-			LOG("Error: CreatePixelShader!");
+			LOG("Error: [DIRECTX11] Failed to Create a Pixel Shader!");
 			exit(-1);
 		}
 		return new DX11PixelShader(PixelShader, Code);
 	}
-	RHIVertexShader* DX11DynamicRHI::RHICreateVertexShader(const std::vector<u32>& Code)
+	RHIVertexShader* DX11DynamicRHI::RHICreateVertexShader(const std::vector<U32>& Code)
 	{
 		ID3D11VertexShader* VertexShader = NULL;
 		if(FAILED(DXDevice->CreateVertexShader(Code.data(), Code.size(), NULL, &VertexShader)))
 		{
-			LOG("Error: CreatePixelShader!");
+			LOG("Error: [DIRECTX11] Failed to Create a Vertex Shader!");
 			exit(-1);
 		}
 		return new DX11VertexShader(VertexShader, Code);
@@ -73,26 +76,14 @@ namespace MeteorEngine
 	{
 		switch (type)
 		{
-			case MeteorEngine::ShaderElementType::Int:
-				break;
-			case MeteorEngine::ShaderElementType::Int2:
-				break;
-			case MeteorEngine::ShaderElementType::Int3:
-				break;
-			case MeteorEngine::ShaderElementType::Int4:
-				break;
-			case MeteorEngine::ShaderElementType::Mat:
-				break;
-			case MeteorEngine::ShaderElementType::Mat2:
-				break;
-			case MeteorEngine::ShaderElementType::Mat3:
-				break;
-			case MeteorEngine::ShaderElementType::Mat4:
-				break;
-			case MeteorEngine::ShaderElementType::Float:	return DXGI_FORMAT_R32_FLOAT;
-			case MeteorEngine::ShaderElementType::Float2:	return DXGI_FORMAT_R32G32_FLOAT;
-			case MeteorEngine::ShaderElementType::Float3:	return DXGI_FORMAT_R32G32B32_FLOAT;
-			case MeteorEngine::ShaderElementType::Float4:	return DXGI_FORMAT_R32G32B32A32_FLOAT;
+			case ShaderElementType::Int:		return DXGI_FORMAT_R32_SINT;
+			case ShaderElementType::Int2:		return DXGI_FORMAT_R32G32_SINT;
+			case ShaderElementType::Int3:		return DXGI_FORMAT_R32G32B32_SINT;
+			case ShaderElementType::Int4:		return DXGI_FORMAT_R32G32B32A32_SINT;
+			case ShaderElementType::Float:	return DXGI_FORMAT_R32_FLOAT;
+			case ShaderElementType::Float2:	return DXGI_FORMAT_R32G32_FLOAT;
+			case ShaderElementType::Float3:	return DXGI_FORMAT_R32G32B32_FLOAT;
+			case ShaderElementType::Float4:	return DXGI_FORMAT_R32G32B32A32_FLOAT;
 			default: return DXGI_FORMAT_R32G32B32A32_FLOAT;
 		}
 	}
@@ -100,26 +91,29 @@ namespace MeteorEngine
 	{
 		ID3D11InputLayout* DXInputLayout = NULL;
 		std::vector<D3D11_INPUT_ELEMENT_DESC> InputElementsDescriptor;
+		bool IsFirstElement = true;
 		for (auto& Element : LayoutGoup)
 		{
 			InputElementsDescriptor.push_back({ Element.BufferName.c_str(),
 									0,
 									BufferLaoutFormatDX11ToBufferLayoutFormatMeteor(Element.BufferType),
 									0,
-									D3D11_APPEND_ALIGNED_ELEMENT,
+									(IsFirstElement) ? 0 : D3D11_APPEND_ALIGNED_ELEMENT,
 									D3D11_INPUT_PER_VERTEX_DATA,
 									0 });
+
+			if (IsFirstElement) IsFirstElement = false;
 		}
-		if (FAILED(DXDevice->CreateInputLayout(InputElementsDescriptor.data(),
-			InputElementsDescriptor.size(),
-			((DX11VertexShader*)VertexShader)->GetPointerCode().data(),
-			((DX11VertexShader*)VertexShader)->GetPointerCode().size(),
-			&DXInputLayout)))
+		if (FAILED(DXDevice->CreateInputLayout(	InputElementsDescriptor.data(),
+												InputElementsDescriptor.size(),
+												((DX11VertexShader*)VertexShader)->GetPointerCode().data(),
+												((DX11VertexShader*)VertexShader)->GetPointerCode().size(),
+												&DXInputLayout)))
 		{
-			LOG("Error: CreateInputLayout!");
+			LOG("Error:[DIRECTX11] Failed to Create a InputLayout!");
 			exit(-1);
 		}
-		return new DX11VertexLayout(DXInputLayout);
+		return new DX11VertexLayout(DXInputLayout, LayoutGoup);
 	}
 	void DX11DynamicRHI::RHIBindPixelShader(const RHIPixelShader* PixelShader)
 	{
@@ -148,6 +142,7 @@ namespace MeteorEngine
 	{
 		ID3DBlob* DXCode = NULL;
 		ID3DBlob* DXErrors = NULL;
+		
 		HRESULT Result = D3DCompileFromFile(Path,
 											NULL,
 											D3D_COMPILE_STANDARD_FILE_INCLUDE,
@@ -158,6 +153,18 @@ namespace MeteorEngine
 											&DXCode,
 											&DXErrors
 											);
+		if(DXErrors != NULL)
+		if (DXErrors->GetBufferSize() > 0)
+		{
+			std::vector<char> ErrorCode(DXErrors->GetBufferSize());
+			memcpy(ErrorCode.data(), DXErrors->GetBufferPointer(), ErrorCode.size());
+			for (auto i : ErrorCode)
+				std::clog << i;
+
+
+			exit(-1);
+		}
+		
 		Code.resize(DXCode->GetBufferSize());
 		memcpy(Code.data(), DXCode->GetBufferPointer(), Code.size());
 		return (Result == S_OK);

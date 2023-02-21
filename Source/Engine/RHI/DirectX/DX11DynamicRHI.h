@@ -3,7 +3,7 @@
 #include <Engine/RHI/DynamicRHI.h>
 #include <Engine/RHI/DirectX/DX11/DX11Viewport.h>
 #include <d3d11.h>
-namespace MeteorEngine
+namespace GeometricEngine
 {
 	class METEOR_API DX11DynamicRHI: public DynamicRHI
 	{
@@ -14,23 +14,28 @@ namespace MeteorEngine
 		~DX11DynamicRHI();
 		virtual void Init() override;
 
-		virtual RHIViewport*		RHICreateViewport(void*, u32, u32, bool) override;
-		virtual RHIPixelShader*		RHICreatePixelShader(const std::vector<u32>& )override;
-		virtual RHIVertexShader*	RHICreateVertexShader(const std::vector<u32>&) override;		
+		virtual RHIViewport*		RHICreateViewport(void*, U32, U32, bool) override;
+		virtual RHIPixelShader*		RHICreatePixelShader(const std::vector<U32>& )override;
+		virtual RHIVertexShader*	RHICreateVertexShader(const std::vector<U32>&) override;		
 		virtual RHIVertexLayout*	RHICreateVertexLayout(const RHIVertexShader*, const VertexLayoutGroup&) override;
-		virtual RHIVertexBuffer*	RHICreateVertexBuffer(void*, u32) override;
-		virtual RHIIndexBuffer*		RHICreateIndexBuffer(void*, u32) override;
+		virtual RHIVertexBuffer*	RHICreateVertexBuffer(void*, U32) override;
+		virtual RHIIndexBuffer*		RHICreateIndexBuffer(U32*, U32) override;
+		virtual RHIConstantBuffer*  RHICreateConstantBuffer(void*, U32) override;
+
+		virtual void				RHIBindVSConstantBuffer(const RHIConstantBuffer*) override;
+		virtual void				RHIBindPSConstantBuffer(const RHIConstantBuffer*) override;
+		virtual void				RHIUpdateConstantBuffer(const RHIConstantBuffer*, void*, U32) override;
 
 		virtual void				RHIBindPixelShader(const RHIPixelShader*) override;
 		virtual void				RHIBindVertexShader(const RHIVertexShader*) override;
 		virtual void				RHIBindVertexLayout(const RHIVertexLayout*) override;
 
-		virtual void				RHIDrawVertices(u32, u32) override;
-		virtual void				RHIBindVertexBuffer(const RHIVertexBuffer*, u32, u32) override;
-		virtual void				RHIBindIndexBuffer(const RHIIndexBuffer*) override{}
+		virtual void				RHIDraw(U32, U32, DrawType) override;
+		virtual void				RHIBindVertexBuffer(const RHIVertexBuffer*, U32, U32) override;
+		virtual void				RHIBindIndexBuffer(const RHIIndexBuffer*) override;
 
-		virtual void				RHISetViewport(f32, f32, f32, f32, f32, f32) override;
-		virtual void				RHIResizeViewport(u32, u32, bool)override;
+		virtual void				RHISetViewport(F32, F32, F32, F32, F32, F32) override;
+		virtual void				RHIResizeViewport(U32, U32, bool)override;
 		virtual void				RHIBegin()override;
 		virtual void				RHIEnd()override;
 

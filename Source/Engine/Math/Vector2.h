@@ -2,7 +2,7 @@
 #define VECTOR2_H
 #include <cmath>
 #include <Engine/Core/Config.h>
-namespace MeteorEngine
+namespace GeometricEngine
 {
     template <typename T>
     class METEOR_API Vector2
@@ -185,10 +185,10 @@ namespace MeteorEngine
 		return !(left > right);
 	}
 
-    typedef Vector2<s32>    Vector2i;
-    typedef Vector2<u32>    Vector2u;
-    typedef Vector2<f32>    Vector2f;
-    typedef Vector2<f64>    Vector2d;
+    typedef Vector2<S32>    Vector2i;
+    typedef Vector2<U32>    Vector2u;
+    typedef Vector2<F32>    Vector2f;
+    typedef Vector2<F64>    Vector2d;
 }
 
 #endif // VECTOR2_H

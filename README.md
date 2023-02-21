@@ -1,2 +1,2 @@
-# MeteorEngine
+# GeometricEngine
 GameEngine

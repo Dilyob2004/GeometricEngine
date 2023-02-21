@@ -2,7 +2,7 @@
 #define VECTOR3_H
 #include <cmath>
 #include <Engine/Core/Config.h>
-namespace MeteorEngine
+namespace GeometricEngine
 {
     template <typename T>
     class Vector3
@@ -230,10 +230,10 @@ namespace MeteorEngine
         return !(left > right);
     }
 
-    typedef Vector3<s32>    Vector3i;
-    typedef Vector3<u32>    Vector3u;
-    typedef Vector3<f32>    Vector3f;
-    typedef Vector3<f64>    Vector3d;
+    typedef Vector3<S32>    Vector3i;
+    typedef Vector3<U32>    Vector3u;
+    typedef Vector3<F32>    Vector3f;
+    typedef Vector3<F64>    Vector3d;
 }
 
 #endif // VECTOR3_H

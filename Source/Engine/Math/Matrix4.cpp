@@ -1,5 +1,5 @@
 #include <Engine/Math/Matrix4.h>
-namespace MeteorEngine
+namespace GeometricEngine
 {
 
     const Matrix4f Matrix4f::Identity = Matrix4f(
@@ -19,7 +19,7 @@ namespace MeteorEngine
     {
         *this = Matrix4f::Identity;
     }
-    Matrix4f::Matrix4f(f32 x)
+    Matrix4f::Matrix4f(F32 x)
     {
         m_column[0] = Vector4f(x, 0, 0, 0);
         m_column[1] = Vector4f(0, x, 0, 0);
@@ -50,18 +50,11 @@ namespace MeteorEngine
         m_column[2] = column3;
         m_column[3] = column4;
     }
-    Matrix4f::Matrix4f( f32 m00, f32 m01, f32 m02, f32 m03,
-                        f32 m10, f32 m11, f32 m12, f32 m13,
-                        f32 m20, f32 m21, f32 m22, f32 m23,
-                        f32 m30, f32 m31, f32 m32, f32 m33 )
+    Matrix4f::Matrix4f( F32 m00, F32 m01, F32 m02, F32 m03,
+                        F32 m10, F32 m11, F32 m12, F32 m13,
+                        F32 m20, F32 m21, F32 m22, F32 m23,
+                        F32 m30, F32 m31, F32 m32, F32 m33 )
     {
-        /**
-        m_column[0] = Vector4f(m00, m10, m20, m30);
-        m_column[1] = Vector4f(m01, m11, m21, m31);
-        m_column[2] = Vector4f(m02, m12, m22, m32);
-        m_column[3] = Vector4f(m03, m13, m23, m33);
-
-        */
         m_column[0] = Vector4f(m00, m01, m02, m03);
         m_column[1] = Vector4f(m10, m11, m12, m13);
         m_column[2] = Vector4f(m20, m21, m22, m23);
@@ -70,24 +63,24 @@ namespace MeteorEngine
     Matrix4f::~Matrix4f()
     {
     }
-    Vector4f& Matrix4f::operator[](const s32& i)
+    Vector4f& Matrix4f::operator[](const S32& i)
     {
         return m_column[i];
     }
 
-    const Vector4f& Matrix4f::operator[](s32 i) const
+    const Vector4f& Matrix4f::operator[](S32 i) const
     {
         return m_column[i];
     }
 
-    Matrix4f operator*(const Matrix4f& m1, const f32 &x)
+    Matrix4f operator*(const Matrix4f& m1, const F32 &x)
     {
         return Matrix4f(m1[0] * x,
                         m1[1] * x,
                         m1[2] * x,
                         m1[3] * x);
     }
-    Matrix4f operator*(const f32 &x, const Matrix4f& m1)
+    Matrix4f operator*(const F32 &x, const Matrix4f& m1)
     {
         return Matrix4f(m1[0] * x,
                         m1[1] * x,
