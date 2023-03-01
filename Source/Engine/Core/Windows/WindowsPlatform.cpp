@@ -1,5 +1,8 @@
-#include <Engine/Core/Windows/WindowsPlatform.h>=
+#include <Engine/Core/Windows/WindowsPlatform.h>
+#include <Engine/Core/Windows/WindowsWindow.h>
+#include <Engine/Core/Windows/WindowsInput.h>
 #include <Engine/Core/Misc/Log.h>
+#include <Engine/Core/Application.h>
 namespace GeometricEngine
 {
 	HINSTANCE WindowsPlatform::HandleInstance = NULL;
@@ -15,7 +18,7 @@ namespace GeometricEngine
 		WindowClass.lpfnWndProc		= &WindowsPlatform::WndProc;
 		WindowClass.hInstance		= HandleInstance;
 		WindowClass.hbrBackground	= (HBRUSH)(COLOR_WINDOW);
-		WindowClass.lpszClassName	= TEXT("MeteorEngine");
+		WindowClass.lpszClassName	= TEXT("GeometricEngine");
 		WindowClass.hIcon			= LoadIcon(NULL, IDI_APPLICATION);
 		WindowClass.hCursor			= LoadCursor(NULL, IDC_ARROW);
 		WindowClass.cbClsExtra		= 0;
@@ -27,16 +30,20 @@ namespace GeometricEngine
 			LOG("Error: [WINDOWS] Failed to Register class platform!");
 			exit(-1);
 		}
-		
 	}
 	void* WindowsPlatform::GetDLLModule(const CHAR* moduleName, const CHAR* name)
 	{
-		HMODULE module = LoadLibraryA(moduleName);
-		void* adress = (module != NULL) ? reinterpret_cast<void*>(GetProcAddress(module, name)) : NULL;
-		if (!adress)
+		HMODULE Library = LoadLibraryA(moduleName);
+
+		if (!Library)
 			return NULL;
-		FreeLibrary(module);
-		return adress;
+		void* Adress = reinterpret_cast<void*>(GetProcAddress(Library, name)) ;
+
+		if (!Adress)
+			return NULL;
+
+		FreeLibrary(Library);
+		return Adress;
 	}
 	void WindowsPlatform::Tick()
 	{
@@ -47,24 +54,13 @@ namespace GeometricEngine
 			DispatchMessageW(&Message);
 		}
 	}
-	LRESULT WindowsPlatform::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT WindowsPlatform::WndProc(HWND hWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
 	{
+		WindowsWindow::WndProc(hWnd, Msg, WParam, LParam);
 
+		if(WindowsInput::HasInitialized())
+			WindowsInput::WndProc(hWnd, Msg, WParam, LParam);
 
-		if (msg == WM_CREATE)
-		{
-			LONG_PTR WindowUserData = (LONG_PTR) reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams;			
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, WindowUserData);
-		}
-		/**WindowsWindow* window = hWnd ? reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA)) : NULL;
-		if (window) 
-			window->OnEvent(msg, wParam, lParam);
-			*/
-		if (msg == WM_DESTROY)
-		{
-			PostQuitMessage(0);
-			return 0;
-		}
-		return (hWnd != 0) ? DefWindowProcA(hWnd, msg, wParam, lParam) : 0;
+		return DefWindowProcA(hWnd, Msg, WParam, LParam);
 	}
 }

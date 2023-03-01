@@ -4,6 +4,17 @@
 namespace GeometricEngine
 {
 
+	class GEOMETRIC_API SMemory
+	{
+	public:
+
+		static void* Allocate(U32, U32 Alignment = 16);
+		static void		Copy(void*, const void*, U64);
+		static void* Zero(void*, U32);
+		static void		Set(void*, U32, U32);
+		static void		Clear(void*, U32);
+		static void		Free(void*);
+	};
 	namespace TMemory 
 	{
 		template<typename T>
@@ -60,16 +71,5 @@ namespace GeometricEngine
 		}
 	}
 
-	class GEOMETRIC_API SMemory
-	{
-	public:
-
-		static void*	Allocate(U32, U32 Alignment = 16);
-		static void		Copy(void*, const void*, U64);
-		static void*	Zero(void*, U32);
-		static void		Set(void*, U32, U32);
-		static void		Clear(void*, U32);
-		static void		Free(void*);
-	};
 }
 #endif // !MEMORY_H

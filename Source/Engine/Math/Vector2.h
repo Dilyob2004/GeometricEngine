@@ -5,7 +5,7 @@
 namespace GeometricEngine
 {
     template <typename T>
-    class METEOR_API Vector2
+    class GEOMETRIC_API Vector2
     {
     public:
 		Vector2():
@@ -176,7 +176,7 @@ namespace GeometricEngine
 	template <typename U>
 	bool operator >(const Vector2<U> & left, const Vector2<U> & right)
 	{
-		return (left.length() > right.length());
+		return (left.Length() > right.Length());
 	}
 
 	template <typename U>

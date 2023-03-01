@@ -45,12 +45,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(SolutionDir)Binaries-int\$(Configuration)-$(Platform)</IntDir>
+    <IntDir>$(SolutionDir)Cache\Intermediate\$(Configuration)-$(Platform)</IntDir>
     <OutDir>$(SolutionDir)Binaries\$(Configuration)-$(Platform)</OutDir>
     <TargetName>GeometricEditor</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
-    <IntDir>$(SolutionDir)Binaries-int\$(Configuration)-$(Platform)</IntDir>
+    <IntDir>$(SolutionDir)Cache\Intermediate\$(Configuration)-$(Platform)</IntDir>
     <OutDir>$(SolutionDir)Binaries\$(Configuration)-$(Platform)</OutDir>
     <TargetName>GeometricEditor</TargetName>
   </PropertyGroup>

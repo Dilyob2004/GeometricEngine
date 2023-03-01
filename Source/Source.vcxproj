@@ -37,6 +37,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <PlatformToolset>v142</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -52,12 +53,17 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Binaries\$(Configuration)-$(Platform)</OutDir>
-    <IntDir>$(SolutionDir)Binaries-int\$(Configuration)-$(Platform)</IntDir>
+    <IntDir>$(SolutionDir)Cache\Intermediate\$(Configuration)-$(Platform)</IntDir>
     <TargetName>GeometricService</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64'">
     <OutDir>$(SolutionDir)Binaries\$(Configuration)-$(Platform)</OutDir>
-    <IntDir>$(SolutionDir)Binaries-int\$(Configuration)-$(Platform)</IntDir>
+    <IntDir>$(SolutionDir)Cache\Intermediate\$(Configuration)-$(Platform)</IntDir>
+    <TargetName>GeometricService</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
+    <IntDir>$(SolutionDir)Cache\Intermediate\$(Configuration)-$(Platform)</IntDir>
+    <OutDir>$(SolutionDir)Binaries\$(Configuration)-$(Platform)</OutDir>
     <TargetName>GeometricService</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -104,9 +110,11 @@
     <ClCompile Include="Engine\Core\Core.cpp" />
     <ClCompile Include="Engine\Core\Misc\CString.cpp" />
     <ClCompile Include="Engine\Core\Generic\Memory.cpp" />
-    <ClCompile Include="Engine\InputDevice\Input.cpp" />
+    <ClCompile Include="Engine\InputCore\InputCore.cpp" />
     <ClCompile Include="Engine\Core\Misc\Log.cpp" />
     <ClCompile Include="Engine\Core\Generic\Window.cpp" />
+    <ClCompile Include="Engine\InputDevice\Keyboard.cpp" />
+    <ClCompile Include="Engine\InputDevice\Mouse.cpp" />
     <ClCompile Include="Engine\Math\MathUtils.cpp" />
     <ClCompile Include="Engine\Math\Matrix3.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
@@ -128,16 +136,22 @@
     <ClInclude Include="Engine\Core\Application.h" />
     <ClInclude Include="Engine\Core\Config.h" />
     <ClInclude Include="Engine\Core\Containers\Array.h" />
+    <ClInclude Include="Engine\Core\Containers\Map.h" />
+    <ClInclude Include="Engine\Core\Containers\Pair.h" />
+    <ClInclude Include="Engine\Core\Containers\Queue.h" />
     <ClInclude Include="Engine\Core\Core.h" />
-    <ClInclude Include="Engine\Core\Event.h" />
+    <ClInclude Include="Engine\Core\EngineModule.h" />
     <ClInclude Include="Engine\Core\Misc\CString.h" />
     <ClInclude Include="Engine\Core\Generic\Memory.h" />
     <ClInclude Include="Engine\Core\Misc\Allocator.h" />
     <ClInclude Include="Engine\Core\Types\String.h" />
     <ClInclude Include="Engine\Core\Types\StringView.h" />
-    <ClInclude Include="Engine\InputDevice\Input.h" />
+    <ClInclude Include="Engine\InputCore\InputCore.h" />
+    <ClInclude Include="Engine\InputDevice\InputDevice.h" />
+    <ClInclude Include="Engine\InputDevice\Keyboard.h" />
     <ClInclude Include="Engine\InputDevice\KeyCodes.h" />
     <ClInclude Include="Engine\Core\Misc\Log.h" />
+    <ClInclude Include="Engine\InputDevice\Mouse.h" />
     <ClInclude Include="Engine\InputDevice\MouseCodes.h" />
     <ClInclude Include="Engine\Core\Generic\Window.h" />
     <ClInclude Include="Engine\Math\MathUtils.h" />

@@ -21,15 +21,16 @@
     <ClCompile Include="Engine\Core\Generic\File.cpp" />
     <ClCompile Include="Engine\Core\Generic\FileSystem.cpp" />
     <ClCompile Include="Engine\Core\Generic\Window.cpp" />
-    <ClCompile Include="Engine\InputDevice\Input.cpp" />
     <ClCompile Include="Engine\Core\Generic\Memory.cpp" />
     <ClCompile Include="Engine\Core\Misc\CString.cpp" />
+    <ClCompile Include="Engine\InputCore\InputCore.cpp" />
+    <ClCompile Include="Engine\InputDevice\Keyboard.cpp" />
+    <ClCompile Include="Engine\InputDevice\Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Application.h" />
     <ClInclude Include="Engine\Core\Config.h" />
     <ClInclude Include="Engine\Core\Core.h" />
-    <ClInclude Include="Engine\Core\Event.h" />
     <ClInclude Include="Engine\Math\MathUtils.h" />
     <ClInclude Include="Engine\Math\Matrix3.h" />
     <ClInclude Include="Engine\Math\Matrix4.h" />
@@ -58,11 +59,18 @@
     <ClInclude Include="Engine\InputDevice\KeyCodes.h" />
     <ClInclude Include="Engine\InputDevice\MouseCodes.h" />
     <ClInclude Include="Engine\Core\Generic\Window.h" />
-    <ClInclude Include="Engine\InputDevice\Input.h" />
     <ClInclude Include="Engine\Core\Misc\Allocator.h" />
     <ClInclude Include="Engine\Core\Types\String.h" />
     <ClInclude Include="Engine\Core\Types\StringView.h" />
     <ClInclude Include="Engine\Core\Generic\Memory.h" />
     <ClInclude Include="Engine\Core\Misc\CString.h" />
+    <ClInclude Include="Engine\InputDevice\InputDevice.h" />
+    <ClInclude Include="Engine\Core\Containers\Queue.h" />
+    <ClInclude Include="Engine\InputDevice\Keyboard.h" />
+    <ClInclude Include="Engine\Core\Containers\Pair.h" />
+    <ClInclude Include="Engine\Core\Containers\Map.h" />
+    <ClInclude Include="Engine\Core\EngineModule.h" />
+    <ClInclude Include="Engine\InputCore\InputCore.h" />
+    <ClInclude Include="Engine\InputDevice\Mouse.h" />
   </ItemGroup>
 </Project>

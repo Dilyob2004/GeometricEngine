@@ -21,7 +21,7 @@ namespace GeometricEngine
 		}
 		constexpr BasicStringView(const BasicStringView& Str)
 			: Data(Str.Data)
-			, Length(Str.Size)
+			, Length(Str.Length)
 		{
 		}
 		constexpr BasicStringView(const T* InData)

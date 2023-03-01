@@ -2,35 +2,38 @@
 
 #include <Engine/Core/Core.h>
 #include <Engine/Core/Generic/Platform.h>
-#include <Engine/Core/Containers/Array.h>
-#include <Engine/Core/Types/String.h>
+#include <Engine/Core/Application.h>
+#include <Engine/Core/EngineModule.h>
+#include <Engine/InputCore/InputCore.h>
 namespace GeometricEngine
 {
-	int GuardedMain(void* hInstance, const CHAR* cmdLine)
+	int GuardedMain(void* hInstance, const CHAR* CmdLine)
 	{
-		String str("1111");
-		str = str.Replace("1", "0");
-		//str = str.Replace("1", "2");
-		std::cout << *str << "\n" << str.Size();
-		//Platform::PreInit(hInstance);
-	//	std::string s1 = "1234", s2 = "1334";
+		Platform::PreInit(hInstance);
 
-//		std::cout << CString::Compare(s1.data(), s2.data());
-		/**TVector<int> Elements;
-		Elements.Resize(2);
-		Elements.Push(10);
-		Elements.Push(20);
-		for (auto i : Elements)
-			std::cout << i << " ";
-		std::cout << "\n";
+		EngineModule::OnInitialize();
 
 
-		Elements.Resize(5);
-		Elements.Push(30);
-		for (auto i : Elements)
+		if (!Application::InitializeProduct("Geometric Engine", CmdLine))
 		{
-			std::cout << i << " ";
-		}*/
+			LOG("Fatal Error: Failed to Initizlied Application!");
+			exit(-1);
+		}
+
+
+		while (!Application::ShouldExit())
+		{
+			EngineModule::OnTick();
+
+			if (Input::GetMouseButtonDown(MouseCode::ButtonLeft))
+				LOG("Pressed Left Button Mouse!");
+
+			EngineModule::OnLateTick();
+			Platform::Tick();
+			Sleep(1);
+		}
+
+		EngineModule::OnDeInitialize();
 		return 0;
 	}
-}
+}	

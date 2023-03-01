@@ -11,6 +11,10 @@ namespace GeometricEngine
 	{
 	public:
 		BasicString() = default;
+		BasicString(const BasicString& Str)
+		{
+			Update(Str.Pointer(), Str.Size());
+		}
 		BasicString(const T* Str)
 		{
 			Update(Str, CString::Length(Str));
@@ -23,16 +27,17 @@ namespace GeometricEngine
 		{
 			SMemory::Free(Data);
 		}
-	public:
+
 		void Update(const T* Str, I32 NewLength)
 		{
 			if (!Str || NewLength <= 0)
 				return;
 
-			if (Length != NewLength) 
+			if (Length != NewLength)
 			{
 				SMemory::Free(Data);
-				if (NewLength != 0) {
+				if (NewLength != 0)
+				{
 					Data = (T*)SMemory::Allocate((NewLength + 1) * sizeof(T));
 					Data[NewLength] = 0;
 				}
@@ -41,6 +46,23 @@ namespace GeometricEngine
 				Length = NewLength;
 			}
 			SMemory::Copy(Data, Str, NewLength * sizeof(T));
+		}
+		void Append(const T* Str, I32 Size)
+		{
+			if (Size == 0)
+				return;
+
+			T * OldData = Data;
+			I32 OldLength = Length;
+
+			Length += Size;
+			Data = (T*)SMemory::Allocate((Length + 1) * sizeof(T));
+			SMemory::Copy(Data, OldData, OldLength * sizeof(T));
+			SMemory::Copy(Data, Str, Size * sizeof(T));
+
+			Data[Length] = 0;
+
+			SMemory::Free(OldData);
 		}
 		I32 Compare(const BasicString& Other, ESearchCase Case = ESearchCase::Sensitive)
 		{
@@ -174,54 +196,11 @@ namespace GeometricEngine
 		}
 		BasicString Replace(const T* From, const T* To, ESearchCase Case = ESearchCase::Sensitive)
 		{
-			if (IsEmpty())
-			{
-				return 0;
-			}
-			// get a pointer into the character data
-			/**T* Travel = Data;
-
-			// precalc the length of the From string
-			I32 FromLength = CString::Length(From);
-
-			// FCString::Strstr will not behave like we want on empty From string
-			if (FromLength == 0)
-			{
-				return *this;
-			}
-
-			while (true)
-			{
-				// look for From in the remaining string
-				T* FromLocation = /**SearchCase == ESearchCase::IgnoreCase ? FCString::Stristr(Travel, From) : (T*)CString::Find(Travel, From);
-				if (FromLocation)
-				{
-					// replace the first letter of the From with 0 so we can do a strcpy (FString +=)
-					T C = *FromLocation;
-					*FromLocation = 0;
-
-					// copy everything up to the From
-					Result += Travel;
-
-					// copy over the To
-					Result += To;
-
-					// retore the letter, just so we don't have 0's in the string
-					*FromLocation = *From;
-
-					Travel = FromLocation + FromLength;
-				}
-				else
-				{
-					break;
-				}
-			}
-			*/
-			// copy anything left over
-			//Result += Travel;
-
 			return 0;
 		}
+		
+		
+		
 		void Resize(I32 NewLength)
 		{
 			const T* OldData = Data;
@@ -232,6 +211,9 @@ namespace GeometricEngine
 			Data[Length] = 0;
 			SMemory::Free((T*)OldData);
 		}
+		
+		
+		
 		void Clear()
 		{
 			SMemory::Free(Data);
@@ -249,14 +231,9 @@ namespace GeometricEngine
 			_ASSERT(Index >= 0 && Index <= Length);
 			return Data[Index];
 		}
-		FORCEINLINE BasicString& operator += (const T* Str)
+		void Append(const BasicString& Str)
 		{
-
-
-			Resize(Length + CString::Length(Str));
-
-			SMemory::Copy(&Data[Length - CString::Length(Str)], Str, CString::Length(Str) * sizeof(T));
-			return *this;
+			Append(Str.Pointer(), Str.Size());
 		}
 
 
@@ -281,15 +258,36 @@ namespace GeometricEngine
 		{
 			return Length;
 		}
-
-
+		FORCEINLINE BasicString& operator += (const BasicString& Str)
+		{
+			Append(Str.Pointer(), Str.Size());
+			return *this;
+		}
+		FORCEINLINE BasicString& operator += (const T* Str)
+		{
+			Append(Str, CString::Length(Str));
+			return *this;
+		}
+		FORCEINLINE BasicString& operator += (T C)
+		{
+			Append(&C, 1);
+			return *this;
+		}
 		FORCEINLINE BasicString& operator = (const BasicString& Other)
 		{
-			if (*this != Other)
-			{
-				Data = Other.Data;
-				Length = Other.Length;
-			}
+			if (this != &Other)
+				Update(Other.Pointer(), Other.Size());
+			return *this;
+		}
+		BasicString& operator = (const T* Other)
+		{
+			if (this != &Other)
+				Update(Other, CString::Length(Other));
+			return *this;
+		}
+		BasicString& operator = (T Other)
+		{
+			Update(&Other, 1);
 			return *this;
 		}
 		FORCEINLINE const T* operator*() const
@@ -299,23 +297,6 @@ namespace GeometricEngine
 		FORCEINLINE  T* operator*()
 		{
 			return Data;
-		}
-
-		FORCEINLINE bool operator == (const BasicString& Other) const
-		{
-			return Length == Other.Length && (CString::Compare(Data, Other.Data) == 0);
-		}
-		FORCEINLINE bool operator != (const BasicString& Other) const
-		{
-			return !(*this == Other);
-		}
-		FORCEINLINE bool operator == (const T * Other) const
-		{
-			return *this == Other;
-		}
-		FORCEINLINE bool operator != (const T * Other) const
-		{
-			return !(*this == Other);
 		}
 	protected:
 		

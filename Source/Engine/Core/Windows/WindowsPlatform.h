@@ -16,7 +16,7 @@ namespace GeometricEngine
 		static void* GetDLLModule(const CHAR*, const CHAR*);
 
 
-	protected:
+	private:
 
 		static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 

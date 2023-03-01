@@ -1,20 +1,13 @@
-#ifndef WINDOWSINPUT_H
-#define WINDOWSINPUT_H
-#include <Engine/Core/Config.h>
+#ifndef INPUTCORE_H
+#define INPUTCORE_H
+#include <Engine/Core/EngineModule.h>
 #include <Engine/InputDevice/KeyCodes.h>
 #include <Engine/InputDevice/MouseCodes.h>
 namespace GeometricEngine
 {
-    class GEOMETRIC_API WindowsInput
+    class GEOMETRIC_API Input
     {
     public:
-		static bool HasInitialized();
-
-
-		static bool Initialize();
-		static void Tick();
-		static void DeInitialize();
-
 		static bool GetKey(KeyCode Key);
 		static bool GetKeyDown(KeyCode Key);
 		static bool GetKeyUp(KeyCode Key);
@@ -22,10 +15,7 @@ namespace GeometricEngine
 		static bool GetMouseButton(MouseCode Key);
 		static bool GetMouseButtonDown(MouseCode Key);
 		static bool GetMouseButtonUp(MouseCode Key);
-
-		static void Reset();
-		static void WndProc(HWND, UINT, WPARAM, LPARAM);
     };
 }
 
-#endif // WINDOWSINPUT_H
+#endif // INPUTCORE_H

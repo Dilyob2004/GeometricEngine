@@ -11,8 +11,7 @@ namespace GeometricEngine
         XButton1,
         XButton2,
         XButton3,
-        XButton4,
-        ButtonCount
+        XButton4
     };
     enum MouseWheel
     {

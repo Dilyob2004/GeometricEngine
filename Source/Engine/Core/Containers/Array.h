@@ -29,7 +29,7 @@ namespace GeometricEngine
 			if (Count > 0)
 			{
 				ElementAllocatorType.Allocate(Count);
-				TMemory::ConstructItems(ElementAllocatorType.GetAllocation(), Other.Data, Count);
+				TMemory::ConstructItems(ElementAllocatorType.GetAllocation(), Other.ElementAllocatorType.GetAllocation(), Count);
 			}	
 		}
 		FORCEINLINE TVector(const T* Data, I32 SizeArray) :
@@ -233,11 +233,27 @@ namespace GeometricEngine
 			if (this != &Other)
 			{
 				TMemory::DestructItems(ElementAllocatorType.GetAllocation(), Count);
+				if (Size < Other.Size)
+				{
+					ElementAllocatorType.Free();
+					Size = Other.GetCount();
+					ElementAllocatorType.Allocate(Size);
+				}
+				TMemory::ConstructItems(ElementAllocatorType.GetAllocation(), Other.GetPointer(), Count);
+
+			}
+			return *this;
+		}
+		TVector& operator=(TVector&& Other) noexcept
+		{
+			if (this != &Other)
+			{
+				TMemory::DestructItems(ElementAllocatorType.GetAllocation(), Count);
 				ElementAllocatorType.Free();
 
 				Count = Other.Count;
 				Size = Other.Size;
-				ElementAllocatorType.Swap(Other.Data);
+				ElementAllocatorType.Swap(Other.ElementAllocatorType);
 
 			}
 			return *this;
