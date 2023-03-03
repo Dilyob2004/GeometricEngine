@@ -130,14 +130,14 @@ namespace GeometricEngine
 				case WM_KEYDOWN:
 				case WM_SYSKEYDOWN:
 				{
-					OnKeyDown(WindowsKeyToKeyCode(WParam, LParam));
+					OnKey(EventType::KeyDown, WindowsKeyToKeyCode(WParam, LParam));
 					break;
 				}
 
 				case WM_KEYUP:
 				case WM_SYSKEYUP:
 				{
-					OnKeyUp(WindowsKeyToKeyCode(WParam, LParam));
+					OnKey(EventType::KeyUp, WindowsKeyToKeyCode(WParam, LParam));
 					break;
 				}
 			}
@@ -161,24 +161,34 @@ namespace GeometricEngine
 			{
 
 				case WM_LBUTTONDOWN:
-					OnMouseDown(MouseCode::ButtonLeft);
+					OnMouse(EventType::MouseDown, MouseCode::ButtonLeft);
 					break;
 				case WM_RBUTTONDOWN:
-					OnMouseDown(MouseCode::ButtonRight);
+					OnMouse(EventType::MouseDown, MouseCode::ButtonRight);
 					break;
 				case WM_MBUTTONDOWN:
-					OnMouseDown(MouseCode::ButtonMiddle);
+					OnMouse(EventType::MouseDown, MouseCode::ButtonMiddle);
+					break;				
+				
+				case WM_LBUTTONDBLCLK:
+					OnMouse(EventType::MouseDoubleClick, MouseCode::ButtonLeft);
+					break;
+				case WM_RBUTTONDBLCLK:
+					OnMouse(EventType::MouseDoubleClick, MouseCode::ButtonRight);
+					break;
+				case WM_MBUTTONDBLCLK:
+					OnMouse(EventType::MouseDoubleClick, MouseCode::ButtonMiddle);
 					break;
 
 
 				case WM_LBUTTONUP:
-					OnMouseUp(MouseCode::ButtonLeft);
+					OnMouse(EventType::MouseUp, MouseCode::ButtonLeft);
 					break;
 				case WM_RBUTTONUP:
-					OnMouseUp(MouseCode::ButtonRight);
+					OnMouse(EventType::MouseUp, MouseCode::ButtonRight);
 					break;
 				case WM_MBUTTONUP:
-					OnMouseUp(MouseCode::ButtonMiddle);
+					OnMouse(EventType::MouseUp, MouseCode::ButtonMiddle);
 					break;
 
 

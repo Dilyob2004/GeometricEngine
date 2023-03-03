@@ -29,7 +29,7 @@ namespace GeometricEngine
 				else 
 				{
 					LOG(i->GetModuleName());
-					LOG(" has initialized!");
+					LOG(" has initialized!\n");
 				}
 
 			return true;

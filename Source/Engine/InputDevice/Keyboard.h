@@ -9,32 +9,36 @@ namespace GeometricEngine
 	public:
 		FORCEINLINE bool GetKey(KeyCode Key)
 		{
-			return KeyAction[static_cast<I32>(Key)];
+			return NowData.KeyAction[static_cast<I32>(Key)];
 		}
 		FORCEINLINE bool GetKeyDown(KeyCode Key)
 		{
-			return (KeyAction[static_cast<I32>(Key)]
-				&& !PrevKeyAction[static_cast<I32>(Key)]);
+			return (NowData.KeyAction[static_cast<I32>(Key)]
+				&& !PrevData.KeyAction[static_cast<I32>(Key)]);
 		}
 		FORCEINLINE bool GetKeyUp(KeyCode Key)
 		{
-			return (!KeyAction[static_cast<I32>(Key)]
-				&& PrevKeyAction[static_cast<I32>(Key)]);
+			return (!NowData.KeyAction[static_cast<I32>(Key)]
+				&& PrevData.KeyAction[static_cast<I32>(Key)]);
 		}
 
-		void OnKeyDown(KeyCode Key);
-		void OnKeyUp(KeyCode Key);
+		void OnKey(EventType Type, KeyCode Key);
 		virtual void Tick() override;
 		virtual void Reset() override;
 	protected:
 		explicit Keyboard() : InputDevice("Keyboard")
 		{
-			memset(KeyAction, false, sizeof(KeyAction));
-			memset(PrevKeyAction, false, sizeof(PrevKeyAction));
 		}
-
-		bool KeyAction[101];
-		bool PrevKeyAction[101];
+		struct Data
+		{
+			Data()
+			{
+				for (int i = 0; i < 100; i++)
+					KeyAction[i] = false;
+			}
+			bool KeyAction[100];
+		};
+		Data NowData, PrevData;
 
 	};
 }

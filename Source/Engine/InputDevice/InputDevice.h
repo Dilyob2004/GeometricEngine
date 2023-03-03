@@ -19,6 +19,7 @@ namespace GeometricEngine
 			MouseUp,
 			MouseWheel,
 			MouseMove,
+			MouseDoubleClick,
 			Char
 		};
 		class Event

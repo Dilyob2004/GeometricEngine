@@ -26,8 +26,9 @@ namespace GeometricEngine
 			EngineModule::OnTick();
 
 			if (Input::GetMouseButtonDown(MouseCode::ButtonLeft))
-				LOG("Pressed Left Button Mouse!");
-
+			{
+				LOG("Pressed Left Button Mouse!\n");
+			}
 			EngineModule::OnLateTick();
 			Platform::Tick();
 			Sleep(1);

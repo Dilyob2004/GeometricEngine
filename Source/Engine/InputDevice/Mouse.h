@@ -10,8 +10,9 @@ namespace GeometricEngine
 
 		FORCEINLINE bool GetButtonDown(MouseCode Code) const
 		{
-			return NowData.MouseCode[static_cast<int>(Code)]
-				&& !PrevData.MouseCode[static_cast<int>(Code)];
+
+			return (NowData.MouseCode[static_cast<int>(Code)]
+				&& !PrevData.MouseCode[static_cast<int>(Code)]);
 		}
 		FORCEINLINE bool GetButton(MouseCode Code) const
 		{
@@ -34,8 +35,7 @@ namespace GeometricEngine
 		{
 			return NowData.Delta;
 		}
-		void OnMouseDown(MouseCode);
-		void OnMouseUp(MouseCode);
+		void OnMouse(EventType Type, MouseCode);
 		void OnMouseMove(const Vector2f& );
 		void OnMouseWheel(float);
 
@@ -44,13 +44,21 @@ namespace GeometricEngine
 	protected:
 		explicit Mouse() : InputDevice("Mouse")
 		{
-			PrevData = NowData = Data();
 		}
 		struct Data
 		{
-			F32 Delta = 0;
-			Vector2f Position;
-			bool MouseCode[10];
+			Data()
+			{
+				Delta = 0;
+				Position = Vector2f(0, 0);
+
+				for (int i = 0; i < 10; i++)
+					MouseCode[i] = false;
+
+			}
+			F32			Delta;
+			Vector2f	Position;
+			bool		MouseCode[10];
 		};
 
 		Data PrevData, NowData;

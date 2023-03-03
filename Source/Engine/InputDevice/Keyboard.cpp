@@ -3,37 +3,27 @@
 namespace GeometricEngine
 {
 
-	void Keyboard::OnKeyDown(KeyCode Key)
+	void Keyboard::OnKey(EventType Type, KeyCode Key)
 	{
 		Event KeyEvent;
 		KeyEvent.KeyData.Key = Key;
-		KeyEvent.Type = EventType::KeyDown;
+		KeyEvent.Type = Type;
 		QueueEvents.Push(KeyEvent);
 	}
-	void Keyboard::OnKeyUp(KeyCode Key)
-	{
-		Event KeyEvent;
-		KeyEvent.KeyData.Key = Key;
-		KeyEvent.Type = EventType::KeyUp;
-		QueueEvents.Push(KeyEvent);
-	}
-
 	void Keyboard::Tick()
 	{
+		SMemory::Copy(&PrevData, &NowData, sizeof(Data));
 		if (!QueueEvents.IsEmpty())
 		{
 			Event LastEvent = QueueEvents.Front();
-
-			if (LastEvent.Type == EventType::KeyDown)
+			switch (LastEvent.Type)
 			{
-				PrevKeyAction[static_cast<I32>(LastEvent.KeyData.Key)] = KeyAction[static_cast<I32>(LastEvent.KeyData.Key)];
-				KeyAction[static_cast<I32>(LastEvent.KeyData.Key)] = true;
-			}
-			else
-			{
-
-				PrevKeyAction[static_cast<I32>(LastEvent.KeyData.Key)] = KeyAction[static_cast<I32>(LastEvent.KeyData.Key)];
-				KeyAction[static_cast<I32>(LastEvent.KeyData.Key)] = false;
+				case EventType::KeyDown:
+					NowData.KeyAction[static_cast<I32>(LastEvent.KeyData.Key)] = true;
+				break;				
+				case EventType::KeyUp:
+					NowData.KeyAction[static_cast<I32>(LastEvent.KeyData.Key)] = false;
+				break;
 			}
 			QueueEvents.Pop();
 
@@ -41,7 +31,5 @@ namespace GeometricEngine
 	}
 	void Keyboard::Reset()
 	{
-		memset(KeyAction, false, sizeof(KeyAction));
-		memset(PrevKeyAction, false, sizeof(PrevKeyAction));
 	}
 }

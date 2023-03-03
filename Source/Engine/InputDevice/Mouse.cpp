@@ -1,23 +1,14 @@
 #include <Engine/InputDevice/Mouse.h>
-
-
 namespace GeometricEngine
 {
 
-	void Mouse::OnMouseDown(MouseCode Code)
+	void Mouse::OnMouse(EventType Type, MouseCode Code)
 	{
 		Event MouseEvent;
-		MouseEvent.Type = EventType::MouseDown;
+		MouseEvent.Type = Type;
 		MouseEvent.MouseData.Code = Code;
 		QueueEvents.Push(MouseEvent);
 
-	}
-	void Mouse::OnMouseUp(MouseCode Code)
-	{
-		Event MouseEvent;
-		MouseEvent.MouseData.Code = Code;
-		MouseEvent.Type = EventType::MouseUp;
-		QueueEvents.Push(MouseEvent);
 	}
 	void Mouse::OnMouseMove(const Vector2f& MovePosition)
 	{
@@ -34,24 +25,28 @@ namespace GeometricEngine
 
 	void Mouse::Tick()
 	{
+		SMemory::Copy(&PrevData, &NowData, sizeof(Data));
 		if (!QueueEvents.IsEmpty())
 		{
-			SMemory::Copy(&PrevData, &NowData, sizeof(Data));
 			Event LastEvent = QueueEvents.Front();
 			switch (LastEvent.Type)
 			{
-			case EventType::MouseDown:
-				NowData.MouseCode[static_cast<int>(LastEvent.MouseData.Code)] = true;
-				break;
-			case EventType::MouseUp:
-				NowData.MouseCode[static_cast<int>(LastEvent.MouseData.Code)] = false;
-				break;
-			case EventType::MouseMove:
-				NowData.Position = LastEvent.MouseData.Position;
-				break;
-			case EventType::MouseWheel:
-				NowData.Delta += LastEvent.MouseData.Delta;
-				break;
+				case EventType::MouseDown:	
+				case EventType::MouseDoubleClick:
+					NowData.MouseCode[static_cast<int>(LastEvent.MouseData.Code)] = true;
+					break;
+
+				case EventType::MouseUp:
+					NowData.MouseCode[static_cast<int>(LastEvent.MouseData.Code)] = false;
+					break;
+
+				case EventType::MouseMove:
+					NowData.Position = LastEvent.MouseData.Position;
+					break;
+
+				case EventType::MouseWheel:
+					NowData.Delta += LastEvent.MouseData.Delta;
+					break;
 			}
 			QueueEvents.Pop();
 
