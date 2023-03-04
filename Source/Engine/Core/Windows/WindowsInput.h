@@ -3,6 +3,7 @@
 #include <Engine/Core/Config.h>
 #include <Engine/InputDevice/KeyCodes.h>
 #include <Engine/InputDevice/MouseCodes.h>
+#include <Engine/Math/Vector2.h>
 namespace GeometricEngine
 {
     class GEOMETRIC_API WindowsInput
@@ -22,6 +23,10 @@ namespace GeometricEngine
 		static bool GetMouseButton(MouseCode Key);
 		static bool GetMouseButtonDown(MouseCode Key);
 		static bool GetMouseButtonUp(MouseCode Key);
+
+		static Vector2f GetMousePosition();
+		static Vector2f GetMousePositionDelta();
+		static F32		GetMouseWhellDelta();
 
 		static void Reset();
 		static void WndProc(HWND, UINT, WPARAM, LPARAM);

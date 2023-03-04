@@ -190,11 +190,11 @@ namespace GeometricEngine
 		{
 			return Count != 0;
 		}
-		FORCEINLINE T* GetPointer() 
+		FORCEINLINE T* Pointer() 
 		{
 			return ElementAllocatorType.GetAllocation();  
 		}
-		FORCEINLINE const T* GetPointer() const 
+		FORCEINLINE const T* Pointer() const 
 		{ 
 			return ElementAllocatorType.GetAllocation();  
 		}
@@ -239,7 +239,7 @@ namespace GeometricEngine
 					Size = Other.GetCount();
 					ElementAllocatorType.Allocate(Size);
 				}
-				TMemory::ConstructItems(ElementAllocatorType.GetAllocation(), Other.GetPointer(), Count);
+				TMemory::ConstructItems(ElementAllocatorType.GetAllocation(), Other.Pointer(), Count);
 
 			}
 			return *this;
@@ -329,11 +329,11 @@ namespace GeometricEngine
 
 				T& operator * ()const
 				{
-					return Array->GetPointer()[Index];
+					return Array->Pointer()[Index];
 				}
 				T* operator -> ()const
 				{
-					return &Array->GetPointer()[Index];
+					return &Array->Pointer()[Index];
 				}
 				FORCEINLINE bool operator !() const
 				{

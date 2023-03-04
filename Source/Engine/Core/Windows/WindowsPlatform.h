@@ -3,7 +3,7 @@
 #include <Engine/Core/Config.h>
 namespace GeometricEngine
 {
-	class METEOR_API WindowsPlatform
+	class GEOMETRIC_API WindowsPlatform
 	{
 	public:
 		static HINSTANCE HandleInstance;

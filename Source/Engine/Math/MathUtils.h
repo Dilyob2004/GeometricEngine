@@ -12,37 +12,37 @@ namespace GeometricEngine
 
 	#define MIN(a, b) (( (a) < (b) ) ? (a) : (b))
 	#define MAX(a, b) (( (a) > (b) ) ? (a) : (b))
-	METEOR_API bool DecomposeTransform(const Matrix4f& transform, Vector3f& position, Vector3f& rotation, Vector3f& scale);
-	METEOR_API Matrix4f Inverse(const Matrix4f& m);
+	GEOMETRIC_API bool DecomposeTransform(const Matrix4f& transform, Vector3f& position, Vector3f& rotation, Vector3f& scale);
+	GEOMETRIC_API Matrix4f Inverse(const Matrix4f& m);
 
-	METEOR_API Matrix4f Ortho(F32 left, F32 right, F32 bottom, F32 top);
-	METEOR_API Matrix4f Perspective(F32 fovy, F32 aspect, F32 zNear, F32 zFar);
+	GEOMETRIC_API Matrix4f Ortho(F32 left, F32 right, F32 bottom, F32 top);
+	GEOMETRIC_API Matrix4f Perspective(F32 fovy, F32 aspect, F32 zNear, F32 zFar);
 
-	METEOR_API Matrix4f Rotate(const Matrix4f& m, F32 angle, const Vector3f& v);
+	GEOMETRIC_API Matrix4f Rotate(const Matrix4f& m, F32 angle, const Vector3f& v);
 
-	METEOR_API Matrix4f Rotate(F32 angle, Vector3f const& v);
-	METEOR_API Matrix4f Translate(const Matrix4f& m, const Vector3f& v);
-	METEOR_API Matrix4f Scale(const Matrix4f& m, const Vector3f& v);
+	GEOMETRIC_API Matrix4f Rotate(F32 angle, Vector3f const& v);
+	GEOMETRIC_API Matrix4f Translate(const Matrix4f& m, const Vector3f& v);
+	GEOMETRIC_API Matrix4f Scale(const Matrix4f& m, const Vector3f& v);
 
-	METEOR_API Vector3f Cross(Vector3f const& x, Vector3f const& y);
+	GEOMETRIC_API Vector3f Cross(Vector3f const& x, Vector3f const& y);
 
-	METEOR_API Vector3f operator*(Quaternion const& q, Vector3f const& v);
+	GEOMETRIC_API Vector3f operator*(Quaternion const& q, Vector3f const& v);
 
-	METEOR_API Matrix3f toMatrix3(const Quaternion& q);
-	METEOR_API Matrix4f toMatrix4(const Quaternion& q);
+	GEOMETRIC_API Matrix3f toMatrix3(const Quaternion& q);
+	GEOMETRIC_API Matrix4f toMatrix4(const Quaternion& q);
 
-	METEOR_API Quaternion Rotate(const Quaternion& q, const F32& angle, const Vector3f& v);
-	METEOR_API Vector3f Rotate(Quaternion const& q, Vector3f const& v);
+	GEOMETRIC_API Quaternion Rotate(const Quaternion& q, const F32& angle, const Vector3f& v);
+	GEOMETRIC_API Vector3f Rotate(Quaternion const& q, Vector3f const& v);
 
-	METEOR_API F32 Dot(const Vector3f& v1, const Vector3f& v2);
-	METEOR_API Matrix4f LookAt(const Vector3f& eye, const Vector3f& center, const Vector3f& up);
-
-
-	METEOR_API F32 Angle(const Vector3f& x, const Vector3f& y);
+	GEOMETRIC_API F32 Dot(const Vector3f& v1, const Vector3f& v2);
+	GEOMETRIC_API Matrix4f LookAt(const Vector3f& eye, const Vector3f& center, const Vector3f& up);
 
 
-	METEOR_API Matrix4f Rotate(F32 angle, Vector3f const& v);
+	GEOMETRIC_API F32 Angle(const Vector3f& x, const Vector3f& y);
 
-	METEOR_API Vector3f Rotate(Vector3f const& v, F32 const& angle, Vector3f const& normal);
+
+	GEOMETRIC_API Matrix4f Rotate(F32 angle, Vector3f const& v);
+
+	GEOMETRIC_API Vector3f Rotate(Vector3f const& v, F32 const& angle, Vector3f const& normal);
 
 }

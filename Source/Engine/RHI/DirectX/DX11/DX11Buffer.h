@@ -4,7 +4,7 @@
 #include <d3d11.h>
 namespace GeometricEngine
 {
-	class DX11VertexBuffer : public RHIVertexBuffer
+	class  DX11VertexBuffer : public RHIVertexBuffer
 	{
 	public:
 		DX11VertexBuffer();
@@ -53,7 +53,7 @@ namespace GeometricEngine
 	};
 
 
-	class METEOR_API DX11ConstantBuffer : public RHIConstantBuffer
+	class DX11ConstantBuffer : public RHIConstantBuffer
 	{
 	public:
 		DX11ConstantBuffer();

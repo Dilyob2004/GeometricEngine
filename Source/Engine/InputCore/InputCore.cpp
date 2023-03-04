@@ -1,17 +1,9 @@
+
 #include <Engine/InputCore/InputCore.h>
 #include <Engine/Core/Windows/WindowsInput.h>
+#include <Engine/InputCore/InputModule.h>
 namespace GeometricEngine
 {
-	class InputModule : public EngineModule
-	{
-	public:
-		InputModule();
-		virtual ~InputModule();
-		bool Initialize() override;
-		void Tick() override;
-		void LateTick() override;
-		void DeInitialize() override;
-	};
 	InputModule::InputModule() : EngineModule("InputModule") 
 	{
 	}
@@ -29,7 +21,6 @@ namespace GeometricEngine
 	{
 		WindowsInput::DeInitialize();
 	}
-	InputModule GInputModuleInstance;
 	bool Input::GetKey(KeyCode Key)
 	{
 		return WindowsInput::GetKey(Key);
@@ -57,5 +48,17 @@ namespace GeometricEngine
 	bool InputModule::Initialize()
 	{
 		return WindowsInput::Initialize();
+	}
+	Vector2f Input::GetMousePosition()
+	{
+		return WindowsInput::GetMousePosition();
+	}
+	Vector2f Input::GetMousePositionDelta()
+	{
+		return WindowsInput::GetMousePositionDelta();
+	}
+	F32		Input::GetMouseWhellDelta()
+	{
+		return WindowsInput::GetMouseWhellDelta();
 	}
 }

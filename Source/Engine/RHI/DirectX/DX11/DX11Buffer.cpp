@@ -1,4 +1,5 @@
 #include <Engine/RHI/DirectX/DX11DynamicRHI.h>
+#include <Engine/RHI/DirectX/DX11/DX11Shader.h>
 #include <Engine/RHI/DirectX/DX11/DX11Buffer.h>
 #include <Engine/Core/Generic/Memory.h>
 #include <Engine/Core/Misc/Log.h>
@@ -28,32 +29,34 @@ namespace GeometricEngine
 	}
 	RHIVertexBuffer* DX11DynamicRHI::RHICreateVertexBuffer(void* Buffer, U32 Size)
 	{
-		ID3D11Buffer* DXBuffer = NULL;
 		D3D11_BUFFER_DESC BufferDescriptor;
 		SMemory::Zero(&BufferDescriptor, sizeof(BufferDescriptor));
 		BufferDescriptor.BindFlags	= D3D11_BIND_VERTEX_BUFFER;
 		BufferDescriptor.Usage		= D3D11_USAGE_DEFAULT;
 		BufferDescriptor.ByteWidth	= Size;
+
 		D3D11_SUBRESOURCE_DATA ResourceData;
 		SMemory::Zero(&ResourceData, sizeof(ResourceData));
 		ResourceData.pSysMem		= Buffer;
 		ResourceData.SysMemPitch	= Size;
 		
+		ID3D11Buffer* DXBuffer = NULL;
 		if (FAILED(DXDevice->CreateBuffer(&BufferDescriptor, &ResourceData, &DXBuffer)))
 		{
-			LOG("Error: [DIRECTX11] Failed to Create a Vertex Buffer!");
+			LOG("Error: [DirectX 11] Failed to Create a Vertex Buffer!");
 			return NULL;
 		}
 		return new DX11VertexBuffer(DXBuffer, Size, Buffer);
 	}
-	void DX11DynamicRHI::RHIBindVertexBuffer(const RHIVertexBuffer* VertexBuffer, U32 Stride, U32 Offset)
+	void DX11DynamicRHI::RHIBindVertexBuffer(const RHIVertexBuffer* VertexBuffer, const RHIVertexLayout* VertexDeclaration, U32 Offset)
 	{
 		ID3D11Buffer* Buffer = ((DX11VertexBuffer*)VertexBuffer)->GetDXVertexBuffer();
-		if (Buffer == NULL) 
+		if (!Buffer) 
 		{
-			LOG("Error: [DIRECTX11] Vertex Buffer!");
+			LOG("Error: [DirectX 11] Vertex Buffer!");
 			exit(-1);
 		}
+		U32 Stride = ((DX11VertexLayout*)VertexDeclaration)->GetStrideLayout();
 		DXDeviceContext->IASetVertexBuffers(0, 1, &Buffer, &Stride, &Offset);
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +79,6 @@ namespace GeometricEngine
 		DXIndexBuffer->Release();
 		delete[] Buffer;
 		Buffer = NULL;
-		Size = 0;
 	}
 	void DX11DynamicRHI::RHIBindIndexBuffer(const RHIIndexBuffer* IndexBuffer)
 	{
@@ -102,7 +104,7 @@ namespace GeometricEngine
 		ID3D11Buffer* DXBuffer = NULL;
 		if (FAILED(DXDevice->CreateBuffer(&BufferDescriptor, &ResourceData, &DXBuffer)))
 		{
-			LOG("Error: [DIRECTX11] Failed to Create a Index Buffer!");
+			LOG("Error: [DirectX 11] Failed to Create a Index Buffer!");
 			return NULL;
 		}
 		return new DX11IndexBuffer(DXBuffer, Size, Buffer);
@@ -128,7 +130,6 @@ namespace GeometricEngine
 		DXConstantBuffer->Release();
 		delete[] Buffer;
 		Buffer = NULL;
-		Size = 0;
 	}
 
 	RHIConstantBuffer* DX11DynamicRHI::RHICreateConstantBuffer(void* Buffer, U32 Size)
@@ -150,7 +151,7 @@ namespace GeometricEngine
 		ID3D11Buffer* DXBuffer = NULL;
 		if (FAILED(DXDevice->CreateBuffer(&BufferDescriptor, &ResourceData, &DXBuffer)))
 		{
-			LOG("Error: [DIRECTX11] Failed to Create a Constant Buffer!");
+			LOG("Error: [DirectX 11] Failed to Create a Constant Buffer!");
 			return NULL;
 		}
 		return new DX11ConstantBuffer(DXBuffer, Size, Buffer);
@@ -159,9 +160,9 @@ namespace GeometricEngine
 	void DX11DynamicRHI::RHIBindVSConstantBuffer(const RHIConstantBuffer* ConstantBuffer)
 	{
 		ID3D11Buffer* Buffer = ((DX11ConstantBuffer*)ConstantBuffer)->GetDXConstantBuffer();
-		if (Buffer == NULL)
+		if (!Buffer)
 		{
-			LOG("Error: [DIRECTX11] Constant Buffer!");
+			LOG("Error: [DirectX 11] Constant Buffer!");
 			exit(-1);
 		}
 		DXDeviceContext->VSSetConstantBuffers(0, 1, &Buffer);
@@ -169,9 +170,9 @@ namespace GeometricEngine
 	void DX11DynamicRHI::RHIBindPSConstantBuffer(const RHIConstantBuffer* ConstantBuffer)
 	{
 		ID3D11Buffer* Buffer = ((DX11ConstantBuffer*)ConstantBuffer)->GetDXConstantBuffer();
-		if (Buffer == NULL)
+		if (!Buffer)
 		{
-			LOG("Error: [DIRECTX11] Constant Buffer!");
+			LOG("Error: [DirectX 11] Constant Buffer!");
 			exit(-1);
 		}
 		DXDeviceContext->PSSetConstantBuffers(0, 1, &Buffer);
@@ -184,10 +185,10 @@ namespace GeometricEngine
 	{
 		switch (type)
 		{
-		case DrawType::POINT:			return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
-		case DrawType::TRIANGLES:		return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		case DrawType::LINES:			return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
-		default:									return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			case DrawType::POINT:			return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+			case DrawType::TRIANGLES:		return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			case DrawType::LINES:			return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+			default:						return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////

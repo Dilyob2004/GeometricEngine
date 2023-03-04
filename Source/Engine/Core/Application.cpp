@@ -1,7 +1,12 @@
 
 #include <Engine/Core/Application.h>
+
+#include <Engine/InputCore/InputModule.h>
+#include <Engine/RHI/RHIModule.h>
 namespace GeometricEngine
 {
+	MODULEINSTANCE(InputModule, GInputModule);
+	MODULEINSTANCE(RHIModule,	GRHIModule);
 	Application* Application::ApplicationInstance = NULL;
 
 	static Window* MainWindow = NULL;
@@ -19,14 +24,14 @@ namespace GeometricEngine
 	}
 	bool Application::InitializeProduct(const CHAR* ApplicationName, const CHAR* CmdLine)
 	{
-		WindowInfoDefinition	Info;
+		WindowDefinition		Info;
 		Info.PositionX			= 200;
 		Info.PositionY			= 200;
 		Info.SizeWidth			= 800;
 		Info.SizeHeight			= 600;
 		Info.Title				= ApplicationName;
 		Info.HasWindowBorder	= true;
-		Info.IsRegilarWindow	= false;
+		Info.IsRegularWindow	= false;
 		MainWindow				= Window::Create(Info);
 		return true;
 

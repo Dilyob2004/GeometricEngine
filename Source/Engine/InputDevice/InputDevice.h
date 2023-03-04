@@ -3,7 +3,7 @@
 #include <Engine/InputDevice/KeyCodes.h>
 #include <Engine/InputDevice/MouseCodes.h>
 #include <Engine/Core/Containers/Queue.h>
-#include <Engine/Core/Types/String.h>
+#include <Engine/Core/Misc/String.h>
 #include <Engine/Math/Vector2.h>
 namespace GeometricEngine
 {

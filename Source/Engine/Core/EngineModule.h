@@ -3,6 +3,7 @@
 #include <Engine/Core/Config.h>
 #include <Engine/Core/Containers/Array.h>
 #include <Engine/Core/Misc/Log.h>
+#define MODULEINSTANCE(type, name) type name;
 namespace GeometricEngine
 {
 	class EngineModule
@@ -43,15 +44,23 @@ namespace GeometricEngine
 		{
 			for (auto i : GetModule())
 				i->LateTick();
+		}		
+		static void OnDraw()
+		{
+			for (auto i : GetModule())
+				i->Draw();
 		}
 		static void OnDeInitialize()
 		{
-			for (auto i : GetModule())
+			for (auto i : GetModule()) {
+
 				i->DeInitialize();
+				LOG(i->GetModuleName());
+				LOG(" has uninitizlized!\n");
+			}
 
 
 
-			LOG("InputModule Has UnInitizlized!\n");
 		}
 	protected:
 

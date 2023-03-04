@@ -1,14 +1,12 @@
 #ifndef WINDOWSWINDOW_H
 #define WINDOWSWINDOW_H
-#include <Engine/Math/Vector2.h>
-#include <Engine/Core/Config.h>
 #include <Engine/Core/Generic/Window.h>
 namespace GeometricEngine
 {
-    class METEOR_API WindowsWindow: public Window
+    class GEOMETRIC_API WindowsWindow: public Window
     {
         public:
-            WindowsWindow(const WindowInfoDefinition&);
+            WindowsWindow(const WindowDefinition&);
             virtual ~WindowsWindow();
 
             virtual void Show() override;

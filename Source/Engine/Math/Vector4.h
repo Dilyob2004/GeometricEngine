@@ -13,13 +13,13 @@ namespace GeometricEngine
             z(0), w(0)
         {
         }
-        Vector4(T X, T Y, T Z, T W):
+		FORCEINLINE Vector4(T X, T Y, T Z, T W):
             x(X), y(Y),
             z(Z), w(W)
         {
         }
         template <typename U>
-        explicit Vector4(const Vector4<U>& v):
+		FORCEINLINE explicit Vector4(const Vector4<U>& v):
             x(static_cast<T>(v.x)),
             y(static_cast<T>(v.y)),
             z(static_cast<T>(v.z)),

@@ -1,5 +1,5 @@
 #include <Engine/Math/MathUtils.h>
-
+#include <algorithm>
 
 
 namespace GeometricEngine

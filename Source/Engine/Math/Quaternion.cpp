@@ -1,5 +1,4 @@
 #include <Engine/Math/Quaternion.h>
-
 #include <cmath>
 
 namespace GeometricEngine
@@ -24,7 +23,7 @@ namespace GeometricEngine
 	}	
 	Quaternion::Quaternion(const Vector3f &eulerAngle)
 	{
-		Vector3f valueVec = eulerAngle * F32(0.5);
+		Vector3f valueVec = eulerAngle * 0.5f;
 
 
 		Vector3f c = Vector3f(std::cos(valueVec.x), std::cos(valueVec.y), std::cos(valueVec.z));
@@ -43,17 +42,29 @@ namespace GeometricEngine
 
 	void Quaternion::Normalize()
 	{
-		F32 n = 1.f / sqrt(x * x + y * y + z * z + w * w);
+		F32 n = 1.0f / sqrt(x * x + y * y + z * z + w * w);
 
 		x *= n;
 		y *= n;
 		z *= n;
 		w *= n;
 	}
-	Quaternion Quaternion::GetNormalized() const
+	Quaternion Quaternion::Normalized() const
 	{
 		Quaternion v(*this);
 		v.Normalize();
 		return v;
 	}
+	Quaternion& Quaternion::operator*=(const Quaternion& r)
+	{
+		const Quaternion  p(*this);
+		const Quaternion  q(r);
+
+		w = p.w * q.w - p.x * q.x - p.y * q.y - p.z * q.z;
+		x = p.w * q.x + p.x * q.w + p.y * q.z - p.z * q.y;
+		y = p.w * q.y + p.y * q.w + p.z * q.x - p.x * q.z;
+		z = p.w * q.z + p.z * q.w + p.x * q.y - p.y * q.x;
+		return *this;
+	}
+
 }

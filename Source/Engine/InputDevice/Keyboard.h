@@ -28,13 +28,13 @@ namespace GeometricEngine
 	protected:
 		explicit Keyboard() : InputDevice("Keyboard")
 		{
+			NowData = PrevData = Data();
 		}
 		struct Data
 		{
-			Data()
+			explicit Data()
 			{
-				for (int i = 0; i < 100; i++)
-					KeyAction[i] = false;
+				SMemory::Set(KeyAction, sizeof(KeyAction), false);
 			}
 			bool KeyAction[100];
 		};

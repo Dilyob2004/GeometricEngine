@@ -4,6 +4,8 @@
 #include <Engine/Core/Generic/Platform.h>
 #include <Engine/Core/Application.h>
 #include <Engine/Core/EngineModule.h>
+
+#include <Engine/RHI/DynamicRHI.h>
 #include <Engine/InputCore/InputCore.h>
 namespace GeometricEngine
 {
@@ -11,7 +13,6 @@ namespace GeometricEngine
 	{
 		Platform::PreInit(hInstance);
 
-		EngineModule::OnInitialize();
 
 
 		if (!Application::InitializeProduct("Geometric Engine", CmdLine))
@@ -19,18 +20,19 @@ namespace GeometricEngine
 			LOG("Fatal Error: Failed to Initizlied Application!");
 			exit(-1);
 		}
-
-
+		EngineModule::OnInitialize();
 		while (!Application::ShouldExit())
 		{
+			Platform::Tick();
+
+
 			EngineModule::OnTick();
 
-			if (Input::GetMouseButtonDown(MouseCode::ButtonLeft))
-			{
-				LOG("Pressed Left Button Mouse!\n");
-			}
+
 			EngineModule::OnLateTick();
-			Platform::Tick();
+
+
+			EngineModule::OnDraw();
 			Sleep(1);
 		}
 

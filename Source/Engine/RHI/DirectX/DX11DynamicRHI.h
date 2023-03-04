@@ -5,18 +5,18 @@
 #include <d3d11.h>
 namespace GeometricEngine
 {
-	class METEOR_API DX11DynamicRHI: public DynamicRHI
+	class GEOMETRIC_API DX11DynamicRHI: public DynamicRHI
 	{
 	public:
 		friend class DX11Viewport;
 		DX11DynamicRHI();
 		DX11DynamicRHI(IDXGIFactory*, IDXGIAdapter*);
 		~DX11DynamicRHI();
-		virtual void Init() override;
+		virtual bool Initialize() override;
 
 		virtual RHIViewport*		RHICreateViewport(void*, U32, U32, bool) override;
-		virtual RHIPixelShader*		RHICreatePixelShader(const std::vector<U32>& )override;
-		virtual RHIVertexShader*	RHICreateVertexShader(const std::vector<U32>&) override;		
+		virtual RHIPixelShader*		RHICreatePixelShader(const TVector<U32>& )override;
+		virtual RHIVertexShader*	RHICreateVertexShader(const TVector<U32>&) override;		
 		virtual RHIVertexLayout*	RHICreateVertexLayout(const RHIVertexShader*, const VertexLayoutGroup&) override;
 		virtual RHIVertexBuffer*	RHICreateVertexBuffer(void*, U32) override;
 		virtual RHIIndexBuffer*		RHICreateIndexBuffer(U32*, U32) override;
@@ -31,7 +31,7 @@ namespace GeometricEngine
 		virtual void				RHIBindVertexLayout(const RHIVertexLayout*) override;
 
 		virtual void				RHIDraw(U32, U32, DrawType) override;
-		virtual void				RHIBindVertexBuffer(const RHIVertexBuffer*, U32, U32) override;
+		virtual void				RHIBindVertexBuffer(const RHIVertexBuffer*, const RHIVertexLayout*, U32) override;
 		virtual void				RHIBindIndexBuffer(const RHIIndexBuffer*) override;
 
 		virtual void				RHISetViewport(F32, F32, F32, F32, F32, F32) override;
@@ -40,7 +40,7 @@ namespace GeometricEngine
 		virtual void				RHIEnd()override;
 
 
-		void InitDevice();
+		bool InitDevice();
 		IDXGIFactory* GetDXGIFactory() const { return DXGIFactory; }
 		ID3D11Device* GetDXDevice() const { return DXDevice; }
 		ID3D11DeviceContext* GetDXDeviceContext() const { return DXDeviceContext; }

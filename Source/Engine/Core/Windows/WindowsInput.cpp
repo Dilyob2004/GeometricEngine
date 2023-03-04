@@ -261,6 +261,19 @@ namespace GeometricEngine
 		return GPlatformMouse->GetButtonUp(Code);
 	}
 
+	Vector2f WindowsInput::GetMousePosition()
+	{
+		return GPlatformMouse->GetPosition();
+	}
+	 Vector2f WindowsInput::GetMousePositionDelta()
+	 {
+		 return GPlatformMouse->GetPositionDelta();
+	 }
+	 F32 WindowsInput::GetMouseWhellDelta()
+	 {
+		 return GPlatformMouse->GetWhellDelta();
+	 }
+
 	void WindowsInput::DeInitialize()
 	{
 	}

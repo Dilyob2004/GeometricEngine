@@ -11,7 +11,7 @@ namespace GeometricEngine
 		Fatal,
 		Log
 	};
-	class METEOR_API LogConsole
+	class GEOMETRIC_API LogConsole
 	{
 	public:
 		static void Msg(const CHAR* );

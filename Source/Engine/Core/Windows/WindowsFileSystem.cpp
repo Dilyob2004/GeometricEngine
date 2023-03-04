@@ -3,51 +3,29 @@
 
 namespace GeometricEngine
 {
-	static WIN32_FIND_DATAA    m_findData = WIN32_FIND_DATAA();
-	static HANDLE              m_hFind = (HANDLE)-1;
-
-
-
-	void WindowsFileSystem::Open(const Path& pathFile)
+	bool WindowsFileSystem::MakeDirectory(const StringView& Path)
 	{
-		m_hFind = FindFirstFileA(pathFile.m_path.c_str(), &m_findData);
-		if (m_hFind == (HANDLE)-1)
-			LOG("Invalid handle value! Please check your path...\n");
+		return ::CreateDirectory(Path.Pointer(), NULL);
 	}
-	bool WindowsFileSystem::CreateDirectoryIn(const std::string& path)
+	bool WindowsFileSystem::DirectoryExists(const StringView& Path)
 	{
-		return ::CreateDirectoryA(path.c_str(), NULL);
+		const DWORD Result = GetFileAttributes(Path.Pointer());
+		return Result != 0xFFFFFFFF && (Result & FILE_ATTRIBUTE_DIRECTORY);
 	}
-	bool WindowsFileSystem::MoveFileTo(const std::string& bufferDst, const std::string& bufferSrc, bool overwrite)
+	bool WindowsFileSystem::Move(const StringView& BufferDst, const StringView& BufferSrc, bool Overwrite)
 	{
-		const DWORD flags = MOVEFILE_COPY_ALLOWED | (overwrite ? MOVEFILE_REPLACE_EXISTING : 0);
-		return ::MoveFileExA(bufferSrc.c_str(), bufferDst.c_str(), flags);
+		const DWORD Flags = MOVEFILE_COPY_ALLOWED | (Overwrite ? MOVEFILE_REPLACE_EXISTING : 0);
+		return ::MoveFileEx(BufferSrc.Pointer(), BufferDst.Pointer(), Flags);
 	}
-	bool WindowsFileSystem::DeleteDirectory(const std::string& path)
+	bool WindowsFileSystem::DeleteDirectory(const StringView& Path)
 	{
-		return ::RemoveDirectoryA(path.c_str());
+		RemoveDirectory(Path.Pointer());
+		const DWORD Result = GetFileAttributes(Path.Pointer());
+		return Result != 0xFFFFFFFF && (Result & FILE_ATTRIBUTE_DIRECTORY);
 	}
-	bool WindowsFileSystem::RemoveFile(const std::string& path)
+	bool WindowsFileSystem::Delete(const StringView& Path)
 	{
-		return ::DeleteFileA(path.c_str());
-
-	}
-	void WindowsFileSystem::Close()
-	{
-		FindClose(m_hFind);
-	}
-	std::vector<Path> WindowsFileSystem::FindDirectory(Path path)
-	{
-		std::vector<Path> vPath;
-		while (FindNextFileA(m_hFind, &m_findData) != 0)
-		{
-			path.fileName = std::string(m_findData.cFileName);
-			path.isDirectory = m_findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
-			vPath.push_back(path);
-		}
-
-
-		return vPath;
+		return ::DeleteFile(Path.Pointer());
 	}
 }
 

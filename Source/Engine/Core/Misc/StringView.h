@@ -1,12 +1,10 @@
 #ifndef STRINGVIEW_H
 #define STRINGVIEW_H
-
-#include <Engine/Core/Config.h>
 #include <Engine/Core/Misc/CString.h>
 namespace GeometricEngine
 {
 	template<typename T>
-	class GEOMETRIC_API BasicStringView
+	class BasicStringView
 	{
 	public:
 		constexpr BasicStringView()
@@ -105,10 +103,6 @@ namespace GeometricEngine
 		FORCEINLINE bool NotEmpty() const
 		{
 			return Size != 0;
-		}
-		FORCEINLINE T* Pointer()
-		{
-			return Data;
 		}
 		FORCEINLINE const T* Pointer() const
 		{

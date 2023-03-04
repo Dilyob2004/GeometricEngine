@@ -82,10 +82,11 @@ namespace GeometricEngine
 		DXGISwapChain->ResizeBuffers(0, SizeWidth, SizeHeight, DXGI_FORMAT_UNKNOWN, 0);
 		ID3D11Texture2D* BackBuffer = NULL;
 		DXGISwapChain->GetBuffer(0, IID_PPV_ARGS(&BackBuffer));
-		if (BackBuffer) {
+		if (BackBuffer) 
+		{
 			if (FAILED(RHI->GetDXDevice()->CreateRenderTargetView(BackBuffer, NULL, &DXRenderTargetView)))
 			{
-				LOG("Error: [DIRECTX11] Failed to Create a RenderTargetView!");
+				LOG("Error: [DirectX 11] Failed to Create a RenderTargetView!");
 				return;
 			}
 		}

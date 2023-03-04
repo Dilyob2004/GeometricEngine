@@ -67,27 +67,27 @@ namespace GeometricEngine
 	{
 
 	}
-	void DX11DynamicRHI::Init()
+	bool  DX11DynamicRHI::Initialize()
 	{
-		InitDevice();
+		return InitDevice();
 	}
 	DX11DynamicRHI::~DX11DynamicRHI()
 	{
-		DXDevice->Release();
 		DXDeviceContext->Release();
+		DXDevice->Release();
 		DXGIFactory->Release();
 		DXGIAdapter->Release();
 	}
 	DynamicRHI* DynamicRHI::CreateDynamicRHI()
 	{
-		D3D_FEATURE_LEVEL FeatureLevel = D3D_FEATURE_LEVEL_11_0;
+		D3D_FEATURE_LEVEL FeatureLevel = D3D_FEATURE_LEVEL_11_1;
 		IDXGIFactory* Factory = NULL;
 		if (CreateDXGIFactory(IID_PPV_ARGS(&Factory)) != S_OK)
 		{
-			LOG("Cannot create DXGI adapter");
+			LOG("Error: [DirectX 11] Cannot create DXGI adapter");
 			return NULL;
 		}
-		IDXGIAdapter* InAdapter;
+		IDXGIAdapter* InAdapter = NULL;
 		IDXGIAdapter* SelectedAdapter = NULL;
 		for (U32 i = 0; Factory->EnumAdapters(i, &InAdapter) != DXGI_ERROR_NOT_FOUND; i++)
 		{
@@ -96,14 +96,13 @@ namespace GeometricEngine
 				DXGI_ADAPTER_DESC Description;
 				if (SUCCEEDED(InAdapter->GetDesc(&Description)))
 				{
-					if(i == 0)
-						SelectedAdapter = InAdapter;
+					SelectedAdapter = InAdapter;
 				}
 			}
 		}
 		return new DX11DynamicRHI(Factory, SelectedAdapter);
 	}
-	void DX11DynamicRHI::InitDevice()
+	bool DX11DynamicRHI::InitDevice()
 	{
 		D3D_DRIVER_TYPE DriverType			= D3D_DRIVER_TYPE_UNKNOWN;
 		U32 Flags							= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -122,9 +121,9 @@ namespace GeometricEngine
 								&DXDeviceContext
 		)))
 		{
-			LOG("Error: D3D11CreateDevice!");
-			return;
+			LOG("Error: [DirectX 11] D3D11CreateDevice!");
+			return false;
 		}
-
+		return true;
 	}
 }

@@ -12,7 +12,7 @@
 namespace GeometricEngine
 {
 	static bool HasClosed = false;
-    WindowsWindow::WindowsWindow(const WindowInfoDefinition& Definition)
+    WindowsWindow::WindowsWindow(const WindowDefinition& Definition)
     {
 
 		DWORD StyleEx = 0, Style = 0;

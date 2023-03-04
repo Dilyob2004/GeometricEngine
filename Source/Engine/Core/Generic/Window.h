@@ -2,25 +2,34 @@
 #define WINDOW_H
 
 #include <Engine/Math/Vector2.h>
-#include <Engine/Core/Config.h>
-#include <Engine/Core/Types/StringView.h>
+#include <Engine/Core/Misc/StringView.h>
 namespace GeometricEngine
 {
-	struct WindowInfoDefinition
+	struct WindowDefinition
 	{
+		WindowDefinition()
+			: PositionX(0)
+			, PositionY(0)
+			, SizeWidth(0)
+			, SizeHeight(0)
+			, HasWindowBorder(false)
+			, IsRegularWindow(false)
+			, Title("")
+		{
+		}
 		F32 PositionX;
 		F32 PositionY; 
 		F32 SizeWidth;
 		F32 SizeHeight;
 		bool HasWindowBorder;
-		bool IsRegilarWindow;
+		bool IsRegularWindow;
 		StringView Title;
 	};
-    class METEOR_API Window
+    class GEOMETRIC_API Window
     {
     public:
-        virtual ~Window(){}
-        static Window* Create(const WindowInfoDefinition&);
+        static Window* Create(const WindowDefinition&);
+		virtual ~Window() {}
         virtual void Show() = 0;
         virtual void Hide() = 0;
 

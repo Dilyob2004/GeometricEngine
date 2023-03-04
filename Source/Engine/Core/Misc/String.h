@@ -7,7 +7,7 @@
 namespace GeometricEngine
 {
 	template<typename T>
-	class GEOMETRIC_API BasicString
+	class BasicString
 	{
 	public:
 		BasicString() = default;

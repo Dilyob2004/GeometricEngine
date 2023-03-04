@@ -51,9 +51,7 @@ namespace GeometricEngine
 			{
 				Delta = 0;
 				Position = Vector2f(0, 0);
-
-				for (int i = 0; i < 10; i++)
-					MouseCode[i] = false;
+				SMemory::Set(MouseCode, sizeof(MouseCode), false);
 
 			}
 			F32			Delta;

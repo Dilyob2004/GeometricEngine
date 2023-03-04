@@ -1,6 +1,7 @@
 #ifndef RHIVIEWPORT_H
 #define RHIVIEWPORT_H
-#include <Engine/Core/Config.h>
+#include <Engine/Core/Misc/StringView.h>
+#include <Engine/Core/Containers/Array.h>
 namespace GeometricEngine
 {
 	enum class RHIPixelFormat : U32
@@ -44,7 +45,6 @@ namespace GeometricEngine
 		DEPTH24_UNORM_STENCIL8_U32,
 		DEPTH32_F32_STENCIL8_U32
 	};
-
 	enum class BlendMode
 	{
 		None = 0,
@@ -70,22 +70,22 @@ namespace GeometricEngine
 	{
 		switch (type)
 		{
-		case ShaderElementType::Float:
-		case ShaderElementType::Int:
-			return 1;
-		case ShaderElementType::Float2:
-		case ShaderElementType::Int2:
-			return 2;
-		case ShaderElementType::Float3:
-		case ShaderElementType::Int3:
-			return 3;
-		case ShaderElementType::Float4:
-		case ShaderElementType::Int4:
-			return 4;
+			case ShaderElementType::Float:
+			case ShaderElementType::Int:
+				return 1;
+			case ShaderElementType::Float2:
+			case ShaderElementType::Int2:
+				return 2;
+			case ShaderElementType::Float3:
+			case ShaderElementType::Int3:
+				return 3;
+			case ShaderElementType::Float4:
+			case ShaderElementType::Int4:
+				return 4;
 
 
-		default:
-			return 0;
+			default:
+				return 0;
 		}
 	}
 	static U32 GetSizeOfShaderType(ShaderElementType type)
@@ -104,9 +104,13 @@ namespace GeometricEngine
 			return 0;
 		}
 	}
-	class GEOMETRIC_API RHIViewport { public: virtual ~RHIViewport(){} };
-	class GEOMETRIC_API RHIPixelShader { public: virtual ~RHIPixelShader() {} };
-	class GEOMETRIC_API RHIVertexShader { public: virtual ~RHIVertexShader() {} };
+	
+
+
+	class RHIViewport { public: virtual ~RHIViewport(){} };
+	class RHIPixelShader { public: virtual ~RHIPixelShader() {} };
+	class RHIVertexShader { public: virtual ~RHIVertexShader() {} };
+
 	struct BufferElement
 	{
 		BufferElement()
@@ -114,77 +118,75 @@ namespace GeometricEngine
 			, BufferType(ShaderElementType::None)
 		{
 		}
-		BufferElement(const std::string& Name, ShaderElementType Type)
+		BufferElement(const StringView& Name, ShaderElementType Type)
 			: BufferName(Name)
 			, BufferType(Type)
 		{
 		}
-		std::string			BufferName;
+		StringView			BufferName;
 		ShaderElementType	BufferType;
 	};
 	class VertexLayoutGroup
 	{
 	public:
 		VertexLayoutGroup() = default;
-		VertexLayoutGroup(std::initializer_list<BufferElement> Elements):
+		VertexLayoutGroup(const TVector<BufferElement>& Elements):
 			Groups(Elements)
 		{
 		}
 		U32 GetStrideLayout() const
 		{
 			U32 Stride = 0;
-			for (auto& Element : Groups)
+			for (auto Element : Groups)
 				Stride += GetShaderStrideType(Element.BufferType) * GetSizeOfShaderType(Element.BufferType);
-			
 			return Stride;
 		}
-		U32 GetCountGroups() const { return Groups.size(); }
-		const std::vector<BufferElement>& GetVertexGroup() const { return Groups; }
-		std::vector<BufferElement>::iterator begin() { return Groups.begin(); }
-		std::vector<BufferElement>::iterator end() { return Groups.end(); }		
-		std::vector<BufferElement>::const_iterator begin() const { return Groups.begin(); }
-		std::vector<BufferElement>::const_iterator end() const { return Groups.end(); }
+		U32 GetCountGroups() const { return Groups.GetCount(); }
+		const TVector<BufferElement>& GetVertexGroup() const { return Groups; }
+		TVector<BufferElement>::Iterator begin() { return Groups.begin(); }
+		TVector<BufferElement>::Iterator end() { return Groups.end(); }
 
 	private:
-		std::vector<BufferElement> Groups;
+		TVector<BufferElement> Groups;
 	};
-	class GEOMETRIC_API RHIVertexLayout
+	class RHIVertexLayout
 	{
 	public:
 		virtual ~RHIVertexLayout() {}
-
 		virtual U32 GetStrideLayout() = 0;
 	};
-	class GEOMETRIC_API RHIVertexBuffer
+	class RHIVertexBuffer
 	{
 	public:
 		virtual ~RHIVertexBuffer() {}
 		virtual void* GetPointer() const = 0;
 		virtual U32 GetSize() const = 0;
 	};
-	class GEOMETRIC_API RHIIndexBuffer
+	class RHIIndexBuffer
 	{
 	public:
 		virtual ~RHIIndexBuffer() {}
 		virtual U32* GetPointer() const = 0;
 		virtual U32 GetSize() const = 0;
 	};
-	class GEOMETRIC_API RHIConstantBuffer
+	class RHIConstantBuffer
 	{
 	public:
 		virtual ~RHIConstantBuffer() {}
 		virtual void* GetPointer() const = 0;
 		virtual U32 GetSize() const = 0;
 	};
-	class GEOMETRIC_API RHIShaderCompiler
+	class RHIShaderCompiler
 	{
 	public:
 		virtual ~RHIShaderCompiler() {}
 		static RHIShaderCompiler* StaticCreate();
+
 		virtual bool Compile(const WCHAR* Path,
-			const CHAR* EntryPoint,
-			const CHAR* Target) = 0;
-		virtual const std::vector<U32>& GetResultCode() const = 0;
+							 const CHAR* EntryPoint,
+							 const CHAR* Target) = 0;
+
+		virtual const TVector<U32>& GetResultCode() const = 0;
 	};
 }
 #endif // !RHIVIEWPORT_H

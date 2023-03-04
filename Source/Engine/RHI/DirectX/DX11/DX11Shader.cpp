@@ -9,14 +9,14 @@ namespace GeometricEngine
 		, DXShader(NULL)
 	{
 	}	
-	DX11PixelShader::DX11PixelShader(ID3D11PixelShader* Shader,const std::vector<U32>& pCode)
+	DX11PixelShader::DX11PixelShader(ID3D11PixelShader* Shader,const TVector<U32>& pCode)
 		: Code(pCode)
 		, DXShader(Shader)
 	{
 	}
 	DX11PixelShader::~DX11PixelShader()
 	{
-		Code.clear();
+		Code.Clear();
 		DXShader = NULL;
 	}
 
@@ -25,14 +25,14 @@ namespace GeometricEngine
 		, DXShader(NULL)
 	{
 	}	
-	DX11VertexShader::DX11VertexShader(ID3D11VertexShader* Shader,const std::vector<U32>& pCode)
+	DX11VertexShader::DX11VertexShader(ID3D11VertexShader* Shader,const TVector<U32>& pCode)
 		: Code(pCode)
 		, DXShader(Shader)
 	{
 	}
 	DX11VertexShader::~DX11VertexShader()
 	{
-		Code.clear();
+		Code.Clear();
 		DXShader = NULL;
 	}
 	DX11VertexLayout::DX11VertexLayout()
@@ -52,22 +52,22 @@ namespace GeometricEngine
 		DXInputLayout->Release();
 	}
 
-	RHIPixelShader* DX11DynamicRHI::RHICreatePixelShader(const std::vector<U32>& Code)
+	RHIPixelShader* DX11DynamicRHI::RHICreatePixelShader(const TVector<U32>& Code)
 	{
 		ID3D11PixelShader* PixelShader = NULL;
-		if (FAILED(DXDevice->CreatePixelShader(Code.data(), Code.size(), NULL, &PixelShader)))
+		if (FAILED(DXDevice->CreatePixelShader(Code.Pointer(), Code.GetSize(), NULL, &PixelShader)))
 		{
-			LOG("Error: [DIRECTX11] Failed to Create a Pixel Shader!");
+			LOG("Error: [DirectX 11] Failed to Create a Pixel Shader!");
 			exit(-1);
 		}
 		return new DX11PixelShader(PixelShader, Code);
 	}
-	RHIVertexShader* DX11DynamicRHI::RHICreateVertexShader(const std::vector<U32>& Code)
+	RHIVertexShader* DX11DynamicRHI::RHICreateVertexShader(const TVector<U32>& Code)
 	{
 		ID3D11VertexShader* VertexShader = NULL;
-		if(FAILED(DXDevice->CreateVertexShader(Code.data(), Code.size(), NULL, &VertexShader)))
+		if(FAILED(DXDevice->CreateVertexShader(Code.Pointer(), Code.GetSize(), NULL, &VertexShader)))
 		{
-			LOG("Error: [DIRECTX11] Failed to Create a Vertex Shader!");
+			LOG("Error: [DirectX 11] Failed to Create a Vertex Shader!");
 			exit(-1);
 		}
 		return new DX11VertexShader(VertexShader, Code);
@@ -90,11 +90,11 @@ namespace GeometricEngine
 	RHIVertexLayout* DX11DynamicRHI::RHICreateVertexLayout(const RHIVertexShader* VertexShader, const VertexLayoutGroup& LayoutGoup)
 	{
 		ID3D11InputLayout* DXInputLayout = NULL;
-		std::vector<D3D11_INPUT_ELEMENT_DESC> InputElementsDescriptor;
+		TVector<D3D11_INPUT_ELEMENT_DESC> InputElementsDescriptor;
 		bool IsFirstElement = true;
-		for (auto& Element : LayoutGoup)
+		for (auto& Element : LayoutGoup.GetVertexGroup())
 		{
-			InputElementsDescriptor.push_back({ Element.BufferName.c_str(),
+			InputElementsDescriptor.Push({ Element.BufferName.Pointer(),
 									0,
 									BufferLaoutFormatDX11ToBufferLayoutFormatMeteor(Element.BufferType),
 									0,
@@ -104,13 +104,13 @@ namespace GeometricEngine
 
 			if (IsFirstElement) IsFirstElement = false;
 		}
-		if (FAILED(DXDevice->CreateInputLayout(	InputElementsDescriptor.data(),
-												InputElementsDescriptor.size(),
-												((DX11VertexShader*)VertexShader)->GetPointerCode().data(),
-												((DX11VertexShader*)VertexShader)->GetPointerCode().size(),
+		if (FAILED(DXDevice->CreateInputLayout(	InputElementsDescriptor.Pointer(),
+												InputElementsDescriptor.GetCount(),
+												((DX11VertexShader*)VertexShader)->GetPointerCode().Pointer(),
+												((DX11VertexShader*)VertexShader)->GetPointerCode().GetCount(),
 												&DXInputLayout)))
 		{
-			LOG("Error:[DIRECTX11] Failed to Create a InputLayout!");
+			LOG("Error:[DirectX 11] Failed to Create a InputLayout!");
 			exit(-1);
 		}
 		return new DX11VertexLayout(DXInputLayout, LayoutGoup);
@@ -154,19 +154,19 @@ namespace GeometricEngine
 											&DXErrors
 											);
 		if(DXErrors != NULL)
-		if (DXErrors->GetBufferSize() > 0)
-		{
-			std::vector<char> ErrorCode(DXErrors->GetBufferSize());
-			memcpy(ErrorCode.data(), DXErrors->GetBufferPointer(), ErrorCode.size());
-			for (auto i : ErrorCode)
-				std::clog << i;
+			if (DXErrors->GetBufferSize() > 0)
+			{
+				TVector<char> ErrorCode(static_cast<I32>(DXErrors->GetBufferSize()));
+				SMemory::Copy(ErrorCode.Pointer(), DXErrors->GetBufferPointer(), ErrorCode.GetCount());
+				for (auto i : ErrorCode)
+					std::clog << i;
 
 
-			exit(-1);
-		}
+				exit(-1);
+			}
 		
-		Code.resize(DXCode->GetBufferSize());
-		memcpy(Code.data(), DXCode->GetBufferPointer(), Code.size());
+		Code.Resize(static_cast<I32>(DXCode->GetBufferSize()));
+		SMemory::Copy(Code.Pointer(), DXCode->GetBufferPointer(), Code.GetCount());
 		return (Result == S_OK);
 	}
 	RHIShaderCompiler* RHIShaderCompiler::StaticCreate()

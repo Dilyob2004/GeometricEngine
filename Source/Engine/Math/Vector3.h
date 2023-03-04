@@ -8,20 +8,20 @@ namespace GeometricEngine
     class Vector3
     {
     public:
-        Vector3():
-            x(0),
-            y(0),
-            z(0)
+        Vector3()
+			: x(0)
+			, y(0)
+			, z(0)
         {
         }
-        Vector3(T X, T Y, T Z):
+		FORCEINLINE Vector3(T X, T Y, T Z):
             x(X),
             y(Y),
             z(Z)
         {
         }
         template <typename U>
-        explicit Vector3(const Vector3<U>& v):
+		FORCEINLINE explicit Vector3(const Vector3<U>& v):
             x(static_cast<T>(v.x)),
             y(static_cast<T>(v.y)),
             z(static_cast<T>(v.z))
@@ -76,7 +76,7 @@ namespace GeometricEngine
         }
         void Normalize()
         {
-            T n = 1.0 / Length();
+            T n = static_cast<T>(1) / Length();
 
             x *= n;
             y *= n;

@@ -7,7 +7,7 @@
 namespace GeometricEngine
 {
 	class DX11DynamicRHI;
-	class GEOMETRIC_API DX11Viewport : public RHIViewport
+	class DX11Viewport : public RHIViewport
 	{
 	public:
 		DX11Viewport();

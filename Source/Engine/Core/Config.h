@@ -1,13 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 #include <windows.h>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <algorithm> 
-#include <typeinfo>
 #include <dwmapi.h>
+#include <iostream>
 
 
 #if defined (GEOMETRIC_DEBUG)
@@ -26,6 +21,8 @@
 #define CONSTEXPR		constexpr
 #define ARRAY_COUNT(X) sizeof(X) / sizeof(typeid(X).raw_name())
 
+
+#pragma warning(disable: 4251)
 
 typedef char     I8;
 typedef short    I16;

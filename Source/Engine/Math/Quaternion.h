@@ -4,7 +4,7 @@
 
 namespace GeometricEngine
 {
-	class METEOR_API Quaternion
+	class GEOMETRIC_API Quaternion
 	{
 	public:
 		Quaternion();
@@ -13,25 +13,15 @@ namespace GeometricEngine
 		~Quaternion();
 
 		void Normalize();
-		Quaternion GetNormalized() const;
+		Quaternion Normalized() const;
 		static const Quaternion Zero;
 		static const Quaternion Identity;
 
-		Quaternion& operator*=(const Quaternion& r)
-		{
-			const Quaternion  p(*this);
-			const Quaternion  q(r);
-
-			w = p.w * q.w - p.x * q.x - p.y * q.y - p.z * q.z;
-			x = p.w * q.x + p.x * q.w + p.y * q.z - p.z * q.y;
-			y = p.w * q.y + p.y * q.w + p.z * q.x - p.x * q.z;
-			z = p.w * q.z + p.z * q.w + p.x * q.y - p.y * q.x;
-			return *this;
-		}
+		Quaternion& operator*=(const Quaternion& r);
 
 		F32 x, y, z, w;
 	};
-	METEOR_API Quaternion operator*(Quaternion const& q, Quaternion const& p);
+	GEOMETRIC_API Quaternion operator*(Quaternion const& q, Quaternion const& p);
 
 }
 #endif // !QUATERNION_H

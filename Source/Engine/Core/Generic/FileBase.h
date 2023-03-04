@@ -14,7 +14,7 @@ namespace GeometricEngine
 		OpenAlways			= 4,
 		TruncateExisting	= 5
 	};
-	enum class FileAccess
+	enum class FileAccess : long long
 	{
 		Read = 0x80000000,
 		Write = 0x40000000,

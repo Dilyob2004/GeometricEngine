@@ -13,19 +13,22 @@ namespace GeometricEngine
 	void Mouse::OnMouseMove(const Vector2f& MovePosition)
 	{
 		Event MouseEvent;
+		MouseEvent.Type = EventType::MouseMove;
 		MouseEvent.MouseData.Position = MovePosition;
 		QueueEvents.Push(MouseEvent);
 	}
 	void Mouse::OnMouseWheel(float Delta)
 	{
 		Event MouseEvent;
+		MouseEvent.Type = EventType::MouseWheel;
 		MouseEvent.MouseData.Delta = Delta;
 		QueueEvents.Push(MouseEvent);
 	}
 
 	void Mouse::Tick()
 	{
-		SMemory::Copy(&PrevData, &NowData, sizeof(Data));
+		SMemory::Copy(&PrevData, &NowData, sizeof(Data)); 
+		NowData.Delta = 0;
 		if (!QueueEvents.IsEmpty())
 		{
 			Event LastEvent = QueueEvents.Front();

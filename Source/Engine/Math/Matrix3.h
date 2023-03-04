@@ -5,7 +5,7 @@
 namespace GeometricEngine
 {
 	class Matrix4f;
-	class METEOR_API Matrix3f
+	class GEOMETRIC_API Matrix3f
 	{
 	public:
 		Matrix3f();
@@ -26,25 +26,19 @@ namespace GeometricEngine
 		Vector3f& operator[](const S32& i);
 		const Vector3f& operator[](S32 i) const;
 
-		Matrix3f& operator=(Matrix3f const& m)
-		{
-			m_column[0] = m[0];
-			m_column[1] = m[1];
-			m_column[2] = m[2];
-			return *this;
-		}
+		Matrix3f& operator=(Matrix3f const& m);
 
 		static const Matrix3f Zero;
 		static const Matrix3f Identity;
 
 	private:
-		Vector3f m_column[3];
+		Vector3f Column[3];
 	};
 
 
-	METEOR_API Matrix3f operator*(const Matrix3f& m1, const F32& x);
-	METEOR_API Matrix3f operator*(const F32& x, const Matrix3f& m1);
-	METEOR_API Matrix3f operator*(const Matrix3f& m1, const Matrix3f& m2);
+	GEOMETRIC_API Matrix3f operator*(const Matrix3f& m1, const F32& x);
+	GEOMETRIC_API Matrix3f operator*(const F32& x, const Matrix3f& m1);
+	GEOMETRIC_API Matrix3f operator*(const Matrix3f& m1, const Matrix3f& m2);
 
 }
 

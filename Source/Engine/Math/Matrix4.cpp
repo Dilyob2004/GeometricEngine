@@ -21,57 +21,66 @@ namespace GeometricEngine
     }
     Matrix4f::Matrix4f(F32 x)
     {
-        m_column[0] = Vector4f(x, 0, 0, 0);
-        m_column[1] = Vector4f(0, x, 0, 0);
-        m_column[2] = Vector4f(0, 0, x, 0);
-        m_column[3] = Vector4f(0, 0, 0, x);
+        Column[0] = Vector4f(x, 0, 0, 0);
+        Column[1] = Vector4f(0, x, 0, 0);
+        Column[2] = Vector4f(0, 0, x, 0);
+        Column[3] = Vector4f(0, 0, 0, x);
     }
     Matrix4f::Matrix4f(const Matrix4f& x)
     {
-        m_column[0] = x[0];
-        m_column[1] = x[1];
-        m_column[2] = x[2];
-        m_column[3] = x[3];
+        Column[0] = x[0];
+        Column[1] = x[1];
+        Column[2] = x[2];
+        Column[3] = x[3];
     }
 	Matrix4f::Matrix4f(const Matrix3f& x)
 	{
-		m_column[0] = Vector4f(x[0][0], x[0][1], x[0][2], 0);
-		m_column[1] = Vector4f(x[1][0], x[1][1], x[1][2], 0);
-		m_column[2] = Vector4f(x[2][0], x[2][1], x[2][2], 0);
-		m_column[3] = Vector4f(0, 0, 0, 1);
+		Column[0] = Vector4f(x[0][0], x[0][1], x[0][2], 0);
+		Column[1] = Vector4f(x[1][0], x[1][1], x[1][2], 0);
+		Column[2] = Vector4f(x[2][0], x[2][1], x[2][2], 0);
+		Column[3] = Vector4f(0, 0, 0, 1);
 	}
     Matrix4f::Matrix4f( const Vector4f &column1,
                         const Vector4f &column2,
                         const Vector4f &column3,
                         const Vector4f &column4 )
     {
-        m_column[0] = column1;
-        m_column[1] = column2;
-        m_column[2] = column3;
-        m_column[3] = column4;
+        Column[0] = column1;
+        Column[1] = column2;
+        Column[2] = column3;
+        Column[3] = column4;
     }
     Matrix4f::Matrix4f( F32 m00, F32 m01, F32 m02, F32 m03,
                         F32 m10, F32 m11, F32 m12, F32 m13,
                         F32 m20, F32 m21, F32 m22, F32 m23,
                         F32 m30, F32 m31, F32 m32, F32 m33 )
     {
-        m_column[0] = Vector4f(m00, m01, m02, m03);
-        m_column[1] = Vector4f(m10, m11, m12, m13);
-        m_column[2] = Vector4f(m20, m21, m22, m23);
-        m_column[3] = Vector4f(m30, m31, m32, m33);
+        Column[0] = Vector4f(m00, m01, m02, m03);
+        Column[1] = Vector4f(m10, m11, m12, m13);
+        Column[2] = Vector4f(m20, m21, m22, m23);
+        Column[3] = Vector4f(m30, m31, m32, m33);
     }
     Matrix4f::~Matrix4f()
     {
     }
     Vector4f& Matrix4f::operator[](const S32& i)
     {
-        return m_column[i];
+        return Column[i];
     }
 
     const Vector4f& Matrix4f::operator[](S32 i) const
     {
-        return m_column[i];
+        return Column[i];
     }
+
+	Matrix4f& Matrix4f::operator=(const Matrix4f & m)
+	{
+		Column[0] = m[0];
+		Column[1] = m[1];
+		Column[2] = m[2];
+		Column[3] = m[3];
+		return *this;
+	}
 
     Matrix4f operator*(const Matrix4f& m1, const F32 &x)
     {

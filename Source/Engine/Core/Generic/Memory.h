@@ -11,7 +11,7 @@ namespace GeometricEngine
 		static void* Allocate(U32, U32 Alignment = 16);
 		static void		Copy(void*, const void*, U64);
 		static void* Zero(void*, U32);
-		static void		Set(void*, U32, U32);
+		static void		Set(void* DST, U32 Size, U32 Value);
 		static void		Clear(void*, U32);
 		static void		Free(void*);
 	};

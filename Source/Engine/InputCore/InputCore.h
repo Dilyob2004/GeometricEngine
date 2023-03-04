@@ -1,6 +1,6 @@
 #ifndef INPUTCORE_H
 #define INPUTCORE_H
-#include <Engine/Core/EngineModule.h>
+#include <Engine/Math/Vector2.h>
 #include <Engine/InputDevice/KeyCodes.h>
 #include <Engine/InputDevice/MouseCodes.h>
 namespace GeometricEngine
@@ -15,6 +15,10 @@ namespace GeometricEngine
 		static bool GetMouseButton(MouseCode Key);
 		static bool GetMouseButtonDown(MouseCode Key);
 		static bool GetMouseButtonUp(MouseCode Key);
+
+		static Vector2f GetMousePosition();
+		static Vector2f GetMousePositionDelta();
+		static F32		GetMouseWhellDelta();
     };
 }
 

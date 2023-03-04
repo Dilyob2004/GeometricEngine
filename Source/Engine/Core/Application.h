@@ -4,12 +4,6 @@
 #include <Engine/Core/Generic/Window.h>
 namespace GeometricEngine
 {
-
-	struct ApplicationDefinitions
-	{
-		CHAR* CmdLine;
-		CHAR* ProductName;
-	};
 	class GEOMETRIC_API Application
 	{
 	public:

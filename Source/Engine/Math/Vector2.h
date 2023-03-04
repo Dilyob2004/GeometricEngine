@@ -13,18 +13,18 @@ namespace GeometricEngine
 			y(0)
 		{
 		}
-		Vector2(T X, T Y) :
+		FORCEINLINE Vector2(T X, T Y) :
 			x(X),
 			y(Y)
 		{
 		}
         template <typename U>
-		explicit Vector2(const Vector2<U>& v) :
+		FORCEINLINE explicit Vector2(const Vector2<U>& v) :
 			x(static_cast<T>(v.x)),
 			y(static_cast<T>(v.y))
 		{
 		}
-		void Clamp(const Vector2<T>& min, const Vector2<T>& max)
+		void Clamp(const Vector2 & min, const Vector2& max)
 		{
 			if (min > max) return;
 
@@ -48,20 +48,20 @@ namespace GeometricEngine
 			x *= n;
 			y *= n;
 		}
-		T Distance(const Vector2<T>& v) const
+		T Distance(const Vector2& v) const
 		{
 			Vector2 v0(v.x - x, v.y - y);
 			return v0.Length();
 		}
-		T Dot(const Vector2<T>& v1, const Vector2<T>& v2)
+		T Dot(const Vector2& v1, const Vector2& v2)
 		{
 			return (v1.x * v2.x + v1.y * v2.y);
 		}
-		Vector2<T> GetNormalized() const
+		Vector2 Normalized() const
 		{
-			Vector2<T> v(*this);
-			v.Normalize();
-			return v;
+			Vector2 V(*this);
+			V.Normalize();
+			return V;
 		}
 		T Length() const
 		{
@@ -128,6 +128,7 @@ namespace GeometricEngine
 	{
 		return Vector2<U>(left.x * right.x, left.y * right.y);
 	}
+	
 	template <typename U>
 	Vector2<U> operator *(const Vector2<U> & left, U right)
 	{
