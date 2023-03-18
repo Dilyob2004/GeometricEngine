@@ -25,11 +25,10 @@ namespace GeometricEngine
 			}
 			FORCEINLINE I32 CalculateSizeBlock(I32 Size, I32 MinSize)
 			{
-				//if (Size < MinSize) Size = MinSize;
+				if (Size < MinSize) Size = MinSize;
 
 				if (Size < 8)
 					return 8;
-				///32, 127, 512, 2058...
 				Size--;
 				Size |= Size >> 1;
 				Size |= Size >> 2;

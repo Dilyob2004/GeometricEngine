@@ -6,7 +6,7 @@
 namespace GeometricEngine
 {
 	MODULEINSTANCE(InputModule, GInputModule);
-	MODULEINSTANCE(RHIModule,	GRHIModule);
+	MODULEINSTANCE(RHIModule, GRHIModule);
 	Application* Application::ApplicationInstance = NULL;
 
 	static Window* MainWindow = NULL;

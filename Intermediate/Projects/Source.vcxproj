@@ -17,7 +17,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{926A6201-8481-4C15-B3D2-B367748205CA}</ProjectGuid>
-    <RootNamespace>MeteorApi</RootNamespace>
+    <RootNamespace>Launch</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Source</ProjectName>
   </PropertyGroup>
@@ -79,7 +79,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>d3dcompiler.lib;dxgi.lib;d3d11.lib;dwmapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;dxgi.lib;d3d12.lib;d3d11.lib;dwmapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Link>
@@ -107,6 +107,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Engine\Core\Application.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompiler.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerDX11\ShaderCompilerDX11.cpp" />
+    <ClInclude Include="..\..\Source\Engine\Core\Application.h" />
     <ClCompile Include="..\..\Source\Engine\Core\Core.cpp" />
     <ClCompile Include="..\..\Source\Engine\Core\Misc\CString.cpp" />
     <ClCompile Include="..\..\Source\Engine\Core\Generic\Memory.cpp" />
@@ -125,16 +128,16 @@
     <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsInput.cpp" />
     <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsPlatform.cpp" />
     <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\File.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\FileSystem.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Device.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Texture.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.cpp" />
-    <ClCompile Include="..\..\Source\Engine\Core\Generic\File.cpp" />
-    <ClCompile Include="..\..\Source\Engine\Core\Generic\FileSystem.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX12\DX12Device.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX12\DX12Viewport.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DynamicRHI.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Source\Engine\Core\Application.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Config.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Containers\Array.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Containers\Map.h" />
@@ -142,11 +145,14 @@
     <ClInclude Include="..\..\Source\Engine\Core\Containers\Queue.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Core.h" />
     <ClInclude Include="..\..\Source\Engine\Core\EngineModule.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\ScopeLock.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\Allocator.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Misc\CString.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Generic\Memory.h" />
-    <ClInclude Include="..\..\Source\Engine\Core\Misc\Allocator.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\ReferenceCount.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Misc\String.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Misc\StringView.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsCriticalSection.h" />
     <ClInclude Include="..\..\Source\Engine\InputCore\InputCore.h" />
     <ClInclude Include="..\..\Source\Engine\InputCore\InputModule.h" />
     <ClInclude Include="..\..\Source\Engine\InputDevice\InputDevice.h" />
@@ -169,10 +175,15 @@
     <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsInput.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsPlatform.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsWindow.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\PixelShader.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\VertexBuffer.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\VertexLayout.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\VertexShader.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11DynamicRHI.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX12DynamicRHI.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DynamicRHI.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\RHIModule.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\RHIResources.h" />
@@ -180,6 +191,8 @@
     <ClInclude Include="..\..\Source\Engine\Core\Generic\FileBase.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Generic\FileSystem.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Generic\Path.h" />
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompiler.h" />
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerDX11\ShaderCompilerDX11.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

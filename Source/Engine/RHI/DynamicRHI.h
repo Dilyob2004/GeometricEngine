@@ -14,7 +14,7 @@ namespace GeometricEngine
 		virtual RHIViewport*		RHICreateViewport(void*, U32, U32, bool) = 0;
 		virtual RHIPixelShader*		RHICreatePixelShader(const TVector<U32>&) = 0;
 		virtual RHIVertexShader*	RHICreateVertexShader(const TVector<U32>&) = 0;
-		virtual RHIVertexLayout*	RHICreateVertexLayout(const RHIVertexShader*, const VertexLayoutGroup&) = 0;
+		virtual RHIVertexLayout*	RHICreateVertexLayout(const RHIVertexShader*, const TVector<BufferElement>&) = 0;
 
 		virtual RHIVertexBuffer*	RHICreateVertexBuffer(void*, U32) = 0;
 		virtual RHIIndexBuffer*		RHICreateIndexBuffer(U32*, U32) = 0;
@@ -36,10 +36,10 @@ namespace GeometricEngine
 
 		virtual void				RHIDraw(U32, U32, DrawType type = DrawType::TRIANGLES) = 0;
 
-		virtual void RHISetViewport(F32, F32, F32, F32, F32, F32) = 0;
-		virtual void RHIResizeViewport(U32, U32, bool) = 0;
-		virtual void RHIBegin() = 0;
-		virtual void RHIEnd() = 0;
+		virtual void				RHISetViewport(F32, F32, F32, F32, F32, F32) = 0;
+		virtual void				RHIResizeViewport(const RHIViewport*, U32, U32, bool) = 0;
+		virtual void				RHIBegin(const RHIViewport*) = 0;
+		virtual void				RHIEnd(const RHIViewport*) = 0;
 	};
 	extern DynamicRHI* GDynamicRHI;
 }

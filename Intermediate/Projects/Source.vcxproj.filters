@@ -1,16 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\..\Source\Engine\Core\Application.cpp" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\Allocator.h" />
     <ClCompile Include="..\..\Source\Engine\Core\Core.cpp" />
     <ClCompile Include="..\..\Source\Engine\Math\MathUtils.cpp" />
     <ClCompile Include="..\..\Source\Engine\Math\Matrix3.cpp" />
     <ClCompile Include="..\..\Source\Engine\Math\Matrix4.cpp" />
     <ClCompile Include="..\..\Source\Engine\Math\Quaternion.cpp" />
-    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Device.cpp" />
-    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.cpp" />
-    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.cpp" />
-    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.cpp" />
     <ClCompile Include="..\..\Source\Engine\Core\Misc\Log.cpp" />
     <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsFile.cpp" />
     <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsFileSystem.cpp" />
@@ -27,9 +23,6 @@
     <ClCompile Include="..\..\Source\Engine\InputDevice\Keyboard.cpp" />
     <ClCompile Include="..\..\Source\Engine\InputDevice\Mouse.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DynamicRHI.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Source\Engine\Core\Application.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Config.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Core.h" />
     <ClInclude Include="..\..\Source\Engine\Math\MathUtils.h" />
@@ -40,12 +33,8 @@
     <ClInclude Include="..\..\Source\Engine\Math\Vector3.h" />
     <ClInclude Include="..\..\Source\Engine\Math\Vector4.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DynamicRHI.h" />
-    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11DynamicRHI.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\RHIResources.h" />
-    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Containers\Array.h" />
-    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.h" />
-    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Misc\Log.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsFile.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsFileSystem.h" />
@@ -60,7 +49,6 @@
     <ClInclude Include="..\..\Source\Engine\InputDevice\KeyCodes.h" />
     <ClInclude Include="..\..\Source\Engine\InputDevice\MouseCodes.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Generic\Window.h" />
-    <ClInclude Include="..\..\Source\Engine\Core\Misc\Allocator.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Generic\Memory.h" />
     <ClInclude Include="..\..\Source\Engine\Core\Misc\CString.h" />
     <ClInclude Include="..\..\Source\Engine\InputDevice\InputDevice.h" />
@@ -75,5 +63,32 @@
     <ClInclude Include="..\..\Source\Engine\Core\Misc\StringView.h" />
     <ClInclude Include="..\..\Source\Engine\InputCore\InputModule.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\RHIModule.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Application.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX12DynamicRHI.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsCriticalSection.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\ScopeLock.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11DynamicRHI.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\ReferenceCount.h" />
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompiler.h" />
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerDX11\ShaderCompilerDX11.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\VertexBuffer.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\VertexLayout.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\PixelShader.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\VertexShader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\Engine\Core\Application.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX12\DX12Device.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX12\DX12Viewport.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Device.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Texture.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompiler.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerDX11\ShaderCompilerDX11.cpp" />
   </ItemGroup>
 </Project>

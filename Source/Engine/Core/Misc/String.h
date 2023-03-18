@@ -1,34 +1,31 @@
 #ifndef STRING_H
 #define STRING_H
-
-#include <Engine/Core/Config.h>
 #include <Engine/Core/Misc/CString.h>
 #include <Engine/Core/Generic/Memory.h>
 namespace GeometricEngine
 {
-	template<typename T>
-	class BasicString
+	class String
 	{
 	public:
-		BasicString() = default;
-		BasicString(const BasicString& Str)
-		{
-			Update(Str.Pointer(), Str.Size());
-		}
-		BasicString(const T* Str)
+		String() = default;
+		String(const CHAR* Str)
 		{
 			Update(Str, CString::Length(Str));
 		}
-		BasicString(const T* Str, I32 NewLength)
+		String(const CHAR* Str, I32 NewLength)
 		{
 			Update(Str, NewLength);
 		}
-		~BasicString()
+		String(const String& Str)
+		{
+			Update(Str.Pointer(), Str.Size());
+		}
+		~String()
 		{
 			SMemory::Free(Data);
 		}
 
-		void Update(const T* Str, I32 NewLength)
+		void Update(const CHAR* Str, I32 NewLength)
 		{
 			if (!Str || NewLength <= 0)
 				return;
@@ -38,51 +35,34 @@ namespace GeometricEngine
 				SMemory::Free(Data);
 				if (NewLength != 0)
 				{
-					Data = (T*)SMemory::Allocate((NewLength + 1) * sizeof(T));
+					Data = (CHAR*)SMemory::Allocate((NewLength + 1) * sizeof(CHAR));
 					Data[NewLength] = 0;
 				}
 				else
 					Data = NULL;
 				Length = NewLength;
 			}
-			SMemory::Copy(Data, Str, NewLength * sizeof(T));
+			SMemory::Copy(Data, Str, NewLength * sizeof(CHAR));
 		}
-		void Append(const T* Str, I32 Size)
-		{
-			if (Size == 0)
-				return;
-
-			T * OldData = Data;
-			I32 OldLength = Length;
-
-			Length += Size;
-			Data = (T*)SMemory::Allocate((Length + 1) * sizeof(T));
-			SMemory::Copy(Data, OldData, OldLength * sizeof(T));
-			SMemory::Copy(Data, Str, Size * sizeof(T));
-
-			Data[Length] = 0;
-
-			SMemory::Free(OldData);
-		}
-		I32 Compare(const BasicString& Other, ESearchCase Case = ESearchCase::Sensitive)
+		I32 Compare(const String& Other, ESearchCase Case = ESearchCase::Sensitive)
 		{
 			return (Case == ESearchCase::Sensitive) ?
 				CString::Compare(**this, *Other) :
 				CString::CompareCaseInSensitive(**this, *Other);
 		}
-		I32 Find(T c) const
+		I32 Find(CHAR c) const
 		{
-			const T* RESTRICT First = Pointer();
-			for (const T* RESTRICT i = First, *RESTRICT End = i + Size(); i != End; i++)
+			const CHAR* RESTRICT First = Pointer();
+			for (const CHAR* RESTRICT i = First, *RESTRICT End = i + Size(); i != End; i++)
 				if (*i == c)
 					return static_cast<I32>(i - First);
 
 			return -1;
 		}
-		I32 FindLast(T c) const
+		I32 FindLast(CHAR c) const
 		{
-			const T* RESTRICT Last = Pointer() + Size();
-			for (const T* RESTRICT i = Last, *RESTRICT First = i - Size(); i != First;) {
+			const CHAR* RESTRICT Last = Pointer() + Size();
+			for (const CHAR* RESTRICT i = Last, *RESTRICT First = i - Size(); i != First;) {
 				i--;
 				if (*i == c)
 					return static_cast<I32>(i - First);
@@ -90,31 +70,33 @@ namespace GeometricEngine
 
 			return -1;
 		}
-		I32 Find(const T * Str, ESearchCase Case = ESearchCase::Sensitive, U32 StartPosition = -1) const
+		I32 Find(const CHAR* Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
 		{
 			if (Str == NULL || !Data)
 				return -1;
+
 			if (StartPosition < Size())
 				StartPosition = Size();
-			const T * First = Data;
+
+			const CHAR* First = Data;
 
 			if (StartPosition != -1)
 				First += StartPosition;
 
-			const T * Temp = (Case == ESearchCase::InSensitive) ?
+			const CHAR* Temp = (Case == ESearchCase::InSensitive) ?
 				CString::FindCaseInSensitive(First, Str) :
 				CString::Find(First, Str);
 
 			return	Temp ? static_cast<I32>(Temp - **this) : -1;
 		}
-		I32 FindLast(const T * Str, ESearchCase Case = ESearchCase::Sensitive, U32 StartPosition = -1) const
+		I32 FindLast(const CHAR* Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
 		{
 			const I32 SizeOfStr = CString::Length(Str);
 			if (Str == NULL || !Data)
 				return -1;
 			if (StartPosition == -1)
 				StartPosition = Size();
-			const T * First = Data;
+			const CHAR* First = Data;
 			for (I32 i = StartPosition - SizeOfStr; i >= 0; i--)
 			{
 				if (Case == ESearchCase::InSensitive ? CString::CompareCaseInSensitive(Data, Str, SizeOfStr)
@@ -124,15 +106,15 @@ namespace GeometricEngine
 
 			return -1;
 		}
-		I32 Find(const BasicString & Str, ESearchCase Case = ESearchCase::Sensitive, U32 StartPosition = -1)
+		I32 Find(const String & Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
 		{
 			return Find(Str.Pointer(), Case, StartPosition);
 		}
-		I32 FindLast(const BasicString & Str, ESearchCase Case = ESearchCase::Sensitive, U32 StartPosition = -1)
+		I32 FindLast(const String & Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
 		{
 			return FindLast(Str.Pointer(), Case, StartPosition);
 		}
-		I32 FindIndexOf(T c, I32 Index = 0)
+		I32 FindIndexOf(CHAR c, I32 Index = 0)
 		{
 			while (Index < Size())
 			{
@@ -142,13 +124,13 @@ namespace GeometricEngine
 			}
 			return -1;
 		}
-		I32 FindIndexOf(const T * Str, I32 Index = 0)
+		I32 FindIndexOf(const CHAR* Str, I32 Index = 0)
 		{
 			while (Index < Size())
 			{
 
-				const T C = Data[Index];
-				const T* S = Str;
+				const CHAR C = Data[Index];
+				const CHAR* S = Str;
 
 				while (*S)
 				{
@@ -160,21 +142,21 @@ namespace GeometricEngine
 			}
 			return -1;
 		}
-		bool StartWith(T c, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		bool StartWith(CHAR c, ESearchCase SearchCase = ESearchCase::Sensitive) const
 		{
 			if (SearchCase == ESearchCase::InSensitive)
 				return Size() > 0 && (CString::ToLower(c) == CString::ToLower(Data[0]));
 
 			return Size() > 0 && Data[0] == c;
 		}
-		bool EndWith(T c, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		bool EndWith(CHAR c, ESearchCase SearchCase = ESearchCase::Sensitive) const
 		{
 			if (SearchCase == ESearchCase::InSensitive)
 				return Size() > 0 && (CString::ToLower(c) == CString::ToLower(Data[Size() - 1]));
 
 			return Size() > 0 && Data[Size() - 1] == c;
 		}
-		bool StartWith(const BasicString & Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		bool StartWith(const String & Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
 		{
 			if (Str.IsEmpty() || Size() < Str.Size())
 				return false;
@@ -184,7 +166,7 @@ namespace GeometricEngine
 
 			return CString::Compare(Pointer(), *Str, Str.Size()) == 0;
 		}
-		bool EndWith(const BasicString & Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		bool EndWith(const String & Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
 		{
 			if (Str.IsEmpty() || Size() < Str.Size())
 				return false;
@@ -194,7 +176,7 @@ namespace GeometricEngine
 
 			return CString::Compare(&(*this)[Size() - Str.Size()], *Str, Str.Size()) == 0;
 		}
-		BasicString Replace(const T* From, const T* To, ESearchCase Case = ESearchCase::Sensitive)
+		String Replace(const CHAR* From, const CHAR* To, ESearchCase Case = ESearchCase::Sensitive)
 		{
 			return 0;
 		}
@@ -203,13 +185,13 @@ namespace GeometricEngine
 		
 		void Resize(I32 NewLength)
 		{
-			const T* OldData = Data;
+			const CHAR* OldData = Data;
 			const I32 MinLength = min(NewLength, Length);
 			Length = NewLength;
-			Data = (T*)SMemory::Allocate((Length + 1) * sizeof(T));
-			SMemory::Copy(Data, OldData, MinLength * sizeof(T));
+			Data = (CHAR*)SMemory::Allocate((Length + 1) * sizeof(CHAR));
+			SMemory::Copy(Data, OldData, MinLength * sizeof(CHAR));
 			Data[Length] = 0;
-			SMemory::Free((T*)OldData);
+			SMemory::Free((CHAR*)OldData);
 		}
 		
 		
@@ -221,17 +203,34 @@ namespace GeometricEngine
 			Length = 0;
 
 		}
-		FORCEINLINE T& operator[](I32 Index)
+		FORCEINLINE CHAR& operator[](I32 Index)
 		{
 			_ASSERT(Index >= 0 && Index <= Length);
 			return Data[Index];
 		}
-		FORCEINLINE const T& operator[](I32 Index) const
+		FORCEINLINE const CHAR& operator[](I32 Index) const
 		{
 			_ASSERT(Index >= 0 && Index <= Length);
 			return Data[Index];
 		}
-		void Append(const BasicString& Str)
+		void Append(const CHAR* Str, I32 Size)
+		{
+			if (Size == 0)
+				return;
+
+			CHAR* OldData = Data;
+			I32 OldLength = Length;
+
+			Length += Size;
+			Data = (CHAR*)SMemory::Allocate((Length + 1) * sizeof(CHAR));
+			SMemory::Copy(Data, OldData, OldLength * sizeof(CHAR));
+			SMemory::Copy(Data + OldLength, Str, Size * sizeof(CHAR));
+
+			Data[Length] = 0;
+
+			SMemory::Free(OldData);
+		}
+		void Append(const String& Str)
 		{
 			Append(Str.Pointer(), Str.Size());
 		}
@@ -246,11 +245,11 @@ namespace GeometricEngine
 		{
 			return Length != 0;
 		}
-		FORCEINLINE T* Pointer()
+		FORCEINLINE CHAR* Pointer()
 		{
-			return Data ? Data : "";
+			return Data;
 		}
-		FORCEINLINE const T* Pointer() const
+		FORCEINLINE const CHAR* Pointer() const
 		{
 			return Data ? Data : "";
 		}
@@ -258,53 +257,50 @@ namespace GeometricEngine
 		{
 			return Length;
 		}
-		FORCEINLINE BasicString& operator += (const BasicString& Str)
+		FORCEINLINE String& operator += (const String& Str)
 		{
 			Append(Str.Pointer(), Str.Size());
 			return *this;
 		}
-		FORCEINLINE BasicString& operator += (const T* Str)
+		FORCEINLINE String& operator += (const CHAR* Str)
 		{
 			Append(Str, CString::Length(Str));
 			return *this;
 		}
-		FORCEINLINE BasicString& operator += (T C)
+		FORCEINLINE String& operator += (CHAR C)
 		{
 			Append(&C, 1);
 			return *this;
 		}
-		FORCEINLINE BasicString& operator = (const BasicString& Other)
+		FORCEINLINE String& operator = (const String& Other)
 		{
 			if (this != &Other)
 				Update(Other.Pointer(), Other.Size());
 			return *this;
 		}
-		BasicString& operator = (const T* Other)
+		String& operator = (const CHAR* Other)
 		{
-			if (this != &Other)
+			if (Data != Other)
 				Update(Other, CString::Length(Other));
 			return *this;
 		}
-		BasicString& operator = (T Other)
+		String& operator = (CHAR Other)
 		{
 			Update(&Other, 1);
 			return *this;
 		}
-		FORCEINLINE const T* operator*() const
+		FORCEINLINE const CHAR* operator*() const
 		{
 			return Data;
 		}
-		FORCEINLINE  T* operator*()
+		FORCEINLINE  CHAR* operator*()
 		{
 			return Data;
 		}
 	protected:
 		
-		T* Data = NULL;
+		CHAR* Data = NULL;
 		I32 Length = 0;
 	};
-
-
-	typedef BasicString<char> String;
 }
 #endif // !STRING_H

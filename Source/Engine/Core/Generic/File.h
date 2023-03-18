@@ -2,16 +2,16 @@
 #define FILE_H
 #include <Engine/Core/Config.h>
 #include <Engine/Core/Generic/FileBase.h>
-
+#include <Engine/Core/Misc/String.h>
 
 namespace GeometricEngine
 {
-	class METEOR_API File
+	class GEOMETRIC_API File
 	{
 	public:
 		File() = default;
 		~File() = default;
-		static File* Create(const std::string&, FileMode, FileAccess, FileShare);
+		static File* Create(const String&, FileMode, FileAccess, FileShare);
 
 		virtual bool Read(void*, U32, U32*) = 0;
 		virtual bool Write(const void*, U32, U32*) = 0;

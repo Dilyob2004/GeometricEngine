@@ -47,9 +47,9 @@ namespace GeometricEngine
 		}
 
 		template<typename T, typename U>
-		FORCEINLINE void ConstructItems0(T* Destination, const U* Source, I32 Count)
-		{
-			SMemory::Copy(Destination, Source, Count);
+		FORCEINLINE void CopyConstructItems(T* Destination, const U* Source, I32 Count)
+		{;
+			SMemory::Copy(Destination, Source, Count * sizeof(U));
 		}
 		template<typename T, typename U>
 		FORCEINLINE void MoveItems(T* Destination, const U* Source, I32 Count)

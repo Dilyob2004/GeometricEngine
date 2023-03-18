@@ -4,8 +4,8 @@
 namespace GeometricEngine
 {
 
-	File* File::Create(const std::string& path, FileMode mode, FileAccess access, FileShare share)
+	File* File::Create(const String& Path, FileMode Mode, FileAccess Access, FileShare Share)
 	{
-		return WindowsFile::Open(path, mode, access, share);
+		return WindowsFile::Open(Path, Mode, Access, Share);
 	}
 }

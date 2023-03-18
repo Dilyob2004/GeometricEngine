@@ -20,6 +20,8 @@ namespace GeometricEngine
             virtual void SetTitle(const StringView&)override;
 
             virtual Vector2u GetSize() const override;
+			virtual U32 GetWidth() const override;
+			virtual U32 GetHeight() const override;
             virtual Vector2i GetPosition() const override;
             virtual void* GetHandle() const override;
 

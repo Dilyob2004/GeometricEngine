@@ -98,15 +98,36 @@ namespace GeometricEngine
 			case ShaderElementType::Float3:
 			case ShaderElementType::Float4:
 				return 4;
-
-
 		default:
 			return 0;
 		}
 	}
-	
 
 
+	class RHITexture
+	{
+	public:	
+		virtual ~RHITexture() {}
+		virtual U32 GetWidth() const = 0;
+		virtual U32 GetHeight() const = 0;
+		virtual void* GetHandle() const = 0;
+		virtual RHIPixelFormat GetFormat() const = 0;
+	};
+
+	class RHITextureView
+	{
+	public:
+		virtual ~RHITextureView() {}
+		virtual void* GetRTV() const = 0;
+		virtual void* GetSRV() const = 0;
+		virtual void* GetDSV() const = 0;
+
+	};
+	class RHITexture2D : public RHITexture
+	{
+	public:
+
+	};
 	class RHIViewport { public: virtual ~RHIViewport(){} };
 	class RHIPixelShader { public: virtual ~RHIPixelShader() {} };
 	class RHIVertexShader { public: virtual ~RHIVertexShader() {} };
@@ -125,29 +146,6 @@ namespace GeometricEngine
 		}
 		StringView			BufferName;
 		ShaderElementType	BufferType;
-	};
-	class VertexLayoutGroup
-	{
-	public:
-		VertexLayoutGroup() = default;
-		VertexLayoutGroup(const TVector<BufferElement>& Elements):
-			Groups(Elements)
-		{
-		}
-		U32 GetStrideLayout() const
-		{
-			U32 Stride = 0;
-			for (auto Element : Groups)
-				Stride += GetShaderStrideType(Element.BufferType) * GetSizeOfShaderType(Element.BufferType);
-			return Stride;
-		}
-		U32 GetCountGroups() const { return Groups.GetCount(); }
-		const TVector<BufferElement>& GetVertexGroup() const { return Groups; }
-		TVector<BufferElement>::Iterator begin() { return Groups.begin(); }
-		TVector<BufferElement>::Iterator end() { return Groups.end(); }
-
-	private:
-		TVector<BufferElement> Groups;
 	};
 	class RHIVertexLayout
 	{
@@ -175,18 +173,6 @@ namespace GeometricEngine
 		virtual ~RHIConstantBuffer() {}
 		virtual void* GetPointer() const = 0;
 		virtual U32 GetSize() const = 0;
-	};
-	class RHIShaderCompiler
-	{
-	public:
-		virtual ~RHIShaderCompiler() {}
-		static RHIShaderCompiler* StaticCreate();
-
-		virtual bool Compile(const WCHAR* Path,
-							 const CHAR* EntryPoint,
-							 const CHAR* Target) = 0;
-
-		virtual const TVector<U32>& GetResultCode() const = 0;
 	};
 }
 #endif // !RHIVIEWPORT_H

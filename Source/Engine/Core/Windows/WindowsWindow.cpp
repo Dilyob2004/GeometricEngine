@@ -103,6 +103,18 @@ namespace GeometricEngine
         GetClientRect(HandleWindow, &rect);
         return Vector2u(rect.right - rect.left, rect.bottom - rect.top);
     }
+	U32 WindowsWindow::GetWidth() const
+	{
+		RECT rect;
+		GetClientRect(HandleWindow, &rect);
+		return rect.right - rect.left;
+	}
+	U32 WindowsWindow::GetHeight() const
+	{
+		RECT rect;
+		GetClientRect(HandleWindow, &rect);
+		return rect.bottom - rect.top;
+	}
     Vector2i WindowsWindow::GetPosition() const
     {
         RECT rect;

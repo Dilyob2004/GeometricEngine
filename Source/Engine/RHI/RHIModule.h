@@ -9,6 +9,8 @@ namespace GeometricEngine
 		RHIModule();
 		virtual ~RHIModule();
 		bool Initialize() override;
+		void Tick() override;
+		void Draw() override;
 		void DeInitialize() override;
 	};
 }

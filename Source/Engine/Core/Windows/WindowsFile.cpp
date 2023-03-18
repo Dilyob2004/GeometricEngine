@@ -1,77 +1,93 @@
 #include <Engine/Core/Windows/WindowsFile.h>
 
+#include <Engine/Core/Misc/Log.h>
 
 namespace GeometricEngine
 {
 
-	WindowsFile::WindowsFile(void* handle) :
-		m_handle(handle)
+	WindowsFile::WindowsFile(void* pHandle) :
+		Handle(pHandle)
 	{
 	}
-	WindowsFile* WindowsFile::Open(const std::string& path, FileMode mode, FileAccess access, FileShare share)
+	WindowsFile* WindowsFile::Open(const String& Path, FileMode Mode, FileAccess Access, FileShare Share)
 	{
-		auto handle = CreateFileA(path.c_str(), (DWORD)access, (DWORD)share, NULL, (DWORD)mode, FILE_ATTRIBUTE_NORMAL, NULL);
 
-		if (handle == INVALID_HANDLE_VALUE)
+		DWORD DWAccess = 0, DWShare = 0, DWMode = 0;
+		if (Access == FileAccess::Read)		DWAccess |= GENERIC_READ;
+		if (Access == FileAccess::Write)	DWAccess |= GENERIC_WRITE;
+
+		if (Share == FileShare::Read)		DWShare |= FILE_SHARE_READ;
+		if (Share == FileShare::Write)		DWShare |= FILE_SHARE_WRITE;
+		if (Share == FileShare::Delete)		DWShare |= FILE_SHARE_DELETE;
+
+		if (Mode == FileMode::CreateAlways)		DWMode |= CREATE_ALWAYS;
+		if (Mode == FileMode::CreateNew)		DWMode |= CREATE_NEW;
+		if (Mode == FileMode::OpenAlways)		DWMode |= OPEN_ALWAYS;
+		if (Mode == FileMode::OpenExisting)		DWMode |= OPEN_EXISTING;
+		if (Mode == FileMode::TruncateExisting) DWMode |= TRUNCATE_EXISTING;
+
+		HANDLE DummyHandle = CreateFileA(Path.Pointer(), DWAccess, DWShare, NULL, DWMode, FILE_ATTRIBUTE_NORMAL, NULL);
+
+		if (DummyHandle == INVALID_HANDLE_VALUE) 
 			return NULL;
+		
 
-		return new WindowsFile(handle);
+		return new WindowsFile(DummyHandle);
 	}
-	bool WindowsFile::Read(void* buffer , U32 bytesToRead, U32* bytesRead)
+	bool WindowsFile::Read(void* Buffer , U32 Size, U32* OutSize)
 	{
-		DWORD temp;
-		if (ReadFile(m_handle, buffer, bytesToRead, &temp, NULL))
+		DWORD temp = 0;
+		if (ReadFile(Handle, Buffer, Size, &temp, NULL))
 		{
-			if (bytesRead)
-				 *bytesRead = temp;
+			if (OutSize)
+				 * OutSize = temp;
 			return true;
 		}
 
-		if (bytesRead)
-			* bytesRead = 0;
+		if (OutSize)
+			* OutSize = 0;
 		return false;
 	}
-	bool WindowsFile::Write(const void* buffer, U32 bytesToRead, U32* bytesRead)
+	bool WindowsFile::Write(const void* Buffer, U32 Size, U32* OutSize)
 	{
 		DWORD temp;
-		if (WriteFile(m_handle, buffer, bytesToRead, &temp, NULL))
+		if (WriteFile(Handle, Buffer, Size, &temp, NULL))
 		{
-			if (bytesRead)
-				* bytesRead = temp;
+			if (OutSize)
+				* OutSize = temp;
 			return true;
 		}
 
-		if (bytesRead)
-			* bytesRead = 0;
+		if (OutSize)
+			* OutSize = 0;
 		return false;
 
 	}
 	void WindowsFile::Close()
 	{ 
-		if (m_handle)
+		if (Handle)
 		{
-			CloseHandle(m_handle);
-			m_handle = NULL;
+			CloseHandle(Handle);
+			Handle = NULL;
 		}
 	}
 	bool WindowsFile::IsOpen()
 	{ 
-		return m_handle != NULL;
+		return Handle != NULL;
 	}
-	void WindowsFile::Seek(U32 seek)
+	void WindowsFile::Seek(U32 Seek)
 	{
-		SetFilePointer(m_handle, seek, NULL, FILE_BEGIN);
+		SetFilePointer(Handle, Seek, NULL, FILE_BEGIN);
 	}
 
 	U32 WindowsFile::GetSize() const
 	{
-
 		LARGE_INTEGER result;
-		GetFileSizeEx(m_handle, &result);
+		GetFileSizeEx(Handle, &result);
 		return (U32)result.QuadPart;
 	}
 	U32 WindowsFile::GetSeek() const
 	{
-		return SetFilePointer(m_handle, 0, NULL, FILE_CURRENT);
+		return SetFilePointer(Handle, 0, NULL, FILE_CURRENT);
 	}
 }

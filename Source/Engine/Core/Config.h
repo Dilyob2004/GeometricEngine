@@ -14,7 +14,6 @@
 #endif
 
 #define MS_ALIGN(n) __declspec	(align(n))
-
 #define FORCEINLINE	__forceinline
 #define INLINE			__inline
 #define RESTRICT		__restrict

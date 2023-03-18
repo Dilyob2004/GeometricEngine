@@ -3,7 +3,14 @@
 #include <Engine/Core/Misc/Allocator.h>
 namespace GeometricEngine
 {
-
+	template<typename T> struct TRemoveReference { typedef T Type; };
+	template<typename T> struct TRemoveReference<T&> { typedef T Type; };
+	template<typename T> struct TRemoveReference<T&&> { typedef T Type; };
+	template<typename T>
+	inline typename TRemoveReference<T>::Type&& MoveTemp(T&& obj)
+	{
+		return (typename TRemoveReference<T>::Type&&)obj;
+	}
 	template<typename T, typename Allocator = HeapAllocator>
 	class TVector
 	{
@@ -11,55 +18,81 @@ namespace GeometricEngine
 		typedef typename Allocator::template Element<T> ElementType;
 	public:
 		FORCEINLINE TVector() :
-			Count(0),
-			Size(0)
+			ArrayCount(0),
+			ArrayMax(0)
 		{
 		}
-		FORCEINLINE TVector(I32 SizeArray) :
-			Count(0),
-			Size(SizeArray)
+		FORCEINLINE TVector(I32 ArrayMaxArray) :
+			ArrayCount(0),
+			ArrayMax(ArrayMaxArray)
 		{
-			if (SizeArray > 0)
-				ElementAllocatorType.Allocate(SizeArray);
+			if (ArrayMaxArray > 0)
+				ElementAllocatorType.Allocate(ArrayMaxArray);
 		}
-		FORCEINLINE TVector(const TVector& Other) :
-			Count(Other.Count),
-			Size(Other.Size)
+		FORCEINLINE TVector(const TVector& Other)
 		{
-			if (Count > 0)
+			ArrayMax = ArrayCount = Other.ArrayCount;
+			if (ArrayMax > 0)
 			{
-				ElementAllocatorType.Allocate(Count);
-				TMemory::ConstructItems(ElementAllocatorType.GetAllocation(), Other.ElementAllocatorType.GetAllocation(), Count);
-			}	
+
+				ElementAllocatorType.ResizeAllocation(ArrayMax, 0, ArrayCount);
+				TMemory::CopyConstructItems(ElementAllocatorType.GetAllocation(), Other.ElementAllocatorType.GetAllocation(), Other.ArrayCount);
+			}
 		}
-		FORCEINLINE TVector(const T* Data, I32 SizeArray) :
-			Count(SizeArray),
-			Size(SizeArray)
+		TVector(TVector&& Other) noexcept :
+			ArrayCount(Other.ArrayCount),
+			ArrayMax(Other.ArrayMax)
 		{
-			if (SizeArray > 0)
+			Other.ArrayCount = 0;
+			Other.ArrayMax = 0;
+			ElementAllocatorType.Swap(Other.ElementAllocatorType);
+		}
+		FORCEINLINE TVector(const T* Data, I32 ArrayMaxArray) :
+			ArrayCount(ArrayMaxArray),
+			ArrayMax(ArrayMaxArray)
+		{
+			if (ArrayMax > 0)
 			{
-				ElementAllocatorType.Allocate(SizeArray);
-				SMemory::Copy(ElementAllocatorType.GetAllocation(), Data, SizeArray);
+				ElementAllocatorType.ResizeAllocation(ArrayMax, 0, ArrayCount);
+				SMemory::Copy(ElementAllocatorType.GetAllocation(), Data, ArrayCount);
 			}
 		}
 
 
 		FORCEINLINE ~TVector()
 		{
-			TMemory::DestructItems(ElementAllocatorType.GetAllocation(), Count);
+			TMemory::DestructItems(ElementAllocatorType.GetAllocation(), ArrayCount);
 		}
 
+
+
+	private:
+		void Relocate(I32 NewArrayMax)
+		{
+			if (ArrayMax == NewArrayMax)
+				return;
+			_ASSERT(NewArrayMax >= 0);
+
+			I32 NewCount = min(ArrayCount, NewArrayMax);
+			ElementAllocatorType.ResizeAllocation(NewArrayMax, ArrayCount, NewCount);
+			ArrayMax = NewArrayMax;
+			ArrayCount = NewCount;
+		}
+		void ResizeArrayMax(I32 NewArrayMax)
+		{
+			if (ArrayMax < NewArrayMax)
+			{
+				I32 NewArrayMaxGrow = ElementAllocatorType.CalculateSizeBlock(ArrayMax, NewArrayMax);
+				Relocate(NewArrayMaxGrow);
+			}
+		}
 	public:
 
 		FORCEINLINE void Push(const T& Element)
 		{
-			ElementAllocatorType.ResizeAllocation(Size, Count, Count+1);
-			
-			TMemory::ConstructItems(ElementAllocatorType.GetAllocation() + Count, &Element, 1);
-
-
-			Count++;
-			Size++;
+			ResizeArrayMax(ArrayCount + 1);
+			TMemory::ConstructItems(ElementAllocatorType.GetAllocation() + ArrayCount, &Element, 1);
+			ArrayCount++;
 		}
 		T Pop()
 		{
@@ -69,36 +102,54 @@ namespace GeometricEngine
 		}
 		void PopBack()
 		{
-			--Count;
-			TMemory::DestructItems(ElementAllocatorType.GetAllocation() + Count, 1);
+			--ArrayCount;
+			TMemory::DestructItems(ElementAllocatorType.GetAllocation() + ArrayCount, 1);
 		}
-		void Resize(I32 NewSize)
+		void Resize(I32 NewArrayMax)
 		{
-			if (Count > NewSize)
-				TMemory::DestructItems(ElementAllocatorType.GetAllocation() + NewSize, Count - NewSize);
+			if (ArrayCount > NewArrayMax)
+				TMemory::DestructItems(ElementAllocatorType.GetAllocation() + NewArrayMax, ArrayCount - NewArrayMax);
 			else
 			{
-				ElementAllocatorType.ResizeAllocation(NewSize, Count, NewSize);
-				TMemory::ConstructItems(ElementAllocatorType.GetAllocation() + Count, NewSize - Count);
+				ResizeArrayMax(NewArrayMax + 1);
+				TMemory::ConstructItems(ElementAllocatorType.GetAllocation() + ArrayCount, NewArrayMax - ArrayCount);
 			}
-			Size = Count = NewSize;
+			ArrayCount = NewArrayMax;
 		}
 
 
 		void RemoveAt(I32 Index)
 		{
-			_ASSERT(Index >= 0 && Index < Count);
-			Count--;
+			_ASSERT(Index >= 0 && Index < ArrayCount);
+			ArrayCount--;
 			T* NewData = ElementAllocatorType.GetAllocation();
-			if (Count)
-				NewData[Index] = NewData[Count];
+			if (ArrayCount)
+				NewData[Index] = NewData[ArrayCount];
 
-			TMemory::DestructItems(NewData + Count, 1);
+			TMemory::DestructItems(NewData + ArrayCount, 1);
+		}
+		void RemoveAtKeepOrder(I32 Index)
+		{
+			_ASSERT(Index >= 0 && Index < ArrayCount);
+			ArrayCount--;
+			T * NewData = ElementAllocatorType.GetAllocation();
+
+
+			if (Index < ArrayCount) 
+			{
+				T* Dst = NewData + Index;
+				T* Src = NewData + (Index + 1);
+				I32 NewArrayCount = ArrayCount - Index;
+
+				for (int i = 0; i < NewArrayCount; i++)
+					Dst[i] = MoveTemp(Src[i]);
+			}
+			TMemory::DestructItems(NewData + ArrayCount, 1);
 		}
 
 		void RemoveAll(const T& Element)
 		{
-			for (int i = GetCount() - 1; i >= 0; i--)
+			for (int i = ArrayCount - 1; i >= 0; i--)
 				if (ElementAllocatorType.GetAllocation()[i] == Element)
 				{
 					RemoveAt(i);
@@ -108,14 +159,14 @@ namespace GeometricEngine
 		}
 		void Swap(TVector& Other)
 		{
-			TMemory::Swap(Count, Other.Count);
-			TMemory::Swap(Size, Other.Size);
+			TMemory::Swap(ArrayCount, Other.ArrayCount);
+			TMemory::Swap(ArrayMax, Other.ArrayMax);
 			ElementAllocatorType.Swap(Other.ElementAllocatorType);
 		}
 		FORCEINLINE void Clear()
 		{
-			TMemory::DestructItems(ElementAllocatorType.GetAllocation(), Count);
-			Count = 0;
+			TMemory::DestructItems(ElementAllocatorType.GetAllocation(), ArrayCount);
+			ArrayCount = 0;
 		}
 
 
@@ -130,10 +181,10 @@ namespace GeometricEngine
 			template<typename U>
 			FORCEINLINE bool Find(const U& Element) const
 			{
-				if (Count > 0)
+				if (ArrayCount > 0)
 				{
 					const T* RESTRICT FirstPointer = ElementAllocatorType.GetAllocation();
-					for (const T * RESTRICT i	= FirstPointer,  *RESTRICT End	= FirstPointer + Count; i != End; ++i)
+					for (const T * RESTRICT i	= FirstPointer,  *RESTRICT End	= FirstPointer + ArrayCount; i != End; ++i)
 						if (*i == Element)
 							return static_cast<int>(i - FirstPointer);
 					
@@ -160,35 +211,35 @@ namespace GeometricEngine
 
 		FORCEINLINE T& Last()
 		{
-			return ElementAllocatorType.GetAllocation()[Count - 1];
+			return ElementAllocatorType.GetAllocation()[ArrayCount - 1];
 		}
 		FORCEINLINE const T& Last() const
 		{
-			return ElementAllocatorType.GetAllocation()[Count - 1];
+			return ElementAllocatorType.GetAllocation()[ArrayCount - 1];
 		}
 
 
-
+		public:
 		FORCEINLINE T& At(I32 Index)
 		{
-			C_ASSERT(Index >= 0 && Index < Count);
+			C_ASSERT(Index >= 0 && Index < ArrayCount);
 			return ElementAllocatorType.GetAllocation()[Index];
 		}
 
 		FORCEINLINE const T& At(I32 Index) const
 		{
-			C_ASSERT(Index >= 0 && Index < Count);
+			C_ASSERT(Index >= 0 && Index < ArrayCount);
 			return ElementAllocatorType.GetAllocation()[Index];
 		}
 	public:
 		FORCEINLINE bool IsEmpty() const 
 		{ 
-			return Count == 0;
+			return ArrayCount == 0;
 		}
 
 		FORCEINLINE bool NotEmpty() const
 		{
-			return Count != 0;
+			return ArrayCount != 0;
 		}
 		FORCEINLINE T* Pointer() 
 		{
@@ -200,46 +251,25 @@ namespace GeometricEngine
 		}
 		FORCEINLINE I32 GetCount() const 
 		{ 
-			return Count; 
+			return ArrayCount; 
 		}
-		FORCEINLINE I32 GetSize() const 
+		FORCEINLINE I32 GetSizeMax() const 
 		{ 
-			return Size; 
+			return ArrayMax; 
 		}
 	public:
-
-		bool operator == (const TVector<T, Allocator>& Other) const
-		{
-			if (Count != Other.Count)
-				return false;
-			else
-			{
-				const T* Data = ElementAllocatorType.GetAllocation();
-				const T* OtherData = Other.ElementAllocatorType.GetAllocation();
-				for (int i = 0; i < Count; i++)
-					if (Data[i] != OtherData[i])
-						return false;
-			}
-			return true;
-		}
-
-
-		bool operator != (const TVector<T, Allocator>& Other) const
-		{
-			return !operator==(Other);
-		}
 		TVector& operator=(const TVector& Other) noexcept
 		{
 			if (this != &Other)
 			{
-				TMemory::DestructItems(ElementAllocatorType.GetAllocation(), Count);
-				if (Size < Other.Size)
+				TMemory::DestructItems(ElementAllocatorType.GetAllocation(), ArrayCount);
+				if (ArrayMax < Other.ArrayMax)
 				{
 					ElementAllocatorType.Free();
-					Size = Other.GetCount();
-					ElementAllocatorType.Allocate(Size);
+					ArrayMax = Other.ArrayCount;
+					ElementAllocatorType.Allocate(ArrayMax);
 				}
-				TMemory::ConstructItems(ElementAllocatorType.GetAllocation(), Other.Pointer(), Count);
+				TMemory::ConstructItems(ElementAllocatorType.GetAllocation(), Other.Pointer(), ArrayCount);
 
 			}
 			return *this;
@@ -248,27 +278,53 @@ namespace GeometricEngine
 		{
 			if (this != &Other)
 			{
-				TMemory::DestructItems(ElementAllocatorType.GetAllocation(), Count);
+				TMemory::DestructItems(ElementAllocatorType.GetAllocation(), ArrayCount);
 				ElementAllocatorType.Free();
 
-				Count = Other.Count;
-				Size = Other.Size;
+				ArrayCount = Other.ArrayCount;
+				ArrayMax = Other.ArrayMax;
 				ElementAllocatorType.Swap(Other.ElementAllocatorType);
 
 			}
 			return *this;
 		}
+		public:
+
 		FORCEINLINE T& operator [] (I32 Index)
 		{
-			_ASSERT(Index >= 0 && Index < Count);
+			_ASSERT(Index >= 0 && Index < ArrayCount);
 			return ElementAllocatorType.GetAllocation()[Index];
 		}
 		FORCEINLINE const T& operator [] (I32 Index) const
 		{
-			_ASSERT(Index >= 0 && Index < Count);
+			_ASSERT(Index >= 0 && Index < ArrayCount);
 			return ElementAllocatorType.GetAllocation()[Index];
 		}
 
+
+		public:
+
+
+			bool operator == (const TVector<T, Allocator>& Other) const
+			{
+				if (ArrayCount != Other.ArrayCount)
+					return false;
+				else
+				{
+					const T* Data = ElementAllocatorType.GetAllocation();
+					const T* OtherData = Other.ElementAllocatorType.GetAllocation();
+					for (int i = 0; i < ArrayCount; i++)
+						if (Data[i] != OtherData[i])
+							return false;
+				}
+				return true;
+			}
+
+
+			bool operator != (const TVector<T, Allocator> & Other) const
+			{
+				return !operator==(Other);
+			}
 
 		public:
 			struct Iterator
@@ -371,11 +427,11 @@ namespace GeometricEngine
 			}
 			FORCEINLINE Iterator end() const
 			{
-				return Iterator(this, Count);
+				return Iterator(this, ArrayCount);
 			}
 	private:
-		I32 Count;
-		I32 Size;
+		I32 ArrayCount;
+		I32 ArrayMax;
 		ElementType ElementAllocatorType;
 	};
 }

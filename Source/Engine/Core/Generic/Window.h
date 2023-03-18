@@ -43,6 +43,8 @@ namespace GeometricEngine
         virtual void SetTitle(const StringView&) = 0;
 
         virtual Vector2u GetSize() const = 0;
+		virtual U32 GetWidth() const = 0;
+		virtual U32 GetHeight() const = 0;
         virtual Vector2i GetPosition() const = 0;
         virtual void* GetHandle() const = 0;
     };

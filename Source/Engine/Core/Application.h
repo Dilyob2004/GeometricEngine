@@ -2,6 +2,7 @@
 #define APPLICATION_H
 #include <Engine/Core/Config.h>
 #include <Engine/Core/Generic/Window.h>
+
 namespace GeometricEngine
 {
 	class GEOMETRIC_API Application

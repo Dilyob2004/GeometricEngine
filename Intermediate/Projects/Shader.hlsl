@@ -13,7 +13,7 @@ VertexOut VSMain( in float3 InPosition : POSITION,
 				  in float3 InColor    : COLOR) 
 {
 	VertexOut Out 	= (VertexOut) 0;
-	Out.Position	=  float4(InPosition, 1.0);//mul(WorldViewProjection, float4(InPosition, 1.0));
+	Out.Position =  float4(InPosition, 1.0);//mul(WorldViewProjection, float4(InPosition, 1.0));
 	Out.Color 		= float4(InColor, 1.0);
 	return Out;
 }
