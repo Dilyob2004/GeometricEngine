@@ -20,7 +20,9 @@ namespace GeometricEngine
 			MouseWheel,
 			MouseMove,
 			MouseDoubleClick,
-			Char
+			Char,
+			ClosedWindow,
+			ResizedWindow
 		};
 		class Event
 		{
@@ -28,11 +30,19 @@ namespace GeometricEngine
 			EventType Type;
 			Event()
 				: Type(EventType::None)
+				, CharData()
 			{
 
 			}
 			union
 			{
+				struct
+				{
+					U32 Width;
+					U32 Height;
+					bool Resized;
+				}ResizeData;
+
 				struct
 				{
 					CHAR Char;

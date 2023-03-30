@@ -4,7 +4,7 @@
 #include <d3d11.h>
 namespace GeometricEngine
 {
-	class  DX11VertexBuffer : public RHIVertexBuffer
+	class DX11VertexBuffer : public RHIVertexBuffer
 	{
 	public:
 		DX11VertexBuffer();
@@ -13,11 +13,12 @@ namespace GeometricEngine
 
 		virtual ~DX11VertexBuffer();
 
-		virtual void* GetPointer() const override { return Buffer; }
+		void* GetPointer() const  { return Buffer; }
 
-		virtual U32 GetSize() const override { return Size; }
+		U32 GetSize() const  { return Size; }
 
-		ID3D11Buffer* GetDXVertexBuffer() const { return DXVertexBuffer; }
+		ID3D11Buffer* GetVertexBuffer() const { return DXVertexBuffer; }
+		ID3D11Buffer** GetInitVertexBuffer() { return &DXVertexBuffer; }
 
 	private:
 		U32 Size;
@@ -37,11 +38,12 @@ namespace GeometricEngine
 
 		virtual ~DX11IndexBuffer();
 
-		virtual U32* GetPointer() const override { return Buffer; }
+		U32* GetPointer() const { return Buffer; }
 
-		virtual U32 GetSize() const override { return Size; }
+		U32 GetSize() const { return Size; }
 
-		ID3D11Buffer* GetDXIndexBuffer() const { return DXIndexBuffer; }
+		ID3D11Buffer* GetIndexBuffer() const { return DXIndexBuffer; }
+		ID3D11Buffer** GetInitIndexBuffer() { return &DXIndexBuffer; }
 
 	private:
 		U32 Size;
@@ -60,13 +62,14 @@ namespace GeometricEngine
 
 		DX11ConstantBuffer(ID3D11Buffer*, U32 Size, void*);
 
-		~DX11ConstantBuffer();
+		virtual ~DX11ConstantBuffer();
 
-		virtual void* GetPointer() const override { return Buffer; }
+		void* GetPointer() const { return Buffer; }
 
-		virtual U32 GetSize() const override { return Size; }
+		U32 GetSize() const { return Size; }
 
-		ID3D11Buffer* GetDXConstantBuffer() const { return DXConstantBuffer; }
+		ID3D11Buffer* GetConstantBuffer() const { return DXConstantBuffer; }
+		ID3D11Buffer** GetInitConstantBuffer() { return &DXConstantBuffer; }
 
 	private:
 		U32 Size;

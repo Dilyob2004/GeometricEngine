@@ -14,6 +14,7 @@ namespace GeometricEngine
 	};
 	enum class ShaderType
 	{
+		None,
 		Pixel,
 		Vertex,
 		Geometry,
@@ -22,15 +23,17 @@ namespace GeometricEngine
 	};
 	struct ShaderCompilerInput
 	{
-		ShaderModel Model;
+		ShaderModel Model = ShaderModel::SM4;
+		ShaderType  Type = ShaderType::None;
 		String		ShaderName;
 		StringView	EntryPoint;
-		ShaderType  Type;
 	};
 	struct ShaderCompilerOutput
 	{
 		TVector<U32> Code;
 		TVector<CHAR> Errors;
+		ShaderType  Type = ShaderType::None;
+		String		ShaderName;
 	};
 
 

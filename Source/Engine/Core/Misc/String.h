@@ -235,7 +235,39 @@ namespace GeometricEngine
 			Append(Str.Pointer(), Str.Size());
 		}
 
+		FORCEINLINE bool operator == (const String& Other) const
+		{
+			return Length == Other.Length && (CString::Compare(Data, Other.Data) == 0);
+		}
+		FORCEINLINE bool operator != (const String& Other) const
+		{
+			return !(*this == Other);
+		}
+		FORCEINLINE bool operator == (const CHAR* Other) const
+		{
+			return *this == Other;
+		}
+		FORCEINLINE bool operator != (const CHAR* Other) const
+		{
+			return !(*this == Other);
+		}
 
+		FORCEINLINE bool operator < (const String& Other) const
+		{
+			return (CString::Compare(Data, Other.Data) < 0);
+		}
+		FORCEINLINE bool operator <= (const String& Other) const
+		{
+			return (CString::Compare(Data, Other.Data) <= 0);
+		}
+		FORCEINLINE bool operator > (const String& Other) const
+		{
+			return (CString::Compare(Data, Other.Data) > 0);
+		}
+		FORCEINLINE bool operator >= (const String& Other) const
+		{
+			return (CString::Compare(Data, Other.Data) >= 0);
+		}
 		FORCEINLINE bool IsEmpty() const
 		{
 			return Length == 0;

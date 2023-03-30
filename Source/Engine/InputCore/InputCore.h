@@ -20,6 +20,12 @@ namespace GeometricEngine
 		static Vector2f GetMousePositionDelta();
 		static F32		GetMouseWhellDelta();
     };
+	class GEOMETRIC_API InputWindow
+	{
+	public:
+		static bool OnResized(U32&, U32&);
+		static bool OnClosed();
+	};
 }
 
 #endif // INPUTCORE_H

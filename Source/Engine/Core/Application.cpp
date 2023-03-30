@@ -1,8 +1,11 @@
 
 #include <Engine/Core/Application.h>
 
+#include <Engine/ImageCore/ImageCore.h>
+
 #include <Engine/InputCore/InputModule.h>
 #include <Engine/RHI/RHIModule.h>
+#include <Engine/InputCore/InputCore.h>
 namespace GeometricEngine
 {
 	MODULEINSTANCE(InputModule, GInputModule);
@@ -30,14 +33,19 @@ namespace GeometricEngine
 		Info.SizeWidth			= 800;
 		Info.SizeHeight			= 600;
 		Info.Title				= ApplicationName;
-		Info.HasWindowBorder	= true;
+		Info.HasBorder			= true;
 		Info.IsRegularWindow	= false;
 		MainWindow				= Window::Create(Info);
+
+		Image ApplicationIcon;
+		if (ApplicationIcon.Load("../../Content/Logo/64x64.png"))
+			MainWindow->SetIcon(ApplicationIcon.GetData(), ApplicationIcon.GetWidth(), ApplicationIcon.GetHeight());
+		
 		return true;
 
 	}
 	bool Application::ShouldExit()
 	{
-		return MainWindow->IsClose();
+		return InputWindow::OnClosed();
 	}
 }

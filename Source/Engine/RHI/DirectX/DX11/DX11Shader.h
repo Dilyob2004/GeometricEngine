@@ -13,8 +13,8 @@ namespace GeometricEngine
 		DX11VertexLayout(ID3D11InputLayout*, const TVector<BufferElement>&, U32);
 		virtual ~DX11VertexLayout();
 
-		virtual U32 GetStrideLayout() override { return Stride; }
-		ID3D11InputLayout* GetDXInputLayout() const { return DXInputLayout; }
+		U32 GetStrideLayout() { return Stride; }
+		ID3D11InputLayout* GetInputLayout() const { return DXInputLayout; }
 	private:
 		ID3D11InputLayout* DXInputLayout;
 		TVector<BufferElement> VertexLayout;
@@ -28,8 +28,8 @@ namespace GeometricEngine
 		DX11PixelShader();
 		DX11PixelShader(ID3D11PixelShader*, const TVector<U32>&);
 		virtual ~DX11PixelShader();
-		ID3D11PixelShader* GetDXShader() const { return DXShader; }
-		const TVector<U32>& GetPointerCode() const { return Code; }
+		ID3D11PixelShader* GetShader() const { return DXShader; }
+		const TVector<U32>& GetCode() const { return Code; }
 	private:
 		ID3D11PixelShader* DXShader;
 		TVector<U32> Code;
@@ -41,8 +41,8 @@ namespace GeometricEngine
 		DX11VertexShader();
 		DX11VertexShader(ID3D11VertexShader*, const TVector<U32>&);
 		virtual ~DX11VertexShader();
-		ID3D11VertexShader* GetDXShader() const { return DXShader; }
-		const TVector<U32>& GetPointerCode() const { return Code; }
+		ID3D11VertexShader* GetShader() const { return DXShader; }
+		const TVector<U32>& GetCode() const { return Code; }
 	private:
 		ID3D11VertexShader* DXShader;
 		TVector<U32> Code;

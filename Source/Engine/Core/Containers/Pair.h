@@ -7,7 +7,7 @@ namespace GeometricEngine
 	class TPair
 	{
 	public:
-		FORCEINLINE TPair() :
+		FORCEINLINE TPair()
 		{
 		}
 		FORCEINLINE TPair(const FirstType& Key, const SecondType& Value) 
@@ -15,11 +15,11 @@ namespace GeometricEngine
 			, Second(Value)
 		{
 		}
-		FORCEINLINE bool opearator == (const TPair& Other) const
+		FORCEINLINE bool operator == (const TPair& Other) const
 		{
 			return First == Other.First && Second == Other.Second;
 		}
-		FORCEINLINE bool opearator != (const TPair& Other) const
+		FORCEINLINE bool operator != (const TPair& Other) const
 		{
 			return !(*this == Other);
 		}

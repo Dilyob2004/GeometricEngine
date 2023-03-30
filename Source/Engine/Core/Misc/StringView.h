@@ -3,51 +3,53 @@
 #include <Engine/Core/Misc/CString.h>
 namespace GeometricEngine
 {
-	template<typename T>
-	class BasicStringView
+	class StringView
 	{
 	public:
-		constexpr BasicStringView()
+		StringView()
 			: Data(NULL)
 			, Length(0)
 		{
 		}
-		constexpr BasicStringView(const T* InData, I32 InSize)
+		StringView(const CHAR* InData, I32 InSize)
 			: Data(InData)
 			, Length(InSize)
 		{
 		}
-		constexpr BasicStringView(const BasicStringView& Str)
+		StringView(const StringView& Str)
 			: Data(Str.Data)
 			, Length(Str.Length)
 		{
 		}
-		constexpr BasicStringView(const T* InData)
+		StringView(const CHAR* InData)
 			: Data(InData)
 			, Length(CString::Length(InData))
 		{
 		}
+		~StringView()
+		{
+			Data = NULL;
+		}
 
-
-		I32 Compare(const BasicStringView& Other, ESearchCase Case = ESearchCase::Sensitive)
+		I32 Compare(const StringView& Other, ESearchCase Case = ESearchCase::Sensitive)
 		{
 			return (Case == ESearchCase::Sensitive) ?
 				CString::Compare(**this, *Other) :
 				CString::CompareCaseInSensitive(**this, *Other);
 		}
-		I32 Find(T c)
+		I32 Find(CHAR c)
 		{
-			const T* RESTRICT First = Pointer();
-			for (const T* RESTRICT i = First, *RESTRICT End = i + Size(); i != End; i++)
+			const CHAR* RESTRICT First = Pointer();
+			for (const CHAR* RESTRICT i = First, *RESTRICT End = i + Size(); i != End; i++)
 				if (*i == c)
 					return static_cast<I32>(i - First);
 
 			return -1;
 		}
-		I32 FindLast(T c)
+		I32 FindLast(CHAR c)
 		{
-			const T* RESTRICT Last = Pointer() + Size();
-			for (const T* RESTRICT i = Last, *RESTRICT First = i - Size(); i != First;) {
+			const CHAR* RESTRICT Last = Pointer() + Size();
+			for (const CHAR* RESTRICT i = Last, *RESTRICT First = i - Size(); i != First;) {
 				i--;
 				if (*i == c)
 					return static_cast<I32>(i - First);
@@ -55,21 +57,21 @@ namespace GeometricEngine
 
 			return -1;
 		}
-		bool StartWith(T c, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		bool StartWith(CHAR c, ESearchCase SearchCase = ESearchCase::Sensitive)
 		{
 			if (SearchCase == ESearchCase::InSensitive)
 				return Size() > 0 && (CString::ToLower(c) == CString::ToLower(Data[0]));
 
 			return Size() > 0 && Data[0] == c;
 		}
-		bool EndWith(T c, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		bool EndWith(CHAR c, ESearchCase SearchCase = ESearchCase::Sensitive)
 		{
 			if (SearchCase == ESearchCase::InSensitive)
 				return Size() > 0 && (CString::ToLower(c) == CString::ToLower(Data[Size() - 1]));
 
 			return Size() > 0 && Data[Size() - 1] == c;
 		}
-		bool StartWith(const BasicStringView& Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		bool StartWith(const StringView& Str, ESearchCase SearchCase = ESearchCase::Sensitive)
 		{
 			if (Str.IsEmpty() || Size() < Str.Size())
 				return false;
@@ -79,7 +81,7 @@ namespace GeometricEngine
 
 			return CString::Compare(Pointer(), *Str, Str.Size()) == 0;
 		}
-		bool EndWith(const BasicStringView&  Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		bool EndWith(const StringView&  Str, ESearchCase SearchCase = ESearchCase::Sensitive)
 		{
 			if (Str.IsEmpty() || Size() < Str.Size())
 				return false;
@@ -89,7 +91,7 @@ namespace GeometricEngine
 
 			return CString::Compare(&(*this)[Size() - Str.Size()], *Str, Str.Size()) == 0;
 		}
-		FORCEINLINE const T& operator[](I32 Index) const
+		FORCEINLINE const CHAR& operator[](I32 Index) const
 		{
 			_ASSERT(Index >= 0 && Index <= Length);
 			return Data[Index];
@@ -97,14 +99,14 @@ namespace GeometricEngine
 
 		FORCEINLINE bool IsEmpty() const
 		{
-			return Size == 0;
+			return Length == 0;
 		}
 
 		FORCEINLINE bool NotEmpty() const
 		{
-			return Size != 0;
+			return Length != 0;
 		}
-		FORCEINLINE const T* Pointer() const
+		FORCEINLINE const CHAR* Pointer() const
 		{
 			return Data;
 		}
@@ -114,14 +116,14 @@ namespace GeometricEngine
 		}
 
 
-		FORCEINLINE constexpr const T* operator*() const
+		FORCEINLINE constexpr const CHAR* operator*() const
 		{
 			return Data;
 		}
 
 	public:
 
-		FORCEINLINE BasicStringView& operator = (const BasicStringView& Other)
+		FORCEINLINE StringView& operator = (const StringView& Other)
 		{
 			if (*this != Other)
 			{
@@ -130,29 +132,26 @@ namespace GeometricEngine
 			}
 			return *this;
 		}
-		FORCEINLINE bool operator == (const BasicStringView& Other) const
+		FORCEINLINE bool operator == (const StringView& Other) const
 		{
 			return Length == Other.Length && (CString::Compare(Data, Other.Data) == 0);
 		}
-		FORCEINLINE bool operator != (const BasicStringView& Other) const
+		FORCEINLINE bool operator != (const StringView& Other) const
 		{
 			return !(*this == Other);
 		}
-		FORCEINLINE bool operator == (const T* Other) const
+		FORCEINLINE bool operator == (const CHAR* Other) const
 		{
 			return *this == Other;
 		}
-		FORCEINLINE bool operator != (const T * Other) const
+		FORCEINLINE bool operator != (const CHAR* Other) const
 		{
 			return !(*this == Other);
 		}
 	protected:
-		const T* Data;
+		const CHAR* Data;
 		I32 Length;
 	};
-
-
-	typedef BasicStringView<char> StringView;
 	
 }
 #endif // !STRINGVIEW_H

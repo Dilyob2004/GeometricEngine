@@ -61,4 +61,12 @@ namespace GeometricEngine
 	{
 		return WindowsInput::GetMouseWhellDelta();
 	}
+	bool InputWindow::OnClosed()
+	{
+		return WindowsInput::OnClosed();
+	}
+	bool InputWindow::OnResized(U32& OutWidth, U32& OutHeight)
+	{
+		return WindowsInput::OnResized(OutWidth, OutHeight);
+	}
 }

@@ -12,22 +12,22 @@ namespace GeometricEngine
             virtual void Show() override;
             virtual void Hide() override;
             virtual bool IsOpen()override;
-            virtual bool IsClose()override;
             virtual void Close()override;
 
             virtual void SetPosition(const Vector2i&)override;
             virtual void SetSize(const Vector2u&)override;
             virtual void SetTitle(const StringView&)override;
 
+            virtual void SetIcon(const TVector<U8>&, U32, U32) override;
+
             virtual Vector2u GetSize() const override;
 			virtual U32 GetWidth() const override;
 			virtual U32 GetHeight() const override;
             virtual Vector2i GetPosition() const override;
             virtual void* GetHandle() const override;
-
-			static void WndProc(HWND, UINT, WPARAM, LPARAM);
 	private:
             HWND HandleWindow;
+            HICON HandleIcon;
     };
 }
 

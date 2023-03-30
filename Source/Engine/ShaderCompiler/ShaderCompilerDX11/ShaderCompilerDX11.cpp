@@ -12,6 +12,7 @@ namespace GeometricEngine
 
 		String PathShader = "../../Source/Shaders/";
 		PathShader += ShaderName;
+		PathShader += ".hlsl";
 		File* ShaderFile = File::Create(PathShader, FileMode::OpenExisting, FileAccess::Read, FileShare::Read);
 
 		if (!ShaderFile)
@@ -60,6 +61,10 @@ namespace GeometricEngine
 			{
 				OutputError.Resize(static_cast<I32>(pErrors->GetBufferSize()));
 				SMemory::Copy(OutputError.Pointer(), pErrors->GetBufferPointer(), OutputError.GetCount());
+			
+				for (auto i : OutputError)
+					std::cout << i;
+				exit(-1);
 			}
 		}
 

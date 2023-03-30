@@ -1,84 +1,101 @@
 
-#include <Engine/RHI/DirectX/DX11/DX11Viewport.h>
 #include <Engine/RHI/DirectX/DX11DynamicRHI.h>
-#include <Engine/Core/Generic/Memory.h>
-#include <Engine/Core/Application.h>
+#include <Engine/RHI/DirectX/DX11/DX11Viewport.h>
+#include <Engine/RHI/DirectX/DX11/DX11Utilities.h>
+#include <Engine/RHI/DirectX/DX11/DX11Resources.h>
 #include <Engine/Core/Misc/Log.h>
+#include <Engine/ShaderCompiler/ShaderCompilerWorker.h>
 namespace GeometricEngine
 {
-	ID3D11Texture2D* D3DCreateTexture2D(ID3D11Device* DXDevice,
-										U32 BindFlag, 
-										U32 MipLevels,
-										U32 Width, 
-										U32 Height, 
-										DXGI_FORMAT Format)
+	static RHITexture2D* GetSwapChainBackBuffer(const DX11DynamicRHI* RHI, IDXGISwapChain* DXSwapChain)
 	{
+		ID3D11Texture2D* BackBuffer;
+		ID3D11RenderTargetView* DXRenderTargetView;
+		ID3D11ShaderResourceView* DXShaderResourceView;
+
+		DXSwapChain->GetBuffer(0, IID_PPV_ARGS(&BackBuffer));
 		D3D11_TEXTURE2D_DESC Descriptor;
-		SMemory::Zero(&Descriptor, sizeof(Descriptor));
-		Descriptor.ArraySize = 1;
-		Descriptor.Usage = D3D11_USAGE_DEFAULT;
-		Descriptor.BindFlags = BindFlag;
-		Descriptor.Format = Format;
-		Descriptor.Width = Width;
-		Descriptor.Height = Height;
-		Descriptor.MipLevels = MipLevels;
-		Descriptor.MiscFlags = 0;
-		Descriptor.SampleDesc.Count = 1;
-		Descriptor.SampleDesc.Quality = 0;
-		Descriptor.CPUAccessFlags = 0;
-		ID3D11Texture2D* Result = NULL;
-		if (FAILED(DXDevice->CreateTexture2D(&Descriptor, NULL, &Result)))
+		BackBuffer->GetDesc(&Descriptor);
+		if (BackBuffer)
 		{
-			LOG("Error: [DX11RHI] Failed to create 2D texture!");
-			return NULL;
+			D3D11_RENDER_TARGET_VIEW_DESC RTVDesc;
+			if (Descriptor.SampleDesc.Count > 1)
+				RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
+			else
+			{
+				RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+				RTVDesc.Texture2D.MipSlice = 0;
+			}
+			RTVDesc.Format = Descriptor.Format;
+			if (FAILED(RHI->GetDXDevice()->CreateRenderTargetView(BackBuffer, &RTVDesc, &DXRenderTargetView)))
+			{
+				LOG("Error: [DX11RHI] Failed to Create a RenderTargetView!");
+				
+				exit(-1);
+			}
+			D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+			if (Descriptor.SampleDesc.Count > 1)
+				SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
+			else
+			{
+				SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+				SRVDesc.Texture2D.MostDetailedMip = 0;
+				SRVDesc.Texture2D.MipLevels = Descriptor.MipLevels;
+			}
+			SRVDesc.Format = Descriptor.Format;
+			if (FAILED(RHI->GetDXDevice()->CreateShaderResourceView(BackBuffer, &SRVDesc, &DXShaderResourceView)))
+			{
+				LOG("Error: [DX11RHI] Failed to Create a RenderTargetView!");
+				exit(-1);
+			}
 		}
-		return Result;
-	}
+		else
+		{
+			LOG("Error: [DX11RHI] Failed to get a back buffer !");
+			exit(-1);
+		}
+		RHITextureDefinitions Definitions;
+		Definitions.Format = RHIFormatToDX11Format(Descriptor.Format);
+		Definitions.Width = Descriptor.Width;
+		Definitions.Height = Descriptor.Height;
+		Definitions.Flags = TF_RenderTarget | TF_ShaderResource;
 
-	static ID3D11Texture2D* GetSwapChainBackBuffer(IDXGISwapChain* DXSwapChain)
-	{
-
+		return new DX11Texture2D( BackBuffer, 
+									DXRenderTargetView, 
+									DXShaderResourceView,
+									NULL, Definitions);
 	}
 	DX11Viewport::DX11Viewport()
 		: DXGISwapChain(NULL)
-		, DXRenderTargetView(NULL)
-		, DXShaderResourceView(NULL)
-		, DXDepthStencilView(NULL)
-		, Width(0)
-		, Height(0)
-		, EnabledFullScreen(false)
-		, EnabledVSync(false)
-		, HandleWindow(NULL)
+		, BackBuffer(NULL)
+		, Definition()
 	{
 	}
-	DX11Viewport::DX11Viewport(const DX11DynamicRHI* RHI, HWND Window, U32 SizeWidth, U32 SizeHeight, bool IsFullScreen)
+	DX11Viewport::DX11Viewport(const DX11DynamicRHI* RHI, const RHIViewportDefinition& Def)
 		: DXGISwapChain(NULL)
-		, DXRenderTargetView(NULL)
-		, DXShaderResourceView(NULL)
-		, DXDepthStencilView(NULL)
-		, Width(SizeWidth)
-		, Height(SizeHeight)
-		, EnabledFullScreen(IsFullScreen)
-		, EnabledVSync(true)
-		, HandleWindow(Window)
+		, Definition(Def)
 	{
-
+		HWND Window = (HWND)Definition.HandleWindow;
 		DXGI_SWAP_CHAIN_DESC SwapChainDescriptor;
 		SMemory::Zero(&SwapChainDescriptor, sizeof(SwapChainDescriptor));
-		SwapChainDescriptor.BufferDesc.Width = Width;
-		SwapChainDescriptor.BufferDesc.Height = Height;
+		SwapChainDescriptor.BufferDesc.Width = Definition.Width;
+		SwapChainDescriptor.BufferDesc.Height = Definition.Height;
+		SwapChainDescriptor.BufferDesc.RefreshRate.Numerator = Definition.RefreshRateNum;
+		SwapChainDescriptor.BufferDesc.Format = RHIFormatToDX11Format(Def.Format);
+		SwapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1;
 		SwapChainDescriptor.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		SwapChainDescriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		SwapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60;
-		SwapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1;
-		SwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+
+		SwapChainDescriptor.OutputWindow = Window;
+		SwapChainDescriptor.Windowed = !Definition.FullScreen;
+
+
 		SwapChainDescriptor.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		SwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
-		SwapChainDescriptor.BufferCount = 2;
-		SwapChainDescriptor.SampleDesc.Count = 2;
+		SwapChainDescriptor.BufferCount = 1;
+		SwapChainDescriptor.SampleDesc.Count = 1;
 		SwapChainDescriptor.SampleDesc.Quality = 0;
-		SwapChainDescriptor.OutputWindow = HandleWindow;
-		SwapChainDescriptor.Windowed = !EnabledFullScreen;
 		SwapChainDescriptor.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 		if (FAILED(RHI->GetDXGIFactory()->CreateSwapChain(RHI->GetDXDevice(), &SwapChainDescriptor, &DXGISwapChain)))
@@ -87,117 +104,78 @@ namespace GeometricEngine
 			exit(-1);
 		}
 
-		RHI->GetDXGIFactory()->MakeWindowAssociation(HandleWindow, DXGI_MWA_NO_WINDOW_CHANGES);
+		RHI->GetDXGIFactory()->MakeWindowAssociation(Window, DXGI_MWA_NO_WINDOW_CHANGES);
 
+		BackBuffer = GetSwapChainBackBuffer(RHI, DXGISwapChain);
+		PostMessage(Window, WM_PAINT, 0, 0);
 
-		CreateBackBuffer(RHI, Width, Height);
-
-		PostMessage(HandleWindow, WM_PAINT, 0, 0);
-
-	}
-
-	void DX11Viewport::CreateBackBuffer(const DX11DynamicRHI* RHI, U32 Width, U32 Height)
-	{
-
-		ID3D11Texture2D* BackBuffer = NULL;
-
-		DXGISwapChain->GetBuffer(0, IID_PPV_ARGS(&BackBuffer));
-		if (BackBuffer)
-		{
-			if (FAILED(RHI->GetDXDevice()->CreateRenderTargetView(BackBuffer, NULL, &DXRenderTargetView)))
-			{
-				LOG("Error: [DX11RHI] Failed to Create a RenderTargetView!");
-				exit(-1);
-			}
-
-			/*8if (FAILED(RHI->GetDXDevice()->CreateShaderResourceView(BackBuffer, NULL, &DXShaderResourceView)))
-			{
-				LOG("Error: [DX11RHI] Failed to Create a ShaderResourceView!");
-				exit(-1);
-			}*/
-
-
-			/**ID3D11Texture2D* DepthTexture = D3DCreateTexture2D(RHI->GetDXDevice(), D3D11_BIND_DEPTH_STENCIL,
-				1, Width, Height, DXGI_FORMAT_D24_UNORM_S8_UINT);
-
-
-			D3D11_DEPTH_STENCIL_VIEW_DESC ViewDesc;
-			SMemory::Zero(&ViewDesc, sizeof(ViewDesc));
-			ViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-			ViewDesc.Texture2D.MipSlice = 0;
-			ViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-			if (FAILED(RHI->GetDXDevice()->CreateDepthStencilView(DepthTexture, &ViewDesc, &DXDepthStencilView)))
-			{
-				LOG("Error: [DX11RHI] Failed to Create a DepthStencilView!");
-				exit(-1);
-			}*/
-		}
-		else
-		{
-			LOG("Error: [DX11RHI] Failed to get a back buffer !");
-			exit(-1);
-		}
-		BackBuffer->Release();
 	}
 	DX11Viewport::~DX11Viewport()
 	{
+
 		DXGISwapChain->Release();
-		DXRenderTargetView->Release();
-		DXShaderResourceView->Release();
-		DXDepthStencilView->Release();
 	}
 
-	void DX11Viewport::Resize(const DX11DynamicRHI* RHI, U32 SizeWidth, U32 SizeHeight, bool)
+	void DX11Viewport::Resize(const DX11DynamicRHI* RHI, U32 SizeWidth, U32 SizeHeight, RHIPixelFormat Format, bool Fullscreen)
 	{
-		DXRenderTargetView->Release();
-		DXShaderResourceView->Release();
-		DXDepthStencilView->Release();
 
-		DXGISwapChain->ResizeBuffers(1, SizeWidth, SizeHeight, DXGI_FORMAT_UNKNOWN, 0);
-		CreateBackBuffer(RHI, SizeWidth, SizeHeight);
+		Definition.FullScreen = Fullscreen;
+		Definition.Width = SizeWidth;
+		Definition.Height = SizeHeight;
+		Definition.Format = Format;
+
+		if (Fullscreen)
+		{
+			DXGI_MODE_DESC BufferDesc;
+			SMemory::Zero(&BufferDesc, sizeof(BufferDesc));
+			BufferDesc.Width = Definition.Width;
+			BufferDesc.Height = Definition.Height;
+			BufferDesc.RefreshRate.Numerator = Definition.RefreshRateNum;
+			BufferDesc.RefreshRate.Denominator = 1;
+			BufferDesc.Format = RHIFormatToDX11Format(Definition.Format);
+			BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+			BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+			DXGISwapChain->ResizeTarget(&BufferDesc);
+		}
+		else
+			DXGISwapChain->ResizeBuffers(1, SizeWidth, SizeHeight, RHIFormatToDX11Format(Format), DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+
+		BackBuffer = GetSwapChainBackBuffer(RHI, DXGISwapChain);
 	}
 	void DX11Viewport::Present()
 	{
-		if (FAILED(DXGISwapChain->Present(EnabledVSync, 0)))
+		if (FAILED(DXGISwapChain->Present(Definition.VSync, 0)))
 		{
 			LOG("Error: [DX11RHI] Present failed!");
 				exit(-1);
 		}
 	}
-	RHIViewport* DX11DynamicRHI::RHICreateViewport(void* Window, U32 Width, U32 Height, bool EnableFullScreen)
+	RHIViewport* DX11DynamicRHI::RHICreateViewport(const RHIViewportDefinition& Def)
 	{
-		return new DX11Viewport(this, (HWND)Window, Width, Height, EnableFullScreen);
+		return new DX11Viewport(this, Def);
 	}
-	void DX11DynamicRHI::RHIClearViewport(const RHIViewport* Viewport, F32 r, F32 g, F32 b, F32 a)
+	void DX11DynamicRHI::RHIResizeViewport(const RHIViewport* ViewportRHI, U32 SizeWidth, U32 SizeHeight, RHIPixelFormat Format, bool EnableFullScreen)
 	{
-		F32 Colos[] = { r, g, b, a };
-		DXDeviceContext->ClearRenderTargetView(((DX11Viewport*)Viewport)->GetDXRenderTargetView(), Colos);
+		DYNAMIC_CAST(DX11Viewport, Viewport, ViewportRHI);
+		Viewport->Resize(this, SizeWidth, SizeHeight, Format, EnableFullScreen);
 	}
-	void DX11DynamicRHI::RHIResizeViewport(const RHIViewport* InViewport, U32 SizeWidth, U32 SizeHeight, bool EnableFullScreen)
+	void DX11DynamicRHI::RHIBegin(const RHIViewport* ViewportRHI)
 	{
-		((DX11Viewport*)InViewport)->Resize(this, SizeWidth, SizeHeight, EnableFullScreen);
-	}
-	void DX11DynamicRHI::RHIBegin(const RHIViewport* Viewport)
-	{
-		RHIClearViewport(Viewport, 0, 0, 0, 1);
-		RHISetViewport(0, 0, 0, 800, 600, 1);
-		DXDeviceContext->OMSetRenderTargets(1, ((DX11Viewport*)Viewport)->GetInitDXRenderTargetView(), NULL);
-	}
-	void DX11DynamicRHI::RHISetViewport(F32 MinX, F32 MinY, F32 MinZ, F32 MaxX, F32 MaxY, F32 MaxZ)
-	{
-		D3D11_VIEWPORT Viewport;
-		SMemory::Zero(&Viewport, sizeof(D3D11_VIEWPORT));
-		Viewport.TopLeftX	= MinX;
-		Viewport.TopLeftY	= MinY;
-		Viewport.MinDepth	= MinZ;
+		DYNAMIC_CAST(DX11Viewport, Viewport, ViewportRHI);
 
-		Viewport.Width		= MaxX;
-		Viewport.Height		= MaxY;
-		Viewport.MaxDepth	= MaxZ;
-		DXDeviceContext->RSSetViewports(1, &Viewport);
+		RHIClearViewport(Viewport, 30, 30, 30, 30);
+		RHISetViewport(0, 0, (F32)Viewport->GetWidth(), (F32)Viewport->GetHeight());
+		RHISetRenderTarget(Viewport->GetBackBufferView());
+
 	}
-	void DX11DynamicRHI::RHIEnd(const RHIViewport* Viewport)
+	void DX11DynamicRHI::RHIEnd(const RHIViewport* ViewportRHI)
 	{
-		((DX11Viewport*)Viewport)->Present();
+		DYNAMIC_CAST(DX11Viewport, Viewport, ViewportRHI);
+		Viewport->Present();
+	}
+	RHITexture2D* DX11DynamicRHI::RHIGetViewportBackBuffer(const RHIViewport* ViewportRHI)
+	{
+		DYNAMIC_CAST(DX11Viewport, Viewport, ViewportRHI);
+		return Viewport->GetBackBufferView();
 	}
 }

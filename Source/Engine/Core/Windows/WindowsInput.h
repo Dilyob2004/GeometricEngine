@@ -20,6 +20,7 @@ namespace GeometricEngine
 		static bool GetKeyDown(KeyCode Key);
 		static bool GetKeyUp(KeyCode Key);
 
+
 		static bool GetMouseButton(MouseCode Key);
 		static bool GetMouseButtonDown(MouseCode Key);
 		static bool GetMouseButtonUp(MouseCode Key);
@@ -27,6 +28,9 @@ namespace GeometricEngine
 		static Vector2f GetMousePosition();
 		static Vector2f GetMousePositionDelta();
 		static F32		GetMouseWhellDelta();
+
+		static bool OnResized(U32&, U32&);
+		static bool OnClosed();
 
 		static void Reset();
 		static void WndProc(HWND, UINT, WPARAM, LPARAM);

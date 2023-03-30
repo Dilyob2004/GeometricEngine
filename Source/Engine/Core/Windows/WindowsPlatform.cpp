@@ -56,9 +56,7 @@ namespace GeometricEngine
 	}
 	LRESULT WindowsPlatform::WndProc(HWND hWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
 	{
-		WindowsWindow::WndProc(hWnd, Msg, WParam, LParam);
-
-		if(WindowsInput::HasInitialized())
+		if(WindowsInput::HasInitialized()) 
 			WindowsInput::WndProc(hWnd, Msg, WParam, LParam);
 
 		return DefWindowProcA(hWnd, Msg, WParam, LParam);

@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
-#include <windows.h>
 #include <dwmapi.h>
+#include <windows.h>
 #include <iostream>
 
 
@@ -19,7 +19,7 @@
 #define RESTRICT		__restrict
 #define CONSTEXPR		constexpr
 #define ARRAY_COUNT(X) sizeof(X) / sizeof(typeid(X).raw_name())
-
+#define DYNAMIC_CAST(Type, Name, Value) Type* Name = (Type*) Value
 
 #pragma warning(disable: 4251)
 

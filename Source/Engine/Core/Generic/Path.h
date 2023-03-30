@@ -1,26 +1,27 @@
 #ifndef  PATH_H
 #define PATH_H
-#include <string>
+#include <Engine/Core/Misc/String.h>
 namespace GeometricEngine
 {
-	struct Path
+	class SPath
 	{
-		Path() :
-			m_path(""),
-			fileName(""),
-			isDirectory(false)
+	public:
+		static String GetEngineDir()
 		{
-
+			return "../../Source/Engine/";
 		}
-		Path(const std::string& path) :
-			m_path(path),
-			fileName(""),
-			isDirectory(false)
+		static String GetEngineEditorDir()
 		{
+			return "../../Source/Editor/";
 		}
-		bool                isDirectory;
-		std::string         fileName;
-		std::string         m_path;
+		static String GetEngineShaderDir()
+		{
+			return "../../Source/Shaders/";
+		}
+		static String GetEngineContentDir()
+		{
+			return "../../Content/";
+		}
 	};
 }
 #endif // ! PATH_H
