@@ -15,11 +15,15 @@ namespace GeometricEngine
 			OutHeight = NowData.Height;
 			return NowData.Resized;
 		}
+		FORCEINLINE bool OnResized()
+		{
+			return NowData.Resized;
+		}
 		FORCEINLINE bool OnClosed() 
 		{ 
 			return NowData.Closed; 
 		}
-		void OnResizeEvent(U32, U32, bool);
+		void OnResizeEvent(U32, U32);
 		void OnClosedEvent();
 		virtual void Tick() override;
 		virtual void Reset() override;

@@ -3,38 +3,27 @@
 namespace GeometricEngine
 {
 
-	ShaderResource::ShaderResource()
-		: VertexShader(NULL)
-		, PixelShader(NULL)
-		, Type(ShaderType::None)
+	BoundShaderResource::BoundShaderResource()
 	{
 
 	}
-	ShaderResource::ShaderResource(const ShaderCompilerOutput& Output)
+	BoundShaderResource::BoundShaderResource( const TVector<BufferElement>& ElementList,
+											  RHIVertexShader* VS,
+											  RHIPixelShader*  PS)
+		: VertexShader(VS)
+		, PixelShader(PS)
 	{
-		Type = Output.Type;
-		ShaderName = Output.ShaderName;
-		if (Type == ShaderType::Pixel)
-			PixelShader = GDynamicRHI->RHICreatePixelShader(Output.Code);
-		else if (Type == ShaderType::Vertex)
-			VertexShader = GDynamicRHI->RHICreateVertexShader(Output.Code);
+		VertexLayout = GDynamicRHI->RHICreateVertexLayout(VS, ElementList);
 	}
-	ShaderResource::~ShaderResource()
+	BoundShaderResource::~BoundShaderResource()
 	{
+	}
 
-	}
-	VertexDelaration::VertexDelaration()
-		: VertexLayout(NULL)
+	void BoundShaderResource::OnTick()
 	{
+		GDynamicRHI->RHISetVertexLayout(VertexLayout);
+		GDynamicRHI->RHISetPixelShader(PixelShader);
+		GDynamicRHI->RHISetVertexShader(VertexShader);
 	}
-	VertexDelaration::VertexDelaration(const ShaderResource* VertexShader, const TVector<BufferElement>& BufferElements)
-	{
-		_ASSERT(VertexShader->GetType() == ShaderType::Vertex);
-		_ASSERT(VertexShader->GetVertexShader() != NULL);
-		VertexLayout = GDynamicRHI->RHICreateVertexLayout(VertexShader->GetVertexShader(), BufferElements);
 
-	}
-	VertexDelaration::~VertexDelaration()
-	{
-	}
 }

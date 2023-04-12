@@ -219,24 +219,12 @@ namespace GeometricEngine
 		{
 			switch (Msg)
 			{
-				case WM_ENTERSIZEMOVE:
-					break;
-
-				case WM_SIZE: {
-					const U32 NewWidth = (U32)(int)(short)(LOWORD(LParam));
-					const U32 NewHeight = (U32)(int)(short)(HIWORD(LParam));
-					OnResizeEvent(NewWidth, NewHeight, true);
-
-					break;
-				}
-				case WM_EXITSIZEMOVE: 
+				case WM_SIZE:
 				{
-					const U32 NewWidth = (U32)(int)(short)(LOWORD(LParam));
-					const U32 NewHeight = (U32)(int)(short)(HIWORD(LParam));
-					OnResizeEvent(NewWidth, NewHeight, false);
+					if (WParam != SIZE_MINIMIZED)
+						OnResizeEvent(U32((int)(short)LOWORD(LParam)), U32((int)(short)HIWORD(LParam)));
 					break;
 				}
-
 				case WM_CLOSE:
 					OnClosedEvent();
 					break;
@@ -246,30 +234,14 @@ namespace GeometricEngine
 
 	static WindowsKeyboard*		GPlatformKeyboard = NULL;
 	static WindowsMouse*		GPlatformMouse = NULL;
-	static WindowsEventWindow* GPlatformEventWindow = NULL;
+	static WindowsEventWindow*	GPlatformEventWindow = NULL;
 
-	static bool Initialized = false;
-	bool WindowsInput::Initialize()
+	void WindowsInput::Initialize()
 	{
 		GPlatformKeyboard	= new WindowsKeyboard();
 		GPlatformMouse		= new WindowsMouse();
 		GPlatformEventWindow = new WindowsEventWindow();
-
-		if (!GPlatformKeyboard) return false;		
-		
-		if (!GPlatformMouse) return false;
-
-		if (!GPlatformEventWindow) return false;
-
-
-
-		Initialized = true;
-		return true;
 	}	
-	bool WindowsInput::HasInitialized()
-	{
-		return Initialized;
-	}
 
 	bool WindowsInput::GetKey(KeyCode Key)
 	{
@@ -310,9 +282,6 @@ namespace GeometricEngine
 		 return GPlatformMouse->GetWhellDelta();
 	 }
 
-	void WindowsInput::DeInitialize()
-	{
-	}
 	void WindowsInput::Tick()
 	{
 		GPlatformKeyboard->Tick();
@@ -326,9 +295,9 @@ namespace GeometricEngine
 	}
 	void WindowsInput::WndProc(HWND hWnd, UINT Msg, WPARAM WParam, LPARAM LParam)
 	{
+		GPlatformEventWindow->WndProc(hWnd, Msg, WParam, LParam);
 		GPlatformKeyboard->WndProc(hWnd, Msg, WParam, LParam);
 		GPlatformMouse->WndProc(hWnd, Msg, WParam, LParam);
-		GPlatformEventWindow->WndProc(hWnd, Msg, WParam, LParam);
 	}
 	bool WindowsInput::OnClosed()
 	{
@@ -337,5 +306,9 @@ namespace GeometricEngine
 	bool WindowsInput::OnResized(U32& OutWidth, U32& OutHeight)
 	{
 		return GPlatformEventWindow->OnResized(OutWidth, OutHeight);
+	}
+	bool WindowsInput::OnResized()
+	{
+		return GPlatformEventWindow->OnResized();
 	}
 }

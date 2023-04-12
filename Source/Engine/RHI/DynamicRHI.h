@@ -1,7 +1,7 @@
 #ifndef DYNAMICRHI_H
 #define DYNAMICRHI_H
 #include <Engine/RHI/RHIResources.h>
-#include <Engine/Core/EngineModule.h>
+#include <Engine/Math/Vector4.h>
 namespace GeometricEngine
 {
 	class GEOMETRIC_API DynamicRHI
@@ -17,6 +17,10 @@ namespace GeometricEngine
 		virtual RHIViewport*			RHICreateViewport(const RHIViewportDefinition& ) = 0;
 		virtual RHITexture2D*			RHIGetViewportBackBuffer(const RHIViewport*) = 0;
 
+		virtual bool					RHICreateGUI(void*) = 0;
+		virtual void					RHIBeginFrameGUI() = 0;
+		virtual void					RHIEndFrameGUI() = 0;
+
 		virtual RHIPixelShader*			RHICreatePixelShader(const TVector<U32>&) = 0;
 		virtual RHIVertexShader*		RHICreateVertexShader(const TVector<U32>&) = 0;
 		virtual RHIVertexLayout*		RHICreateVertexLayout(const RHIVertexShader*, const TVector<BufferElement>&) = 0;
@@ -25,7 +29,7 @@ namespace GeometricEngine
 		virtual RHIIndexBuffer*			RHICreateIndexBuffer(U32*, U32) = 0;
 		virtual RHIConstantBuffer*		RHICreateConstantBuffer(void*, U32) = 0;
 
-		virtual RHITexture2D*			RHICreateTexture2D(const RHITextureDefinitions& ) = 0;
+		virtual RHITexture2D*			RHICreateTexture2D(const RHITextureDefinition& ) = 0;
 		
 		virtual RHISamplerState*		RHICreateSamplerState(const RHISamplerStateDefinition& ) = 0;
 		virtual RHIBlendState*			RHICreateBlendState(const RHIBlendStateDefinition& ) = 0;
@@ -55,14 +59,23 @@ namespace GeometricEngine
 		virtual void					RHIDrawPrimitiveIndexed(U32, U32, DrawType type = DrawType::Triangles) = 0;
 		virtual void					RHIDrawPrimitive(U32, U32, DrawType type = DrawType::Triangles) = 0;
 
-		virtual void					RHISetViewport(F32, F32, F32, F32) = 0;
-		virtual void					RHISetRenderTarget(const RHITexture*) = 0;
-		virtual void					RHISetRenderTarget(const RHITexture*, const RHITexture*) = 0;
 		virtual void					RHISetScissorRect(U32, U32, U32, U32) = 0;
-		virtual void					RHIResizeViewport(const RHIViewport*, U32, U32, RHIPixelFormat, bool) = 0;
-		virtual void					RHIBegin(const RHIViewport*) = 0;
-		virtual void					RHIEnd(const RHIViewport*) = 0;
+
+		virtual void					RHISetViewport(F32, F32, F32, F32) = 0;
+		virtual void					RHIBeginFrameViewport(const RHIViewport*) = 0;
+		virtual void					RHIBeginFrameViewportDepth(const RHIViewport* , const RHITexture2D* ) = 0;
+		virtual void					RHIEndFrameViewport(const RHIViewport*) = 0;
+		virtual void					RHIResizeViewport(const RHIViewport*, U32, U32, bool) = 0;
+
+
+		virtual void					RHISetRenderTarget(const RHITexture2D*) = 0;
+		virtual void					RHISetRenderTarget(const RHITexture2D*, const RHITexture2D*) = 0;
+		virtual void					RHIClearRenderTarget(const RHITexture2D*, F32, F32, F32, F32) = 0;
+		virtual void					RHIClearDepthTarget(const RHITexture2D*, bool, bool, F32) = 0;
+
+	
 	};
-	extern DynamicRHI* GDynamicRHI;
+	extern GEOMETRIC_API DynamicRHI* GDynamicRHI;
+	extern GEOMETRIC_API bool InitializeDynamicRHI();
 }
 #endif // !DYNAMICRHI_H

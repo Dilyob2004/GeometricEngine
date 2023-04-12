@@ -15,11 +15,8 @@ namespace GeometricEngine
 		DX11Viewport(const DX11DynamicRHI*, const RHIViewportDefinition&);
 		~DX11Viewport();
 
-		void Resize(const DX11DynamicRHI*, U32, U32, RHIPixelFormat, bool);
+		void Resize(const DX11DynamicRHI*, U32, U32, bool);
 		void Present();
-
-		U32 GetWidth() const { return Definition.Width; }
-		U32 GetHeight() const { return Definition.Height; }
 
 		RHITexture2D* GetBackBufferView() const { return BackBuffer; }
 		IDXGISwapChain* GetDXGISwapChain() const { return DXGISwapChain; }

@@ -2,6 +2,10 @@
 #include <Engine/Core/Misc/Log.h>
 namespace GeometricEngine
 {
+#define GPU_VENDOR_ID_AMD 0x1002
+#define GPU_VENDOR_ID_INTEL 0x8086
+#define GPU_VENDOR_ID_NVIDIA 0x10DE
+#define GPU_VENDOR_ID_MICROSOFT 0x1414
 	static bool SafeTestD3D11CreateDevice(IDXGIAdapter* Adapter, D3D_FEATURE_LEVEL MaxFeatureLevel, D3D_FEATURE_LEVEL* OutFeatureLevel)
 	{
 		ID3D11Device* D3DDevice = NULL;
@@ -45,17 +49,14 @@ namespace GeometricEngine
 		return false;
 	}
 	DX11DynamicRHI::DX11DynamicRHI()
-		:
-		  Viewport(NULL)
-		, DXDevice(NULL)
+		: DXDevice(NULL)
 		, DXDeviceContext(NULL)
 		, DXGIFactory(NULL)
 	{
 
 	}
 	DX11DynamicRHI::DX11DynamicRHI(IDXGIFactory1* Factory, DX11Adapter Adapter)
-		: Viewport(NULL)
-		, DXDevice(NULL)
+		: DXDevice(NULL)
 		, DXDeviceContext(NULL)
 		, DXGIFactory(Factory)
 		, DXAdapterIndex(Adapter.Index)
@@ -81,24 +82,31 @@ namespace GeometricEngine
 			return NULL;
 		}
 
-		DX11Adapter ChoosenAdapter;
+		TVector<DX11Adapter> AdapterList;
 		D3D_FEATURE_LEVEL ActualLevel;
 		IDXGIAdapter* EnumAdapter;
 		for (U32 i = 0; DXGIFactory->EnumAdapters(i, &EnumAdapter) != DXGI_ERROR_NOT_FOUND; i++)
-		{
 			if (EnumAdapter && SafeTestD3D11CreateDevice(EnumAdapter, D3D_FEATURE_LEVEL_11_1, &ActualLevel))
 			{
 				DXGI_ADAPTER_DESC Description;
 				if (SUCCEEDED(EnumAdapter->GetDesc(&Description)))
 				{
+					DX11Adapter ChoosenAdapter;
 					ChoosenAdapter.Index = i;
 					ChoosenAdapter.Description = Description;
 					ChoosenAdapter.MaxSupportFeatureLevel = ActualLevel;
+					AdapterList.Push(ChoosenAdapter);
 				}
 			}
-		}
 
+		DX11Adapter ChoosenAdapter = AdapterList.First();
 
+		for(auto& i : AdapterList)
+			if (i.Description.VendorId == GPU_VENDOR_ID_NVIDIA)
+			{
+				ChoosenAdapter = i;
+				break;
+			}
 		return new DX11DynamicRHI(DXGIFactory, ChoosenAdapter);
 	}
 	bool DX11DynamicRHI::InitDevice()
@@ -113,6 +121,7 @@ namespace GeometricEngine
 		D3D_FEATURE_LEVEL ActualLevel		= (D3D_FEATURE_LEVEL)0;
 
 		IDXGIAdapter* EnumAdapter;
+
 		#ifdef GEOMETRIC_DEBUG
 			Flags |= D3D11_CREATE_DEVICE_DEBUG;
 		#endif // GEOMETRIC_DEBUG

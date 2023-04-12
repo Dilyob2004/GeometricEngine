@@ -31,6 +31,8 @@ namespace GeometricEngine
 	{
 		D3D11_BUFFER_DESC BufferDescriptor;
 		SMemory::Zero(&BufferDescriptor, sizeof(BufferDescriptor));
+
+
 		BufferDescriptor.BindFlags	= D3D11_BIND_VERTEX_BUFFER;
 		BufferDescriptor.Usage		= D3D11_USAGE_DEFAULT;
 		BufferDescriptor.ByteWidth	= Size;
@@ -123,7 +125,6 @@ namespace GeometricEngine
 
 		D3D11_BUFFER_DESC BufferDescriptor;
 		SMemory::Zero(&BufferDescriptor, sizeof(BufferDescriptor));
-
 		BufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		BufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 		BufferDescriptor.ByteWidth = Size;

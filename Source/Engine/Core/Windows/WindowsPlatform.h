@@ -11,6 +11,7 @@ namespace GeometricEngine
 		static HINSTANCE GetHandleInstance() { return HandleInstance; }
 
 		static void PreInit(void*);
+		static bool Init();
 		static void Tick();
 		
 		static void* GetDLLModule(const CHAR*, const CHAR*);

@@ -1,26 +1,8 @@
 
 #include <Engine/InputCore/InputCore.h>
 #include <Engine/Core/Windows/WindowsInput.h>
-#include <Engine/InputCore/InputModule.h>
 namespace GeometricEngine
 {
-	InputModule::InputModule() : EngineModule("InputModule") 
-	{
-	}
-	InputModule::~InputModule()
-	{
-	}
-	void InputModule::Tick()
-	{
-		WindowsInput::Tick();
-	}	
-	void InputModule::LateTick()
-	{
-	}
-	void InputModule::DeInitialize()
-	{
-		WindowsInput::DeInitialize();
-	}
 	bool Input::GetKey(KeyCode Key)
 	{
 		return WindowsInput::GetKey(Key);
@@ -45,10 +27,6 @@ namespace GeometricEngine
 	{
 		return WindowsInput::GetMouseButtonUp(Code);
 	}
-	bool InputModule::Initialize()
-	{
-		return WindowsInput::Initialize();
-	}
 	Vector2f Input::GetMousePosition()
 	{
 		return WindowsInput::GetMousePosition();
@@ -61,12 +39,16 @@ namespace GeometricEngine
 	{
 		return WindowsInput::GetMouseWhellDelta();
 	}
-	bool InputWindow::OnClosed()
+	bool Input::OnWindowClosed()
 	{
 		return WindowsInput::OnClosed();
 	}
-	bool InputWindow::OnResized(U32& OutWidth, U32& OutHeight)
+	bool Input::OnWindowResized(U32& OutWidth, U32& OutHeight)
 	{
 		return WindowsInput::OnResized(OutWidth, OutHeight);
+	}
+	bool Input::OnWindowResized()
+	{
+		return WindowsInput::OnResized();
 	}
 }

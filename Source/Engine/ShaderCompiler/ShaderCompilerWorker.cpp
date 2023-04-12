@@ -1,13 +1,28 @@
 #include "ShaderCompilerWorker.h"
-
+#include <Engine/Core/Misc/Log.h>
+#include <Engine/Core/Generic/ScopeLock.h>
 namespace GeometricEngine
 {
+	CriticalSection CompileWork;
 	std::map<String, ShaderCompilerOutput> GShadersMap;
+	std::map < String, RHIVertexShader* > GVSResourceMap;
+	std::map < String, RHIPixelShader* > GPSResourceMap;
 	void ShaderCompilerWorker::Initialize()
 	{
-		AddCompile("ScreenVSTexture", ShaderType::Vertex);
+
+		ScopeLock Locker(&CompileWork);
+		LOG("\nState Compiler Shaders: Compiling...\n");
 		AddCompile("ScreenPSTexture", ShaderType::Pixel);
+		AddCompile("ScreenVSTexture", ShaderType::Vertex);
+
+		AddCompile("ScreenPixelShader", ShaderType::Pixel);
+		AddCompile("ScreenVertexShader", ShaderType::Vertex);
+
 		AddCompile("FXAA", ShaderType::Pixel);
+
+
+
+		LOG("State Compiler Shaders: Complete\n");
 	}
 	void ShaderCompilerWorker::AddCompile(const String& Name, ShaderType Type)
 	{
@@ -27,6 +42,12 @@ namespace GeometricEngine
 		Input.EntryPoint = EntryPoint;
 		ShaderCompilerOutput Output;
 		CompileShader(Input, Output);
+
+		if (Type == ShaderType::Pixel)
+			GPSResourceMap.insert({ Name, GDynamicRHI->RHICreatePixelShader(Output.Code) });
+		else if (Type == ShaderType::Vertex)
+			GVSResourceMap.insert({ Name, GDynamicRHI->RHICreateVertexShader(Output.Code) });
+
 		GShadersMap.insert({Name, Output});
 	}
 }

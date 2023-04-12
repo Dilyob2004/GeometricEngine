@@ -1,10 +1,9 @@
 
 
 #include <Engine/Core/Core.h>
-#include <Engine/Core/Generic/Platform.h>
 #include <Engine/Core/Application.h>
-#include <Engine/Core/EngineModule.h>
-#include <Engine/InputCore/InputCore.h>
+#include <Engine/Core/Generic/Platform.h>
+
 namespace GeometricEngine
 {
 	int GuardedMain(void* hInstance, const CHAR* CmdLine)
@@ -12,27 +11,30 @@ namespace GeometricEngine
 
 		Platform::PreInit(hInstance);
 
-		if (!Application::InitializeProduct("Geometric Engine", CmdLine))
+		if (!Platform::Init())
 		{
-			LOG("Fatal Error: Failed to Initizlied Application!");
-			exit(-1);
+
+			return -1;
 		}
-		EngineModule::OnInitialize();
+
+		Application::InitializeProduct(CmdLine);
+
 		while (!Application::ShouldExit())
 		{
+
 			Platform::Tick();
 
-			EngineModule::OnTick();
+			Application::OnTick();
+
+			//Application::OnFixedTick();
+
+			//Application::OnLateTick();
+
+			Application::OnDrawFrame();
 
 
-			EngineModule::OnLateTick();
-
-
-			EngineModule::OnDraw();
 			Sleep(1);
 		}
-
-		EngineModule::OnDeInitialize();
 		return 0;
 	}
 }	

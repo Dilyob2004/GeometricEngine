@@ -38,7 +38,7 @@ namespace GeometricEngine
 		Column[0] = Vector4f(x[0][0], x[0][1], x[0][2], 0);
 		Column[1] = Vector4f(x[1][0], x[1][1], x[1][2], 0);
 		Column[2] = Vector4f(x[2][0], x[2][1], x[2][2], 0);
-		Column[3] = Vector4f(0, 0, 0, 1);
+		Column[3] = Vector4f(0,       0,       0,       1);
 	}
     Matrix4f::Matrix4f( const Vector4f &column1,
                         const Vector4f &column2,

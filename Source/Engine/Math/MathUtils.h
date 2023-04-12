@@ -12,11 +12,14 @@ namespace GeometricEngine
 
 	#define MIN(a, b) (( (a) < (b) ) ? (a) : (b))
 	#define MAX(a, b) (( (a) > (b) ) ? (a) : (b))
+
+
 	GEOMETRIC_API bool DecomposeTransform(const Matrix4f& transform, Vector3f& position, Vector3f& rotation, Vector3f& scale);
 	GEOMETRIC_API Matrix4f Inverse(const Matrix4f& m);
 
 	GEOMETRIC_API Matrix4f Ortho(F32 left, F32 right, F32 bottom, F32 top);
 	GEOMETRIC_API Matrix4f Perspective(F32 fovy, F32 aspect, F32 zNear, F32 zFar);
+	GEOMETRIC_API Matrix4f Perspective(F32 FOV, F32 Width, F32 Height, F32 zNear, F32 zFar);
 
 	GEOMETRIC_API Matrix4f Rotate(const Matrix4f& m, F32 angle, const Vector3f& v);
 
@@ -45,4 +48,11 @@ namespace GeometricEngine
 
 	GEOMETRIC_API Vector3f Rotate(Vector3f const& v, F32 const& angle, Vector3f const& normal);
 
+
+
+	template<typename T>
+	 T* OnPointerValues(const T& Value)
+	{
+		return &Value[0];
+	}
 }

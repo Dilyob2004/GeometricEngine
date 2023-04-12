@@ -5,6 +5,10 @@ namespace GeometricEngine
 	void Platform::PreInit(void *HandleInstance)
 	{
 		WindowsPlatform::PreInit(HandleInstance);
+	}	
+	bool Platform::Init()
+	{
+		return WindowsPlatform::Init();
 	}
 	void Platform::Tick()
 	{

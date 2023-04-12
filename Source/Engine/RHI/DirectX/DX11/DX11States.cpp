@@ -2,6 +2,7 @@
 #include <Engine/RHI/DirectX/DX11DynamicRHI.h>
 #include <Engine/RHI/DirectX/DX11/DX11Resources.h>
 #include <Engine/RHI/DirectX/DX11/DX11Utilities.h>
+#include <Engine/Core/Misc/Log.h>
 
 namespace GeometricEngine
 {
@@ -67,11 +68,13 @@ namespace GeometricEngine
 	{
 		D3D11_DEPTH_STENCIL_DESC DepthStecilDesc;
 		SMemory::Zero(&DepthStecilDesc, sizeof(DepthStecilDesc));
-		DepthStecilDesc.DepthEnable = Definition.DepthTest != RHICompareFunction::Always || Definition.EnabledDepthWrite;
+		DepthStecilDesc.DepthEnable = true;
+
 		if (Definition.EnabledDepthWrite)
 			DepthStecilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		else
 			DepthStecilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+
 		DepthStecilDesc.DepthFunc = EngineCompareFuncToDX11(Definition.DepthTest);
 		DepthStecilDesc.StencilEnable = Definition.EnabledBackFaceStencil | Definition.EnabledFrontFaceStencil;
 		DepthStecilDesc.StencilReadMask = Definition.StencilReadMask;
@@ -81,6 +84,7 @@ namespace GeometricEngine
 		DepthStecilDesc.FrontFace.StencilFailOp = EngineDSOpToDX11(Definition.FFStencilFailOp);
 		DepthStecilDesc.FrontFace.StencilDepthFailOp = EngineDSOpToDX11(Definition.FFDepthFailOp);
 		DepthStecilDesc.FrontFace.StencilPassOp = EngineDSOpToDX11(Definition.FFPassFailOp);
+
 		if (Definition.EnabledBackFaceStencil)
 		{
 			DepthStecilDesc.BackFace.StencilFunc = EngineCompareFuncToDX11(Definition.BFStencilTest);
@@ -105,25 +109,21 @@ namespace GeometricEngine
 	{
 		D3D11_BLEND_DESC BlendDesc;
 		SMemory::Zero(&BlendDesc, sizeof(BlendDesc));
-		bool BlendEnabled = false;
-		if (Definition.RenderTarget.ColorBlendOperation != RHIBlendOperation::Add ||
-			Definition.RenderTarget.AlphaBlendOperation != RHIBlendOperation::Add ||
-			Definition.RenderTarget.ColorBlendSrc != RHIBlendFactor::One ||
-			Definition.RenderTarget.AlphaBlendSrc != RHIBlendFactor::One ||
-			Definition.RenderTarget.ColorBlendDest != RHIBlendFactor::Zero ||
-			Definition.RenderTarget.AlphaBlendDest != RHIBlendFactor::Zero)
-			BlendEnabled = true;
+
 		BlendDesc.AlphaToCoverageEnable = true;
 		BlendDesc.IndependentBlendEnable = Definition.EnabledIndependentBlend;
+
+
 		D3D11_RENDER_TARGET_BLEND_DESC& RenderTarget = BlendDesc.RenderTarget[0];
 		RenderTarget.BlendEnable	= true;
-		RenderTarget.BlendOp		= EngineBlendOpToDX11(Definition.RenderTarget.ColorBlendOperation);
-		RenderTarget.BlendOpAlpha	= EngineBlendOpToDX11(Definition.RenderTarget.AlphaBlendOperation);
 
 		RenderTarget.SrcBlend		= EngineBlendToDX11(Definition.RenderTarget.ColorBlendSrc);
 		RenderTarget.DestBlend		= EngineBlendToDX11(Definition.RenderTarget.ColorBlendDest);
+		RenderTarget.BlendOp		= EngineBlendOpToDX11(Definition.RenderTarget.ColorBlendOperation);
+
 		RenderTarget.SrcBlendAlpha	= EngineBlendToDX11(Definition.RenderTarget.AlphaBlendSrc);
 		RenderTarget.DestBlendAlpha = EngineBlendToDX11(Definition.RenderTarget.AlphaBlendDest);
+		RenderTarget.BlendOpAlpha	= EngineBlendOpToDX11(Definition.RenderTarget.AlphaBlendOperation);
 
 		if (Definition.RenderTarget.ColorWriteMask & RTWM_RED)
 			RenderTarget.RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED;

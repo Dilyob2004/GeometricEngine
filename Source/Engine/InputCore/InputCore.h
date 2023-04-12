@@ -8,6 +8,7 @@ namespace GeometricEngine
     class GEOMETRIC_API Input
     {
     public:
+
 		static bool GetKey(KeyCode Key);
 		static bool GetKeyDown(KeyCode Key);
 		static bool GetKeyUp(KeyCode Key);
@@ -19,13 +20,12 @@ namespace GeometricEngine
 		static Vector2f GetMousePosition();
 		static Vector2f GetMousePositionDelta();
 		static F32		GetMouseWhellDelta();
+
+
+		static bool OnWindowResized(U32&, U32&);
+		static bool OnWindowResized();
+		static bool OnWindowClosed();
     };
-	class GEOMETRIC_API InputWindow
-	{
-	public:
-		static bool OnResized(U32&, U32&);
-		static bool OnClosed();
-	};
 }
 
 #endif // INPUTCORE_H

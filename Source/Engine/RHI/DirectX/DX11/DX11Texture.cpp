@@ -2,6 +2,7 @@
 #include <Engine/RHI/DirectX/DX11DynamicRHI.h>
 #include <Engine/RHI/DirectX/DX11/DX11Resources.h>
 #include <Engine/RHI/DirectX/DX11/DX11Utilities.h>
+#include <Engine/Core/Misc/Log.h>
 
 
 namespace GeometricEngine
@@ -19,7 +20,7 @@ namespace GeometricEngine
 	DX11Texture2D::DX11Texture2D(	ID3D11Texture2D* D3DTexture, 
 									ID3D11RenderTargetView* D3DRTV, 
 									ID3D11ShaderResourceView* D3DSRV, 
-									ID3D11DepthStencilView* D3DDSV , const RHITextureDefinitions& Definitions)
+									ID3D11DepthStencilView* D3DDSV , const RHITextureDefinition& Definitions)
 		: RHITexture2D(Definitions.Width, Definitions.Height, Definitions.MipLevels, Definitions.Samples, Definitions.Format, Definitions.Flags)
 		, DXTexture(D3DTexture)
 		, DXShaderResourceView(D3DSRV)
@@ -33,7 +34,7 @@ namespace GeometricEngine
 		DXShaderResourceView->Release();
 		DXDepthStencilView->Release();
 	}
-	RHITexture2D* DX11DynamicRHI::RHICreateTexture2D(const RHITextureDefinitions& Definition)
+	RHITexture2D* DX11DynamicRHI::RHICreateTexture2D(const RHITextureDefinition& Definition)
 	{
 		D3D11_TEXTURE2D_DESC Descriptor;
 		SMemory::Zero(&Descriptor, sizeof(Descriptor));
@@ -42,7 +43,7 @@ namespace GeometricEngine
 		Descriptor.Format = RHIFormatToDX11Format(Definition.Format);
 		Descriptor.MipLevels = Definition.MipLevels;
 		Descriptor.SampleDesc.Count = Definition.Samples;
-		Descriptor.SampleDesc.Quality =  (Definition.Samples > 0) ? D3D11_STANDARD_MULTISAMPLE_PATTERN : 0;
+		Descriptor.SampleDesc.Quality =  (Definition.Samples > 1) ? D3D11_STANDARD_MULTISAMPLE_PATTERN : 0;
 		Descriptor.Usage = EngineTextureUsageToDX11(Definition.Usage);
 		Descriptor.ArraySize = 1;
 		if (Definition.Flags & TF_ShaderResource)
@@ -64,7 +65,7 @@ namespace GeometricEngine
 			TextureData.SysMemPitch = Definition.Width * 4;
 			if (FAILED(GetDXDevice()->CreateTexture2D(&Descriptor, &TextureData, &DXTexture)))
 			{
-				LOG("Error: [DX11RHI] Failed to create a resource texture 2D!");
+				LOG("Error: [DX11RHI] Failed to create a resource pSysMem texture 2D!");
 				exit(-1);
 			}
 		}

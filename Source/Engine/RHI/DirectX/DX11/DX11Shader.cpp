@@ -2,6 +2,7 @@
 #include <Engine/RHI/DirectX/DX11/DX11Shader.h>
 #include <Engine/RHI/DirectX/DX11/DX11Utilities.h>
 #include <Engine/RHI/DirectX/DX11/DX11Resources.h>
+#include <Engine/Core/Misc/Log.h>
 namespace GeometricEngine
 {
 	DX11PixelShader::DX11PixelShader()

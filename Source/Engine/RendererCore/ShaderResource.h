@@ -3,43 +3,28 @@
 
 #include <Engine/RHI/DynamicRHI.h>
 #include <Engine/ShaderCompiler/ShaderCompiler.h>
-
+#include <Engine/Core/Misc/References.h> 
 namespace GeometricEngine
 {
-	class GEOMETRIC_API ShaderResource
+	class GEOMETRIC_API BoundShaderResource
 	{
 	public:
-		ShaderResource();
-		ShaderResource(const ShaderCompilerOutput&);
-		~ShaderResource();
+		BoundShaderResource();
+		BoundShaderResource(
+			const TVector<BufferElement>& BufferElement,
+			RHIVertexShader* VertexShader,
+			RHIPixelShader* PixelShader);
+		~BoundShaderResource();
 
-		ShaderType GetType() const { return Type; }
-		RHIVertexShader* GetVertexShader() const
-		{
-			_ASSERT(Type == ShaderType::Vertex);
-			return VertexShader;
-		}
-		RHIPixelShader* GetPixelShader() const
-		{
-			_ASSERT(Type == ShaderType::Pixel);
-			return PixelShader;
-		}
-	private:
-		ShaderType Type;
-		String ShaderName;
-		RHIVertexShader* VertexShader;
-		RHIPixelShader* PixelShader;
-	};
-	class GEOMETRIC_API VertexDelaration
-	{
-	public:
-		VertexDelaration();
-		VertexDelaration(const ShaderResource*, const TVector<BufferElement>& );
-		~VertexDelaration();
+		void OnTick();
 
 		RHIVertexLayout* GetVertexLayout() const { return VertexLayout; }
+		RHIVertexShader* GetVertexShader() const { return VertexShader; }
+		RHIPixelShader* GetPixelShader() const { return PixelShader; }
 	private:
 		RHIVertexLayout* VertexLayout;
+		RHIVertexShader* VertexShader;
+		RHIPixelShader* PixelShader;
 	};
 }
 #endif // !SHADERRESOURCE_H

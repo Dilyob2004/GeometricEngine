@@ -7,6 +7,7 @@ namespace GeometricEngine
 	{
 	public:
 		static void PreInit(void*);
+		static bool Init();
 
 
 

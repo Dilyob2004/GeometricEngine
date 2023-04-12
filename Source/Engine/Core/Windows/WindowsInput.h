@@ -9,12 +9,9 @@ namespace GeometricEngine
     class GEOMETRIC_API WindowsInput
     {
     public:
-		static bool HasInitialized();
 
-
-		static bool Initialize();
+		static void Initialize();
 		static void Tick();
-		static void DeInitialize();
 
 		static bool GetKey(KeyCode Key);
 		static bool GetKeyDown(KeyCode Key);
@@ -30,6 +27,7 @@ namespace GeometricEngine
 		static F32		GetMouseWhellDelta();
 
 		static bool OnResized(U32&, U32&);
+		static bool OnResized();
 		static bool OnClosed();
 
 		static void Reset();

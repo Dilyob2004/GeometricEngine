@@ -12,7 +12,7 @@ namespace GeometricEngine
 			: Width(800)
 			, Height(600)
 			, Format(RHIPixelFormat::R8G8BA8_UNORM)
-			, RefreshRateNum (60)
+			, RefreshRateNum(60)
 			, FullScreen(false)
 			, VSync(true)
 			, HandleWindow(NULL)
@@ -20,10 +20,10 @@ namespace GeometricEngine
 		}
 		U32 Width;
 		U32 Height;
-		RHIPixelFormat Format;
 		U32 RefreshRateNum;
 		bool FullScreen;
 		bool VSync;
+		RHIPixelFormat Format;
 		void* HandleWindow;
 	};
 
@@ -52,11 +52,13 @@ namespace GeometricEngine
 		{
 			Attachment()
 				: ColorBlendOperation(RHIBlendOperation::Add)
-				, ColorBlendSrc(RHIBlendFactor::One)
-				, ColorBlendDest(RHIBlendFactor::Zero)
+				, ColorBlendSrc(RHIBlendFactor::SourceAlpha)
+				, ColorBlendDest(RHIBlendFactor::InverseSourceAlpha)
+
 				, AlphaBlendOperation(RHIBlendOperation::Add)
 				, AlphaBlendSrc(RHIBlendFactor::One)
-				, AlphaBlendDest(RHIBlendFactor::Zero)
+				, AlphaBlendDest(RHIBlendFactor::InverseSourceAlpha)
+
 				, ColorWriteMask(RTWM_RGBA)
 			{
 			}
@@ -127,7 +129,7 @@ namespace GeometricEngine
 			, MaxLod(FLT_MAX)
 			, MipBias(0)
 			, MaxAnisotropy(0)
-			, Filter(RHISamplerFiler::Point)
+			, Filter(RHISamplerFiler::Trilinear)
 			, AddressModeU(RHISamplerAddressMode::Wrap)
 			, AddressModeV(RHISamplerAddressMode::Wrap)
 			, AddressModeW(RHISamplerAddressMode::Wrap)
@@ -147,11 +149,11 @@ namespace GeometricEngine
 		RHISamplerCompareFunc SamplerComarisonFunc;
 	};
 
-	struct RHITextureDefinitions
+	struct RHITextureDefinition
 	{
-		RHITextureDefinitions()
-			: Width(0)
-			, Height(0)
+		RHITextureDefinition()
+			: Width(1)
+			, Height(1)
 			, Data(NULL)
 			, Samples(1)
 			, MipLevels(1)
@@ -224,13 +226,15 @@ namespace GeometricEngine
 		}
 		RHITexture2D(U32 UWidth, U32 UHeight, U32 Mipmaps, U32 Samples, RHIPixelFormat EFormat, U32 EFlags) 
 			: RHITexture(Mipmaps, Samples, EFormat, EFlags)
-			, Width(0)
-			, Height(0)
+			, Width(UWidth)
+			, Height(UHeight)
 		{
 		}
+
+		virtual void SafeRelease() { }
 		U32 GetWidth() const { return Width; }
 		U32 GetHeight() const { return Height; }
-
+		virtual void* GetHandle() { return NULL; }
 	private:
 		U32 Width, Height;
 	};
@@ -248,6 +252,7 @@ namespace GeometricEngine
 	class RHIDepthStencilState { public: virtual ~RHIDepthStencilState() {} };
 	class RHISamplerState { public: virtual ~RHISamplerState() {} };
 	class RHIRasterizerState { public: virtual ~RHIRasterizerState() {} };
+
 							
 }
 #endif // !RHIVIEWPORT_H

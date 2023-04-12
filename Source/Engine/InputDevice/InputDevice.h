@@ -40,7 +40,6 @@ namespace GeometricEngine
 				{
 					U32 Width;
 					U32 Height;
-					bool Resized;
 				}ResizeData;
 
 				struct

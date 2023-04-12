@@ -11,25 +11,39 @@
 namespace GeometricEngine
 {
 
-	void DX11DynamicRHI::RHIClearViewport(const RHIViewport* ViewportRHI, F32 r, F32 g, F32 b, F32 a)
+	void DX11DynamicRHI::RHIClearRenderTarget(const RHITexture2D* TargetRHI, F32 r, F32 g, F32 b, F32 a)
 	{
 		F32 Colos[] = { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-
-		DYNAMIC_CAST(DX11Viewport, Viewport, ViewportRHI);
-		DYNAMIC_CAST(DX11Texture2D, View, Viewport->GetBackBufferView());
-
-		DXDeviceContext->ClearRenderTargetView(View->GetRTV(), Colos);
+		DYNAMIC_CAST(DX11Texture2D, Target, TargetRHI);
+		DXDeviceContext->ClearRenderTargetView(Target->GetRTV(), Colos);
 	}
-	void DX11DynamicRHI::RHISetRenderTarget(const RHITexture* RenderTarget)
+
+	void DX11DynamicRHI::RHIClearDepthTarget(const RHITexture2D* TargetRHI, bool UseDepth, bool UseStencil, F32 Depth)
 	{
-		DYNAMIC_CAST(DX11Texture2D, View, RenderTarget);
-		DXDeviceContext->OMSetRenderTargets(1, View->GetInitRTV(), NULL);
+		DYNAMIC_CAST(DX11Texture2D, Target, TargetRHI);
+		if (UseDepth)   DepthFlag |= D3D11_CLEAR_DEPTH;
+		if (UseStencil) DepthFlag |= D3D11_CLEAR_STENCIL;
+		DXDeviceContext->ClearDepthStencilView(Target->GetDSV(), DepthFlag, Depth, 0xFF);
 	}
-	void DX11DynamicRHI::RHISetRenderTarget(const RHITexture* RenderTarget, const RHITexture* DepthTarget)
+	void DX11DynamicRHI::RHISetRenderTarget(const RHITexture2D* RenderTarget)
+	{
+		if(RenderTarget != NULL)
+		{
+			DYNAMIC_CAST(DX11Texture2D, View, RenderTarget);
+			DXDeviceContext->OMSetRenderTargets(1, View->GetInitRTV(), NULL);
+			RHISetViewport(0, 0, (F32)View->GetWidth(), (F32)View->GetHeight());
+		}
+		else
+			DXDeviceContext->OMSetRenderTargets(0, NULL, NULL);
+	}
+	void DX11DynamicRHI::RHISetRenderTarget(const RHITexture2D* RenderTarget, const RHITexture2D* DepthTarget)
 	{
 		DYNAMIC_CAST(DX11Texture2D, View, RenderTarget);
 		DYNAMIC_CAST(DX11Texture2D, Depth, DepthTarget);
+
 		DXDeviceContext->OMSetRenderTargets(1, View->GetInitRTV(), Depth->GetDSV());
+
+		RHISetViewport(0, 0, (F32)View->GetWidth(), (F32)View->GetHeight());
 	}
 	void DX11DynamicRHI::RHISetScissorRect(U32 MinX, U32 MaxX, U32 MinY, U32 MaxY)
 	{
@@ -95,6 +109,7 @@ namespace GeometricEngine
 		DYNAMIC_CAST(DX11SamplerState, Sampler, SamplerStateRHI);
 		DXDeviceContext->PSSetSamplers(0, 1, Sampler->GetInitSamplerState());
 	}
+	
 	void DX11DynamicRHI::RHISetTexture(const RHIPixelShader* ShaderRHI, const RHITexture2D* TextureRHI)
 	{
 		_ASSERT(ShaderRHI != NULL);

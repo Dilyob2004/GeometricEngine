@@ -5,13 +5,22 @@
 
 namespace GeometricEngine
 {
-	class GEOMETRIC_API DX11Texture2D : public RHITexture2D
+	class DX11Texture2D : public RHITexture2D
 	{
 	public:
 
 		DX11Texture2D();
-		DX11Texture2D(ID3D11Texture2D*, ID3D11RenderTargetView*, ID3D11ShaderResourceView*, ID3D11DepthStencilView*, const RHITextureDefinitions& );
+		DX11Texture2D(ID3D11Texture2D*, ID3D11RenderTargetView*, ID3D11ShaderResourceView*, ID3D11DepthStencilView*, const RHITextureDefinition& );
 		virtual ~DX11Texture2D();
+
+		virtual void SafeRelease() override
+		{
+
+			if (DXTexture) DXTexture->Release(), DXTexture = NULL;
+			if (DXRenderTargetView) DXRenderTargetView->Release(), DXRenderTargetView = NULL;
+			if (DXShaderResourceView) DXShaderResourceView->Release(), DXShaderResourceView = NULL;
+			if(DXDepthStencilView)  DXDepthStencilView->Release(), DXDepthStencilView = NULL;
+		}
 		ID3D11Texture2D* GetTexture() const
 		{
 			return DXTexture;
@@ -23,6 +32,10 @@ namespace GeometricEngine
 		ID3D11ShaderResourceView** GetInitSRV()
 		{
 			return &DXShaderResourceView;
+		}
+		virtual void* GetHandle() override
+		{
+			return DXShaderResourceView;
 		}
 		ID3D11DepthStencilView* GetDSV() const
 		{

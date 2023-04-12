@@ -60,17 +60,6 @@ namespace GeometricEngine
 
 		return mInverse * OneOverDeterminant;
 	}
-	Matrix4f Ortho(F32 left, F32 right, F32 bottom, F32 top)
-	{
-		Matrix4f Result(1.f);
-
-		Result[0][0] = 2.f / (right - left);
-		Result[1][1] = 2.f / (top - bottom);
-		Result[2][2] = -1.f;
-		Result[3][0] = (right + left) / (left - right);
-		Result[3][1] = (top + bottom) / (bottom - top);
-		return Result;
-	}
 	Matrix4f Rotate(const Matrix4f & m, F32 angle, const Vector3f & v)
 	{
 		F32 const a = angle;
@@ -116,15 +105,38 @@ namespace GeometricEngine
 		return Result;
 	}
 
-	Matrix4f Perspective(F32 fovy, F32 aspect, F32 zNear, F32 zFar)
+	Matrix4f Ortho(F32 left, F32 right, F32 bottom, F32 top)
 	{
-		const F32 tanHalfFovy = tan(fovy / static_cast<F32>(2));
-		Matrix4f Result(static_cast<F32>(0));
+		Matrix4f Result(1.f);
+		Result[0][0] = 2.f / (right - left);
+		Result[1][1] = 2.f / (top - bottom);
+		Result[2][2] = 1.f;
+		Result[3][0] = (right + left) / (left - right);
+		Result[3][1] = (top + bottom) / (bottom - top);
+		return Result;
+	}
+	Matrix4f Perspective(F32 FOV, F32 AspectRatio, F32 zNear, F32 zFar)
+	{
+		F32 Height = 1.0f / tanf(FOV * 0.5f);
+		F32 Width = Height / AspectRatio;
+		F32 fRange = zFar / (zNear - zFar);
+		F32 lRange = fRange * zNear;
+		return Matrix4f(Vector4f(Width, 0.0f,  0.0f,   0.0f),
+						Vector4f(0.0f, Height, 0.0f,   0.0f),
+						Vector4f(0.0f,   0.0f,  fRange, -1.0f),
+						Vector4f(0.0f,   0.0f,  lRange, 0.0f));
+	}
+	Matrix4f Perspective(F32 FOV, F32 Width, F32 Height, F32 zNear, F32 zFar)
+	{
+		F32 const rad = FOV;
+		F32 const h = cos(rad / 2) / sin(rad / 2);
+		F32 const w = h * Height / Width;
 
-		Result[0][0] = static_cast<F32>(1) / (aspect * tanHalfFovy);
-		Result[1][1] = static_cast<F32>(1) / (tanHalfFovy);
+		Matrix4f Result(0.0f);
+		Result[0][0] = w;
+		Result[1][1] = h;
 		Result[2][2] = zFar / (zFar - zNear);
-		Result[2][3] = static_cast<F32>(1);
+		Result[2][3] = 1.0f;
 		Result[3][2] = -(zFar * zNear) / (zFar - zNear);
 		return Result;
 	}
@@ -247,25 +259,28 @@ namespace GeometricEngine
 	{
 		return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 	}
-	Matrix4f LookAt(const Vector3f & eye, const Vector3f & center, const Vector3f & up)
+	Matrix4f LookAt(const Vector3f &EyePosition, const Vector3f &LookAtPosition, const Vector3f & UpVector)
 	{
-		const Vector3f f((center - eye).GetNormalized());
-		const Vector3f s(Cross(up, f).GetNormalized());
-		const Vector3f u(Cross(f, s));
+		Matrix4f Result(1.0f);
+		const Vector3f ZAxis((EyePosition - LookAtPosition).GetNormalized());
+		const Vector3f XAxis(Cross(UpVector, ZAxis).GetNormalized());
+		const Vector3f YAxis(Cross(ZAxis, XAxis));
 
-		Matrix4f Result(1);
-		Result[0][0] = s.x;
-		Result[1][0] = s.y;
-		Result[2][0] = s.z;
-		Result[0][1] = u.x;
-		Result[1][1] = u.y;
-		Result[2][1] = u.z;
-		Result[0][2] = f.x;
-		Result[1][2] = f.y;
-		Result[2][2] = f.z;
-		Result[3][0] = -Dot(s, eye);
-		Result[3][1] = -Dot(u, eye);
-		Result[3][2] = -Dot(f, eye);
+		Result[0][0] = XAxis.x;
+		Result[1][0] = XAxis.y;
+		Result[2][0] = XAxis.z;
+
+		Result[0][1] = YAxis.x;
+		Result[1][1] = YAxis.y;
+		Result[2][1] = YAxis.z;
+
+		Result[0][2] = ZAxis.x;
+		Result[1][2] = ZAxis.y;
+		Result[2][2] = ZAxis.z;
+
+		Result[3][0] = Dot(XAxis, -EyePosition);
+		Result[3][1] = Dot(YAxis, -EyePosition);
+		Result[3][2] = Dot(ZAxis, -EyePosition);
 		return Result;
 	}
 

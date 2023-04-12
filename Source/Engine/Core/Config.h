@@ -20,7 +20,7 @@
 #define CONSTEXPR		constexpr
 #define ARRAY_COUNT(X) sizeof(X) / sizeof(typeid(X).raw_name())
 #define DYNAMIC_CAST(Type, Name, Value) Type* Name = (Type*) Value
-
+#define OVERRIDE override
 #pragma warning(disable: 4251)
 
 typedef char     I8;
