@@ -1,0 +1,459 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{e0170774-afb8-4a5f-b26a-04d80b9e0b59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{0b544298-410b-4b31-a143-cd4b1a91b4f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>{d67ad87c-f77c-4cf4-b632-aad43aac560a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine">
+      <UniqueIdentifier>{3aa93f0b-2c11-4408-b3a6-741dd15c5903}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor">
+      <UniqueIdentifier>{21578609-c642-4718-8ffe-dc7cbbf718f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty">
+      <UniqueIdentifier>{6c266326-0da0-4e8e-936e-bb30973c4cbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\ImGui">
+      <UniqueIdentifier>{f122aebe-df87-47a8-9ae8-0463f931bcde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\stb">
+      <UniqueIdentifier>{04945223-d987-46f9-894e-41e10474f285}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Shaders">
+      <UniqueIdentifier>{fb0b7693-4419-4c4a-a502-e6fcc1e6f954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core">
+      <UniqueIdentifier>{b5efe1ef-4d6e-49e2-a49d-07963b2f2b04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\ImageCore">
+      <UniqueIdentifier>{ca4635ef-e7b5-4899-be32-49dc6b353507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\ImageWrapper">
+      <UniqueIdentifier>{58e87a94-7888-4666-9a1d-7534a367a8a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\InputCore">
+      <UniqueIdentifier>{9e46f685-3f41-4e30-b73a-5c9cf2c34d57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\InputDevice">
+      <UniqueIdentifier>{f7119a5f-b074-4e78-8a7a-ffa37a3907e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Math">
+      <UniqueIdentifier>{fbc986d2-aab3-43f6-af1e-8d51615fc247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Renderer">
+      <UniqueIdentifier>{92f9ea16-1e90-4be4-9764-6198a75c64d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\RendererCore">
+      <UniqueIdentifier>{fd40912c-0b3a-4997-ad4b-1ed522c6db35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\RHI">
+      <UniqueIdentifier>{28eca22f-9b57-463b-822c-8de6b9d40be8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\ShaderCompiler">
+      <UniqueIdentifier>{1c872017-eb71-44fa-af3d-69afdd5b9bbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Containers">
+      <UniqueIdentifier>{9c2bd25f-bb10-45d6-a956-d8bf1e7e7ad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Generic">
+      <UniqueIdentifier>{6bc86248-7c1c-4fd0-be6e-fbcbc091cc1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Misc">
+      <UniqueIdentifier>{b259aedc-4e17-4f2b-98fe-a3e04d182e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Core\Windows">
+      <UniqueIdentifier>{ce783413-e142-4136-8e07-88ff92724795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\ShaderCompiler\ShaderCompilerDX11">
+      <UniqueIdentifier>{715f3d7b-a82b-4aa2-9a9a-99a21653d85f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\RHI\DirectX">
+      <UniqueIdentifier>{d23089ae-1ce9-4a5d-9d7d-c167edb7327a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\RHI\DirectX\DX12">
+      <UniqueIdentifier>{6400564c-f2be-45be-8891-4413685946e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\RHI\DirectX\DX11">
+      <UniqueIdentifier>{f6a4e428-bbcd-407c-92e4-168345ac9916}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\Editor\Editor.cpp">
+      <Filter>Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Editor\SceneViewport.cpp">
+      <Filter>Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui.cpp">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_demo.cpp">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_draw.cpp">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_impl_dx11.cpp">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_impl_win32.cpp">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_tables.cpp">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_widgets.cpp">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\File.cpp">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\FileSystem.cpp">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\Memory.cpp">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\Platform.cpp">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\Window.cpp">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Misc\CString.cpp">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Misc\Log.cpp">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsFile.cpp">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsFileSystem.cpp">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsInput.cpp">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsPlatform.cpp">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsWindow.cpp">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\ImageCore\ImageCore.cpp">
+      <Filter>Source\Engine\ImageCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\ImageWrapper\ImageWrapper.cpp">
+      <Filter>Source\Engine\ImageWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\InputCore\InputCore.cpp">
+      <Filter>Source\Engine\InputCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\InputDevice\EventWindow.cpp">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\InputDevice\Keyboard.cpp">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\InputDevice\Mouse.cpp">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Math\MathUtils.cpp">
+      <Filter>Source\Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Math\Matrix3.cpp">
+      <Filter>Source\Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Math\Matrix4.cpp">
+      <Filter>Source\Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Math\Quaternion.cpp">
+      <Filter>Source\Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerDX11\ShaderCompilerDX11.cpp">
+      <Filter>Source\Engine\ShaderCompiler\ShaderCompilerDX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompiler.cpp">
+      <Filter>Source\Engine\ShaderCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerWorker.cpp">
+      <Filter>Source\Engine\ShaderCompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.cpp">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Commands.cpp">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Device.cpp">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Gui.cpp">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.cpp">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11States.cpp">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Texture.cpp">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.cpp">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RHI\DynamicRHI.cpp">
+      <Filter>Source\Engine\RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RendererCore\Mesh.cpp">
+      <Filter>Source\Engine\RendererCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RendererCore\ShaderResource.cpp">
+      <Filter>Source\Engine\RendererCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RendererCore\TextureResource2D.cpp">
+      <Filter>Source\Engine\RendererCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Renderer\Camera.cpp">
+      <Filter>Source\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Application.cpp">
+      <Filter>Source\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Core.cpp">
+      <Filter>Source\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Engine.cpp">
+      <Filter>Source\Engine\Core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\Editor\Editor.h">
+      <Filter>Source\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Editor\SceneViewport.h">
+      <Filter>Source\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imconfig.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_impl_dx11.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_impl_win32.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_internal.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_rectpack.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_textedit.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_truetype.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\stb\stb_image.h">
+      <Filter>Source\ThirdParty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\stb\stb_image_write.h">
+      <Filter>Source\ThirdParty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Containers\Array.h">
+      <Filter>Source\Engine\Core\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Containers\Map.h">
+      <Filter>Source\Engine\Core\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Containers\Pair.h">
+      <Filter>Source\Engine\Core\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Containers\Queue.h">
+      <Filter>Source\Engine\Core\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\File.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\FileBase.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\FileSystem.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\Memory.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\Path.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\Platform.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\PlatformInfo.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\ScopeLock.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\Window.h">
+      <Filter>Source\Engine\Core\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\Allocator.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\CString.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\Log.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\References.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\String.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\StringView.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsCriticalSection.h">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsFile.h">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsFileSystem.h">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsInput.h">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsPlatform.h">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsWindow.h">
+      <Filter>Source\Engine\Core\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\ImageCore\ImageCore.h">
+      <Filter>Source\Engine\ImageCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\ImageWrapper\ImageWrapper.h">
+      <Filter>Source\Engine\ImageWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\InputCore\InputCore.h">
+      <Filter>Source\Engine\InputCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\InputDevice\EventWindow.h">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\InputDevice\InputDevice.h">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\InputDevice\Keyboard.h">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\InputDevice\KeyCodes.h">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\InputDevice\Mouse.h">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\InputDevice\MouseCodes.h">
+      <Filter>Source\Engine\InputDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Math\MathUtils.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Math\Matrix3.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Math\Matrix4.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Math\Quaternion.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Math\Vector2.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Math\Vector3.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Math\Vector4.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerDX11\ShaderCompilerDX11.h">
+      <Filter>Source\Engine\ShaderCompiler\ShaderCompilerDX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompiler.h">
+      <Filter>Source\Engine\ShaderCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerWorker.h">
+      <Filter>Source\Engine\ShaderCompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.h">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Resources.h">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.h">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Utilities.h">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.h">
+      <Filter>Source\Engine\RHI\DirectX\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11DynamicRHI.h">
+      <Filter>Source\Engine\RHI\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\DynamicRHI.h">
+      <Filter>Source\Engine\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\RHIResources.h">
+      <Filter>Source\Engine\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RHI\RHIUtilities.h">
+      <Filter>Source\Engine\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RendererCore\Mesh.h">
+      <Filter>Source\Engine\RendererCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RendererCore\ShaderResource.h">
+      <Filter>Source\Engine\RendererCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RendererCore\TextureResource2D.h">
+      <Filter>Source\Engine\RendererCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Renderer\Camera.h">
+      <Filter>Source\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Application.h">
+      <Filter>Source\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Config.h">
+      <Filter>Source\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Core.h">
+      <Filter>Source\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Engine.h">
+      <Filter>Source\Engine\Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\Editor\Editor.cpp" />
+    <ClCompile Include="..\..\Source\Editor\SceneViewport.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Application.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Core.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Engine.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\File.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\FileSystem.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\Memory.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\Platform.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Generic\Window.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Misc\CString.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Misc\Log.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsFile.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsFileSystem.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsInput.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsPlatform.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ImageCore\ImageCore.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ImageWrapper\ImageWrapper.cpp" />
+    <ClCompile Include="..\..\Source\Engine\InputCore\InputCore.cpp" />
+    <ClCompile Include="..\..\Source\Engine\InputDevice\EventWindow.cpp" />
+    <ClCompile Include="..\..\Source\Engine\InputDevice\Keyboard.cpp" />
+    <ClCompile Include="..\..\Source\Engine\InputDevice\Mouse.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Math\MathUtils.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Math\Matrix3.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Math\Matrix4.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Math\Quaternion.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RendererCore\Mesh.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RendererCore\ShaderResource.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RendererCore\TextureResource2D.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Renderer\Camera.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Commands.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Device.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Gui.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11States.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Texture.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.cpp" />
+    <ClCompile Include="..\..\Source\Engine\RHI\DynamicRHI.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompiler.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerDX11\ShaderCompilerDX11.cpp" />
+    <ClCompile Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerWorker.cpp" />
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui.cpp" />
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\Editor\Editor.h" />
+    <ClInclude Include="..\..\Source\Editor\SceneViewport.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Application.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Config.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Containers\Array.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Containers\Map.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Containers\Pair.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Containers\Queue.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Core.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Engine.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\File.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\FileBase.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\FileSystem.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\Memory.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\Path.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\Platform.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\PlatformInfo.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\ScopeLock.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Generic\Window.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\Allocator.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\CString.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\Log.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\References.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\String.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\StringView.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsCriticalSection.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsFile.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsFileSystem.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsInput.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsPlatform.h" />
+    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsWindow.h" />
+    <ClInclude Include="..\..\Source\Engine\ImageCore\ImageCore.h" />
+    <ClInclude Include="..\..\Source\Engine\ImageWrapper\ImageWrapper.h" />
+    <ClInclude Include="..\..\Source\Engine\InputCore\InputCore.h" />
+    <ClInclude Include="..\..\Source\Engine\InputDevice\EventWindow.h" />
+    <ClInclude Include="..\..\Source\Engine\InputDevice\InputDevice.h" />
+    <ClInclude Include="..\..\Source\Engine\InputDevice\Keyboard.h" />
+    <ClInclude Include="..\..\Source\Engine\InputDevice\KeyCodes.h" />
+    <ClInclude Include="..\..\Source\Engine\InputDevice\Mouse.h" />
+    <ClInclude Include="..\..\Source\Engine\InputDevice\MouseCodes.h" />
+    <ClInclude Include="..\..\Source\Engine\Math\MathUtils.h" />
+    <ClInclude Include="..\..\Source\Engine\Math\Matrix3.h" />
+    <ClInclude Include="..\..\Source\Engine\Math\Matrix4.h" />
+    <ClInclude Include="..\..\Source\Engine\Math\Quaternion.h" />
+    <ClInclude Include="..\..\Source\Engine\Math\Vector2.h" />
+    <ClInclude Include="..\..\Source\Engine\Math\Vector3.h" />
+    <ClInclude Include="..\..\Source\Engine\Math\Vector4.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\Mesh.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\ShaderResource.h" />
+    <ClInclude Include="..\..\Source\Engine\RendererCore\TextureResource2D.h" />
+    <ClInclude Include="..\..\Source\Engine\Renderer\Camera.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11DynamicRHI.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Resources.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Shader.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Utilities.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Viewport.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\DynamicRHI.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\RHIResources.h" />
+    <ClInclude Include="..\..\Source\Engine\RHI\RHIUtilities.h" />
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompiler.h" />
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerDX11\ShaderCompilerDX11.h" />
+    <ClInclude Include="..\..\Source\Engine\ShaderCompiler\ShaderCompilerWorker.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imconfig.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imgui_internal.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_textedit.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\stb\stb_image.h" />
+    <ClInclude Include="..\..\Source\ThirdParty\stb\stb_image_write.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{787af5e4-2213-45a1-bb42-df20c1996713}</ProjectGuid>
+    <RootNamespace>Source</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)Engine\Binaries\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)Engine\Intermediate\Build\Source\$(Configuration)-$(Platform)\</IntDir>
+    <TargetName>GeometricService</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>GEOMETRIC_DEBUG;GEOMETRIC_BUILD_DLL;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\Source\;$(SolutionDir)Engine\Source\ThirdParty\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3dcompiler.lib;dxgi.lib;d3d12.lib;d3d11.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
