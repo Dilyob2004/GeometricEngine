@@ -53,11 +53,10 @@ namespace GeometricEngine
 		virtual void					RHISetVertexShader(const RHIVertexShader*) OVERRIDE;
 
 
-		virtual void					RHISetVertexBuffer(const RHIVertexBuffer*) OVERRIDE;		
 		virtual void					RHIUpdateUniformBuffer(const RHIUniformBuffer*, void*, U32) OVERRIDE;
 
-		virtual void					RHIDrawPrimitiveIndexed(RHIIndexBuffer*,U32, U32, DrawType type = DrawType::Triangles) OVERRIDE;
-		virtual void					RHIDrawPrimitive(U32, U32, DrawType type = DrawType::Triangles) OVERRIDE;
+		virtual void					RHIDrawPrimitiveIndexed(RHIVertexBuffer*, RHIIndexBuffer*,U32, U32, DrawType type = DrawType::Triangles) OVERRIDE;
+		virtual void					RHIDrawPrimitive(RHIVertexBuffer*, U32, U32, DrawType type = DrawType::Triangles) OVERRIDE;
 
 
 

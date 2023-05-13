@@ -113,15 +113,6 @@ namespace GeometricEngine
 		DYNAMIC_CAST(DX11UniformBuffer, UniformBuffer, UniformBufferRHI);
 		DXDeviceContext->PSSetConstantBuffers(0, 1, UniformBuffer->GetInitUniformBuffer());
 	}
-
-	void DX11DynamicRHI::RHISetVertexBuffer(const RHIVertexBuffer* VertexBufferRHI)
-	{
-		DYNAMIC_CAST(DX11VertexBuffer, VertexBuffer, VertexBufferRHI);
-		U32 Stride = VertexBuffer->GetBufferView().Stride;
-		U32 Offset = VertexBuffer->GetBufferView().Offset;
-		DXDeviceContext->IASetVertexBuffers(0, 1, VertexBuffer->GetInitVertexBuffer(), &Stride, &Offset);
-	}
-
 	
 	
 	void DX11DynamicRHI::RHIUpdateUniformBuffer(const RHIUniformBuffer* UniformBufferRHI, void* Data, U32 Size)
@@ -129,15 +120,26 @@ namespace GeometricEngine
 		DYNAMIC_CAST(DX11UniformBuffer, UniformBuffer, UniformBufferRHI);
 		DXDeviceContext->UpdateSubresource(UniformBuffer->GetUniformBuffer(), 0, NULL, Data, Size, 0);
 	}
-	void DX11DynamicRHI::RHIDrawPrimitiveIndexed(RHIIndexBuffer* IndexBufferRHI, U32 Count, U32 Start, DrawType type)
+	void DX11DynamicRHI::RHIDrawPrimitiveIndexed(RHIVertexBuffer* VertexBufferRHI, RHIIndexBuffer* IndexBufferRHI, U32 Count, U32 Start, DrawType type)
 	{
 		DYNAMIC_CAST(DX11IndexBuffer, IndexBuffer, IndexBufferRHI);
+		DYNAMIC_CAST(DX11VertexBuffer, VertexBuffer, VertexBufferRHI);
+
+		U32 Stride = VertexBuffer->GetBufferView().Stride;
+		U32 Offset = VertexBuffer->GetBufferView().Offset;
+
+		DXDeviceContext->IASetVertexBuffers(0, 1, VertexBuffer->GetInitVertexBuffer(), &Stride, &Offset);
 		DXDeviceContext->IASetPrimitiveTopology(DrawTypeEngineToDX11(type));
 		DXDeviceContext->IASetIndexBuffer(IndexBuffer->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 		DXDeviceContext->DrawIndexed(Count, Start, 0);
 	}
-	void DX11DynamicRHI::RHIDrawPrimitive(U32 Count, U32 Start, DrawType type)
+	void DX11DynamicRHI::RHIDrawPrimitive(RHIVertexBuffer* VertexBufferRHI, U32 Count, U32 Start, DrawType type)
 	{
+		DYNAMIC_CAST(DX11VertexBuffer, VertexBuffer, VertexBufferRHI);
+		U32 Stride = VertexBuffer->GetBufferView().Stride;
+		U32 Offset = VertexBuffer->GetBufferView().Offset;
+
+		DXDeviceContext->IASetVertexBuffers(0, 1, VertexBuffer->GetInitVertexBuffer(), &Stride, &Offset);
 		DXDeviceContext->IASetPrimitiveTopology(DrawTypeEngineToDX11(type));
 		DXDeviceContext->Draw(Count, Start);
 	}

@@ -35,7 +35,6 @@ namespace GeometricEngine
 
 	void Mesh::OnTick(RHIVertexShader* Shader, const Matrix4f& ViewProjection)
 	{
-		GDynamicRHI->RHISetVertexBuffer(VertexBuffer);
 
 		if (CBufferMesh.ViewProjection != ViewProjection)
 		{
@@ -45,7 +44,7 @@ namespace GeometricEngine
 
 		GDynamicRHI->RHISetUniformBuffer(Shader, UniformBuffer);
 
-		GDynamicRHI->RHIDrawPrimitiveIndexed(IndexBuffer, Indices.GetCount(), 0);
+		GDynamicRHI->RHIDrawPrimitiveIndexed(VertexBuffer, IndexBuffer, Indices.GetCount(), 0);
 	}
 
 

@@ -22,12 +22,10 @@ namespace GeometricEngine
 		DXVertexBuffer->Release();
 	}
 
-
 	RHIVertexBuffer* DX11DynamicRHI::RHICreateVertexBuffer(const void* Data, U32 Size, U32 Stride, U32 Offset)
 	{
 		D3D11_BUFFER_DESC BufferDescriptor;
 		SMemory::Zero(&BufferDescriptor, sizeof(BufferDescriptor));
-
 
 		BufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		BufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
@@ -135,7 +133,7 @@ namespace GeometricEngine
 		ID3D11Buffer* DXBuffer = NULL;
 		if (FAILED(DXDevice->CreateBuffer(&BufferDescriptor, &ResourceData, &DXBuffer)))
 		{
-			LOG("Error: [DX11RHI] Failed to Create a Constant Buffer!");
+			LOG("Error: [DX11RHI] Failed to Create a Uniform Buffer!");
 			return NULL;
 		}
 		return new DX11UniformBuffer(DXBuffer, Size, Buffer);

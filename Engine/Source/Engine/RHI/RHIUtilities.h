@@ -162,11 +162,17 @@ namespace GeometricEngine
 		TF_DepthStencil = 2U,
 		TF_RenderTarget = 4U
 	};
-	enum class RHITextureUsage
+	enum class RHIBufferFlags
 	{
-		Immutable,
+		VertexBuffer,
+		IndexBuffer,
+		UniformBuffer
+	};
+	enum class RHIUsage
+	{
 		Default,
 		Dynamic,
+		Immutable,
 		Staging
 	};
 }

@@ -129,7 +129,7 @@ namespace GeometricEngine
 			, MaxLod(FLT_MAX)
 			, MipBias(0)
 			, MaxAnisotropy(0)
-			, Filter(RHISamplerFiler::Trilinear)
+			, Filter(RHISamplerFiler::Bilinear)
 			, AddressModeU(RHISamplerAddressMode::Wrap)
 			, AddressModeV(RHISamplerAddressMode::Wrap)
 			, AddressModeW(RHISamplerAddressMode::Wrap)
@@ -156,7 +156,7 @@ namespace GeometricEngine
 			, Data(NULL)
 			, Samples(1)
 			, MipLevels(1)
-			, Usage(RHITextureUsage::Default)
+			, Usage(RHIUsage::Default)
 			, Format(RHIPixelFormat::R8G8BA8_UNORM)
 			, Flags(-1)
 		{
@@ -166,7 +166,7 @@ namespace GeometricEngine
 		U32 MipLevels;
 		U32 Samples;
 		U8* Data;
-		RHITextureUsage Usage;
+		RHIUsage Usage;
 		RHIPixelFormat Format;
 		U32 Flags;
 	};
@@ -253,6 +253,8 @@ namespace GeometricEngine
 	class RHIVertexBuffer { public: virtual ~RHIVertexBuffer() {} };
 	class RHIIndexBuffer { public: virtual ~RHIIndexBuffer() {} };
 	class RHIUniformBuffer { public: virtual ~RHIUniformBuffer() {} };
+
+	class RHIBuffer { public: virtual ~RHIBuffer() {} };
 	class RHISamplerState { public: virtual ~RHISamplerState() {} };
 
 	class RHIPipelineState { public: virtual ~RHIPipelineState() {} };

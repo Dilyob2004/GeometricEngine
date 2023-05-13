@@ -3,6 +3,7 @@
 #include "ShaderResource.h"
 namespace GeometricEngine
 {
+
 	class GEOMETRIC_API TextureResource2D
 	{
 	public:

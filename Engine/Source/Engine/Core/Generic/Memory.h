@@ -17,6 +17,17 @@ namespace GeometricEngine
 	{
 	};
 
+
+	template<typename T> struct TRemoveReference { typedef T Type; };
+	template<typename T> struct TRemoveReference<T&> { typedef T Type; };
+	template<typename T> struct TRemoveReference<T&&> { typedef T Type; };
+
+	template<typename T>
+	inline typename TRemoveReference<T>::Type&& MoveTemp(T&& obj)
+	{
+		return (typename TRemoveReference<T>::Type&&)obj;
+	}
+
 	class GEOMETRIC_API SMemory
 	{
 	public:

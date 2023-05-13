@@ -23,7 +23,8 @@ namespace GeometricEngine
 
 		void InitRenderTarget();
 
-		RHITexture2D* RenderTarget, *DepthTarget;
+		RHITexture2D* RenderTarget;
+		RHITexture2D *DepthTarget;
 		Vector2f SceneViewSize{1280, 720};
 		Camera SceneCamera;
 

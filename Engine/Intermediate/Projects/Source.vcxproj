@@ -42,6 +42,7 @@
     <ClCompile Include="..\..\Source\Engine\RendererCore\ShaderResource.cpp" />
     <ClCompile Include="..\..\Source\Engine\RendererCore\TextureResource2D.cpp" />
     <ClCompile Include="..\..\Source\Engine\Renderer\Camera.cpp" />
+    <ClCompile Include="..\..\Source\Engine\Renderer\FXAA.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Commands.cpp" />
     <ClCompile Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Device.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="..\..\Source\Engine\RendererCore\ShaderResource.h" />
     <ClInclude Include="..\..\Source\Engine\RendererCore\TextureResource2D.h" />
     <ClInclude Include="..\..\Source\Engine\Renderer\Camera.h" />
+    <ClInclude Include="..\..\Source\Engine\Renderer\FXAA.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11DynamicRHI.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Buffer.h" />
     <ClInclude Include="..\..\Source\Engine\RHI\DirectX\DX11\DX11Resources.h" />

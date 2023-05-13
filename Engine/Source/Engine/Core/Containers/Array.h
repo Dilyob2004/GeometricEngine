@@ -4,14 +4,6 @@
 #include <initializer_list>
 namespace GeometricEngine
 {
-	template<typename T> struct TRemoveReference { typedef T Type; };
-	template<typename T> struct TRemoveReference<T&> { typedef T Type; };
-	template<typename T> struct TRemoveReference<T&&> { typedef T Type; };
-	template<typename T>
-	inline typename TRemoveReference<T>::Type&& MoveTemp(T&& obj)
-	{
-		return (typename TRemoveReference<T>::Type&&)obj;
-	}
 	template<typename T, typename Allocator = HeapAllocator>
 	class TVector
 	{

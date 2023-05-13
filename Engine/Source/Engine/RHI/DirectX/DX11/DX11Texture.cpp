@@ -44,7 +44,7 @@ namespace GeometricEngine
 		Descriptor.MipLevels = Definition.MipLevels;
 		Descriptor.SampleDesc.Count = Definition.Samples;
 		Descriptor.SampleDesc.Quality =  (Definition.Samples > 1) ? D3D11_STANDARD_MULTISAMPLE_PATTERN : 0;
-		Descriptor.Usage = EngineTextureUsageToDX11(Definition.Usage);
+		Descriptor.Usage = EngineUsageToDX11(Definition.Usage);
 		Descriptor.ArraySize = 1;
 		if (Definition.Flags & TF_ShaderResource)
 			Descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;

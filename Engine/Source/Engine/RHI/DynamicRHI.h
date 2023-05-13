@@ -48,6 +48,7 @@ namespace GeometricEngine
 		virtual RHIVertexBuffer*		RHICreateVertexBuffer(const void*, U32 , U32, U32 = 0) = 0;
 		virtual RHIIndexBuffer*			RHICreateIndexBuffer(const U32*, U32) = 0;
 		virtual RHIUniformBuffer*		RHICreateUniformBuffer(void*, U32) = 0;
+		//virtual RHIBuffer*				RHICreateBuffer();
 
 		virtual RHITexture2D*			RHICreateTexture2D(const RHITextureDefinition& ) = 0;
 		virtual RHISamplerState*		RHICreateSamplerState(const RHISamplerStateDefinition& ) = 0;
@@ -63,20 +64,14 @@ namespace GeometricEngine
 		virtual void					RHISetPixelShader(const RHIPixelShader*) = 0;
 		virtual void					RHISetVertexShader(const RHIVertexShader*) = 0;
 
-		virtual void					RHISetVertexBuffer(const RHIVertexBuffer*) = 0;
-
 		virtual void					RHIUpdateUniformBuffer(const RHIUniformBuffer*, void*, U32) = 0;
 
 		virtual void					RHISetUniformBuffer(const RHIVertexShader*, const RHIUniformBuffer*) = 0;
 		virtual void					RHISetUniformBuffer(const RHIPixelShader*, const RHIUniformBuffer*) = 0;
+			
 
-
-		virtual void					RHIDrawPrimitiveIndexed(RHIIndexBuffer*, U32, U32, DrawType type = DrawType::Triangles) = 0;
-		virtual void					RHIDrawPrimitive(U32, U32, DrawType type = DrawType::Triangles) = 0;
-
-
-
-
+		virtual void					RHIDrawPrimitiveIndexed(RHIVertexBuffer*, RHIIndexBuffer*, U32, U32, DrawType type = DrawType::Triangles) = 0;
+		virtual void					RHIDrawPrimitive(RHIVertexBuffer*, U32, U32, DrawType type = DrawType::Triangles) = 0;
 
 	};
 	extern GEOMETRIC_API DynamicRHI* GDynamicRHI;
