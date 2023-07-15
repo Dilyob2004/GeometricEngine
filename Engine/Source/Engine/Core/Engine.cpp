@@ -6,63 +6,68 @@
 #include <Engine/ShaderCompiler/ShaderCompilerWorker.h>
 #include <Engine/ImageCore/ImageCore.h>
 #include <Engine/InputCore/InputCore.h>
-#include <Engine/Renderer/Camera.h>
-namespace GeometricEngine
+#include <Engine/Renderer/Renderer2D.h>
+
+TScopePtr<Window> Engine::MainWindow = NULL;
+RHIViewport* Engine::MainViewport = NULL;
+
+static FLevel* EmptyLevel;
+void Engine::InitializeProduct(const CharAnsi* CmdLine)
 {
-	TSharedPtr<Window> Engine::MainWindow = NULL;
-	TSharedPtr<RHIViewport> Engine::MainViewport = NULL;
-
-	void Engine::InitializeProduct(const CHAR* CmdLine)
+	if (!InitializeDynamicRHI())
 	{
-		LOG(CmdLine);
-		if (!InitializeDynamicRHI())
-		{
-			LOG("Fatal Error: Failed to Initizlied DynamicRHI!\n");
-			exit(-1);
-		}
-
-		ShaderCompilerWorker::Initialize();
-
-		WindowDefinition Info;
-		Info.PositionX = 200;
-		Info.PositionY = 200;
-		Info.SizeWidth = 1280;
-		Info.SizeHeight = 720;
-		Info.Title		= "Geometric Engine";
-		Info.HasBorder = true;
-		Info.IsRegularWindow = false;
-
-
-		MainWindow.reset(Window::Create(Info));
-
-		{
-			Image ApplicationIcon;
-			if (ApplicationIcon.Load("../../Content/Logo/64x64.png"))
-				MainWindow->SetIcon(ApplicationIcon.GetData(), ApplicationIcon.GetWidth(), ApplicationIcon.GetHeight());
-		}
-
-		RHIViewportDefinition Definition;
-		Definition.Width = MainWindow->GetWidth();
-		Definition.Height = MainWindow->GetHeight();
-		Definition.HandleWindow = MainWindow->GetHandle();
-
-		MainViewport.reset(GDynamicRHI->RHICreateViewport(Definition));
-
-	}
-	bool Engine::ShouldExit()
-	{
-		return Input::OnWindowClosed();
+		LOG("Fatal Error: Failed to Initizlied DynamicRHI!\n");
+		exit(-1);
 	}
 
-	void Engine::OnTick()
+	ShaderCompileWorker::DefaultInitialize();
+
+
+
+	WindowDefinition Info;
+	Info.SizeWidth = 1280;
+	Info.SizeHeight = 720;
+	Info.Title		= TEXT("Geometric Engine");
+	Info.Fullscreen = false;
+
+	MainWindow.reset(Window::Create(Info));
 	{
-		if (Input::OnWindowResized()) 
-			GDynamicRHI->RHIResizeViewport(MainViewport.get(), MainWindow->GetWidth(), MainWindow->GetHeight(), false);
-		
+		Image ApplicationIcon;
+		if (ApplicationIcon.Load(TEXT("../../Content/Logo/64x64.png")))
+			MainWindow->SetIcon(ApplicationIcon.GetData(), ApplicationIcon.GetWidth(), ApplicationIcon.GetHeight());
 	}
-	void Engine::OnDrawFrame()
+
+	RHIViewportDefinition Definition;
+	Definition.Width = MainWindow->GetWidth();
+	Definition.Height = MainWindow->GetHeight();
+	Definition.HandleWindow = MainWindow->GetHandle();
+	Definition.FullScreen = Info.Fullscreen;
+
+	MainViewport = GDynamicRHI->RHICreateViewport(Definition);
+
+	Renderer2D::Init();
+	EmptyLevel = new FLevel("DefaultLevel");
+
+	EmptyLevel->Deserialize("../../Content/Default.map");
+}
+bool Engine::ShouldExit()
+{
+	return Input::OnWindowClosed();
+}
+
+void Engine::OnTick()
+{
+	EmptyLevel->OnTick();
+	if (Input::OnWindowResized()) 
 	{
-		GDynamicRHI->RHIBeginFrameViewport(MainViewport.get());
-		GDynamicRHI->RHIEndFrameViewport(MainViewport.get());
+		GDynamicRHI->RHIResizeViewport(MainViewport, MainWindow->GetWidth(), MainWindow->GetHeight(), false);
+		EmptyLevel->OnResize({ (F32)MainWindow->GetWidth(), (F32)MainWindow->GetHeight() });
 	}
+}
+void Engine::OnDrawFrame()
+{
+	GDynamicRHI->RHIBeginFrameViewport(MainViewport);
+		EmptyLevel->OnDrawActors();
+
+	GDynamicRHI->RHIEndFrameViewport(MainViewport);
 }

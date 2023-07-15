@@ -1,45 +1,44 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 #include <Engine/InputDevice/InputDevice.h>
-namespace GeometricEngine
+
+class GEOMETRIC_API Keyboard : public InputDevice
 {
-	class GEOMETRIC_API Keyboard : public InputDevice
-	{
 		
-	public:
-		FORCEINLINE bool GetKey(KeyCode Key)
-		{
-			return NowData.KeyAction[static_cast<I32>(Key)];
-		}
-		FORCEINLINE bool GetKeyDown(KeyCode Key)
-		{
-			return (NowData.KeyAction[static_cast<I32>(Key)]
-				&& !PrevData.KeyAction[static_cast<I32>(Key)]);
-		}
-		FORCEINLINE bool GetKeyUp(KeyCode Key)
-		{
-			return (!NowData.KeyAction[static_cast<I32>(Key)]
-				&& PrevData.KeyAction[static_cast<I32>(Key)]);
-		}
+public:
+	FORCEINLINE bool GetKey(KeyCode Key)
+	{
+		return NowData.KeyAction[static_cast<I32>(Key)];
+	}
+	FORCEINLINE bool GetKeyDown(KeyCode Key)
+	{
+		return (NowData.KeyAction[static_cast<I32>(Key)]
+			&& !PrevData.KeyAction[static_cast<I32>(Key)]);
+	}
+	FORCEINLINE bool GetKeyUp(KeyCode Key)
+	{
+		return (!NowData.KeyAction[static_cast<I32>(Key)]
+			&& PrevData.KeyAction[static_cast<I32>(Key)]);
+	}
 
-		void OnKey(EventType Type, KeyCode Key);
-		virtual void Tick() override;
-		virtual void Reset() override;
-	protected:
-		explicit Keyboard() : InputDevice("Keyboard")
+	void OnKey(EventType Type, KeyCode Key);
+	virtual void Tick() override;
+	virtual void Reset() override;
+protected:
+	explicit Keyboard() : InputDevice(("Keyboard"))
+	{
+		NowData = PrevData = Data();
+	}
+	struct Data
+	{
+		explicit Data()
 		{
-			NowData = PrevData = Data();
+			SMemory::Set(KeyAction, sizeof(KeyAction), false);
 		}
-		struct Data
-		{
-			explicit Data()
-			{
-				SMemory::Set(KeyAction, sizeof(KeyAction), false);
-			}
-			bool KeyAction[100];
-		};
-		Data NowData, PrevData;
-
+		bool KeyAction[100];
 	};
-}
+	Data NowData, PrevData;
+
+};
+
 #endif

@@ -1,0 +1,20 @@
+cbuffer PSConstant: register(b0)
+{
+	float4 Color;
+};
+
+Texture2D Texture;
+SamplerState SamplerWrap;
+
+
+struct VertexOutQuad2D
+{
+	float4 Position : SV_POSITION;
+	float2 TexCoord: TEXCOORD;
+};
+
+float4 Main(VertexOutQuad2D Input) : SV_TARGET
+{
+
+	return Texture.Sample(SamplerWrap, Input.TexCoord) * Color;
+}

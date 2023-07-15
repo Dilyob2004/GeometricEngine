@@ -82,12 +82,42 @@
     <Filter Include="Source\Engine\RHI\DirectX\DX11">
       <UniqueIdentifier>{f6a4e428-bbcd-407c-92e4-168345ac9916}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\ThirdParty\Entt">
+      <UniqueIdentifier>{ec9b4da2-5122-450d-9c7d-c82582971730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Level">
+      <UniqueIdentifier>{32555d92-c737-42fb-b24c-6ec1ece7587f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\SlateCore">
+      <UniqueIdentifier>{82886ffa-06a5-4783-9c7f-9e4c1b9ea3cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\AssetRegistry">
+      <UniqueIdentifier>{f24af579-5479-40bb-9707-96521c82d7f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\rapidjson">
+      <UniqueIdentifier>{e37d36e0-4e71-43bd-9e69-622a3d567832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\rapidjson\error">
+      <UniqueIdentifier>{b9b9a9cb-6446-4f76-9783-350c37734227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\rapidjson\internal">
+      <UniqueIdentifier>{deff1977-e3b7-4f64-9c89-0a11c6e083e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\rapidjson\msinttypes">
+      <UniqueIdentifier>{cce91fe1-c360-4c1f-ad8b-491132225cd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\JsonCore">
+      <UniqueIdentifier>{e6a77642-d009-45ed-bca1-d49096548815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Logo">
+      <UniqueIdentifier>{1950cd6e-0197-4200-83f5-21470852c759}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Editor\Editor.cpp">
       <Filter>Source\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Editor\SceneViewport.cpp">
+    <ClCompile Include="..\..\Source\Editor\EditorViewport.cpp">
       <Filter>Source\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ThirdParty\ImGui\imgui.cpp">
@@ -114,9 +144,6 @@
     <ClCompile Include="..\..\Source\Engine\Core\Generic\File.cpp">
       <Filter>Source\Engine\Core\Generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\Core\Generic\FileSystem.cpp">
-      <Filter>Source\Engine\Core\Generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Engine\Core\Generic\Memory.cpp">
       <Filter>Source\Engine\Core\Generic</Filter>
     </ClCompile>
@@ -133,9 +160,6 @@
       <Filter>Source\Engine\Core\Misc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsFile.cpp">
-      <Filter>Source\Engine\Core\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsFileSystem.cpp">
       <Filter>Source\Engine\Core\Windows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Engine\Core\Windows\WindowsInput.cpp">
@@ -216,17 +240,8 @@
     <ClCompile Include="..\..\Source\Engine\RendererCore\Mesh.cpp">
       <Filter>Source\Engine\RendererCore</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\RendererCore\ShaderResource.cpp">
-      <Filter>Source\Engine\RendererCore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\RendererCore\TextureResource2D.cpp">
-      <Filter>Source\Engine\RendererCore</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Engine\Renderer\Camera.cpp">
       <Filter>Source\Engine\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Engine\Core\Application.cpp">
-      <Filter>Source\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Engine\Core\Core.cpp">
       <Filter>Source\Engine\Core</Filter>
@@ -237,12 +252,48 @@
     <ClCompile Include="..\..\Source\Engine\Renderer\FXAA.cpp">
       <Filter>Source\Engine\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Renderer\Renderer2D.cpp">
+      <Filter>Source\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Misc\String.cpp">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Level\Level.cpp">
+      <Filter>Source\Engine\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Level\Actor.cpp">
+      <Filter>Source\Engine\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Editor\PropertyEditor.cpp">
+      <Filter>Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Editor\OutlinerEditor.cpp">
+      <Filter>Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\SlateCore\SlateUtilities.cpp">
+      <Filter>Source\Engine\SlateCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ThirdParty\ImGui\ImGuizmo.cpp">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\Core\Misc\Debug.cpp">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Editor\ContentBrowserEditor.cpp">
+      <Filter>Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\RendererCore\Sprite.cpp">
+      <Filter>Source\Engine\RendererCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Engine\AssetRegistry\AssetRegistry.cpp">
+      <Filter>Source\Engine\AssetRegistry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Editor\Editor.h">
       <Filter>Source\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Editor\SceneViewport.h">
+    <ClInclude Include="..\..\Source\Editor\EditorViewport.h">
       <Filter>Source\Editor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ThirdParty\ImGui\imconfig.h">
@@ -293,9 +344,6 @@
     <ClInclude Include="..\..\Source\Engine\Core\Generic\FileBase.h">
       <Filter>Source\Engine\Core\Generic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\Core\Generic\FileSystem.h">
-      <Filter>Source\Engine\Core\Generic</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Engine\Core\Generic\Memory.h">
       <Filter>Source\Engine\Core\Generic</Filter>
     </ClInclude>
@@ -336,9 +384,6 @@
       <Filter>Source\Engine\Core\Windows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsFile.h">
-      <Filter>Source\Engine\Core\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsFileSystem.h">
       <Filter>Source\Engine\Core\Windows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Engine\Core\Windows\WindowsInput.h">
@@ -437,12 +482,6 @@
     <ClInclude Include="..\..\Source\Engine\RendererCore\Mesh.h">
       <Filter>Source\Engine\RendererCore</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\RendererCore\ShaderResource.h">
-      <Filter>Source\Engine\RendererCore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Engine\RendererCore\TextureResource2D.h">
-      <Filter>Source\Engine\RendererCore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Engine\Renderer\Camera.h">
       <Filter>Source\Engine\Renderer</Filter>
     </ClInclude>
@@ -461,5 +500,185 @@
     <ClInclude Include="..\..\Source\Engine\Renderer\FXAA.h">
       <Filter>Source\Engine\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\Templates.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\Entt\entt.hpp">
+      <Filter>Source\ThirdParty\Entt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Renderer\Renderer2D.h">
+      <Filter>Source\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Level\Level.h">
+      <Filter>Source\Engine\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Level\Actor.h">
+      <Filter>Source\Engine\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Level\ActorComponents.h">
+      <Filter>Source\Engine\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Editor\PropertyEditor.h">
+      <Filter>Source\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Editor\OutlinerEditor.h">
+      <Filter>Source\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\SlateCore\SlateUtilities.h">
+      <Filter>Source\Engine\SlateCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\ImGui\ImGuizmo.h">
+      <Filter>Source\ThirdParty\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\AssertionMacros.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\Core\Misc\Debug.h">
+      <Filter>Source\Engine\Core\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Editor\ContentBrowserEditor.h">
+      <Filter>Source\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\RendererCore\Sprite.h">
+      <Filter>Source\Engine\RendererCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\allocators.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\document.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\encodedstream.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\encodings.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\filereadstream.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\filewritestream.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\fwd.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\istreamwrapper.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\memorybuffer.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\memorystream.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\ostreamwrapper.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\pointer.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\prettywriter.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\rapidjson.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\reader.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\schema.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\stream.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\stringbuffer.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\writer.h">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\error\en.h">
+      <Filter>Source\ThirdParty\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\error\error.h">
+      <Filter>Source\ThirdParty\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\biginteger.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\diyfp.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\dtoa.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\ieee754.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\itoa.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\meta.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\pow10.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\regex.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\stack.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\strfunc.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\strtod.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\internal\swap.h">
+      <Filter>Source\ThirdParty\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\msinttypes\inttypes.h">
+      <Filter>Source\ThirdParty\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ThirdParty\rapidjson\msinttypes\stdint.h">
+      <Filter>Source\ThirdParty\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\JsonCore\JsonCore.h">
+      <Filter>Source\Engine\JsonCore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Engine\AssetRegistry\AssetRegistry.h">
+      <Filter>Source\Engine\AssetRegistry</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Source\ThirdParty\rapidjson\RapidJSON license.txt">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Source\ThirdParty\rapidjson\rapidjson.Build.cs">
+      <Filter>Source\ThirdParty\rapidjson</Filter>
+    </None>
+    <None Include="..\..\Source\Shaders\PSFXAA.gsf">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="..\..\Source\Shaders\ScreenPixelShader.gsf">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="..\..\Source\Shaders\ScreenVertexShader.gsf">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="..\..\Source\Shaders\VSFXAA.gsf">
+      <Filter>Source\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\Content\Logo\512x512.ico">
+      <Filter>Content\Logo</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -1,0 +1,19 @@
+cbuffer VSConstants: register(b0)
+{
+	matrix WorldViewProjection;
+	matrix Transform;
+};
+
+struct VertexOutQuad2D
+{
+    float4 Position : SV_POSITION;
+	float2 TexCoord: TEXCOORD;
+};
+VertexOutQuad2D Main( in float3 Position :	POSITION,
+					in float2 TexCoord :	TEXCOORD)
+{
+	VertexOutQuad2D Out = (VertexOutQuad2D)0;
+	Out.Position		= mul(mul(WorldViewProjection, Transform), float4(Position, 1.0));
+	Out.TexCoord		= TexCoord;
+	return Out;
+}

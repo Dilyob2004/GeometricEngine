@@ -1,10 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
-#include <dwmapi.h>
-#include <windows.h>
-#include <iostream>
-
-#if defined (GEOMETRIC_BUILD_DLL)
+#if defined (BUILD_DLL)
     #define GEOMETRIC_API __declspec(dllexport)
 #else
     #define GEOMETRIC_API __declspec(dllimport)
@@ -18,14 +14,19 @@
 #define ARRAY_COUNT(X) sizeof(X) / sizeof(typeid(X).raw_name())
 #define DYNAMIC_CAST(Type, Name, Value) Type* Name = (Type*) Value
 #define OVERRIDE override
+#define FINAL final
 
 
+
+#define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 #pragma warning(disable: 4251)
 
 typedef char     I8;
 typedef short    I16;
 typedef int      I32;
 typedef long     I64;
+typedef long long     I128;
 
 typedef signed char         S8;
 typedef signed short        S16;
@@ -42,9 +43,20 @@ typedef unsigned long long  U128;
 typedef float	F32;
 typedef double	F64;
 
-typedef wchar_t	 WCHAR;
-typedef char	 CHAR;
+typedef wchar_t	 Char;
+typedef char	 CharAnsi;
 
 
+struct FTimeItems
+{
+	int Years;
+	int Month;
+	int Week;
+	int Day;
+	int Hour;
+	int Minute;
+	int Second;
+	int MilliSecond;
+};
 
 #endif // CONFIG_H

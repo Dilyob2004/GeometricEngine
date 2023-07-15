@@ -1,20 +1,32 @@
-#include <Engine/Core/Misc/Log.h>
-
-namespace GeometricEngine
+#include "Log.h"
+#include <stdio.h>
+#include <Engine/Core/Generic/Platform.h>
+void LogConsole::MsgString(const String& Format)
 {
-	void LogConsole::Msg(const CHAR* text)
+	FTimeItems Items;
+	Platform::GetTime(Items);
+	String TimeFormat = String::Format("[%d%d:%d%d:%d%d] ", Items.Hour / 10, Items.Hour % 10,
+															Items.Minute / 10, Items.Minute % 10, 
+															Items.Second / 10, Items.Second % 10);
+	printf(*(TimeFormat + Format));
+}
+void LogConsole::Msg(ELogCategory Category, const String& Format)
+{
+	String ResultLog;
+	switch (Category)
 	{
-		printf("%s", text);
+		case ELogCategory::Error:	ResultLog += "Error: "; break;
+		case ELogCategory::Warning: ResultLog += "Warning: "; break;
+		case ELogCategory::Log:		ResultLog += "Info: "; break;
+		default: break;
 	}
-	void LogConsole::MsgFormat(const CHAR* format, const CHAR* text)
-	{
-		printf(format, text);
-	}
-	void LogConsole::MsgFormatArgs(const CHAR* format, ...)
-	{
-		va_list ArgumentList;
-		va_start(ArgumentList, format);
-		vprintf(format, ArgumentList);
-		va_end(ArgumentList);
-	}
+	ResultLog.Append(Format);
+
+	FTimeItems Items;
+	Platform::GetTime(Items);
+	String TimeFormat = String::Format("[%d%d:%d%d:%d%d] ", Items.Hour / 10, Items.Hour % 10,
+		Items.Minute / 10, Items.Minute % 10,
+		Items.Second / 10, Items.Second % 10);
+
+	printf(*(TimeFormat + ResultLog));
 }

@@ -5,38 +5,35 @@
 #include <Engine/Core/Misc/String.h>
 #include <Engine/Core/Misc/StringView.h>
 
-namespace GeometricEngine
+enum class ShaderModel
 {
-
-	enum class ShaderModel
-	{
-		SM4, SM5
-	};
-	enum class ShaderType
-	{
-		None,
-		Pixel,
-		Vertex,
-		Geometry,
-		Hull,
-		Compute
-	};
-	struct ShaderCompilerInput
-	{
-		ShaderModel Model = ShaderModel::SM4;
-		ShaderType  Type = ShaderType::None;
-		String		ShaderName;
-		StringView	EntryPoint;
-	};
-	struct ShaderCompilerOutput
-	{
-		TVector<U32> Code;
-		TVector<CHAR> Errors;
-		ShaderType  Type = ShaderType::None;
-		String		ShaderName;
-	};
+	SM4, SM5, SM6
+};
+enum class ShaderType
+{
+	None,
+	Pixel,
+	Vertex,
+	Geometry,
+	Hull,
+	Compute
+};
+struct ShaderCompilerInput
+{
+	ShaderModel Model = ShaderModel::SM5;
+	ShaderType  Type = ShaderType::None;
+	String		ShaderName;
+	String		EntryPoint;
+};
+struct ShaderCompilerOutput
+{
+	TArray<U32>		Code;
+	TArray<String>	Errors;
+	ShaderType		Type = ShaderType::None;
+	String			ShaderName;
+};
 
 
-	GEOMETRIC_API void CompileShader(const ShaderCompilerInput& Input, ShaderCompilerOutput& Output);
-}
+GEOMETRIC_API void CompileShader(const ShaderCompilerInput& Input, ShaderCompilerOutput& Output);
+
 #endif // !SHADERCOMPILER_H

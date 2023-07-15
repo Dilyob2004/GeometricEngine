@@ -5,81 +5,83 @@
 #include <Engine/Core/Containers/Queue.h>
 #include <Engine/Core/Misc/String.h>
 #include <Engine/Math/Vector2.h>
-namespace GeometricEngine
+
+class GEOMETRIC_API InputDevice
 {
-	class GEOMETRIC_API InputDevice
+public:
+	enum class EventType
+	{
+		None,
+		KeyDown,
+		KeyUp,
+
+		MouseDown,
+		MouseUp,
+		MouseWheel,
+		MouseMove,
+		MouseDoubleClick,
+
+		Char,
+		ClosedWindow,
+		ResizedWindow
+	};
+	class Event
 	{
 	public:
-		enum class EventType
+
+		EventType Type;
+		Event()
+			: Type(EventType::None)
+			, CharData()
 		{
-			None,
-			KeyDown,
-			KeyUp,
-			MouseDown,
-			MouseUp,
-			MouseWheel,
-			MouseMove,
-			MouseDoubleClick,
-			Char,
-			ClosedWindow,
-			ResizedWindow
-		};
-		class Event
+
+		}
+		union
 		{
-		public:
-			EventType Type;
-			Event()
-				: Type(EventType::None)
-				, CharData()
+			struct
 			{
+				U32 Width;
+				U32 Height;
+			}ResizeData;
 
-			}
-			union
+			struct
 			{
-				struct
-				{
-					U32 Width;
-					U32 Height;
-				}ResizeData;
+				CharAnsi Char;
+			} CharData;
 
-				struct
-				{
-					CHAR Char;
-				} CharData;
-
-				struct
-				{
-					KeyCode Key;
-				}KeyData;
+			struct
+			{
+				KeyCode Key;
+			}KeyData;
 
 
-				struct
-				{
-					MouseCode Code;
-					Vector2f Position;
-					F32 Delta;
-				}MouseData;
+			struct
+			{
+				MouseCode Code;
+				Vector2f Position;
+				F32 Delta;
+			}MouseData;
 
-			};
 		};
-		FORCEINLINE const String& GetDeviceName() const
-		{
-			return NameDevice;
-		}
-	protected:
-		explicit InputDevice(const String& Name)
-			: NameDevice(Name)
-			, QueueEvents()
-		{
-		}
-		String NameDevice;
-		TQueue<Event> QueueEvents;
-	public:
-		virtual void Reset()
-		{
-			QueueEvents.Clear();
-		}
-		virtual void Tick() = 0;
 	};
-}
+	FORCEINLINE const String& GetDeviceName() const
+	{
+		return NameDevice;
+	}
+protected:
+	explicit InputDevice(const String& Name)
+		: NameDevice(Name)
+		, QueueEvents()
+	{
+	}
+	String NameDevice;
+	TQueue<Event> QueueEvents;
+public:
+	virtual void Reset()
+	{
+		QueueEvents.Clear();
+	}
+	virtual void Tick() = 0;
+};
+
 #endif // !INPUTDEVICE_H

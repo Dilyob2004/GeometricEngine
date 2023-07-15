@@ -5,79 +5,77 @@
 #include <Engine/ImageCore/ImageCore.h>
 #include <Engine/InputCore/InputCore.h>
 #include <Engine/ShaderCompiler/ShaderCompilerWorker.h>
-namespace GeometricEngine
+#include <ImGui/imgui.h>
+
+TScopePtr < Window> Editor::MainWindow;
+RHIViewport* Editor::MainViewport = NULL;
+EditorViewport* Editor::EditorView = NULL;
+PropertyEditor* Editor::Property = NULL;
+OutlinerEditor* Editor::Outliner = NULL;
+ContentBrowserEditor* Editor::ContentBrowser = NULL;
+
+
+void Editor::InitializeProduct(const CharAnsi* CmdLine)
 {
-	TSharedPtr<Window> Editor::MainWindow = NULL;
-	TSharedPtr<RHIViewport> Editor::MainViewport = NULL;
-	TSharedPtr<SceneViewport> Editor::SceneRenderer = NULL;
-
-
-	void Editor::InitializeProduct(const CHAR* CmdLine)
+	if (!InitializeDynamicRHI())
 	{
-		if (!InitializeDynamicRHI())
-		{
-			LOG("Fatal Error: Failed to Initizlied DynamicRHI!\n");
-			exit(-1);
-		}
+		LOG("Error:[RHI] Failed to Initizlied!\n");
+		exit(-1);
+	}
+	LOG("Info: [DYNAMICRHI] Initialized!\n");
+	ShaderCompileWorker::DefaultInitialize();
 
-		ShaderCompilerWorker::Initialize();
+	WindowDefinition Info;
+	Info.Title = ("GeometricEditor");
+	Info.SizeWidth = 1280;
+	Info.SizeHeight = 720;
+	Info.Fullscreen = false;
+	MainWindow.reset(Window::Create(Info));
 
-		WindowDefinition Info;
-		Info.PositionX = 200;
-		Info.PositionY = 200;
-		Info.SizeWidth = 1280;
-		Info.SizeHeight = 720;
-		Info.Title = "Geometric Editor";
-		Info.HasBorder = true;
-		Info.IsRegularWindow = false;
+	RHIViewportDefinition Definition;
+	Definition.Width = MainWindow->GetWidth();
+	Definition.Height = MainWindow->GetHeight();
+	Definition.HandleWindow = MainWindow->GetHandle();
+	Definition.FullScreen = Info.Fullscreen;
+	MainViewport = GDynamicRHI->RHICreateViewport(Definition),
+					GDynamicRHI->RHICreateGUI(MainWindow->GetHandle());
 
-
-		MainWindow.reset(Window::Create(Info));
-
-		{
-			Image ApplicationIcon;
-			if (ApplicationIcon.Load("../../Content/Logo/64x64.png"))
-				MainWindow->SetIcon(ApplicationIcon.GetData(), ApplicationIcon.GetWidth(), ApplicationIcon.GetHeight());
-		}
-
-		RHIViewportDefinition Definition;
-		Definition.Width = MainWindow->GetWidth();
-		Definition.Height = MainWindow->GetHeight();
-		Definition.HandleWindow = MainWindow->GetHandle();
-
-		MainViewport.reset(GDynamicRHI->RHICreateViewport(Definition));
-		SceneRenderer.reset(new SceneViewport());
-
-		GDynamicRHI->RHICreateGUI(MainWindow->GetHandle());
-
+	EditorView = new EditorViewport();
+	Property = new PropertyEditor();
+	Outliner = new OutlinerEditor(EditorView->GetActiveLevel());
+	ContentBrowser = new ContentBrowserEditor();
 		
-	}
-	bool Editor::ShouldExit()
-	{
-		return Input::OnWindowClosed();
-	}
+}
+bool Editor::ShouldExit()
+{
+	return Input::OnWindowClosed();
+}
 
-	void Editor::OnTick()
-	{
-		if (Input::OnWindowResized())
-			GDynamicRHI->RHIResizeViewport(MainViewport.get(), MainWindow->GetWidth(), MainWindow->GetHeight(), false);
+void Editor::OnTick()
+{
+	if (Input::OnWindowResized())
+		GDynamicRHI->RHIResizeViewport(MainViewport, MainWindow->GetWidth(), MainWindow->GetHeight(), false);
 
 	
-		SceneRenderer->OnTick();
-	}
-	void Editor::OnDrawFrame()
-	{
+	EditorView->OnTick();
+}
+void Editor::OnDrawFrame()
+{
 
-		SceneRenderer->OnDrawRenderer();
+	EditorView->OnRenderer();
 
 
-		GDynamicRHI->RHIBeginFrameViewport(MainViewport.get());
+	GDynamicRHI->RHIBeginFrameViewport(MainViewport);
 
-			GDynamicRHI->RHIBeginFrameGUI();
-				SceneRenderer->OnDrawSceneViewport();
-			GDynamicRHI->RHIEndFrameGUI();
+		GDynamicRHI->RHIBeginFrameGUI();
 
-		GDynamicRHI->RHIEndFrameViewport(MainViewport.get());
+			EditorView->OnPaint();
+			Property->OnPaint();
+			Outliner->OnPaint();
+			ContentBrowser->OnPaint();
 
-	}
+		GDynamicRHI->RHIEndFrameGUI();
+
+	GDynamicRHI->RHIEndFrameViewport(MainViewport);
+
 }

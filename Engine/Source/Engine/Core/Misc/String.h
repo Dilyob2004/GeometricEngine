@@ -2,337 +2,397 @@
 #define STRING_H
 #include <Engine/Core/Misc/CString.h>
 #include <Engine/Core/Generic/Memory.h>
-namespace GeometricEngine
+#include <Engine/Core/Misc/AssertionMacros.h>
+#include <Engine/Core/Containers/Array.h>
+
+class String
 {
-	class String
+public:
+	String() = default;
+	String(const CharAnsi* Str) : String()
 	{
-	public:
-		String() = default;
-		String(const CHAR* Str)
-		{
-			Update(Str, CString::Length(Str));
-		}
-		String(const CHAR* Str, I32 NewLength)
-		{
-			Update(Str, NewLength);
-		}
-		String(const String& Str)
-		{
-			Update(Str.Pointer(), Str.Size());
-		}
-		~String()
-		{
-			SMemory::Free(Data);
+		Set(Str, CString::Length(Str));
+	}
+	String(const CharAnsi* Str, I32 NewLength) : String()
+	{
+		Set(Str, NewLength);
+	}
+	String(const String& Str) : String()
+	{
+		Set(Str.Pointer(), Str.Size());
+	}
+	~String()
+	{
+		SMemory::Free(Data);
+	}
+
+public:
+
+	I32 Compare(const String& Other, ESearchCase Case = ESearchCase::Sensitive)
+	{
+		return (Case == ESearchCase::Sensitive) ?
+			CString::Compare(**this, *Other) :
+			CString::CompareCaseInSensitive(**this, *Other);
+	}
+	I32 Find(CharAnsi c) const
+	{
+		const CharAnsi* RESTRICT First = Pointer();
+		for (const CharAnsi* RESTRICT i = First, *RESTRICT End = i + Size(); i != End; i++)
+			if (*i == c)
+				return static_cast<I32>(i - First);
+
+		return -1;
+	}
+	I32 FindLast(CharAnsi c) const
+	{
+		const CharAnsi* RESTRICT Last = Pointer() + Size();
+		for (const CharAnsi* RESTRICT i = Last, *RESTRICT First = i - Size(); i != First;) {
+			i--;
+			if (*i == c)
+				return static_cast<I32>(i - First);
 		}
 
-		void Update(const CHAR* Str, I32 NewLength)
-		{
-			if (!Str || NewLength <= 0)
-				return;
-
-			if (Length != NewLength)
-			{
-				SMemory::Free(Data);
-				if (NewLength != 0)
-				{
-					Data = (CHAR*)SMemory::Allocate((NewLength + 1) * sizeof(CHAR));
-					Data[NewLength] = 0;
-				}
-				else
-					Data = NULL;
-				Length = NewLength;
-			}
-			SMemory::Copy(Data, Str, NewLength * sizeof(CHAR));
-		}
-		I32 Compare(const String& Other, ESearchCase Case = ESearchCase::Sensitive)
-		{
-			return (Case == ESearchCase::Sensitive) ?
-				CString::Compare(**this, *Other) :
-				CString::CompareCaseInSensitive(**this, *Other);
-		}
-		I32 Find(CHAR c) const
-		{
-			const CHAR* RESTRICT First = Pointer();
-			for (const CHAR* RESTRICT i = First, *RESTRICT End = i + Size(); i != End; i++)
-				if (*i == c)
-					return static_cast<I32>(i - First);
-
+		return -1;
+	}
+	I32 Find(const CharAnsi* Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
+	{
+		if (Str == nullptr || !Data)
 			return -1;
-		}
-		I32 FindLast(CHAR c) const
-		{
-			const CHAR* RESTRICT Last = Pointer() + Size();
-			for (const CHAR* RESTRICT i = Last, *RESTRICT First = i - Size(); i != First;) {
-				i--;
-				if (*i == c)
-					return static_cast<I32>(i - First);
-			}
 
+		if (StartPosition < Size())
+			StartPosition = Size();
+
+		const CharAnsi* First = Data;
+
+		if (StartPosition != -1)
+			First += StartPosition;
+
+		const CharAnsi* Temp = (Case == ESearchCase::InSensitive) ?
+			CString::FindCaseInSensitive(First, Str) :
+			CString::Find(First, Str);
+
+		return	Temp ? static_cast<I32>(Temp - **this) : -1;
+	}
+	I32 FindLast(const CharAnsi* Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
+	{
+		const I32 SizeOfStr = CString::Length(Str);
+		if (Str == nullptr || !Data)
 			return -1;
-		}
-		I32 Find(const CHAR* Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
+		if (StartPosition == -1)
+			StartPosition = Size();
+		const CharAnsi* First = Data;
+		for (I32 i = StartPosition - SizeOfStr; i >= 0; i--)
 		{
-			if (Str == NULL || !Data)
-				return -1;
-
-			if (StartPosition < Size())
-				StartPosition = Size();
-
-			const CHAR* First = Data;
-
-			if (StartPosition != -1)
-				First += StartPosition;
-
-			const CHAR* Temp = (Case == ESearchCase::InSensitive) ?
-				CString::FindCaseInSensitive(First, Str) :
-				CString::Find(First, Str);
-
-			return	Temp ? static_cast<I32>(Temp - **this) : -1;
+			if (Case == ESearchCase::InSensitive ? CString::CompareCaseInSensitive(Data, Str, SizeOfStr)
+				: CString::Compare(Data, Str, SizeOfStr) == 0)
+				return i;
 		}
-		I32 FindLast(const CHAR* Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
+
+		return -1;
+	}
+	I32 Find(const String& Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
+	{
+		return Find(Str.Pointer(), Case, StartPosition);
+	}
+	I32 FindLast(const String& Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
+	{
+		return FindLast(Str.Pointer(), Case, StartPosition);
+	}
+	I32 FindIndexOf(CharAnsi c, I32 Index = 0)
+	{
+		while (Index < Size())
 		{
-			const I32 SizeOfStr = CString::Length(Str);
-			if (Str == NULL || !Data)
-				return -1;
-			if (StartPosition == -1)
-				StartPosition = Size();
-			const CHAR* First = Data;
-			for (I32 i = StartPosition - SizeOfStr; i >= 0; i--)
+			if (Data[Index] == c)
+				return Index;
+			Index++;
+		}
+		return -1;
+	}
+	I32 FindIndexOf(const CharAnsi* Str, I32 Index = 0)
+	{
+		while (Index < Size())
+		{
+
+			const CharAnsi C = Data[Index];
+			const CharAnsi* S = Str;
+
+			while (*S)
 			{
-				if (Case == ESearchCase::InSensitive ? CString::CompareCaseInSensitive(Data, Str, SizeOfStr)
-					: CString::Compare(Data, Str, SizeOfStr) == 0)
-					return i;
-			}
-
-			return -1;
-		}
-		I32 Find(const String & Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
-		{
-			return Find(Str.Pointer(), Case, StartPosition);
-		}
-		I32 FindLast(const String & Str, ESearchCase Case = ESearchCase::Sensitive, I32 StartPosition = -1)
-		{
-			return FindLast(Str.Pointer(), Case, StartPosition);
-		}
-		I32 FindIndexOf(CHAR c, I32 Index = 0)
-		{
-			while (Index < Size())
-			{
-				if (Data[Index] == c)
+				if (C == *S)
 					return Index;
-				Index++;
+				++S;
 			}
-			return -1;
+			Index++;
 		}
-		I32 FindIndexOf(const CHAR* Str, I32 Index = 0)
+		return -1;
+	}
+	bool StartWith(CharAnsi c, ESearchCase SearchCase = ESearchCase::Sensitive) const
+	{
+		if (SearchCase == ESearchCase::InSensitive)
+			return Size() > 0 && (CString::ToLower(c) == CString::ToLower(Data[0]));
+
+		return Size() > 0 && Data[0] == c;
+	}
+	bool EndWith(CharAnsi c, ESearchCase SearchCase = ESearchCase::Sensitive) const
+	{
+		if (SearchCase == ESearchCase::InSensitive)
+			return Size() > 0 && (CString::ToLower(c) == CString::ToLower(Data[Size() - 1]));
+
+		return Size() > 0 && Data[Size() - 1] == c;
+	}
+	bool StartWith(const String& Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
+	{
+		if (Str.IsEmpty() || Size() < Str.Size())
+			return false;
+
+		if (SearchCase == ESearchCase::InSensitive)
+			return CString::CompareCaseInSensitive(Pointer(), *Str, Str.Size()) == 0;
+
+		return CString::Compare(Pointer(), *Str, Str.Size()) == 0;
+	}
+	bool EndWith(const String& Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
+	{
+		if (Str.IsEmpty() || Size() < Str.Size())
+			return false;
+
+		if (SearchCase == ESearchCase::InSensitive)
+			return CString::CompareCaseInSensitive(&(*this)[Size() - Str.Size()], *Str, Str.Size()) == 0;
+
+		return CString::Compare(&(*this)[Size() - Str.Size()], *Str, Str.Size()) == 0;
+	}
+	String Replace(const CharAnsi* From, const CharAnsi* To, ESearchCase Case = ESearchCase::Sensitive)
+	{
+		return 0;
+	}
+	String SubString(I32 Index) const
+	{
+		Check(Index >= 0 && Index <= Length-1);
+		return String(Data + Index, Length - Index);
+	}
+	String SubString(I32 Index, I32 Count) const
+	{
+		Check(Count >= 0 && Index >= 0 && Index + Count <= Length - 1 );
+		return String(Data + Index, Count);
+	}
+	TArray<String> Split(CharAnsi C) const
+	{
+		TArray<String> Result;
+		I32 Start = 0;
+		for (int i = 0; i < Length; i++)
 		{
-			while (Index < Size())
+			if (Data[i] == C)
 			{
-
-				const CHAR C = Data[Index];
-				const CHAR* S = Str;
-
-				while (*S)
-				{
-					if (C == *S)
-						return Index;
-					++S;
-				}
-				Index++;
+				Result.Push(SubString(Start, i - Start));
+				Start = i + 1;
 			}
-			return -1;
 		}
-		bool StartWith(CHAR c, ESearchCase SearchCase = ESearchCase::Sensitive) const
+		if (Length - Start > 0)
 		{
-			if (SearchCase == ESearchCase::InSensitive)
-				return Size() > 0 && (CString::ToLower(c) == CString::ToLower(Data[0]));
+			Result.Push(SubString(Start, Length - Start));
+		}
+		return Result;
+	}
+	F32 ToFloat() const
+	{
+		return CString::Atof(Data);
+	}
+	I32 ToInt() const
+	{
+		return CString::Atoi(Data);
+	}
+	static String Format(const CharAnsi* Buffer, ...);
+public:
 
-			return Size() > 0 && Data[0] == c;
-		}
-		bool EndWith(CHAR c, ESearchCase SearchCase = ESearchCase::Sensitive) const
-		{
-			if (SearchCase == ESearchCase::InSensitive)
-				return Size() > 0 && (CString::ToLower(c) == CString::ToLower(Data[Size() - 1]));
 
-			return Size() > 0 && Data[Size() - 1] == c;
-		}
-		bool StartWith(const String & Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
-		{
-			if (Str.IsEmpty() || Size() < Str.Size())
-				return false;
+	void Set(const CharAnsi* Str, I32 NewLength);
+	void Resize(I32 NewLength);
+	void ReserveUninitialized(I32 NewLength);
 
-			if (SearchCase == ESearchCase::InSensitive)
-				return CString::CompareCaseInSensitive(Pointer(), *Str, Str.Size()) == 0;
+	void Clear()
+	{
+		SMemory::Free(Data);
+		Data = nullptr;
+		Length = 0;
+	}
 
-			return CString::Compare(Pointer(), *Str, Str.Size()) == 0;
-		}
-		bool EndWith(const String & Str, ESearchCase SearchCase = ESearchCase::Sensitive) const
-		{
-			if (Str.IsEmpty() || Size() < Str.Size())
-				return false;
+public:
+	FORCEINLINE CharAnsi& operator[](I32 Index)
+	{
+		Check(Index >= 0 && Index <= Length);
+		return Data[Index];
+	}
+	FORCEINLINE const CharAnsi& operator[](I32 Index) const
+	{
+		Check(Index >= 0 && Index <= Length);
+		return Data[Index];
+	}
+	void Append(const CharAnsi* Str, I32 Size);
 
-			if (SearchCase == ESearchCase::InSensitive)
-				return CString::CompareCaseInSensitive(&(*this)[Size() - Str.Size()], *Str, Str.Size()) == 0;
+	void Append(CharAnsi C)
+	{
+		Append(&C, 1);
+	}
+	void Append(const CharAnsi* Str)
+	{
+		Append(Str, CString::Length(Str));
+	}
+	void Append(const String& Str)
+	{
+		Append(Str.Pointer(), Str.Size());
+	}
 
-			return CString::Compare(&(*this)[Size() - Str.Size()], *Str, Str.Size()) == 0;
-		}
-		String Replace(const CHAR* From, const CHAR* To, ESearchCase Case = ESearchCase::Sensitive)
-		{
-			return 0;
-		}
-		
-		
-		
-		void Resize(I32 NewLength)
-		{
-			const CHAR* OldData = Data;
-			const I32 MinLength = min(NewLength, Length);
-			Length = NewLength;
-			Data = (CHAR*)SMemory::Allocate((Length + 1) * sizeof(CHAR));
-			SMemory::Copy(Data, OldData, MinLength * sizeof(CHAR));
-			Data[Length] = 0;
-			SMemory::Free((CHAR*)OldData);
-		}
-		
-		
-		
-		void Clear()
-		{
-			SMemory::Free(Data);
-			Data = NULL;
-			Length = 0;
 
-		}
-		FORCEINLINE CHAR& operator[](I32 Index)
-		{
-			_ASSERT(Index >= 0 && Index <= Length);
-			return Data[Index];
-		}
-		FORCEINLINE const CHAR& operator[](I32 Index) const
-		{
-			_ASSERT(Index >= 0 && Index <= Length);
-			return Data[Index];
-		}
-		void Append(const CHAR* Str, I32 Size)
-		{
-			if (Size == 0)
-				return;
+public:
 
-			CHAR* OldData = Data;
-			I32 OldLength = Length;
+	FORCEINLINE bool operator == (const String& Other) const
+	{
+		return (Length == Other.Length) && (CString::Compare(Data, Other.Data) == 0);
+	}
+	FORCEINLINE bool operator != (const String& Other) const
+	{
+		return !(*this == Other);
+	}
 
-			Length += Size;
-			Data = (CHAR*)SMemory::Allocate((Length + 1) * sizeof(CHAR));
-			SMemory::Copy(Data, OldData, OldLength * sizeof(CHAR));
-			SMemory::Copy(Data + OldLength, Str, Size * sizeof(CHAR));
 
-			Data[Length] = 0;
+	FORCEINLINE bool operator == (const CharAnsi* OtherData) const
+	{
+		return (CString::Compare(Data, OtherData) == 0);
+	}
+	FORCEINLINE bool operator != (const CharAnsi* OtherData) const
+	{
+		return (CString::Compare(Data, OtherData) != 0);
+	}
 
-			SMemory::Free(OldData);
-		}
-		void Append(const String& Str)
-		{
-			Append(Str.Pointer(), Str.Size());
-		}
+	FORCEINLINE bool operator < (const String& Other) const
+	{
+		return (CString::Compare(Data, Other.Data) < 0);
+	}
+	FORCEINLINE bool operator <= (const String& Other) const
+	{
+		return (CString::Compare(Data, Other.Data) <= 0);
+	}
+	FORCEINLINE bool operator > (const String& Other) const
+	{
+		return (CString::Compare(Data, Other.Data) > 0);
+	}
+	FORCEINLINE bool operator >= (const String& Other) const
+	{
+		return (CString::Compare(Data, Other.Data) >= 0);
+	}
+	FORCEINLINE String& operator += (const String& Str)
+	{
+		Check(Str.NotEmpty());
+		Append(Str.Pointer(), Str.Size());
+		return *this;
+	}
+	FORCEINLINE String& operator += (const CharAnsi* Str)
+	{
+		Check(Str);
+		Append(Str, CString::Length(Str));
+		return *this;
+	}
+	FORCEINLINE String& operator += (CharAnsi C)
+	{
+		Check(C);
+		Append(&C, 1);
+		return *this;
+	}
+	FORCEINLINE String& operator = (const String& Other)
+	{
+		Check(Other.NotEmpty());
+		if (this != &Other)
+			Set(Other.Pointer(), Other.Size());
+		return *this;
+	}
+	String& operator = (const CharAnsi* Other)
+	{
+		Check(Other);
+		if (Data != Other)
+			Set(Other, CString::Length(Other));
+		return *this;
+	}
+	String& operator = (CharAnsi Other)
+	{
+		Check(Other);
+		Set(&Other, 1);
+		return *this;
+	}
+public:
+	FORCEINLINE String operator + (CharAnsi C)
+	{
+		Check(C);
+		Append(C);
+		return *this;
+	}
 
-		FORCEINLINE bool operator == (const String& Other) const
-		{
-			return Length == Other.Length && (CString::Compare(Data, Other.Data) == 0);
-		}
-		FORCEINLINE bool operator != (const String& Other) const
-		{
-			return !(*this == Other);
-		}
-		FORCEINLINE bool operator == (const CHAR* Other) const
-		{
-			return *this == Other;
-		}
-		FORCEINLINE bool operator != (const CHAR* Other) const
-		{
-			return !(*this == Other);
-		}
 
-		FORCEINLINE bool operator < (const String& Other) const
-		{
-			return (CString::Compare(Data, Other.Data) < 0);
-		}
-		FORCEINLINE bool operator <= (const String& Other) const
-		{
-			return (CString::Compare(Data, Other.Data) <= 0);
-		}
-		FORCEINLINE bool operator > (const String& Other) const
-		{
-			return (CString::Compare(Data, Other.Data) > 0);
-		}
-		FORCEINLINE bool operator >= (const String& Other) const
-		{
-			return (CString::Compare(Data, Other.Data) >= 0);
-		}
-		FORCEINLINE bool IsEmpty() const
-		{
-			return Length == 0;
-		}
+	FORCEINLINE String operator + (const CharAnsi* Str) 
+	{
+		Check(Str);
+		Append(Str);
+		return *this;
+	}
+	FORCEINLINE String operator + (const String& Str) 
+	{
+		Check(Str.NotEmpty());
+		Append(Str);
+		return *this;
+	}
+	FORCEINLINE String& operator /=(const CharAnsi* Str)
+	{
+		if (Length > 1 && Data[Length-2] != '/' && Data[Length - 2] != '\\')
+			*this += "/";
 
-		FORCEINLINE bool NotEmpty() const
-		{
-			return Length != 0;
-		}
-		FORCEINLINE CHAR* Pointer()
-		{
-			return Data;
-		}
-		FORCEINLINE const CHAR* Pointer() const
-		{
-			return Data ? Data : "";
-		}
-		FORCEINLINE I32 Size() const
-		{
-			return Length;
-		}
-		FORCEINLINE String& operator += (const String& Str)
-		{
-			Append(Str.Pointer(), Str.Size());
-			return *this;
-		}
-		FORCEINLINE String& operator += (const CHAR* Str)
-		{
-			Append(Str, CString::Length(Str));
-			return *this;
-		}
-		FORCEINLINE String& operator += (CHAR C)
-		{
-			Append(&C, 1);
-			return *this;
-		}
-		FORCEINLINE String& operator = (const String& Other)
-		{
-			if (this != &Other)
-				Update(Other.Pointer(), Other.Size());
-			return *this;
-		}
-		String& operator = (const CHAR* Other)
-		{
-			if (Data != Other)
-				Update(Other, CString::Length(Other));
-			return *this;
-		}
-		String& operator = (CHAR Other)
-		{
-			Update(&Other, 1);
-			return *this;
-		}
-		FORCEINLINE const CHAR* operator*() const
-		{
-			return Data;
-		}
-		FORCEINLINE  CHAR* operator*()
-		{
-			return Data;
-		}
-	protected:
-		
-		CHAR* Data = NULL;
-		I32 Length = 0;
-	};
-}
+		return *this += Str;
+	}
+	FORCEINLINE String& operator /=(const String& Str)
+	{
+		return operator/=( *Str );
+	}
+	FORCEINLINE String operator /(const CharAnsi* Str) const
+	{
+		return String(*this) /= Str;
+	}
+	FORCEINLINE String operator /(const String& Str) const
+	{
+		return operator/(*Str);
+	}
+public:
+
+	FORCEINLINE bool IsEmpty() const
+	{
+		return Length == 0;
+	}
+
+	FORCEINLINE bool NotEmpty() const
+	{
+		return Length != 0;
+	}
+	FORCEINLINE CharAnsi* Pointer()
+	{
+		return Data;
+	}
+	FORCEINLINE const CharAnsi* Pointer() const
+	{
+		return Data ? Data : "";
+	}
+	FORCEINLINE I32 Size() const
+	{
+		return Length;
+	}
+	FORCEINLINE const CharAnsi* operator*() const
+	{
+		return Data;
+	}
+	FORCEINLINE  CharAnsi* operator*()
+	{
+		return Data;
+	}
+protected:
+
+	CharAnsi* Data = nullptr;
+	I32 Length = 0;
+};
+
+
 #endif // !STRING_H

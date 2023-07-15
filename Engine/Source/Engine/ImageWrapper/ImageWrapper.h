@@ -3,14 +3,11 @@
 
 #include <Engine/Core/Misc/String.h>
 #include <Engine/Core/Containers/Array.h>
-namespace GeometricEngine
+class GEOMETRIC_API ImageWrapper
 {
-	class GEOMETRIC_API ImageWrapper
-	{
-	public:
+public:
 
-		static bool Load(const String&, TVector<U8>&, U32&, U32&);
-	};
-}
+	static bool Load(const String&, TArray<U8>&, U32&, U32&);
+};
 
 #endif // IMAGEWRAPPER_H

@@ -2,30 +2,29 @@
 #define WINDOWSFILE_H
 
 #include <Engine/Core/Generic/File.h>
+#include <Windows.h>
 
-namespace GeometricEngine
+class GEOMETRIC_API WindowsFile : public File
 {
-	class GEOMETRIC_API WindowsFile : public File
-	{
-	public:
+public:
 
-		static WindowsFile* Open(const String& , FileMode, FileAccess, FileShare);
-		virtual bool Read(void*, U32, U32*) override;
-		virtual bool Write(const void*, U32, U32*)override;
-		virtual void Close() override;
-		virtual bool IsOpen() override;
-		virtual void Seek(U32) override;
+	static WindowsFile* Open(const String& , FileMode, FileAccess, FileShare);
+	virtual bool Read(void*, U32, U32*);
+	virtual bool Write(const void*, U32, U32*)override;
+	virtual void Close() override;
+	virtual bool IsOpen() override;
+	virtual void Seek(U32) override;
 
 
-		virtual U32 GetSize() const override;
-		virtual U32 GetSeek() const override;
+	virtual U32 GetSize() const override;
+	virtual U32 GetSeek() const override;
 
 
-	private:
-		explicit WindowsFile(HANDLE);
+private:
+	explicit WindowsFile(HANDLE);
 
-		HANDLE Handle = NULL;
+	HANDLE Handle = NULL;
 
-	};
-}
+};
+
 #endif // !WINDOWSFILE_H

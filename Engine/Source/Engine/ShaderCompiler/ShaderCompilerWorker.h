@@ -5,17 +5,15 @@
 #include <Engine/RHI/DynamicRHI.h>
 #include <Engine/Core/Misc/String.h>
 #include <map>
-namespace GeometricEngine
+
+class GEOMETRIC_API ShaderCompileWorker
 {
-	class GEOMETRIC_API ShaderCompilerWorker
-	{
-	public:
-		static void Initialize();
-	private:
-		static void AddCompile(const String& Name, ShaderType);
-	};
-	extern std::map < String, RHIVertexShader* > GVSResourceMap;
-	extern std::map < String, RHIPixelShader* > GPSResourceMap;
-	extern std::map<String, ShaderCompilerOutput> GShadersMap;
-}
+public:
+	static void DefaultInitialize();
+private:
+	static void AddCompile(const String& Name, ShaderType);
+};
+extern std::map < String, RHIVertexShader* > GVertexShaderMap;
+extern std::map < String, RHIPixelShader* > GPixelShaderMap;
+
 #endif // !SHADERCOMPILERWORKER_H

@@ -1,24 +1,24 @@
 #include <Engine/Core/Core.h>
 
-extern "C"  { _declspec(dllexport) unsigned int NvOptimusEnablement = 0x00000001; }
-extern "C"  { __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1; }
-#ifdef GEOMETRIC_DEBUG
-int main(int argc, char* argv[])
+#include <Windows.h>
+
+#if defined DEBUG_EDITOR || DEBUG_GAME
+int main()
 #else
-int WINAPI WinMain(	_In_		HINSTANCE	hInstance,
-					_In_opt_	HINSTANCE	hPrevInstance,
-					_In_		PSTR		CmdLine,
-					_In_		int		CmdShow)
+int WINAPI WinMain(_In_		HINSTANCE	hInstance,
+	_In_opt_	HINSTANCE	hPrevInstance,
+	_In_		PSTR		CmdLine,
+	_In_		int		CmdShow)
 #endif
 {
-	#ifdef GEOMETRIC_DEBUG
-		HINSTANCE hInstance = GetModuleHandle(NULL);
-		PSTR		CmdLine = GetCommandLineA();
-	#endif
 
+	#if defined DEBUG_EDITOR || DEBUG_GAME
+		HINSTANCE hInstance = GetModuleHandle(NULL);
+		CHAR* CmdLine = GetCommandLine();
+	#endif
 	try
 	{
-		return GeometricEngine::GuardedMain(hInstance, CmdLine);
+		return ::GuardedMain(hInstance, CmdLine);
 	}
 	catch (...)
 	{

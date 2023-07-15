@@ -1,27 +1,22 @@
-#ifndef QUATERNION_H
-#define QUATERNION_H
-#include <Engine/Math/Matrix4.h>
+#pragma once
+#include <Engine/Math/Vector3.h>
 
-namespace GeometricEngine
+class FQuaternion
 {
-	class GEOMETRIC_API Quaternion
-	{
-	public:
-		Quaternion();
-		Quaternion(F32, F32, F32, F32);
-		Quaternion(const Vector3f& );
-		~Quaternion();
+public:
+	FQuaternion();
+	FQuaternion(F32, F32, F32, F32);
+	FQuaternion(const Vector3f& );
+	~FQuaternion();
 
-		void Normalize();
-		Quaternion Normalized() const;
-		static const Quaternion Zero;
-		static const Quaternion Identity;
+	void Normalize();
+	FQuaternion Normalized() const;
 
-		Quaternion& operator*=(const Quaternion& r);
+	static const FQuaternion Zero;
+	static const FQuaternion Identity;
 
-		F32 x, y, z, w;
-	};
-	GEOMETRIC_API Quaternion operator*(Quaternion const& q, Quaternion const& p);
+	FQuaternion& operator*=(const FQuaternion& r);
 
-}
-#endif // !QUATERNION_H
+	F32 x, y, z, w;
+};
+FQuaternion operator*(const FQuaternion& q, const FQuaternion & p);

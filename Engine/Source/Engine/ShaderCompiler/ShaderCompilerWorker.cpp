@@ -1,54 +1,52 @@
 #include "ShaderCompilerWorker.h"
 #include <Engine/Core/Misc/Log.h>
 #include <Engine/Core/Generic/ScopeLock.h>
-namespace GeometricEngine
+#include <Engine/Core/Generic/Platform.h>
+
+CriticalSection CompileWorker;
+std::map < String, RHIVertexShader* > GVertexShaderMap;
+std::map < String, RHIPixelShader* >	GPixelShaderMap;
+
+void ShaderCompileWorker::DefaultInitialize()
 {
-	CriticalSection CompileWork;
-	std::map<String, ShaderCompilerOutput> GShadersMap;
-	std::map < String, RHIVertexShader* > GVSResourceMap;
-	std::map < String, RHIPixelShader* > GPSResourceMap;
-	void ShaderCompilerWorker::Initialize()
+
+	ScopeLock Locker(&CompileWorker);
+
+	LOG("Info: [SHADERCOMPILEWORKER] Compiling...\n");
+	long long StartTime = Platform::GetTime();
+
+	AddCompile(TEXT("ScreenPixelShader"), ShaderType::Pixel);
+	AddCompile(TEXT("ScreenVertexShader"), ShaderType::Vertex);
+
+
+	LOG(String::Format("Info: [SHADERCOMPILEWORKER] Time Elapsed: %lfms\n", F64(Platform::GetTime() - StartTime) / 1000.0f));
+	
+	LOG("Info: [SHADERCOMPILEWORKER] Compiled!\n");
+}
+
+void ShaderCompileWorker::AddCompile(const String& Name, ShaderType Type)
+{
+	ShaderCompilerInput Input;
+	Input.Type = Type;
+	Input.Model = ShaderModel::SM5;
+	Input.ShaderName = Name;
+	Input.EntryPoint = "Main";
+
+	ShaderCompilerOutput Output;
+	CompileShader(Input, Output);
+
+	if (Output.Errors.NotEmpty())
 	{
-
-		ScopeLock Locker(&CompileWork);
-		LOG("\nState Compiler Shaders: Compiling...\n");
-		AddCompile("ScreenPSTexture", ShaderType::Pixel);
-		AddCompile("ScreenVSTexture", ShaderType::Vertex);
-
-		AddCompile("ScreenPixelShader", ShaderType::Pixel);
-		AddCompile("ScreenVertexShader", ShaderType::Vertex);
-
-		AddCompile("PSFXAA", ShaderType::Pixel);
-		AddCompile("VSFXAA", ShaderType::Vertex);
-
-
-
-		LOG("State Compiler Shaders: Complete\n");
+		LOG("Error: [SHADERCOMPILEWORKER] Failed Compiled!\n");
+		for (String i : Output.Errors) 
+			LOG(i + '\n');
+		exit(-1);
 	}
-	void ShaderCompilerWorker::AddCompile(const String& Name, ShaderType Type)
-	{
-		ShaderCompilerInput Input;
-		Input.Type = Type;
-		Input.Model = ShaderModel::SM5;
-		Input.ShaderName = Name;
+
+	if (Type == ShaderType::Pixel)
+		GPixelShaderMap.insert({ Name, GDynamicRHI->RHICreatePixelShader(Output.Code) });
 
 
-		StringView EntryPoint;
-		if (Type == ShaderType::Pixel)
-			EntryPoint = "PSMain";
-		else if(Type == ShaderType::Vertex)
-			EntryPoint = "VSMain";
-
-
-		Input.EntryPoint = EntryPoint;
-		ShaderCompilerOutput Output;
-		CompileShader(Input, Output);
-
-		if (Type == ShaderType::Pixel)
-			GPSResourceMap.insert({ Name, GDynamicRHI->RHICreatePixelShader(Output.Code) });
-		else if (Type == ShaderType::Vertex)
-			GVSResourceMap.insert({ Name, GDynamicRHI->RHICreateVertexShader(Output.Code) });
-
-		GShadersMap.insert({Name, Output});
-	}
+	else if (Type == ShaderType::Vertex)
+		GVertexShaderMap.insert({ Name, GDynamicRHI->RHICreateVertexShader(Output.Code) });
 }

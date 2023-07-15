@@ -1,10 +1,9 @@
 #include <Engine/Math/MathUtils.h>
 #include <algorithm>
 
-
-namespace GeometricEngine
+namespace MathUtils 
 {
-	Matrix4f Inverse(const Matrix4f& m)
+	FMatrix4 Inverse(const FMatrix4& m)
 	{
 		F32 Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
 		F32 Coef02 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
@@ -49,7 +48,7 @@ namespace GeometricEngine
 
 		Vector4f SignA(1, -1, 1, -1);
 		Vector4f SignB(-1, 1, -1, 1);
-		Matrix4f mInverse(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
+		FMatrix4 mInverse(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
 
 		Vector4f Row0(mInverse[0][0], mInverse[1][0], mInverse[2][0], mInverse[3][0]);
 
@@ -60,7 +59,7 @@ namespace GeometricEngine
 
 		return mInverse * OneOverDeterminant;
 	}
-	Matrix4f Rotate(const Matrix4f & m, F32 angle, const Vector3f & v)
+	FMatrix4 Rotate(const FMatrix4& m, F32 angle, const Vector3f& v)
 	{
 		F32 const a = angle;
 		F32 const c = cos(a);
@@ -69,7 +68,7 @@ namespace GeometricEngine
 		Vector3f axis(v.GetNormalized());
 		Vector3f temp((F32(1) - c) * axis);
 
-		Matrix4f Rotate;
+		FMatrix4 Rotate;
 		Rotate[0][0] = c + temp[0] * axis[0];
 		Rotate[0][1] = temp[0] * axis[1] + s * axis[2];
 		Rotate[0][2] = temp[0] * axis[2] - s * axis[1];
@@ -82,22 +81,22 @@ namespace GeometricEngine
 		Rotate[2][1] = temp[2] * axis[1] - s * axis[0];
 		Rotate[2][2] = c + temp[2] * axis[2];
 
-		Matrix4f Result;
+		FMatrix4 Result;
 		Result[0] = m[0] * Rotate[0][0] + m[1] * Rotate[0][1] + m[2] * Rotate[0][2];
 		Result[1] = m[0] * Rotate[1][0] + m[1] * Rotate[1][1] + m[2] * Rotate[1][2];
 		Result[2] = m[0] * Rotate[2][0] + m[1] * Rotate[2][1] + m[2] * Rotate[2][2];
 		Result[3] = m[3];
 		return Result;
 	}
-	Matrix4f Translate(const Matrix4f & m, const Vector3f & v)
+	FMatrix4 Translate(const FMatrix4& m, const Vector3f& v)
 	{
-		Matrix4f Result(m);
+		FMatrix4 Result(m);
 		Result[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[3];
 		return Result;
 	}
-	Matrix4f Scale(const Matrix4f & m, const Vector3f & v)
+	FMatrix4 Scale(const FMatrix4& m, const Vector3f& v)
 	{
-		Matrix4f Result;
+		FMatrix4 Result;
 		Result[0] = m[0] * v[0];
 		Result[1] = m[1] * v[1];
 		Result[2] = m[2] * v[2];
@@ -105,9 +104,9 @@ namespace GeometricEngine
 		return Result;
 	}
 
-	Matrix4f Ortho(F32 left, F32 right, F32 bottom, F32 top)
+	FMatrix4 Ortho(F32 left, F32 right, F32 bottom, F32 top)
 	{
-		Matrix4f Result(1.f);
+		FMatrix4 Result(1.f);
 		Result[0][0] = 2.f / (right - left);
 		Result[1][1] = 2.f / (top - bottom);
 		Result[2][2] = 1.f;
@@ -115,24 +114,24 @@ namespace GeometricEngine
 		Result[3][1] = (top + bottom) / (bottom - top);
 		return Result;
 	}
-	Matrix4f Perspective(F32 FOV, F32 AspectRatio, F32 zNear, F32 zFar)
+	FMatrix4 Perspective(F32 FOV, F32 AspectRatio, F32 zNear, F32 zFar)
 	{
 		F32 Height = 1.0f / tanf(FOV * 0.5f);
 		F32 Width = Height / AspectRatio;
 		F32 fRange = zFar / (zNear - zFar);
 		F32 lRange = fRange * zNear;
-		return Matrix4f(Vector4f(Width, 0.0f,  0.0f,   0.0f),
-						Vector4f(0.0f, Height, 0.0f,   0.0f),
-						Vector4f(0.0f,   0.0f,  fRange, -1.0f),
-						Vector4f(0.0f,   0.0f,  lRange, 0.0f));
+		return FMatrix4(Vector4f(Width, 0.0f, 0.0f, 0.0f),
+						Vector4f(0.0f, Height, 0.0f, 0.0f),
+						Vector4f(0.0f, 0.0f, fRange, -1.0f),
+						Vector4f(0.0f, 0.0f, lRange, 0.0f));
 	}
-	Matrix4f Perspective(F32 FOV, F32 Width, F32 Height, F32 zNear, F32 zFar)
+	FMatrix4 Perspective(F32 FOV, F32 Width, F32 Height, F32 zNear, F32 zFar)
 	{
 		F32 const rad = FOV;
 		F32 const h = cos(rad / 2) / sin(rad / 2);
 		F32 const w = h * Height / Width;
 
-		Matrix4f Result(0.0f);
+		FMatrix4 Result(0.0f);
 		Result[0][0] = w;
 		Result[1][1] = h;
 		Result[2][2] = zFar / (zFar - zNear);
@@ -140,9 +139,9 @@ namespace GeometricEngine
 		Result[3][2] = -(zFar * zNear) / (zFar - zNear);
 		return Result;
 	}
-	bool DecomposeTransform(const Matrix4f& transform, Vector3f& position, Vector3f& rotation, Vector3f& scale)
+	bool DecomposeTransform(const FMatrix4& transform, Vector3f& position, Vector3f& rotation, Vector3f& scale)
 	{
-		Matrix4f LocalMatrix(transform);
+		FMatrix4 LocalMatrix(transform);
 		position = Vector3f(LocalMatrix[3].x, LocalMatrix[3].y, LocalMatrix[3].z);
 
 		LocalMatrix[3] = Vector4f(0, 0, 0, LocalMatrix[3].w);
@@ -155,35 +154,37 @@ namespace GeometricEngine
 
 
 		rotation.y = asin(-Row[0][2]);
-		if (cos(rotation.y) != 0) {
+		if (cos(rotation.y) != 0) 
+		{
 			rotation.x = atan2(Row[1][2], Row[2][2]);
 			rotation.z = atan2(Row[0][1], Row[0][0]);
 		}
-		else {
+		else 
+		{
 			rotation.x = atan2(-Row[2][0], Row[1][1]);
 			rotation.z = 0;
 		}
 
 
 		scale.x = Row[0].Length();
-		Matrix4f ScaleX = Scale(Matrix4f::Identity, Row[0]);
+		FMatrix4 ScaleX = Scale(FMatrix4::Identity, Row[0]);
 		Row[0] = Vector3f(ScaleX[0].x, ScaleX[0].y, ScaleX[0].z);
 
 		scale.y = Row[1].Length();
 
-		Matrix4f ScaleY = Scale(Matrix4f::Identity, Row[1]);
+		FMatrix4 ScaleY = Scale(FMatrix4::Identity, Row[1]);
 		Row[1] = Vector3f(ScaleY[1].x, ScaleY[1].y, ScaleY[1].z);
 
 		scale.z = Row[2].Length();
-		Matrix4f ScaleZ = Scale(Matrix4f::Identity, Row[2]);
+		FMatrix4 ScaleZ = Scale(FMatrix4::Identity, Row[2]);
 		Row[2] = Vector3f(ScaleZ[2].x, ScaleZ[2].y, ScaleZ[2].z);
 
 		return true;
 	}
 
-	Matrix3f toMatrix3(const Quaternion& q)
+	FMatrix3 QuaternionToMatrix3(const FQuaternion& q)
 	{
-		Matrix3f Result(F32(1));
+		FMatrix3 Result(1.0f);
 		F32 qxx(q.x * q.x);
 		F32 qyy(q.y * q.y);
 		F32 qzz(q.z * q.z);
@@ -208,9 +209,9 @@ namespace GeometricEngine
 		return Result;
 	}
 
-	Matrix4f toMatrix4(const Quaternion & q)
+	FMatrix4 QuaternionToMatrix4(const FQuaternion& q)
 	{
-		return Matrix4f(toMatrix3(q));
+		return FMatrix4(QuaternionToMatrix3(q));
 	}
 
 	Vector3f Cross(Vector3f const& x, Vector3f const& y)
@@ -220,7 +221,7 @@ namespace GeometricEngine
 			x.z * y.x - y.z * x.x,
 			x.x * y.y - y.x * x.y);
 	}
-	Quaternion Rotate(const Quaternion & q, const F32 & angle, const Vector3f & v)
+	FQuaternion Rotate(const FQuaternion& q, const F32& angle, const Vector3f& v)
 	{
 		Vector3f Tmp = v;
 
@@ -236,13 +237,9 @@ namespace GeometricEngine
 		const F32  AngleRad(angle);
 		const F32  Sin = sin(AngleRad * static_cast<F32>(0.5));
 
-		return q * Quaternion(cos(AngleRad * static_cast<F32>(0.5)), Tmp.x * Sin, Tmp.y * Sin, Tmp.z * Sin);
+		return q * FQuaternion(cos(AngleRad * static_cast<F32>(0.5)), Tmp.x * Sin, Tmp.y * Sin, Tmp.z * Sin);
 	}
-	Quaternion operator*(Quaternion const& q, Quaternion const& p)
-	{
-		return Quaternion(q) *= p;
-	}
-	Vector3f operator*(Quaternion const& q, Vector3f const& v)
+	Vector3f operator*(FQuaternion const& q, const Vector3f& v)
 	{
 		Vector3f const QuatVector(q.x, q.y, q.z);
 		Vector3f const uv(Cross(QuatVector, v));
@@ -250,7 +247,7 @@ namespace GeometricEngine
 
 		return v + ((uv * q.w) + uuv) * static_cast<F32>(2);
 	}
-	Vector3f Rotate(Quaternion const& q, Vector3f const& v)
+	Vector3f Rotate(FQuaternion const& q, Vector3f const& v)
 	{
 		return q * v;
 	}
@@ -259,9 +256,9 @@ namespace GeometricEngine
 	{
 		return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 	}
-	Matrix4f LookAt(const Vector3f &EyePosition, const Vector3f &LookAtPosition, const Vector3f & UpVector)
+	FMatrix4 LookAt(const Vector3f& EyePosition, const Vector3f& LookAtPosition, const Vector3f& UpVector)
 	{
-		Matrix4f Result(1.0f);
+		FMatrix4 Result(1.0f);
 		const Vector3f ZAxis((EyePosition - LookAtPosition).GetNormalized());
 		const Vector3f XAxis(Cross(UpVector, ZAxis).GetNormalized());
 		const Vector3f YAxis(Cross(ZAxis, XAxis));
@@ -288,13 +285,13 @@ namespace GeometricEngine
 	{
 		return acos(std::clamp(Dot(x, y), -1.0f, 1.0f));
 	}
-	Matrix4f Rotate(F32 angle, Vector3f const& v)
+	FMatrix4 Rotate(F32 angle, Vector3f const& v)
 	{
-		return Rotate(Matrix4f(static_cast<F32>(1)), angle, v);
+		return Rotate(FMatrix4(static_cast<F32>(1)), angle, v);
 	}
 
 
-	 Vector3f Rotate(Vector3f const& x, F32 const& angle, Vector3f const& normal)
+	Vector3f Rotate(Vector3f const& x, F32 const& angle, Vector3f const& normal)
 	{
 		const F32 Cos = cos(angle * MATH_RADIANS);
 		const F32 Sin = sin(angle * MATH_RADIANS);

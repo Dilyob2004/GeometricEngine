@@ -1,0 +1,14240 @@
+// #include "config/config.h"
+#ifndef ENTT_CONFIG_CONFIG_H
+#define ENTT_CONFIG_CONFIG_H
+
+// #include "version.h"
+#ifndef ENTT_CONFIG_VERSION_H
+#define ENTT_CONFIG_VERSION_H
+
+// #include "macro.h"
+#ifndef ENTT_CONFIG_MACRO_H
+#define ENTT_CONFIG_MACRO_H
+
+#define ENTT_STR(arg) #arg
+#define ENTT_XSTR(arg) ENTT_STR(arg)
+
+#endif
+
+
+#define ENTT_VERSION_MAJOR 3
+#define ENTT_VERSION_MINOR 10
+#define ENTT_VERSION_PATCH 0
+
+#define ENTT_VERSION \
+    ENTT_XSTR(ENTT_VERSION_MAJOR) \
+    "." ENTT_XSTR(ENTT_VERSION_MINOR) "." ENTT_XSTR(ENTT_VERSION_PATCH)
+
+#endif
+
+
+#if defined(__cpp_exceptions) && !defined(ENTT_NOEXCEPTION)
+#    define ENTT_NOEXCEPT noexcept
+#    define ENTT_NOEXCEPT_IF(expr) noexcept(expr)
+#    define ENTT_THROW throw
+#    define ENTT_TRY try
+#    define ENTT_CATCH catch(...)
+#else
+#    define ENTT_NOEXCEPT
+#    define ENTT_NOEXCEPT_IF(...)
+#    define ENTT_THROW
+#    define ENTT_TRY if(true)
+#    define ENTT_CATCH if(false)
+#endif
+
+#ifdef ENTT_USE_ATOMIC
+#    include <atomic>
+#    define ENTT_MAYBE_ATOMIC(Type) std::atomic<Type>
+#else
+#    define ENTT_MAYBE_ATOMIC(Type) Type
+#endif
+
+#ifndef ENTT_ID_TYPE
+#    include <cstdint>
+#    define ENTT_ID_TYPE std::uint32_t
+#endif
+
+#ifndef ENTT_SPARSE_PAGE
+#    define ENTT_SPARSE_PAGE 4096
+#endif
+
+#ifndef ENTT_PACKED_PAGE
+#    define ENTT_PACKED_PAGE 1024
+#endif
+
+#ifdef ENTT_DISABLE_ASSERT
+#    undef ENTT_ASSERT
+#    define ENTT_ASSERT(...) (void(0))
+#elif !defined ENTT_ASSERT
+#    include <cassert>
+#    define ENTT_ASSERT(condition, ...) assert(condition)
+#endif
+
+#ifdef ENTT_NO_ETO
+#    define ENTT_IGNORE_IF_EMPTY false
+#else
+#    define ENTT_IGNORE_IF_EMPTY true
+#endif
+
+#ifdef ENTT_STANDARD_CPP
+#    define ENTT_NONSTD false
+#else
+#    define ENTT_NONSTD true
+#    if defined __clang__ || defined __GNUC__
+#        define ENTT_PRETTY_FUNCTION __PRETTY_FUNCTION__
+#        define ENTT_PRETTY_FUNCTION_PREFIX '='
+#        define ENTT_PRETTY_FUNCTION_SUFFIX ']'
+#    elif defined _MSC_VER
+#        define ENTT_PRETTY_FUNCTION __FUNCSIG__
+#        define ENTT_PRETTY_FUNCTION_PREFIX '<'
+#        define ENTT_PRETTY_FUNCTION_SUFFIX '>'
+#    endif
+#endif
+
+#if defined _MSC_VER
+#    pragma detect_mismatch("entt.version", ENTT_VERSION)
+#    pragma detect_mismatch("entt.noexcept", ENTT_XSTR(ENTT_TRY))
+#    pragma detect_mismatch("entt.id", ENTT_XSTR(ENTT_ID_TYPE))
+#    pragma detect_mismatch("entt.nonstd", ENTT_XSTR(ENTT_NONSTD))
+#endif
+
+#endif
+
+// #include "config/macro.h"
+#ifndef ENTT_CONFIG_MACRO_H
+#define ENTT_CONFIG_MACRO_H
+
+#define ENTT_STR(arg) #arg
+#define ENTT_XSTR(arg) ENTT_STR(arg)
+
+#endif
+
+// #include "config/version.h"
+#ifndef ENTT_CONFIG_VERSION_H
+#define ENTT_CONFIG_VERSION_H
+
+// #include "macro.h"
+
+
+#define ENTT_VERSION_MAJOR 3
+#define ENTT_VERSION_MINOR 10
+#define ENTT_VERSION_PATCH 0
+
+#define ENTT_VERSION \
+    ENTT_XSTR(ENTT_VERSION_MAJOR) \
+    "." ENTT_XSTR(ENTT_VERSION_MINOR) "." ENTT_XSTR(ENTT_VERSION_PATCH)
+
+#endif
+
+// #include "container/dense_map.hpp"
+#ifndef ENTT_CONTAINER_DENSE_MAP_HPP
+#define ENTT_CONTAINER_DENSE_MAP_HPP
+
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <functional>
+#include <iterator>
+#include <limits>
+#include <memory>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+// #include "../core/compressed_pair.hpp"
+#ifndef ENTT_CORE_COMPRESSED_PAIR_HPP
+#define ENTT_CORE_COMPRESSED_PAIR_HPP
+
+#include <cstddef>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+// #include "type_traits.hpp"
+#ifndef ENTT_CORE_TYPE_TRAITS_HPP
+#define ENTT_CORE_TYPE_TRAITS_HPP
+
+#include <cstddef>
+#include <iterator>
+#include <type_traits>
+#include <utility>
+// #include "../config/config.h"
+
+// #include "fwd.hpp"
+#ifndef ENTT_CORE_FWD_HPP
+#define ENTT_CORE_FWD_HPP
+
+#include <cstdint>
+#include <type_traits>
+// #include "../config/config.h"
+
+
+namespace entt {
+
+	template<std::size_t Len = sizeof(double[2]), std::size_t = alignof(typename std::aligned_storage_t<Len + !Len>)>
+	class basic_any;
+
+	/*! @brief Alias declaration for type identifiers. */
+	using id_type = ENTT_ID_TYPE;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using any = basic_any<>;
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @brief Utility class to disambiguate overloaded functions.
+	 * @tparam N Number of choices available.
+	 */
+	template<std::size_t N>
+	struct choice_t
+		// Unfortunately, doxygen cannot parse such a construct.
+		: /*! @cond TURN_OFF_DOXYGEN */ choice_t<N - 1> /*! @endcond */
+	{};
+
+	/*! @copybrief choice_t */
+	template<>
+	struct choice_t<0> {};
+
+	/**
+	 * @brief Variable template for the choice trick.
+	 * @tparam N Number of choices available.
+	 */
+	template<std::size_t N>
+	inline constexpr choice_t<N> choice{};
+
+	/**
+	 * @brief Identity type trait.
+	 *
+	 * Useful to establish non-deduced contexts in template argument deduction
+	 * (waiting for C++20) or to provide types through function arguments.
+	 *
+	 * @tparam Type A type.
+	 */
+	template<typename Type>
+	struct type_identity {
+		/*! @brief Identity type. */
+		using type = Type;
+	};
+
+	/**
+	 * @brief Helper type.
+	 * @tparam Type A type.
+	 */
+	template<typename Type>
+	using type_identity_t = typename type_identity<Type>::type;
+
+	/**
+	 * @brief A type-only `sizeof` wrapper that returns 0 where `sizeof` complains.
+	 * @tparam Type The type of which to return the size.
+	 * @tparam The size of the type if `sizeof` accepts it, 0 otherwise.
+	 */
+	template<typename Type, typename = void>
+	struct size_of : std::integral_constant<std::size_t, 0u> {};
+
+	/*! @copydoc size_of */
+	template<typename Type>
+	struct size_of<Type, std::void_t<decltype(sizeof(Type))>>
+		: std::integral_constant<std::size_t, sizeof(Type)> {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Type The type of which to return the size.
+	 */
+	template<typename Type>
+	inline constexpr std::size_t size_of_v = size_of<Type>::value;
+
+	/**
+	 * @brief Using declaration to be used to _repeat_ the same type a number of
+	 * times equal to the size of a given parameter pack.
+	 * @tparam Type A type to repeat.
+	 */
+	template<typename Type, typename>
+	using unpack_as_type = Type;
+
+	/**
+	 * @brief Helper variable template to be used to _repeat_ the same value a
+	 * number of times equal to the size of a given parameter pack.
+	 * @tparam Value A value to repeat.
+	 */
+	template<auto Value, typename>
+	inline constexpr auto unpack_as_value = Value;
+
+	/**
+	 * @brief Wraps a static constant.
+	 * @tparam Value A static constant.
+	 */
+	template<auto Value>
+	using integral_constant = std::integral_constant<decltype(Value), Value>;
+
+	/**
+	 * @brief Alias template to facilitate the creation of named values.
+	 * @tparam Value A constant value at least convertible to `id_type`.
+	 */
+	template<id_type Value>
+	using tag = integral_constant<Value>;
+
+	/**
+	 * @brief A class to use to push around lists of types, nothing more.
+	 * @tparam Type Types provided by the type list.
+	 */
+	template<typename... Type>
+	struct type_list {
+		/*! @brief Type list type. */
+		using type = type_list;
+		/*! @brief Compile-time number of elements in the type list. */
+		static constexpr auto size = sizeof...(Type);
+	};
+
+	/*! @brief Primary template isn't defined on purpose. */
+	template<std::size_t, typename>
+	struct type_list_element;
+
+	/**
+	 * @brief Provides compile-time indexed access to the types of a type list.
+	 * @tparam Index Index of the type to return.
+	 * @tparam Type First type provided by the type list.
+	 * @tparam Other Other types provided by the type list.
+	 */
+	template<std::size_t Index, typename Type, typename... Other>
+	struct type_list_element<Index, type_list<Type, Other...>>
+		: type_list_element<Index - 1u, type_list<Other...>> {};
+
+	/**
+	 * @brief Provides compile-time indexed access to the types of a type list.
+	 * @tparam Type First type provided by the type list.
+	 * @tparam Other Other types provided by the type list.
+	 */
+	template<typename Type, typename... Other>
+	struct type_list_element<0u, type_list<Type, Other...>> {
+		/*! @brief Searched type. */
+		using type = Type;
+	};
+
+	/**
+	 * @brief Helper type.
+	 * @tparam Index Index of the type to return.
+	 * @tparam List Type list to search into.
+	 */
+	template<std::size_t Index, typename List>
+	using type_list_element_t = typename type_list_element<Index, List>::type;
+
+	/**
+	 * @brief Concatenates multiple type lists.
+	 * @tparam Type Types provided by the first type list.
+	 * @tparam Other Types provided by the second type list.
+	 * @return A type list composed by the types of both the type lists.
+	 */
+	template<typename... Type, typename... Other>
+	constexpr type_list<Type..., Other...> operator+(type_list<Type...>, type_list<Other...>) {
+		return {};
+	}
+
+	/*! @brief Primary template isn't defined on purpose. */
+	template<typename...>
+	struct type_list_cat;
+
+	/*! @brief Concatenates multiple type lists. */
+	template<>
+	struct type_list_cat<> {
+		/*! @brief A type list composed by the types of all the type lists. */
+		using type = type_list<>;
+	};
+
+	/**
+	 * @brief Concatenates multiple type lists.
+	 * @tparam Type Types provided by the first type list.
+	 * @tparam Other Types provided by the second type list.
+	 * @tparam List Other type lists, if any.
+	 */
+	template<typename... Type, typename... Other, typename... List>
+	struct type_list_cat<type_list<Type...>, type_list<Other...>, List...> {
+		/*! @brief A type list composed by the types of all the type lists. */
+		using type = typename type_list_cat<type_list<Type..., Other...>, List...>::type;
+	};
+
+	/**
+	 * @brief Concatenates multiple type lists.
+	 * @tparam Type Types provided by the type list.
+	 */
+	template<typename... Type>
+	struct type_list_cat<type_list<Type...>> {
+		/*! @brief A type list composed by the types of all the type lists. */
+		using type = type_list<Type...>;
+	};
+
+	/**
+	 * @brief Helper type.
+	 * @tparam List Type lists to concatenate.
+	 */
+	template<typename... List>
+	using type_list_cat_t = typename type_list_cat<List...>::type;
+
+	/*! @brief Primary template isn't defined on purpose. */
+	template<typename>
+	struct type_list_unique;
+
+	/**
+	 * @brief Removes duplicates types from a type list.
+	 * @tparam Type One of the types provided by the given type list.
+	 * @tparam Other The other types provided by the given type list.
+	 */
+	template<typename Type, typename... Other>
+	struct type_list_unique<type_list<Type, Other...>> {
+		/*! @brief A type list without duplicate types. */
+		using type = std::conditional_t<
+			(std::is_same_v<Type, Other> || ...),
+			typename type_list_unique<type_list<Other...>>::type,
+			type_list_cat_t<type_list<Type>, typename type_list_unique<type_list<Other...>>::type>>;
+	};
+
+	/*! @brief Removes duplicates types from a type list. */
+	template<>
+	struct type_list_unique<type_list<>> {
+		/*! @brief A type list without duplicate types. */
+		using type = type_list<>;
+	};
+
+	/**
+	 * @brief Helper type.
+	 * @tparam Type A type list.
+	 */
+	template<typename Type>
+	using type_list_unique_t = typename type_list_unique<Type>::type;
+
+	/**
+	 * @brief Provides the member constant `value` to true if a type list contains a
+	 * given type, false otherwise.
+	 * @tparam List Type list.
+	 * @tparam Type Type to look for.
+	 */
+	template<typename List, typename Type>
+	struct type_list_contains;
+
+	/**
+	 * @copybrief type_list_contains
+	 * @tparam Type Types provided by the type list.
+	 * @tparam Other Type to look for.
+	 */
+	template<typename... Type, typename Other>
+	struct type_list_contains<type_list<Type...>, Other> : std::disjunction<std::is_same<Type, Other>...> {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam List Type list.
+	 * @tparam Type Type to look for.
+	 */
+	template<typename List, typename Type>
+	inline constexpr bool type_list_contains_v = type_list_contains<List, Type>::value;
+
+	/*! @brief Primary template isn't defined on purpose. */
+	template<typename...>
+	struct type_list_diff;
+
+	/**
+	 * @brief Computes the difference between two type lists.
+	 * @tparam Type Types provided by the first type list.
+	 * @tparam Other Types provided by the second type list.
+	 */
+	template<typename... Type, typename... Other>
+	struct type_list_diff<type_list<Type...>, type_list<Other...>> {
+		/*! @brief A type list that is the difference between the two type lists. */
+		using type = type_list_cat_t<std::conditional_t<type_list_contains_v<type_list<Other...>, Type>, type_list<>, type_list<Type>>...>;
+	};
+
+	/**
+	 * @brief Helper type.
+	 * @tparam List Type lists between which to compute the difference.
+	 */
+	template<typename... List>
+	using type_list_diff_t = typename type_list_diff<List...>::type;
+
+	/**
+	 * @brief A class to use to push around lists of constant values, nothing more.
+	 * @tparam Value Values provided by the value list.
+	 */
+	template<auto... Value>
+	struct value_list {
+		/*! @brief Value list type. */
+		using type = value_list;
+		/*! @brief Compile-time number of elements in the value list. */
+		static constexpr auto size = sizeof...(Value);
+	};
+
+	/*! @brief Primary template isn't defined on purpose. */
+	template<std::size_t, typename>
+	struct value_list_element;
+
+	/**
+	 * @brief Provides compile-time indexed access to the values of a value list.
+	 * @tparam Index Index of the value to return.
+	 * @tparam Value First value provided by the value list.
+	 * @tparam Other Other values provided by the value list.
+	 */
+	template<std::size_t Index, auto Value, auto... Other>
+	struct value_list_element<Index, value_list<Value, Other...>>
+		: value_list_element<Index - 1u, value_list<Other...>> {};
+
+	/**
+	 * @brief Provides compile-time indexed access to the types of a type list.
+	 * @tparam Value First value provided by the value list.
+	 * @tparam Other Other values provided by the value list.
+	 */
+	template<auto Value, auto... Other>
+	struct value_list_element<0u, value_list<Value, Other...>> {
+		/*! @brief Searched value. */
+		static constexpr auto value = Value;
+	};
+
+	/**
+	 * @brief Helper type.
+	 * @tparam Index Index of the value to return.
+	 * @tparam List Value list to search into.
+	 */
+	template<std::size_t Index, typename List>
+	inline constexpr auto value_list_element_v = value_list_element<Index, List>::value;
+
+	/**
+	 * @brief Concatenates multiple value lists.
+	 * @tparam Value Values provided by the first value list.
+	 * @tparam Other Values provided by the second value list.
+	 * @return A value list composed by the values of both the value lists.
+	 */
+	template<auto... Value, auto... Other>
+	constexpr value_list<Value..., Other...> operator+(value_list<Value...>, value_list<Other...>) {
+		return {};
+	}
+
+	/*! @brief Primary template isn't defined on purpose. */
+	template<typename...>
+	struct value_list_cat;
+
+	/*! @brief Concatenates multiple value lists. */
+	template<>
+	struct value_list_cat<> {
+		/*! @brief A value list composed by the values of all the value lists. */
+		using type = value_list<>;
+	};
+
+	/**
+	 * @brief Concatenates multiple value lists.
+	 * @tparam Value Values provided by the first value list.
+	 * @tparam Other Values provided by the second value list.
+	 * @tparam List Other value lists, if any.
+	 */
+	template<auto... Value, auto... Other, typename... List>
+	struct value_list_cat<value_list<Value...>, value_list<Other...>, List...> {
+		/*! @brief A value list composed by the values of all the value lists. */
+		using type = typename value_list_cat<value_list<Value..., Other...>, List...>::type;
+	};
+
+	/**
+	 * @brief Concatenates multiple value lists.
+	 * @tparam Value Values provided by the value list.
+	 */
+	template<auto... Value>
+	struct value_list_cat<value_list<Value...>> {
+		/*! @brief A value list composed by the values of all the value lists. */
+		using type = value_list<Value...>;
+	};
+
+	/**
+	 * @brief Helper type.
+	 * @tparam List Value lists to concatenate.
+	 */
+	template<typename... List>
+	using value_list_cat_t = typename value_list_cat<List...>::type;
+
+	/*! @brief Same as std::is_invocable, but with tuples. */
+	template<typename, typename>
+	struct is_applicable : std::false_type {};
+
+	/**
+	 * @copybrief is_applicable
+	 * @tparam Func A valid function type.
+	 * @tparam Tuple Tuple-like type.
+	 * @tparam Args The list of arguments to use to probe the function type.
+	 */
+	template<typename Func, template<typename...> class Tuple, typename... Args>
+	struct is_applicable<Func, Tuple<Args...>> : std::is_invocable<Func, Args...> {};
+
+	/**
+	 * @copybrief is_applicable
+	 * @tparam Func A valid function type.
+	 * @tparam Tuple Tuple-like type.
+	 * @tparam Args The list of arguments to use to probe the function type.
+	 */
+	template<typename Func, template<typename...> class Tuple, typename... Args>
+	struct is_applicable<Func, const Tuple<Args...>> : std::is_invocable<Func, Args...> {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Func A valid function type.
+	 * @tparam Args The list of arguments to use to probe the function type.
+	 */
+	template<typename Func, typename Args>
+	inline constexpr bool is_applicable_v = is_applicable<Func, Args>::value;
+
+	/*! @brief Same as std::is_invocable_r, but with tuples for arguments. */
+	template<typename, typename, typename>
+	struct is_applicable_r : std::false_type {};
+
+	/**
+	 * @copybrief is_applicable_r
+	 * @tparam Ret The type to which the return type of the function should be
+	 * convertible.
+	 * @tparam Func A valid function type.
+	 * @tparam Args The list of arguments to use to probe the function type.
+	 */
+	template<typename Ret, typename Func, typename... Args>
+	struct is_applicable_r<Ret, Func, std::tuple<Args...>> : std::is_invocable_r<Ret, Func, Args...> {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Ret The type to which the return type of the function should be
+	 * convertible.
+	 * @tparam Func A valid function type.
+	 * @tparam Args The list of arguments to use to probe the function type.
+	 */
+	template<typename Ret, typename Func, typename Args>
+	inline constexpr bool is_applicable_r_v = is_applicable_r<Ret, Func, Args>::value;
+
+	/**
+	 * @brief Provides the member constant `value` to true if a given type is
+	 * complete, false otherwise.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type, typename = void>
+	struct is_complete : std::false_type {};
+
+	/*! @copydoc is_complete */
+	template<typename Type>
+	struct is_complete<Type, std::void_t<decltype(sizeof(Type))>> : std::true_type {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type>
+	inline constexpr bool is_complete_v = is_complete<Type>::value;
+
+	/**
+	 * @brief Provides the member constant `value` to true if a given type is an
+	 * iterator, false otherwise.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type, typename = void>
+	struct is_iterator : std::false_type {};
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename, typename = void>
+		struct has_iterator_category : std::false_type {};
+
+		template<typename Type>
+		struct has_iterator_category<Type, std::void_t<typename std::iterator_traits<Type>::iterator_category>> : std::true_type {};
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /*! @copydoc is_iterator */
+	template<typename Type>
+	struct is_iterator<Type, std::enable_if_t<!std::is_same_v<std::remove_const_t<std::remove_pointer_t<Type>>, void>>>
+		: internal::has_iterator_category<Type> {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type>
+	inline constexpr bool is_iterator_v = is_iterator<Type>::value;
+
+	/**
+	 * @brief Provides the member constant `value` to true if a given type is both
+	 * an empty and non-final class, false otherwise.
+	 * @tparam Type The type to test
+	 */
+	template<typename Type>
+	struct is_ebco_eligible
+		: std::conjunction<std::is_empty<Type>, std::negation<std::is_final<Type>>> {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type>
+	inline constexpr bool is_ebco_eligible_v = is_ebco_eligible<Type>::value;
+
+	/**
+	 * @brief Provides the member constant `value` to true if `Type::is_transparent`
+	 * is valid and denotes a type, false otherwise.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type, typename = void>
+	struct is_transparent : std::false_type {};
+
+	/*! @copydoc is_transparent */
+	template<typename Type>
+	struct is_transparent<Type, std::void_t<typename Type::is_transparent>> : std::true_type {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type>
+	inline constexpr bool is_transparent_v = is_transparent<Type>::value;
+
+	/**
+	 * @brief Provides the member constant `value` to true if a given type is
+	 * equality comparable, false otherwise.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type, typename = void>
+	struct is_equality_comparable : std::false_type {};
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename, typename = void>
+		struct has_tuple_size_value : std::false_type {};
+
+		template<typename Type>
+		struct has_tuple_size_value<Type, std::void_t<decltype(std::tuple_size<const Type>::value)>> : std::true_type {};
+
+		template<typename Type, std::size_t... Index>
+		[[nodiscard]] constexpr bool unpack_maybe_equality_comparable(std::index_sequence<Index...>) {
+			return (is_equality_comparable<std::tuple_element_t<Index, Type>>::value && ...);
+		}
+
+		template<typename>
+		[[nodiscard]] constexpr bool maybe_equality_comparable(choice_t<0>) {
+			return true;
+		}
+
+		template<typename Type>
+		[[nodiscard]] constexpr auto maybe_equality_comparable(choice_t<1>) -> decltype(std::declval<typename Type::value_type>(), bool{}) {
+			if constexpr (is_iterator_v<Type>) {
+				return true;
+			}
+			else if constexpr (std::is_same_v<typename Type::value_type, Type>) {
+				return maybe_equality_comparable<Type>(choice<0>);
+			}
+			else {
+				return is_equality_comparable<typename Type::value_type>::value;
+			}
+		}
+
+		template<typename Type>
+		[[nodiscard]] constexpr std::enable_if_t<is_complete_v<std::tuple_size<std::remove_const_t<Type>>>, bool> maybe_equality_comparable(choice_t<2>) {
+			if constexpr (has_tuple_size_value<Type>::value) {
+				return unpack_maybe_equality_comparable<Type>(std::make_index_sequence<std::tuple_size<Type>::value>{});
+			}
+			else {
+				return maybe_equality_comparable<Type>(choice<1>);
+			}
+		}
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /*! @copydoc is_equality_comparable */
+	template<typename Type>
+	struct is_equality_comparable<Type, std::void_t<decltype(std::declval<Type>() == std::declval<Type>())>>
+		: std::bool_constant<internal::maybe_equality_comparable<Type>(choice<2>)> {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Type The type to test.
+	 */
+	template<typename Type>
+	inline constexpr bool is_equality_comparable_v = is_equality_comparable<Type>::value;
+
+	/**
+	 * @brief Transcribes the constness of a type to another type.
+	 * @tparam To The type to which to transcribe the constness.
+	 * @tparam From The type from which to transcribe the constness.
+	 */
+	template<typename To, typename From>
+	struct constness_as {
+		/*! @brief The type resulting from the transcription of the constness. */
+		using type = std::remove_const_t<To>;
+	};
+
+	/*! @copydoc constness_as */
+	template<typename To, typename From>
+	struct constness_as<To, const From> {
+		/*! @brief The type resulting from the transcription of the constness. */
+		using type = std::add_const_t<To>;
+	};
+
+	/**
+	 * @brief Alias template to facilitate the transcription of the constness.
+	 * @tparam To The type to which to transcribe the constness.
+	 * @tparam From The type from which to transcribe the constness.
+	 */
+	template<typename To, typename From>
+	using constness_as_t = typename constness_as<To, From>::type;
+
+	/**
+	 * @brief Extracts the class of a non-static member object or function.
+	 * @tparam Member A pointer to a non-static member object or function.
+	 */
+	template<typename Member>
+	class member_class {
+		static_assert(std::is_member_pointer_v<Member>, "Invalid pointer type to non-static member object or function");
+
+		template<typename Class, typename Ret, typename... Args>
+		static Class* clazz(Ret(Class::*)(Args...));
+
+		template<typename Class, typename Ret, typename... Args>
+		static Class* clazz(Ret(Class::*)(Args...) const);
+
+		template<typename Class, typename Type>
+		static Class* clazz(Type Class::*);
+
+	public:
+		/*! @brief The class of the given non-static member object or function. */
+		using type = std::remove_pointer_t<decltype(clazz(std::declval<Member>()))>;
+	};
+
+	/**
+	 * @brief Helper type.
+	 * @tparam Member A pointer to a non-static member object or function.
+	 */
+	template<typename Member>
+	using member_class_t = typename member_class<Member>::type;
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename Type, std::size_t, typename = void>
+		struct compressed_pair_element {
+			using reference = Type&;
+			using const_reference = const Type&;
+
+			template<bool Dummy = true, typename = std::enable_if_t<Dummy&& std::is_default_constructible_v<Type>>>
+			compressed_pair_element()
+				: value{} {}
+
+			template<typename Args, typename = std::enable_if_t<!std::is_same_v<std::remove_cv_t<std::remove_reference_t<Args>>, compressed_pair_element>>>
+			compressed_pair_element(Args&& args)
+				: value{ std::forward<Args>(args) } {}
+
+			template<typename... Args, std::size_t... Index>
+			compressed_pair_element(std::tuple<Args...> args, std::index_sequence<Index...>)
+				: value{ std::forward<Args>(std::get<Index>(args))... } {}
+
+			[[nodiscard]] reference get() ENTT_NOEXCEPT {
+				return value;
+			}
+
+			[[nodiscard]] const_reference get() const ENTT_NOEXCEPT {
+				return value;
+			}
+
+		private:
+			Type value;
+		};
+
+		template<typename Type, std::size_t Tag>
+		struct compressed_pair_element<Type, Tag, std::enable_if_t<is_ebco_eligible_v<Type>>> : Type {
+			using reference = Type&;
+			using const_reference = const Type&;
+			using base_type = Type;
+
+			template<bool Dummy = true, typename = std::enable_if_t<Dummy&& std::is_default_constructible_v<base_type>>>
+			compressed_pair_element()
+				: base_type{} {}
+
+			template<typename Args, typename = std::enable_if_t<!std::is_same_v<std::remove_cv_t<std::remove_reference_t<Args>>, compressed_pair_element>>>
+			compressed_pair_element(Args&& args)
+				: base_type{ std::forward<Args>(args) } {}
+
+			template<typename... Args, std::size_t... Index>
+			compressed_pair_element(std::tuple<Args...> args, std::index_sequence<Index...>)
+				: base_type{ std::forward<Args>(std::get<Index>(args))... } {}
+
+			[[nodiscard]] reference get() ENTT_NOEXCEPT {
+				return *this;
+			}
+
+			[[nodiscard]] const_reference get() const ENTT_NOEXCEPT {
+				return *this;
+			}
+		};
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief A compressed pair.
+	  *
+	  * A pair that exploits the _Empty Base Class Optimization_ (or _EBCO_) to
+	  * reduce its final size to a minimum.
+	  *
+	  * @tparam First The type of the first element that the pair stores.
+	  * @tparam Second The type of the second element that the pair stores.
+	  */
+	template<typename First, typename Second>
+	class compressed_pair final
+		: internal::compressed_pair_element<First, 0u>,
+		internal::compressed_pair_element<Second, 1u> {
+		using first_base = internal::compressed_pair_element<First, 0u>;
+		using second_base = internal::compressed_pair_element<Second, 1u>;
+
+	public:
+		/*! @brief The type of the first element that the pair stores. */
+		using first_type = First;
+		/*! @brief The type of the second element that the pair stores. */
+		using second_type = Second;
+
+		/**
+		 * @brief Default constructor, conditionally enabled.
+		 *
+		 * This constructor is only available when the types that the pair stores
+		 * are both at least default constructible.
+		 *
+		 * @tparam Dummy Dummy template parameter used for internal purposes.
+		 */
+		template<bool Dummy = true, typename = std::enable_if_t<Dummy&& std::is_default_constructible_v<first_type>&& std::is_default_constructible_v<second_type>>>
+		constexpr compressed_pair()
+			: first_base{},
+			second_base{} {}
+
+		/**
+		 * @brief Copy constructor.
+		 * @param other The instance to copy from.
+		 */
+		constexpr compressed_pair(const compressed_pair& other) = default;
+
+		/**
+		 * @brief Move constructor.
+		 * @param other The instance to move from.
+		 */
+		constexpr compressed_pair(compressed_pair&& other) = default;
+
+		/**
+		 * @brief Constructs a pair from its values.
+		 * @tparam Arg Type of value to use to initialize the first element.
+		 * @tparam Other Type of value to use to initialize the second element.
+		 * @param arg Value to use to initialize the first element.
+		 * @param other Value to use to initialize the second element.
+		 */
+		template<typename Arg, typename Other>
+		constexpr compressed_pair(Arg&& arg, Other&& other)
+			: first_base{ std::forward<Arg>(arg) },
+			second_base{ std::forward<Other>(other) } {}
+
+		/**
+		 * @brief Constructs a pair by forwarding the arguments to its parts.
+		 * @tparam Args Types of arguments to use to initialize the first element.
+		 * @tparam Other Types of arguments to use to initialize the second element.
+		 * @param args Arguments to use to initialize the first element.
+		 * @param other Arguments to use to initialize the second element.
+		 */
+		template<typename... Args, typename... Other>
+		constexpr compressed_pair(std::piecewise_construct_t, std::tuple<Args...> args, std::tuple<Other...> other)
+			: first_base{ std::move(args), std::index_sequence_for<Args...>{} },
+			second_base{ std::move(other), std::index_sequence_for<Other...>{} } {}
+
+		/**
+		 * @brief Copy assignment operator.
+		 * @param other The instance to copy from.
+		 * @return This compressed pair object.
+		 */
+		constexpr compressed_pair& operator=(const compressed_pair& other) = default;
+
+		/**
+		 * @brief Move assignment operator.
+		 * @param other The instance to move from.
+		 * @return This compressed pair object.
+		 */
+		constexpr compressed_pair& operator=(compressed_pair&& other) = default;
+
+		/**
+		 * @brief Returns the first element that a pair stores.
+		 * @return The first element that a pair stores.
+		 */
+		[[nodiscard]] first_type& first() ENTT_NOEXCEPT {
+			return static_cast<first_base&>(*this).get();
+		}
+
+		/*! @copydoc first */
+		[[nodiscard]] const first_type& first() const ENTT_NOEXCEPT {
+			return static_cast<const first_base&>(*this).get();
+		}
+
+		/**
+		 * @brief Returns the second element that a pair stores.
+		 * @return The second element that a pair stores.
+		 */
+		[[nodiscard]] second_type& second() ENTT_NOEXCEPT {
+			return static_cast<second_base&>(*this).get();
+		}
+
+		/*! @copydoc second */
+		[[nodiscard]] const second_type& second() const ENTT_NOEXCEPT {
+			return static_cast<const second_base&>(*this).get();
+		}
+
+		/**
+		 * @brief Swaps two compressed pair objects.
+		 * @param other The compressed pair to swap with.
+		 */
+		void swap(compressed_pair& other) {
+			using std::swap;
+			swap(first(), other.first());
+			swap(second(), other.second());
+		}
+
+		/**
+		 * @brief Extracts an element from the compressed pair.
+		 * @tparam Index An integer value that is either 0 or 1.
+		 * @return Returns a reference to the first element if `Index` is 0 and a
+		 * reference to the second element if `Index` is 1.
+		 */
+		template<std::size_t Index>
+		decltype(auto) get() ENTT_NOEXCEPT {
+			if constexpr (Index == 0u) {
+				return first();
+			}
+			else {
+				static_assert(Index == 1u, "Index out of bounds");
+				return second();
+			}
+		}
+
+		/*! @copydoc get */
+		template<std::size_t Index>
+		decltype(auto) get() const ENTT_NOEXCEPT {
+			if constexpr (Index == 0u) {
+				return first();
+			}
+			else {
+				static_assert(Index == 1u, "Index out of bounds");
+				return second();
+			}
+		}
+	};
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Type Type of value to use to initialize the first element.
+	 * @tparam Other Type of value to use to initialize the second element.
+	 */
+	template<typename Type, typename Other>
+	compressed_pair(Type&&, Other&&) -> compressed_pair<std::decay_t<Type>, std::decay_t<Other>>;
+
+	/**
+	 * @brief Swaps two compressed pair objects.
+	 * @tparam First The type of the first element that the pairs store.
+	 * @tparam Second The type of the second element that the pairs store.
+	 * @param lhs A valid compressed pair object.
+	 * @param rhs A valid compressed pair object.
+	 */
+	template<typename First, typename Second>
+	inline void swap(compressed_pair<First, Second>& lhs, compressed_pair<First, Second>& rhs) {
+		lhs.swap(rhs);
+	}
+
+} // namespace entt
+
+// disable structured binding support for clang 6, it messes when specializing tuple_size
+#if !defined __clang_major__ || __clang_major__ > 6
+namespace std {
+
+	/**
+	 * @brief `std::tuple_size` specialization for `compressed_pair`s.
+	 * @tparam First The type of the first element that the pair stores.
+	 * @tparam Second The type of the second element that the pair stores.
+	 */
+	template<typename First, typename Second>
+	struct tuple_size<entt::compressed_pair<First, Second>> : integral_constant<size_t, 2u> {};
+
+	/**
+	 * @brief `std::tuple_element` specialization for `compressed_pair`s.
+	 * @tparam Index The index of the type to return.
+	 * @tparam First The type of the first element that the pair stores.
+	 * @tparam Second The type of the second element that the pair stores.
+	 */
+	template<size_t Index, typename First, typename Second>
+	struct tuple_element<Index, entt::compressed_pair<First, Second>> : conditional<Index == 0u, First, Second> {
+		static_assert(Index < 2u, "Index out of bounds");
+	};
+
+} // namespace std
+#endif
+
+#endif
+
+// #include "../core/iterator.hpp"
+#ifndef ENTT_CORE_ITERATOR_HPP
+#define ENTT_CORE_ITERATOR_HPP
+
+#include <iterator>
+#include <memory>
+#include <utility>
+// #include "../config/config.h"
+
+
+namespace entt {
+
+	/**
+	 * @brief Helper type to use as pointer with input iterators.
+	 * @tparam Type of wrapped value.
+	 */
+	template<typename Type>
+	struct input_iterator_pointer final {
+		/*! @brief Pointer type. */
+		using pointer = Type*;
+
+		/*! @brief Default copy constructor, deleted on purpose. */
+		input_iterator_pointer(const input_iterator_pointer&) = delete;
+
+		/*! @brief Default move constructor. */
+		input_iterator_pointer(input_iterator_pointer&&) = default;
+
+		/**
+		 * @brief Constructs a proxy object by move.
+		 * @param val Value to use to initialize the proxy object.
+		 */
+		input_iterator_pointer(Type&& val)
+			: value{ std::move(val) } {}
+
+		/**
+		 * @brief Default copy assignment operator, deleted on purpose.
+		 * @return This proxy object.
+		 */
+		input_iterator_pointer& operator=(const input_iterator_pointer&) = delete;
+
+		/**
+		 * @brief Default move assignment operator.
+		 * @return This proxy object.
+		 */
+		input_iterator_pointer& operator=(input_iterator_pointer&&) = default;
+
+		/**
+		 * @brief Access operator for accessing wrapped values.
+		 * @return A pointer to the wrapped value.
+		 */
+		[[nodiscard]] pointer operator->() ENTT_NOEXCEPT {
+			return std::addressof(value);
+		}
+
+	private:
+		Type value;
+	};
+
+	/**
+	 * @brief Utility class to create an iterable object from a pair of iterators.
+	 * @tparam It Type of iterator.
+	 * @tparam Sentinel Type of sentinel.
+	 */
+	template<typename It, typename Sentinel = It>
+	struct iterable_adaptor final {
+		/*! @brief Value type. */
+		using value_type = typename std::iterator_traits<It>::value_type;
+		/*! @brief Iterator type. */
+		using iterator = It;
+		/*! @brief Sentinel type. */
+		using sentinel = Sentinel;
+
+		/*! @brief Default constructor. */
+		iterable_adaptor() = default;
+
+		/**
+		 * @brief Creates an iterable object from a pair of iterators.
+		 * @param from Begin iterator.
+		 * @param to End iterator.
+		 */
+		iterable_adaptor(iterator from, sentinel to)
+			: first{ from },
+			last{ to } {}
+
+		/**
+		 * @brief Returns an iterator to the beginning.
+		 * @return An iterator to the first element of the range.
+		 */
+		[[nodiscard]] iterator begin() const ENTT_NOEXCEPT {
+			return first;
+		}
+
+		/**
+		 * @brief Returns an iterator to the end.
+		 * @return An iterator to the element following the last element of the
+		 * range.
+		 */
+		[[nodiscard]] sentinel end() const ENTT_NOEXCEPT {
+			return last;
+		}
+
+		/*! @copydoc begin */
+		[[nodiscard]] iterator cbegin() const ENTT_NOEXCEPT {
+			return begin();
+		}
+
+		/*! @copydoc end */
+		[[nodiscard]] sentinel cend() const ENTT_NOEXCEPT {
+			return end();
+		}
+
+	private:
+		It first;
+		Sentinel last;
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "../core/memory.hpp"
+#ifndef ENTT_CORE_MEMORY_HPP
+#define ENTT_CORE_MEMORY_HPP
+
+#include <cstddef>
+#include <limits>
+#include <memory>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+// #include "../config/config.h"
+
+
+namespace entt {
+
+	/**
+	 * @brief Unwraps fancy pointers, does nothing otherwise (waiting for C++20).
+	 * @tparam Type Pointer type.
+	 * @param ptr Fancy or raw pointer.
+	 * @return A raw pointer that represents the address of the original pointer.
+	 */
+	template<typename Type>
+	[[nodiscard]] constexpr auto to_address(Type&& ptr) ENTT_NOEXCEPT {
+		if constexpr (std::is_pointer_v<std::remove_cv_t<std::remove_reference_t<Type>>>) {
+			return ptr;
+		}
+		else {
+			return to_address(std::forward<Type>(ptr).operator->());
+		}
+	}
+
+	/**
+	 * @brief Utility function to design allocation-aware containers.
+	 * @tparam Allocator Type of allocator.
+	 * @param lhs A valid allocator.
+	 * @param rhs Another valid allocator.
+	 */
+	template<typename Allocator>
+	constexpr void propagate_on_container_copy_assignment([[maybe_unused]] Allocator& lhs, [[maybe_unused]] Allocator& rhs) ENTT_NOEXCEPT {
+		if constexpr (std::allocator_traits<Allocator>::propagate_on_container_copy_assignment::value) {
+			lhs = rhs;
+		}
+	}
+
+	/**
+	 * @brief Utility function to design allocation-aware containers.
+	 * @tparam Allocator Type of allocator.
+	 * @param lhs A valid allocator.
+	 * @param rhs Another valid allocator.
+	 */
+	template<typename Allocator>
+	constexpr void propagate_on_container_move_assignment([[maybe_unused]] Allocator& lhs, [[maybe_unused]] Allocator& rhs) ENTT_NOEXCEPT {
+		if constexpr (std::allocator_traits<Allocator>::propagate_on_container_move_assignment::value) {
+			lhs = std::move(rhs);
+		}
+	}
+
+	/**
+	 * @brief Utility function to design allocation-aware containers.
+	 * @tparam Allocator Type of allocator.
+	 * @param lhs A valid allocator.
+	 * @param rhs Another valid allocator.
+	 */
+	template<typename Allocator>
+	constexpr void propagate_on_container_swap([[maybe_unused]] Allocator& lhs, [[maybe_unused]] Allocator& rhs) ENTT_NOEXCEPT {
+		ENTT_ASSERT(std::allocator_traits<Allocator>::propagate_on_container_swap::value || lhs == rhs, "Cannot swap the containers");
+
+		if constexpr (std::allocator_traits<Allocator>::propagate_on_container_swap::value) {
+			using std::swap;
+			swap(lhs, rhs);
+		}
+	}
+
+	/**
+	 * @brief Checks whether a value is a power of two or not.
+	 * @param value A value that may or may not be a power of two.
+	 * @return True if the value is a power of two, false otherwise.
+	 */
+	[[nodiscard]] inline constexpr bool is_power_of_two(const std::size_t value) ENTT_NOEXCEPT {
+		return value && ((value & (value - 1)) == 0);
+	}
+
+	/**
+	 * @brief Computes the smallest power of two greater than or equal to a value.
+	 * @param value The value to use.
+	 * @return The smallest power of two greater than or equal to the given value.
+	 */
+	[[nodiscard]] inline constexpr std::size_t next_power_of_two(const std::size_t value) ENTT_NOEXCEPT {
+		ENTT_ASSERT(value < (std::size_t{ 1u } << (std::numeric_limits<std::size_t>::digits - 1)), "Numeric limits exceeded");
+		std::size_t curr = value - (value != 0u);
+
+		for (int next = 1; next < std::numeric_limits<std::size_t>::digits; next = next * 2) {
+			curr |= curr >> next;
+		}
+
+		return ++curr;
+	}
+
+	/**
+	 * @brief Fast module utility function (powers of two only).
+	 * @param value A value for which to calculate the modulus.
+	 * @param mod _Modulus_, it must be a power of two.
+	 * @return The common remainder.
+	 */
+	[[nodiscard]] inline constexpr std::size_t fast_mod(const std::size_t value, const std::size_t mod) ENTT_NOEXCEPT {
+		ENTT_ASSERT(is_power_of_two(mod), "Value must be a power of two");
+		return value & (mod - 1u);
+	}
+
+	/**
+	 * @brief Deleter for allocator-aware unique pointers (waiting for C++20).
+	 * @tparam Args Types of arguments to use to construct the object.
+	 */
+	template<typename Allocator>
+	struct allocation_deleter : private Allocator {
+		/*! @brief Allocator type. */
+		using allocator_type = Allocator;
+		/*! @brief Pointer type. */
+		using pointer = typename std::allocator_traits<Allocator>::pointer;
+
+		/**
+		 * @brief Inherited constructors.
+		 * @param alloc The allocator to use.
+		 */
+		allocation_deleter(const allocator_type& alloc)
+			: Allocator{ alloc } {}
+
+		/**
+		 * @brief Destroys the pointed object and deallocates its memory.
+		 * @param ptr A valid pointer to an object of the given type.
+		 */
+		void operator()(pointer ptr) {
+			using alloc_traits = typename std::allocator_traits<Allocator>;
+			alloc_traits::destroy(*this, to_address(ptr));
+			alloc_traits::deallocate(*this, ptr, 1u);
+		}
+	};
+
+	/**
+	 * @brief Allows `std::unique_ptr` to use allocators (waiting for C++20).
+	 * @tparam Type Type of object to allocate for and to construct.
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 * @tparam Args Types of arguments to use to construct the object.
+	 * @param allocator The allocator to use.
+	 * @param args Parameters to use to construct the object.
+	 * @return A properly initialized unique pointer with a custom deleter.
+	 */
+	template<typename Type, typename Allocator, typename... Args>
+	auto allocate_unique(Allocator& allocator, Args && ...args) {
+		static_assert(!std::is_array_v<Type>, "Array types are not supported");
+
+		using alloc_traits = typename std::allocator_traits<Allocator>::template rebind_traits<Type>;
+		using allocator_type = typename alloc_traits::allocator_type;
+
+		allocator_type alloc{ allocator };
+		auto ptr = alloc_traits::allocate(alloc, 1u);
+
+		ENTT_TRY{
+			alloc_traits::construct(alloc, to_address(ptr), std::forward<Args>(args)...);
+		}
+			ENTT_CATCH{
+				alloc_traits::deallocate(alloc, ptr, 1u);
+				ENTT_THROW;
+		}
+
+		return std::unique_ptr<Type, allocation_deleter<allocator_type>>{ptr, alloc};
+	}
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename Type>
+		struct uses_allocator_construction {
+			template<typename Allocator, typename... Params>
+			static constexpr auto args([[maybe_unused]] const Allocator& allocator, Params&& ...params) ENTT_NOEXCEPT {
+				if constexpr (!std::uses_allocator_v<Type, Allocator> && std::is_constructible_v<Type, Params...>) {
+					return std::forward_as_tuple(std::forward<Params>(params)...);
+				}
+				else {
+					static_assert(std::uses_allocator_v<Type, Allocator>, "Ill-formed request");
+
+					if constexpr (std::is_constructible_v<Type, std::allocator_arg_t, const Allocator&, Params...>) {
+						return std::tuple<std::allocator_arg_t, const Allocator&, Params&& ...>(std::allocator_arg, allocator, std::forward<Params>(params)...);
+					}
+					else {
+						static_assert(std::is_constructible_v<Type, Params..., const Allocator&>, "Ill-formed request");
+						return std::forward_as_tuple(std::forward<Params>(params)..., allocator);
+					}
+				}
+			}
+		};
+
+		template<typename Type, typename Other>
+		struct uses_allocator_construction<std::pair<Type, Other>> {
+			using type = std::pair<Type, Other>;
+
+			template<typename Allocator, typename First, typename Second>
+			static constexpr auto args(const Allocator& allocator, std::piecewise_construct_t, First&& first, Second&& second) ENTT_NOEXCEPT {
+				return std::make_tuple(
+					std::piecewise_construct,
+					std::apply([&allocator](auto && ...curr) { return uses_allocator_construction<Type>::args(allocator, std::forward<decltype(curr)>(curr)...); }, std::forward<First>(first)),
+					std::apply([&allocator](auto && ...curr) { return uses_allocator_construction<Other>::args(allocator, std::forward<decltype(curr)>(curr)...); }, std::forward<Second>(second)));
+			}
+
+			template<typename Allocator>
+			static constexpr auto args(const Allocator& allocator) ENTT_NOEXCEPT {
+				return uses_allocator_construction<type>::args(allocator, std::piecewise_construct, std::tuple<>{}, std::tuple<>{});
+			}
+
+			template<typename Allocator, typename First, typename Second>
+			static constexpr auto args(const Allocator& allocator, First&& first, Second&& second) ENTT_NOEXCEPT {
+				return uses_allocator_construction<type>::args(allocator, std::piecewise_construct, std::forward_as_tuple(std::forward<First>(first)), std::forward_as_tuple(std::forward<Second>(second)));
+			}
+
+			template<typename Allocator, typename First, typename Second>
+			static constexpr auto args(const Allocator& allocator, const std::pair<First, Second>& value) ENTT_NOEXCEPT {
+				return uses_allocator_construction<type>::args(allocator, std::piecewise_construct, std::forward_as_tuple(value.first), std::forward_as_tuple(value.second));
+			}
+
+			template<typename Allocator, typename First, typename Second>
+			static constexpr auto args(const Allocator& allocator, std::pair<First, Second>&& value) ENTT_NOEXCEPT {
+				return uses_allocator_construction<type>::args(allocator, std::piecewise_construct, std::forward_as_tuple(std::move(value.first)), std::forward_as_tuple(std::move(value.second)));
+			}
+		};
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Uses-allocator construction utility (waiting for C++20).
+	  *
+	  * Primarily intended for internal use. Prepares the argument list needed to
+	  * create an object of a given type by means of uses-allocator construction.
+	  *
+	  * @tparam Type Type to return arguments for.
+	  * @tparam Allocator Type of allocator used to manage memory and elements.
+	  * @tparam Args Types of arguments to use to construct the object.
+	  * @param allocator The allocator to use.
+	  * @param args Parameters to use to construct the object.
+	  * @return The arguments needed to create an object of the given type.
+	  */
+	template<typename Type, typename Allocator, typename... Args>
+	constexpr auto uses_allocator_construction_args(const Allocator& allocator, Args&& ...args) ENTT_NOEXCEPT {
+		return internal::uses_allocator_construction<Type>::args(allocator, std::forward<Args>(args)...);
+	}
+
+	/**
+	 * @brief Uses-allocator construction utility (waiting for C++20).
+	 *
+	 * Primarily intended for internal use. Creates an object of a given type by
+	 * means of uses-allocator construction.
+	 *
+	 * @tparam Type Type of object to create.
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 * @tparam Args Types of arguments to use to construct the object.
+	 * @param allocator The allocator to use.
+	 * @param args Parameters to use to construct the object.
+	 * @return A newly created object of the given type.
+	 */
+	template<typename Type, typename Allocator, typename... Args>
+	constexpr Type make_obj_using_allocator(const Allocator& allocator, Args&& ...args) {
+		return std::make_from_tuple<Type>(internal::uses_allocator_construction<Type>::args(allocator, std::forward<Args>(args)...));
+	}
+
+	/**
+	 * @brief Uses-allocator construction utility (waiting for C++20).
+	 *
+	 * Primarily intended for internal use. Creates an object of a given type by
+	 * means of uses-allocator construction at an uninitialized memory location.
+	 *
+	 * @tparam Type Type of object to create.
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 * @tparam Args Types of arguments to use to construct the object.
+	 * @param value Memory location in which to place the object.
+	 * @param allocator The allocator to use.
+	 * @param args Parameters to use to construct the object.
+	 * @return A pointer to the newly created object of the given type.
+	 */
+	template<typename Type, typename Allocator, typename... Args>
+	constexpr Type* uninitialized_construct_using_allocator(Type* value, const Allocator& allocator, Args&& ...args) {
+		return std::apply([&](auto && ...curr) { return new(value) Type(std::forward<decltype(curr)>(curr)...); }, internal::uses_allocator_construction<Type>::args(allocator, std::forward<Args>(args)...));
+	}
+
+} // namespace entt
+
+#endif
+
+
+// #include "fwd.hpp"
+#ifndef ENTT_CONTAINER_FWD_HPP
+#define ENTT_CONTAINER_FWD_HPP
+
+#include <functional>
+#include <memory>
+
+namespace entt {
+
+	template<
+		typename Key,
+		typename Type,
+		typename = std::hash<Key>,
+		typename = std::equal_to<Key>,
+		typename = std::allocator<std::pair<const Key, Type>>>
+	class dense_map;
+
+	template<
+		typename Type,
+		typename = std::hash<Type>,
+		typename = std::equal_to<Type>,
+		typename = std::allocator<Type>>
+		class dense_set;
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename Key, typename Type>
+		struct dense_map_node final {
+			using value_type = std::pair<Key, Type>;
+
+			template<typename... Args>
+			dense_map_node(const std::size_t pos, Args&& ...args)
+				: next{ pos },
+				element{ std::forward<Args>(args)... } {}
+
+			template<typename Allocator, typename... Args>
+			dense_map_node(std::allocator_arg_t, const Allocator& allocator, const std::size_t pos, Args&& ...args)
+				: next{ pos },
+				element{ entt::make_obj_using_allocator<value_type>(allocator, std::forward<Args>(args)...) } {}
+
+			template<typename Allocator>
+			dense_map_node(std::allocator_arg_t, const Allocator& allocator, const dense_map_node& other)
+				: next{ other.next },
+				element{ entt::make_obj_using_allocator<value_type>(allocator, other.element) } {}
+
+			template<typename Allocator>
+			dense_map_node(std::allocator_arg_t, const Allocator& allocator, dense_map_node&& other)
+				: next{ other.next },
+				element{ entt::make_obj_using_allocator<value_type>(allocator, std::move(other.element)) } {}
+
+			std::size_t next;
+			value_type element;
+		};
+
+		template<typename It>
+		class dense_map_iterator final {
+			template<typename>
+			friend class dense_map_iterator;
+
+			using first_type = decltype(std::as_const(std::declval<It>()->element.first));
+			using second_type = decltype((std::declval<It>()->element.second));
+
+		public:
+			using value_type = std::pair<first_type, second_type>;
+			using pointer = input_iterator_pointer<value_type>;
+			using reference = value_type;
+			using difference_type = std::ptrdiff_t;
+			using iterator_category = std::input_iterator_tag;
+
+			dense_map_iterator() ENTT_NOEXCEPT
+				: it{} {}
+
+			dense_map_iterator(const It iter) ENTT_NOEXCEPT
+				: it{ iter } {}
+
+			template<typename Other, typename = std::enable_if_t<!std::is_same_v<It, Other>&& std::is_constructible_v<It, Other>>>
+			dense_map_iterator(const dense_map_iterator<Other>& other) ENTT_NOEXCEPT
+				: it{ other.it } {}
+
+			dense_map_iterator& operator++() ENTT_NOEXCEPT {
+				return ++it, * this;
+			}
+
+			dense_map_iterator operator++(int) ENTT_NOEXCEPT {
+				dense_map_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			dense_map_iterator& operator--() ENTT_NOEXCEPT {
+				return --it, * this;
+			}
+
+			dense_map_iterator operator--(int) ENTT_NOEXCEPT {
+				dense_map_iterator orig = *this;
+				return operator--(), orig;
+			}
+
+			dense_map_iterator& operator+=(const difference_type value) ENTT_NOEXCEPT {
+				it += value;
+				return *this;
+			}
+
+			dense_map_iterator operator+(const difference_type value) const ENTT_NOEXCEPT {
+				dense_map_iterator copy = *this;
+				return (copy += value);
+			}
+
+			dense_map_iterator& operator-=(const difference_type value) ENTT_NOEXCEPT {
+				return (*this += -value);
+			}
+
+			dense_map_iterator operator-(const difference_type value) const ENTT_NOEXCEPT {
+				return (*this + -value);
+			}
+
+			[[nodiscard]] reference operator[](const difference_type value) const ENTT_NOEXCEPT {
+				return { it[value].element.first, it[value].element.second };
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return operator*();
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return { it->element.first, it->element.second };
+			}
+
+			template<typename ILhs, typename IRhs>
+			friend std::ptrdiff_t operator-(const dense_map_iterator<ILhs>&, const dense_map_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+			template<typename ILhs, typename IRhs>
+			friend bool operator==(const dense_map_iterator<ILhs>&, const dense_map_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+			template<typename ILhs, typename IRhs>
+			friend bool operator<(const dense_map_iterator<ILhs>&, const dense_map_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+		private:
+			It it;
+		};
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] std::ptrdiff_t operator-(const dense_map_iterator<ILhs>& lhs, const dense_map_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it - rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator==(const dense_map_iterator<ILhs>& lhs, const dense_map_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it == rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator!=(const dense_map_iterator<ILhs>& lhs, const dense_map_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator<(const dense_map_iterator<ILhs>& lhs, const dense_map_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it < rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator>(const dense_map_iterator<ILhs>& lhs, const dense_map_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return rhs < lhs;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator<=(const dense_map_iterator<ILhs>& lhs, const dense_map_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs > rhs);
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator>=(const dense_map_iterator<ILhs>& lhs, const dense_map_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs < rhs);
+		}
+
+		template<typename It>
+		class dense_map_local_iterator final {
+			template<typename>
+			friend class dense_map_local_iterator;
+
+			using first_type = decltype(std::as_const(std::declval<It>()->element.first));
+			using second_type = decltype((std::declval<It>()->element.second));
+
+		public:
+			using value_type = std::pair<first_type, second_type>;
+			using pointer = input_iterator_pointer<value_type>;
+			using reference = value_type;
+			using difference_type = std::ptrdiff_t;
+			using iterator_category = std::input_iterator_tag;
+
+			dense_map_local_iterator() ENTT_NOEXCEPT
+				: it{},
+				offset{} {}
+
+			dense_map_local_iterator(It iter, const std::size_t pos) ENTT_NOEXCEPT
+				: it{ iter },
+				offset{ pos } {}
+
+			template<typename Other, typename = std::enable_if_t<!std::is_same_v<It, Other>&& std::is_constructible_v<It, Other>>>
+			dense_map_local_iterator(const dense_map_local_iterator<Other>& other) ENTT_NOEXCEPT
+				: it{ other.it },
+				offset{ other.offset } {}
+
+			dense_map_local_iterator& operator++() ENTT_NOEXCEPT {
+				return offset = it[offset].next, *this;
+			}
+
+			dense_map_local_iterator operator++(int) ENTT_NOEXCEPT {
+				dense_map_local_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return operator*();
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return { it[offset].element.first, it[offset].element.second };
+			}
+
+			[[nodiscard]] std::size_t index() const ENTT_NOEXCEPT {
+				return offset;
+			}
+
+		private:
+			It it;
+			std::size_t offset;
+		};
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator==(const dense_map_local_iterator<ILhs>& lhs, const dense_map_local_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.index() == rhs.index();
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator!=(const dense_map_local_iterator<ILhs>& lhs, const dense_map_local_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Associative container for key-value pairs with unique keys.
+	  *
+	  * Internally, elements are organized into buckets. Which bucket an element is
+	  * placed into depends entirely on the hash of its key. Keys with the same hash
+	  * code appear in the same bucket.
+	  *
+	  * @tparam Key Key type of the associative container.
+	  * @tparam Type Mapped type of the associative container.
+	  * @tparam Hash Type of function to use to hash the keys.
+	  * @tparam KeyEqual Type of function to use to compare the keys for equality.
+	  * @tparam Allocator Type of allocator used to manage memory and elements.
+	  */
+	template<typename Key, typename Type, typename Hash, typename KeyEqual, typename Allocator>
+	class dense_map {
+		static constexpr float default_threshold = 0.875f;
+		static constexpr std::size_t minimum_capacity = 8u;
+
+		using node_type = internal::dense_map_node<Key, Type>;
+		using alloc_traits = typename std::allocator_traits<Allocator>;
+		static_assert(std::is_same_v<typename alloc_traits::value_type, std::pair<const Key, Type>>, "Invalid value type");
+		using sparse_container_type = std::vector<std::size_t, typename alloc_traits::template rebind_alloc<std::size_t>>;
+		using packed_container_type = std::vector<node_type, typename alloc_traits::template rebind_alloc<node_type>>;
+
+		template<typename Other>
+		[[nodiscard]] std::size_t key_to_bucket(const Other& key) const ENTT_NOEXCEPT {
+			return fast_mod(sparse.second()(key), bucket_count());
+		}
+
+		template<typename Other>
+		[[nodiscard]] auto constrained_find(const Other& key, std::size_t bucket) {
+			for (auto it = begin(bucket), last = end(bucket); it != last; ++it) {
+				if (packed.second()(it->first, key)) {
+					return begin() + static_cast<typename iterator::difference_type>(it.index());
+				}
+			}
+
+			return end();
+		}
+
+		template<typename Other>
+		[[nodiscard]] auto constrained_find(const Other& key, std::size_t bucket) const {
+			for (auto it = cbegin(bucket), last = cend(bucket); it != last; ++it) {
+				if (packed.second()(it->first, key)) {
+					return cbegin() + static_cast<typename iterator::difference_type>(it.index());
+				}
+			}
+
+			return cend();
+		}
+
+		template<typename Other, typename... Args>
+		[[nodiscard]] auto insert_or_do_nothing(Other&& key, Args&& ...args) {
+			const auto index = key_to_bucket(key);
+
+			if (auto it = constrained_find(key, index); it != end()) {
+				return std::make_pair(it, false);
+			}
+
+			packed.first().emplace_back(sparse.first()[index], std::piecewise_construct, std::forward_as_tuple(std::forward<Other>(key)), std::forward_as_tuple(std::forward<Args>(args)...));
+			sparse.first()[index] = packed.first().size() - 1u;
+			rehash_if_required();
+
+			return std::make_pair(--end(), true);
+		}
+
+		template<typename Other, typename Arg>
+		[[nodiscard]] auto insert_or_overwrite(Other&& key, Arg&& value) {
+			const auto index = key_to_bucket(key);
+
+			if (auto it = constrained_find(key, index); it != end()) {
+				it->second = std::forward<Arg>(value);
+				return std::make_pair(it, false);
+			}
+
+			packed.first().emplace_back(sparse.first()[index], std::forward<Other>(key), std::forward<Arg>(value));
+			sparse.first()[index] = packed.first().size() - 1u;
+			rehash_if_required();
+
+			return std::make_pair(--end(), true);
+		}
+
+		void move_and_pop(const std::size_t pos) {
+			if (const auto last = size() - 1u; pos != last) {
+				packed.first()[pos] = std::move(packed.first().back());
+				size_type* curr = sparse.first().data() + key_to_bucket(packed.first().back().element.first);
+				for (; *curr != last; curr = &packed.first()[*curr].next) {}
+				*curr = pos;
+			}
+
+			packed.first().pop_back();
+		}
+
+		void rehash_if_required() {
+			if (size() > (bucket_count() * max_load_factor())) {
+				rehash(bucket_count() * 2u);
+			}
+		}
+
+	public:
+		/*! @brief Key type of the container. */
+		using key_type = Key;
+		/*! @brief Mapped type of the container. */
+		using mapped_type = Type;
+		/*! @brief Key-value type of the container. */
+		using value_type = std::pair<const Key, Type>;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Type of function to use to hash the keys. */
+		using hasher = Hash;
+		/*! @brief Type of function to use to compare the keys for equality. */
+		using key_equal = KeyEqual;
+		/*! @brief Allocator type. */
+		using allocator_type = Allocator;
+		/*! @brief Input iterator type. */
+		using iterator = internal::dense_map_iterator<typename packed_container_type::iterator>;
+		/*! @brief Constant input iterator type. */
+		using const_iterator = internal::dense_map_iterator<typename packed_container_type::const_iterator>;
+		/*! @brief Input iterator type. */
+		using local_iterator = internal::dense_map_local_iterator<typename packed_container_type::iterator>;
+		/*! @brief Constant input iterator type. */
+		using const_local_iterator = internal::dense_map_local_iterator<typename packed_container_type::const_iterator>;
+
+		/*! @brief Default constructor. */
+		dense_map()
+			: dense_map(minimum_capacity) {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator.
+		 * @param allocator The allocator to use.
+		 */
+		explicit dense_map(const allocator_type& allocator)
+			: dense_map{ minimum_capacity, hasher{}, key_equal{}, allocator } {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator and user
+		 * supplied minimal number of buckets.
+		 * @param bucket_count Minimal number of buckets.
+		 * @param allocator The allocator to use.
+		 */
+		dense_map(const size_type bucket_count, const allocator_type& allocator)
+			: dense_map{ bucket_count, hasher{}, key_equal{}, allocator } {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator, hash
+		 * function and user supplied minimal number of buckets.
+		 * @param bucket_count Minimal number of buckets.
+		 * @param hash Hash function to use.
+		 * @param allocator The allocator to use.
+		 */
+		dense_map(const size_type bucket_count, const hasher& hash, const allocator_type& allocator)
+			: dense_map{ bucket_count, hash, key_equal{}, allocator } {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator, hash
+		 * function, compare function and user supplied minimal number of buckets.
+		 * @param bucket_count Minimal number of buckets.
+		 * @param hash Hash function to use.
+		 * @param equal Compare function to use.
+		 * @param allocator The allocator to use.
+		 */
+		explicit dense_map(const size_type bucket_count, const hasher& hash = hasher{}, const key_equal& equal = key_equal{}, const allocator_type& allocator = allocator_type{})
+			: sparse{ allocator, hash },
+			packed{ allocator, equal },
+			threshold{ default_threshold } {
+			rehash(bucket_count);
+		}
+
+		/*! @brief Default copy constructor. */
+		dense_map(const dense_map&) = default;
+
+		/**
+		 * @brief Allocator-extended copy constructor.
+		 * @param other The instance to copy from.
+		 * @param allocator The allocator to use.
+		 */
+		dense_map(const dense_map& other, const allocator_type& allocator)
+			: sparse{ std::piecewise_construct, std::forward_as_tuple(other.sparse.first(), allocator), std::forward_as_tuple(other.sparse.second()) },
+			packed{ std::piecewise_construct, std::forward_as_tuple(other.packed.first(), allocator), std::forward_as_tuple(other.packed.second()) },
+			threshold{ other.threshold } {}
+
+		/*! @brief Default move constructor. */
+		dense_map(dense_map&&) = default;
+
+		/**
+		 * @brief Allocator-extended move constructor.
+		 * @param other The instance to move from.
+		 * @param allocator The allocator to use.
+		 */
+		dense_map(dense_map&& other, const allocator_type& allocator)
+			: sparse{ std::piecewise_construct, std::forward_as_tuple(std::move(other.sparse.first()), allocator), std::forward_as_tuple(std::move(other.sparse.second())) },
+			packed{ std::piecewise_construct, std::forward_as_tuple(std::move(other.packed.first()), allocator), std::forward_as_tuple(std::move(other.packed.second())) },
+			threshold{ other.threshold } {}
+
+		/**
+		 * @brief Default copy assignment operator.
+		 * @return This container.
+		 */
+		dense_map& operator=(const dense_map&) = default;
+
+		/**
+		 * @brief Default move assignment operator.
+		 * @return This container.
+		 */
+		dense_map& operator=(dense_map&&) = default;
+
+		/**
+		 * @brief Returns the associated allocator.
+		 * @return The associated allocator.
+		 */
+		[[nodiscard]] constexpr allocator_type get_allocator() const ENTT_NOEXCEPT {
+			return sparse.first().get_allocator();
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning.
+		 *
+		 * The returned iterator points to the first instance of the internal array.
+		 * If the array is empty, the returned iterator will be equal to `end()`.
+		 *
+		 * @return An iterator to the first instance of the internal array.
+		 */
+		[[nodiscard]] const_iterator cbegin() const ENTT_NOEXCEPT {
+			return packed.first().begin();
+		}
+
+		/*! @copydoc cbegin */
+		[[nodiscard]] const_iterator begin() const ENTT_NOEXCEPT {
+			return cbegin();
+		}
+
+		/*! @copydoc begin */
+		[[nodiscard]] iterator begin() ENTT_NOEXCEPT {
+			return packed.first().begin();
+		}
+
+		/**
+		 * @brief Returns an iterator to the end.
+		 *
+		 * The returned iterator points to the element following the last instance
+		 * of the internal array. Attempting to dereference the returned iterator
+		 * results in undefined behavior.
+		 *
+		 * @return An iterator to the element following the last instance of the
+		 * internal array.
+		 */
+		[[nodiscard]] const_iterator cend() const ENTT_NOEXCEPT {
+			return packed.first().end();
+		}
+
+		/*! @copydoc cend */
+		[[nodiscard]] const_iterator end() const ENTT_NOEXCEPT {
+			return cend();
+		}
+
+		/*! @copydoc end */
+		[[nodiscard]] iterator end() ENTT_NOEXCEPT {
+			return packed.first().end();
+		}
+
+		/**
+		 * @brief Checks whether a container is empty.
+		 * @return True if the container is empty, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return packed.first().empty();
+		}
+
+		/**
+		 * @brief Returns the number of elements in a container.
+		 * @return Number of elements in a container.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return packed.first().size();
+		}
+
+		/*! @brief Clears the container. */
+		void clear() ENTT_NOEXCEPT {
+			sparse.first().clear();
+			packed.first().clear();
+			rehash(0u);
+		}
+
+		/**
+		 * @brief Inserts an element into the container, if the key does not exist.
+		 * @param value A key-value pair eventually convertible to the value type.
+		 * @return A pair consisting of an iterator to the inserted element (or to
+		 * the element that prevented the insertion) and a bool denoting whether the
+		 * insertion took place.
+		 */
+		std::pair<iterator, bool> insert(const value_type& value) {
+			return insert_or_do_nothing(value.first, value.second);
+		}
+
+		/*! @copydoc insert */
+		std::pair<iterator, bool> insert(value_type&& value) {
+			return insert_or_do_nothing(std::move(value.first), std::move(value.second));
+		}
+
+		/**
+		 * @copydoc insert
+		 * @tparam Arg Type of the key-value pair to insert into the container.
+		 */
+		template<typename Arg>
+		std::enable_if_t<std::is_constructible_v<value_type, Arg&&>, std::pair<iterator, bool>>
+			insert(Arg&& value) {
+			return insert_or_do_nothing(std::forward<Arg>(value).first, std::forward<Arg>(value).second);
+		}
+
+		/**
+		 * @brief Inserts elements into the container, if their keys do not exist.
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of elements.
+		 * @param last An iterator past the last element of the range of elements.
+		 */
+		template<typename It>
+		void insert(It first, It last) {
+			for (; first != last; ++first) {
+				insert(*first);
+			}
+		}
+
+		/**
+		 * @brief Inserts an element into the container or assigns to the current
+		 * element if the key already exists.
+		 * @tparam Arg Type of the value to insert or assign.
+		 * @param key A key used both to look up and to insert if not found.
+		 * @param value A value to insert or assign.
+		 * @return A pair consisting of an iterator to the element and a bool
+		 * denoting whether the insertion took place.
+		 */
+		template<typename Arg>
+		std::pair<iterator, bool> insert_or_assign(const key_type& key, Arg&& value) {
+			return insert_or_overwrite(key, std::forward<Arg>(value));
+		}
+
+		/*! @copydoc insert_or_assign */
+		template<typename Arg>
+		std::pair<iterator, bool> insert_or_assign(key_type&& key, Arg&& value) {
+			return insert_or_overwrite(std::move(key), std::forward<Arg>(value));
+		}
+
+		/**
+		 * @brief Constructs an element in-place, if the key does not exist.
+		 *
+		 * The element is also constructed when the container already has the key,
+		 * in which case the newly constructed object is destroyed immediately.
+		 *
+		 * @tparam Args Types of arguments to forward to the constructor of the
+		 * element.
+		 * @param args Arguments to forward to the constructor of the element.
+		 * @return A pair consisting of an iterator to the inserted element (or to
+		 * the element that prevented the insertion) and a bool denoting whether the
+		 * insertion took place.
+		 */
+		template<typename... Args>
+		std::pair<iterator, bool> emplace([[maybe_unused]] Args&& ...args) {
+			if constexpr (sizeof...(Args) == 0u) {
+				return insert_or_do_nothing(key_type{});
+			}
+			else if constexpr (sizeof...(Args) == 1u) {
+				return insert_or_do_nothing(std::forward<Args>(args).first..., std::forward<Args>(args).second...);
+			}
+			else if constexpr (sizeof...(Args) == 2u) {
+				return insert_or_do_nothing(std::forward<Args>(args)...);
+			}
+			else {
+				auto& node = packed.first().emplace_back(packed.first().size(), std::forward<Args>(args)...);
+				const auto index = key_to_bucket(node.element.first);
+
+				if (auto it = constrained_find(node.element.first, index); it != end()) {
+					packed.first().pop_back();
+					return std::make_pair(it, false);
+				}
+
+				std::swap(node.next, sparse.first()[index]);
+				rehash_if_required();
+
+				return std::make_pair(--end(), true);
+			}
+		}
+
+		/**
+		 * @brief Inserts in-place if the key does not exist, does nothing if the
+		 * key exists.
+		 * @tparam Args Types of arguments to forward to the constructor of the
+		 * element.
+		 * @param key A key used both to look up and to insert if not found.
+		 * @param args Arguments to forward to the constructor of the element.
+		 * @return A pair consisting of an iterator to the inserted element (or to
+		 * the element that prevented the insertion) and a bool denoting whether the
+		 * insertion took place.
+		 */
+		template<typename... Args>
+		std::pair<iterator, bool> try_emplace(const key_type& key, Args&& ...args) {
+			return insert_or_do_nothing(key, std::forward<Args>(args)...);
+		}
+
+		/*! @copydoc try_emplace */
+		template<typename... Args>
+		std::pair<iterator, bool> try_emplace(key_type&& key, Args&& ...args) {
+			return insert_or_do_nothing(std::move(key), std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Removes an element from a given position.
+		 * @param pos An iterator to the element to remove.
+		 * @return An iterator following the removed element.
+		 */
+		iterator erase(const_iterator pos) {
+			const auto diff = pos - cbegin();
+			erase(pos->first);
+			return begin() + diff;
+		}
+
+		/**
+		 * @brief Removes the given elements from a container.
+		 * @param first An iterator to the first element of the range of elements.
+		 * @param last An iterator past the last element of the range of elements.
+		 * @return An iterator following the last removed element.
+		 */
+		iterator erase(const_iterator first, const_iterator last) {
+			const auto dist = first - cbegin();
+
+			for (auto from = last - cbegin(); from != dist; --from) {
+				erase(packed.first()[from - 1u].element.first);
+			}
+
+			return (begin() + dist);
+		}
+
+		/**
+		 * @brief Removes the element associated with a given key.
+		 * @param key A key value of an element to remove.
+		 * @return Number of elements removed (either 0 or 1).
+		 */
+		size_type erase(const key_type& key) {
+			for (size_type* curr = sparse.first().data() + key_to_bucket(key); *curr != (std::numeric_limits<size_type>::max)(); curr = &packed.first()[*curr].next) {
+				if (packed.second()(packed.first()[*curr].element.first, key)) {
+					const auto index = *curr;
+					*curr = packed.first()[*curr].next;
+					move_and_pop(index);
+					return 1u;
+				}
+			}
+
+			return 0u;
+		}
+
+		/**
+		 * @brief Exchanges the contents with those of a given container.
+		 * @param other Container to exchange the content with.
+		 */
+		void swap(dense_map& other) {
+			using std::swap;
+			swap(sparse, other.sparse);
+			swap(packed, other.packed);
+			swap(threshold, other.threshold);
+		}
+
+		/**
+		 * @brief Accesses a given element with bounds checking.
+		 * @param key A key of an element to find.
+		 * @return A reference to the mapped value of the requested element.
+		 */
+		[[nodiscard]] mapped_type& at(const key_type& key) {
+			auto it = find(key);
+			ENTT_ASSERT(it != end(), "Invalid key");
+			return it->second;
+		}
+
+		/*! @copydoc at */
+		[[nodiscard]] const mapped_type& at(const key_type& key) const {
+			auto it = find(key);
+			ENTT_ASSERT(it != cend(), "Invalid key");
+			return it->second;
+		}
+
+		/**
+		 * @brief Accesses or inserts a given element.
+		 * @param key A key of an element to find or insert.
+		 * @return A reference to the mapped value of the requested element.
+		 */
+		[[nodiscard]] mapped_type& operator[](const key_type& key) {
+			return insert_or_do_nothing(key).first->second;
+		}
+
+		/**
+		 * @brief Accesses or inserts a given element.
+		 * @param key A key of an element to find or insert.
+		 * @return A reference to the mapped value of the requested element.
+		 */
+		[[nodiscard]] mapped_type& operator[](key_type&& key) {
+			return insert_or_do_nothing(std::move(key)).first->second;
+		}
+
+		/**
+		 * @brief Finds an element with a given key.
+		 * @param key Key value of an element to search for.
+		 * @return An iterator to an element with the given key. If no such element
+		 * is found, a past-the-end iterator is returned.
+		 */
+		[[nodiscard]] iterator find(const key_type& key) {
+			return constrained_find(key, key_to_bucket(key));
+		}
+
+		/*! @copydoc find */
+		[[nodiscard]] const_iterator find(const key_type& key) const {
+			return constrained_find(key, key_to_bucket(key));
+		}
+
+		/**
+		 * @brief Finds an element with a key that compares _equivalent_ to a given
+		 * value.
+		 * @tparam Other Type of the key value of an element to search for.
+		 * @param key Key value of an element to search for.
+		 * @return An iterator to an element with the given key. If no such element
+		 * is found, a past-the-end iterator is returned.
+		 */
+		template<typename Other>
+		[[nodiscard]] std::enable_if_t<is_transparent_v<hasher>&& is_transparent_v<key_equal>, std::conditional_t<false, Other, iterator>>
+			find(const Other& key) {
+			return constrained_find(key, key_to_bucket(key));
+		}
+
+		/*! @copydoc find */
+		template<typename Other>
+		[[nodiscard]] std::enable_if_t<is_transparent_v<hasher>&& is_transparent_v<key_equal>, std::conditional_t<false, Other, const_iterator>>
+			find(const Other& key) const {
+			return constrained_find(key, key_to_bucket(key));
+		}
+
+		/**
+		 * @brief Checks if the container contains an element with a given key.
+		 * @param key Key value of an element to search for.
+		 * @return True if there is such an element, false otherwise.
+		 */
+		[[nodiscard]] bool contains(const key_type& key) const {
+			return (find(key) != cend());
+		}
+
+		/**
+		 * @brief Checks if the container contains an element with a key that
+		 * compares _equivalent_ to a given value.
+		 * @tparam Other Type of the key value of an element to search for.
+		 * @param key Key value of an element to search for.
+		 * @return True if there is such an element, false otherwise.
+		 */
+		template<typename Other>
+		[[nodiscard]] std::enable_if_t<is_transparent_v<hasher>&& is_transparent_v<key_equal>, std::conditional_t<false, Other, bool>>
+			contains(const Other& key) const {
+			return (find(key) != cend());
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the beginning of the given bucket.
+		 */
+		[[nodiscard]] const_local_iterator cbegin(const size_type index) const {
+			return { packed.first().begin(), sparse.first()[index] };
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the beginning of the given bucket.
+		 */
+		[[nodiscard]] const_local_iterator begin(const size_type index) const {
+			return cbegin(index);
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the beginning of the given bucket.
+		 */
+		[[nodiscard]] local_iterator begin(const size_type index) {
+			return { packed.first().begin(), sparse.first()[index] };
+		}
+
+		/**
+		 * @brief Returns an iterator to the end of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the end of the given bucket.
+		 */
+		[[nodiscard]] const_local_iterator cend([[maybe_unused]] const size_type index) const {
+			return { packed.first().begin(), (std::numeric_limits<size_type>::max)() };
+		}
+
+		/**
+		 * @brief Returns an iterator to the end of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the end of the given bucket.
+		 */
+		[[nodiscard]] const_local_iterator end([[maybe_unused]] const size_type index) const {
+			return cend(index);
+		}
+
+		/**
+		 * @brief Returns an iterator to the end of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the end of the given bucket.
+		 */
+		[[nodiscard]] local_iterator end([[maybe_unused]] const size_type index) {
+			return { packed.first().begin(), (std::numeric_limits<size_type>::max)() };
+		}
+
+		/**
+		 * @brief Returns the number of buckets.
+		 * @return The number of buckets.
+		 */
+		[[nodiscard]] size_type bucket_count() const {
+			return sparse.first().size();
+		}
+
+		/**
+		 * @brief Returns the maximum number of buckets.
+		 * @return The maximum number of buckets.
+		 */
+		[[nodiscard]] size_type max_bucket_count() const {
+			return sparse.first().max_size();
+		}
+
+		/**
+		 * @brief Returns the number of elements in a given bucket.
+		 * @param index The index of the bucket to examine.
+		 * @return The number of elements in the given bucket.
+		 */
+		[[nodiscard]] size_type bucket_size(const size_type index) const {
+			return static_cast<size_type>(std::distance(begin(index), end(index)));
+		}
+
+		/**
+		 * @brief Returns the bucket for a given key.
+		 * @param key The value of the key to examine.
+		 * @return The bucket for the given key.
+		 */
+		[[nodiscard]] size_type bucket(const key_type& key) const {
+			return key_to_bucket(key);
+		}
+
+		/**
+		 * @brief Returns the average number of elements per bucket.
+		 * @return The average number of elements per bucket.
+		 */
+		[[nodiscard]] float load_factor() const {
+			return size() / static_cast<float>(bucket_count());
+		}
+
+		/**
+		 * @brief Returns the maximum average number of elements per bucket.
+		 * @return The maximum average number of elements per bucket.
+		 */
+		[[nodiscard]] float max_load_factor() const {
+			return threshold;
+		}
+
+		/**
+		 * @brief Sets the desired maximum average number of elements per bucket.
+		 * @param value A desired maximum average number of elements per bucket.
+		 */
+		void max_load_factor(const float value) {
+			ENTT_ASSERT(value > 0.f, "Invalid load factor");
+			threshold = value;
+			rehash(0u);
+		}
+
+		/**
+		 * @brief Reserves at least the specified number of buckets and regenerates
+		 * the hash table.
+		 * @param count New number of buckets.
+		 */
+		void rehash(const size_type count) {
+			auto value = (std::max)(count, minimum_capacity);
+			value = (std::max)(value, static_cast<size_type>(size() / max_load_factor()));
+
+			if (const auto sz = next_power_of_two(value); sz != bucket_count()) {
+				sparse.first().resize(sz);
+				std::fill(sparse.first().begin(), sparse.first().end(), (std::numeric_limits<size_type>::max)());
+
+				for (size_type pos{}, last = size(); pos < last; ++pos) {
+					const auto index = key_to_bucket(packed.first()[pos].element.first);
+					packed.first()[pos].next = std::exchange(sparse.first()[index], pos);
+				}
+			}
+		}
+
+		/**
+		 * @brief Reserves space for at least the specified number of elements and
+		 * regenerates the hash table.
+		 * @param count New number of elements.
+		 */
+		void reserve(const size_type count) {
+			packed.first().reserve(count);
+			rehash(static_cast<size_type>(std::ceil(count / max_load_factor())));
+		}
+
+		/**
+		 * @brief Returns the function used to hash the keys.
+		 * @return The function used to hash the keys.
+		 */
+		[[nodiscard]] hasher hash_function() const {
+			return sparse.second();
+		}
+
+		/**
+		 * @brief Returns the function used to compare keys for equality.
+		 * @return The function used to compare keys for equality.
+		 */
+		[[nodiscard]] key_equal key_eq() const {
+			return packed.second();
+		}
+
+	private:
+		compressed_pair<sparse_container_type, hasher> sparse;
+		compressed_pair<packed_container_type, key_equal> packed;
+		float threshold;
+	};
+
+} // namespace entt
+
+/**
+ * @cond TURN_OFF_DOXYGEN
+ * Internal details not to be documented.
+ */
+
+namespace std {
+
+	template<typename Key, typename Value, typename Allocator>
+	struct uses_allocator<entt::internal::dense_map_node<Key, Value>, Allocator>
+		: std::true_type {};
+
+} // namespace std
+
+/**
+ * Internal details not to be documented.
+ * @endcond
+ */
+
+#endif
+
+ // #include "container/dense_set.hpp"
+#ifndef ENTT_CONTAINER_DENSE_SET_HPP
+#define ENTT_CONTAINER_DENSE_SET_HPP
+
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <functional>
+#include <iterator>
+#include <limits>
+#include <memory>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
+// #include "../config/config.h"
+
+// #include "../core/compressed_pair.hpp"
+
+// #include "../core/memory.hpp"
+
+// #include "../core/type_traits.hpp"
+
+// #include "fwd.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename It>
+		class dense_set_iterator final {
+			template<typename>
+			friend class dense_set_iterator;
+
+		public:
+			using value_type = typename It::value_type::second_type;
+			using pointer = const value_type*;
+			using reference = const value_type&;
+			using difference_type = std::ptrdiff_t;
+			using iterator_category = std::random_access_iterator_tag;
+
+			dense_set_iterator() ENTT_NOEXCEPT
+				: it{} {}
+
+			dense_set_iterator(const It iter) ENTT_NOEXCEPT
+				: it{ iter } {}
+
+			template<typename Other, typename = std::enable_if_t<!std::is_same_v<It, Other>&& std::is_constructible_v<It, Other>>>
+			dense_set_iterator(const dense_set_iterator<Other>& other) ENTT_NOEXCEPT
+				: it{ other.it } {}
+
+			dense_set_iterator& operator++() ENTT_NOEXCEPT {
+				return ++it, * this;
+			}
+
+			dense_set_iterator operator++(int) ENTT_NOEXCEPT {
+				dense_set_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			dense_set_iterator& operator--() ENTT_NOEXCEPT {
+				return --it, * this;
+			}
+
+			dense_set_iterator operator--(int) ENTT_NOEXCEPT {
+				dense_set_iterator orig = *this;
+				return operator--(), orig;
+			}
+
+			dense_set_iterator& operator+=(const difference_type value) ENTT_NOEXCEPT {
+				it += value;
+				return *this;
+			}
+
+			dense_set_iterator operator+(const difference_type value) const ENTT_NOEXCEPT {
+				dense_set_iterator copy = *this;
+				return (copy += value);
+			}
+
+			dense_set_iterator& operator-=(const difference_type value) ENTT_NOEXCEPT {
+				return (*this += -value);
+			}
+
+			dense_set_iterator operator-(const difference_type value) const ENTT_NOEXCEPT {
+				return (*this + -value);
+			}
+
+			[[nodiscard]] reference operator[](const difference_type value) const ENTT_NOEXCEPT {
+				return it[value].second;
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return std::addressof(it->second);
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return *operator->();
+			}
+
+			template<typename ILhs, typename IRhs>
+			friend std::ptrdiff_t operator-(const dense_set_iterator<ILhs>&, const dense_set_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+			template<typename ILhs, typename IRhs>
+			friend bool operator==(const dense_set_iterator<ILhs>&, const dense_set_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+			template<typename ILhs, typename IRhs>
+			friend bool operator<(const dense_set_iterator<ILhs>&, const dense_set_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+		private:
+			It it;
+		};
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] std::ptrdiff_t operator-(const dense_set_iterator<ILhs>& lhs, const dense_set_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it - rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator==(const dense_set_iterator<ILhs>& lhs, const dense_set_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it == rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator!=(const dense_set_iterator<ILhs>& lhs, const dense_set_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator<(const dense_set_iterator<ILhs>& lhs, const dense_set_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it < rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator>(const dense_set_iterator<ILhs>& lhs, const dense_set_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return rhs < lhs;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator<=(const dense_set_iterator<ILhs>& lhs, const dense_set_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs > rhs);
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator>=(const dense_set_iterator<ILhs>& lhs, const dense_set_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs < rhs);
+		}
+
+		template<typename It>
+		class dense_set_local_iterator final {
+			template<typename>
+			friend class dense_set_local_iterator;
+
+		public:
+			using value_type = typename It::value_type::second_type;
+			using pointer = const value_type*;
+			using reference = const value_type&;
+			using difference_type = std::ptrdiff_t;
+			using iterator_category = std::forward_iterator_tag;
+
+			dense_set_local_iterator() ENTT_NOEXCEPT
+				: it{},
+				offset{} {}
+
+			dense_set_local_iterator(It iter, const std::size_t pos) ENTT_NOEXCEPT
+				: it{ iter },
+				offset{ pos } {}
+
+			template<typename Other, typename = std::enable_if_t<!std::is_same_v<It, Other>&& std::is_constructible_v<It, Other>>>
+			dense_set_local_iterator(const dense_set_local_iterator<Other>& other) ENTT_NOEXCEPT
+				: it{ other.it },
+				offset{ other.offset } {}
+
+			dense_set_local_iterator& operator++() ENTT_NOEXCEPT {
+				return offset = it[offset].first, *this;
+			}
+
+			dense_set_local_iterator operator++(int) ENTT_NOEXCEPT {
+				dense_set_local_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return std::addressof(it[offset].second);
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return *operator->();
+			}
+
+			[[nodiscard]] std::size_t index() const ENTT_NOEXCEPT {
+				return offset;
+			}
+
+		private:
+			It it;
+			std::size_t offset;
+		};
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator==(const dense_set_local_iterator<ILhs>& lhs, const dense_set_local_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.index() == rhs.index();
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator!=(const dense_set_local_iterator<ILhs>& lhs, const dense_set_local_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Associative container for unique objects of a given type.
+	  *
+	  * Internally, elements are organized into buckets. Which bucket an element is
+	  * placed into depends entirely on its hash. Elements with the same hash code
+	  * appear in the same bucket.
+	  *
+	  * @tparam Type Value type of the associative container.
+	  * @tparam Hash Type of function to use to hash the values.
+	  * @tparam KeyEqual Type of function to use to compare the values for equality.
+	  * @tparam Allocator Type of allocator used to manage memory and elements.
+	  */
+	template<typename Type, typename Hash, typename KeyEqual, typename Allocator>
+	class dense_set {
+		static constexpr float default_threshold = 0.875f;
+		static constexpr std::size_t minimum_capacity = 8u;
+
+		using node_type = std::pair<std::size_t, Type>;
+		using alloc_traits = std::allocator_traits<Allocator>;
+		static_assert(std::is_same_v<typename alloc_traits::value_type, Type>, "Invalid value type");
+		using sparse_container_type = std::vector<std::size_t, typename alloc_traits::template rebind_alloc<std::size_t>>;
+		using packed_container_type = std::vector<node_type, typename alloc_traits::template rebind_alloc<node_type>>;
+
+		template<typename Other>
+		[[nodiscard]] std::size_t value_to_bucket(const Other& value) const ENTT_NOEXCEPT {
+			return fast_mod(sparse.second()(value), bucket_count());
+		}
+
+		template<typename Other>
+		[[nodiscard]] auto constrained_find(const Other& value, std::size_t bucket) {
+			for (auto it = begin(bucket), last = end(bucket); it != last; ++it) {
+				if (packed.second()(*it, value)) {
+					return begin() + static_cast<typename iterator::difference_type>(it.index());
+				}
+			}
+
+			return end();
+		}
+
+		template<typename Other>
+		[[nodiscard]] auto constrained_find(const Other& value, std::size_t bucket) const {
+			for (auto it = cbegin(bucket), last = cend(bucket); it != last; ++it) {
+				if (packed.second()(*it, value)) {
+					return cbegin() + static_cast<typename iterator::difference_type>(it.index());
+				}
+			}
+
+			return cend();
+		}
+
+		template<typename Other>
+		[[nodiscard]] auto insert_or_do_nothing(Other&& value) {
+			const auto index = value_to_bucket(value);
+
+			if (auto it = constrained_find(value, index); it != end()) {
+				return std::make_pair(it, false);
+			}
+
+			packed.first().emplace_back(sparse.first()[index], std::forward<Other>(value));
+			sparse.first()[index] = packed.first().size() - 1u;
+			rehash_if_required();
+
+			return std::make_pair(--end(), true);
+		}
+
+		void move_and_pop(const std::size_t pos) {
+			if (const auto last = size() - 1u; pos != last) {
+				packed.first()[pos] = std::move(packed.first().back());
+				size_type* curr = sparse.first().data() + value_to_bucket(packed.first().back().second);
+				for (; *curr != last; curr = &packed.first()[*curr].first) {}
+				*curr = pos;
+			}
+
+			packed.first().pop_back();
+		}
+
+		void rehash_if_required() {
+			if (size() > (bucket_count() * max_load_factor())) {
+				rehash(bucket_count() * 2u);
+			}
+		}
+
+	public:
+		/*! @brief Key type of the container. */
+		using key_type = Type;
+		/*! @brief Value type of the container. */
+		using value_type = Type;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Type of function to use to hash the elements. */
+		using hasher = Hash;
+		/*! @brief Type of function to use to compare the elements for equality. */
+		using key_equal = KeyEqual;
+		/*! @brief Allocator type. */
+		using allocator_type = Allocator;
+		/*! @brief Random access iterator type. */
+		using iterator = internal::dense_set_iterator<typename packed_container_type::iterator>;
+		/*! @brief Constant random access iterator type. */
+		using const_iterator = internal::dense_set_iterator<typename packed_container_type::const_iterator>;
+		/*! @brief Forward iterator type. */
+		using local_iterator = internal::dense_set_local_iterator<typename packed_container_type::iterator>;
+		/*! @brief Constant forward iterator type. */
+		using const_local_iterator = internal::dense_set_local_iterator<typename packed_container_type::const_iterator>;
+
+		/*! @brief Default constructor. */
+		dense_set()
+			: dense_set(minimum_capacity) {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator.
+		 * @param allocator The allocator to use.
+		 */
+		explicit dense_set(const allocator_type& allocator)
+			: dense_set{ minimum_capacity, hasher{}, key_equal{}, allocator } {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator and user
+		 * supplied minimal number of buckets.
+		 * @param bucket_count Minimal number of buckets.
+		 * @param allocator The allocator to use.
+		 */
+		dense_set(const size_type bucket_count, const allocator_type& allocator)
+			: dense_set{ bucket_count, hasher{}, key_equal{}, allocator } {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator, hash
+		 * function and user supplied minimal number of buckets.
+		 * @param bucket_count Minimal number of buckets.
+		 * @param hash Hash function to use.
+		 * @param allocator The allocator to use.
+		 */
+		dense_set(const size_type bucket_count, const hasher& hash, const allocator_type& allocator)
+			: dense_set{ bucket_count, hash, key_equal{}, allocator } {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator, hash
+		 * function, compare function and user supplied minimal number of buckets.
+		 * @param bucket_count Minimal number of buckets.
+		 * @param hash Hash function to use.
+		 * @param equal Compare function to use.
+		 * @param allocator The allocator to use.
+		 */
+		explicit dense_set(const size_type bucket_count, const hasher& hash = hasher{}, const key_equal& equal = key_equal{}, const allocator_type& allocator = allocator_type{})
+			: sparse{ allocator, hash },
+			packed{ allocator, equal },
+			threshold{ default_threshold } {
+			rehash(bucket_count);
+		}
+
+		/*! @brief Default copy constructor. */
+		dense_set(const dense_set&) = default;
+
+		/**
+		 * @brief Allocator-extended copy constructor.
+		 * @param other The instance to copy from.
+		 * @param allocator The allocator to use.
+		 */
+		dense_set(const dense_set& other, const allocator_type& allocator)
+			: sparse{ std::piecewise_construct, std::forward_as_tuple(other.sparse.first(), allocator), std::forward_as_tuple(other.sparse.second()) },
+			packed{ std::piecewise_construct, std::forward_as_tuple(other.packed.first(), allocator), std::forward_as_tuple(other.packed.second()) },
+			threshold{ other.threshold } {}
+
+		/*! @brief Default move constructor. */
+		dense_set(dense_set&&) = default;
+
+		/**
+		 * @brief Allocator-extended move constructor.
+		 * @param other The instance to move from.
+		 * @param allocator The allocator to use.
+		 */
+		dense_set(dense_set&& other, const allocator_type& allocator)
+			: sparse{ std::piecewise_construct, std::forward_as_tuple(std::move(other.sparse.first()), allocator), std::forward_as_tuple(std::move(other.sparse.second())) },
+			packed{ std::piecewise_construct, std::forward_as_tuple(std::move(other.packed.first()), allocator), std::forward_as_tuple(std::move(other.packed.second())) },
+			threshold{ other.threshold } {}
+
+		/**
+		 * @brief Default copy assignment operator.
+		 * @return This container.
+		 */
+		dense_set& operator=(const dense_set&) = default;
+
+		/**
+		 * @brief Default move assignment operator.
+		 * @return This container.
+		 */
+		dense_set& operator=(dense_set&&) = default;
+
+		/**
+		 * @brief Returns the associated allocator.
+		 * @return The associated allocator.
+		 */
+		[[nodiscard]] constexpr allocator_type get_allocator() const ENTT_NOEXCEPT {
+			return sparse.first().get_allocator();
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning.
+		 *
+		 * The returned iterator points to the first instance of the internal array.
+		 * If the array is empty, the returned iterator will be equal to `end()`.
+		 *
+		 * @return An iterator to the first instance of the internal array.
+		 */
+		[[nodiscard]] const_iterator cbegin() const ENTT_NOEXCEPT {
+			return packed.first().begin();
+		}
+
+		/*! @copydoc cbegin */
+		[[nodiscard]] const_iterator begin() const ENTT_NOEXCEPT {
+			return cbegin();
+		}
+
+		/*! @copydoc begin */
+		[[nodiscard]] iterator begin() ENTT_NOEXCEPT {
+			return packed.first().begin();
+		}
+
+		/**
+		 * @brief Returns an iterator to the end.
+		 *
+		 * The returned iterator points to the element following the last instance
+		 * of the internal array. Attempting to dereference the returned iterator
+		 * results in undefined behavior.
+		 *
+		 * @return An iterator to the element following the last instance of the
+		 * internal array.
+		 */
+		[[nodiscard]] const_iterator cend() const ENTT_NOEXCEPT {
+			return packed.first().end();
+		}
+
+		/*! @copydoc cend */
+		[[nodiscard]] const_iterator end() const ENTT_NOEXCEPT {
+			return cend();
+		}
+
+		/*! @copydoc end */
+		[[nodiscard]] iterator end() ENTT_NOEXCEPT {
+			return packed.first().end();
+		}
+
+		/**
+		 * @brief Checks whether a container is empty.
+		 * @return True if the container is empty, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return packed.first().empty();
+		}
+
+		/**
+		 * @brief Returns the number of elements in a container.
+		 * @return Number of elements in a container.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return packed.first().size();
+		}
+
+		/*! @brief Clears the container. */
+		void clear() ENTT_NOEXCEPT {
+			sparse.first().clear();
+			packed.first().clear();
+			rehash(0u);
+		}
+
+		/**
+		 * @brief Inserts an element into the container, if it does not exist.
+		 * @param value An element to insert into the container.
+		 * @return A pair consisting of an iterator to the inserted element (or to
+		 * the element that prevented the insertion) and a bool denoting whether the
+		 * insertion took place.
+		 */
+		std::pair<iterator, bool> insert(const value_type& value) {
+			return insert_or_do_nothing(value);
+		}
+
+		/*! @copydoc insert */
+		std::pair<iterator, bool> insert(value_type&& value) {
+			return insert_or_do_nothing(std::move(value));
+		}
+
+		/**
+		 * @brief Inserts elements into the container, if they do not exist.
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of elements.
+		 * @param last An iterator past the last element of the range of elements.
+		 */
+		template<typename It>
+		void insert(It first, It last) {
+			for (; first != last; ++first) {
+				insert(*first);
+			}
+		}
+
+		/**
+		 * @brief Constructs an element in-place, if it does not exist.
+		 *
+		 * The element is also constructed when the container already has the key,
+		 * in which case the newly constructed object is destroyed immediately.
+		 *
+		 * @tparam Args Types of arguments to forward to the constructor of the
+		 * element.
+		 * @param args Arguments to forward to the constructor of the element.
+		 * @return A pair consisting of an iterator to the inserted element (or to
+		 * the element that prevented the insertion) and a bool denoting whether the
+		 * insertion took place.
+		 */
+		template<typename... Args>
+		std::pair<iterator, bool> emplace(Args&& ...args) {
+			if constexpr (((sizeof...(Args) == 1u) && ... && std::is_same_v<std::remove_cv_t<std::remove_reference_t<Args>>, value_type>)) {
+				return insert_or_do_nothing(std::forward<Args>(args)...);
+			}
+			else {
+				auto& node = packed.first().emplace_back(std::piecewise_construct, std::make_tuple(packed.first().size()), std::forward_as_tuple(std::forward<Args>(args)...));
+				const auto index = value_to_bucket(node.second);
+
+				if (auto it = constrained_find(node.second, index); it != end()) {
+					packed.first().pop_back();
+					return std::make_pair(it, false);
+				}
+
+				std::swap(node.first, sparse.first()[index]);
+				rehash_if_required();
+
+				return std::make_pair(--end(), true);
+			}
+		}
+
+		/**
+		 * @brief Removes an element from a given position.
+		 * @param pos An iterator to the element to remove.
+		 * @return An iterator following the removed element.
+		 */
+		iterator erase(const_iterator pos) {
+			const auto diff = pos - cbegin();
+			erase(*pos);
+			return begin() + diff;
+		}
+
+		/**
+		 * @brief Removes the given elements from a container.
+		 * @param first An iterator to the first element of the range of elements.
+		 * @param last An iterator past the last element of the range of elements.
+		 * @return An iterator following the last removed element.
+		 */
+		iterator erase(const_iterator first, const_iterator last) {
+			const auto dist = first - cbegin();
+
+			for (auto from = last - cbegin(); from != dist; --from) {
+				erase(packed.first()[from - 1u].second);
+			}
+
+			return (begin() + dist);
+		}
+
+		/**
+		 * @brief Removes the element associated with a given value.
+		 * @param value Value of an element to remove.
+		 * @return Number of elements removed (either 0 or 1).
+		 */
+		size_type erase(const value_type& value) {
+			for (size_type* curr = sparse.first().data() + value_to_bucket(value); *curr != (std::numeric_limits<size_type>::max)(); curr = &packed.first()[*curr].first) {
+				if (packed.second()(packed.first()[*curr].second, value)) {
+					const auto index = *curr;
+					*curr = packed.first()[*curr].first;
+					move_and_pop(index);
+					return 1u;
+				}
+			}
+
+			return 0u;
+		}
+
+		/**
+		 * @brief Exchanges the contents with those of a given container.
+		 * @param other Container to exchange the content with.
+		 */
+		void swap(dense_set& other) {
+			using std::swap;
+			swap(sparse, other.sparse);
+			swap(packed, other.packed);
+			swap(threshold, other.threshold);
+		}
+
+		/**
+		 * @brief Finds an element with a given value.
+		 * @param value Value of an element to search for.
+		 * @return An iterator to an element with the given value. If no such
+		 * element is found, a past-the-end iterator is returned.
+		 */
+		[[nodiscard]] iterator find(const value_type& value) {
+			return constrained_find(value, value_to_bucket(value));
+		}
+
+		/*! @copydoc find */
+		[[nodiscard]] const_iterator find(const value_type& value) const {
+			return constrained_find(value, value_to_bucket(value));
+		}
+
+		/**
+		 * @brief Finds an element that compares _equivalent_ to a given value.
+		 * @tparam Other Type of an element to search for.
+		 * @param value Value of an element to search for.
+		 * @return An iterator to an element with the given value. If no such
+		 * element is found, a past-the-end iterator is returned.
+		 */
+		template<typename Other>
+		[[nodiscard]] std::enable_if_t<is_transparent_v<hasher>&& is_transparent_v<key_equal>, std::conditional_t<false, Other, iterator>>
+			find(const Other& value) {
+			return constrained_find(value, value_to_bucket(value));
+		}
+
+		/*! @copydoc find */
+		template<typename Other>
+		[[nodiscard]] std::enable_if_t<is_transparent_v<hasher>&& is_transparent_v<key_equal>, std::conditional_t<false, Other, const_iterator>>
+			find(const Other& value) const {
+			return constrained_find(value, value_to_bucket(value));
+		}
+
+		/**
+		 * @brief Checks if the container contains an element with a given value.
+		 * @param value Value of an element to search for.
+		 * @return True if there is such an element, false otherwise.
+		 */
+		[[nodiscard]] bool contains(const value_type& value) const {
+			return (find(value) != cend());
+		}
+
+		/**
+		 * @brief Checks if the container contains an element that compares
+		 * _equivalent_ to a given value.
+		 * @tparam Other Type of an element to search for.
+		 * @param value Value of an element to search for.
+		 * @return True if there is such an element, false otherwise.
+		 */
+		template<typename Other>
+		[[nodiscard]] std::enable_if_t<is_transparent_v<hasher>&& is_transparent_v<key_equal>, std::conditional_t<false, Other, bool>>
+			contains(const Other& value) const {
+			return (find(value) != cend());
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the beginning of the given bucket.
+		 */
+		[[nodiscard]] const_local_iterator cbegin(const size_type index) const {
+			return { packed.first().begin(), sparse.first()[index] };
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the beginning of the given bucket.
+		 */
+		[[nodiscard]] const_local_iterator begin(const size_type index) const {
+			return cbegin(index);
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the beginning of the given bucket.
+		 */
+		[[nodiscard]] local_iterator begin(const size_type index) {
+			return { packed.first().begin(), sparse.first()[index] };
+		}
+
+		/**
+		 * @brief Returns an iterator to the end of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the end of the given bucket.
+		 */
+		[[nodiscard]] const_local_iterator cend([[maybe_unused]] const size_type index) const {
+			return { packed.first().begin(), (std::numeric_limits<size_type>::max)() };
+		}
+
+		/**
+		 * @brief Returns an iterator to the end of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the end of the given bucket.
+		 */
+		[[nodiscard]] const_local_iterator end([[maybe_unused]] const size_type index) const {
+			return cend(index);
+		}
+
+		/**
+		 * @brief Returns an iterator to the end of a given bucket.
+		 * @param index An index of a bucket to access.
+		 * @return An iterator to the end of the given bucket.
+		 */
+		[[nodiscard]] local_iterator end([[maybe_unused]] const size_type index) {
+			return { packed.first().begin(), (std::numeric_limits<size_type>::max)() };
+		}
+
+		/**
+		 * @brief Returns the number of buckets.
+		 * @return The number of buckets.
+		 */
+		[[nodiscard]] size_type bucket_count() const {
+			return sparse.first().size();
+		}
+
+		/**
+		 * @brief Returns the maximum number of buckets.
+		 * @return The maximum number of buckets.
+		 */
+		[[nodiscard]] size_type max_bucket_count() const {
+			return sparse.first().max_size();
+		}
+
+		/**
+		 * @brief Returns the number of elements in a given bucket.
+		 * @param index The index of the bucket to examine.
+		 * @return The number of elements in the given bucket.
+		 */
+		[[nodiscard]] size_type bucket_size(const size_type index) const {
+			return static_cast<size_type>(std::distance(begin(index), end(index)));
+		}
+
+		/**
+		 * @brief Returns the bucket for a given element.
+		 * @param value The value of the element to examine.
+		 * @return The bucket for the given element.
+		 */
+		[[nodiscard]] size_type bucket(const value_type& value) const {
+			return value_to_bucket(value);
+		}
+
+		/**
+		 * @brief Returns the average number of elements per bucket.
+		 * @return The average number of elements per bucket.
+		 */
+		[[nodiscard]] float load_factor() const {
+			return size() / static_cast<float>(bucket_count());
+		}
+
+		/**
+		 * @brief Returns the maximum average number of elements per bucket.
+		 * @return The maximum average number of elements per bucket.
+		 */
+		[[nodiscard]] float max_load_factor() const {
+			return threshold;
+		}
+
+		/**
+		 * @brief Sets the desired maximum average number of elements per bucket.
+		 * @param value A desired maximum average number of elements per bucket.
+		 */
+		void max_load_factor(const float value) {
+			ENTT_ASSERT(value > 0.f, "Invalid load factor");
+			threshold = value;
+			rehash(0u);
+		}
+
+		/**
+		 * @brief Reserves at least the specified number of buckets and regenerates
+		 * the hash table.
+		 * @param count New number of buckets.
+		 */
+		void rehash(const size_type count) {
+			auto value = (std::max)(count, minimum_capacity);
+			value = (std::max)(value, static_cast<size_type>(size() / max_load_factor()));
+
+			if (const auto sz = next_power_of_two(value); sz != bucket_count()) {
+				sparse.first().resize(sz);
+				std::fill(sparse.first().begin(), sparse.first().end(), (std::numeric_limits<size_type>::max)());
+
+				for (size_type pos{}, last = size(); pos < last; ++pos) {
+					const auto index = value_to_bucket(packed.first()[pos].second);
+					packed.first()[pos].first = std::exchange(sparse.first()[index], pos);
+				}
+			}
+		}
+
+		/**
+		 * @brief Reserves space for at least the specified number of elements and
+		 * regenerates the hash table.
+		 * @param count New number of elements.
+		 */
+		void reserve(const size_type count) {
+			packed.first().reserve(count);
+			rehash(static_cast<size_type>(std::ceil(count / max_load_factor())));
+		}
+
+		/**
+		 * @brief Returns the function used to hash the elements.
+		 * @return The function used to hash the elements.
+		 */
+		[[nodiscard]] hasher hash_function() const {
+			return sparse.second();
+		}
+
+		/**
+		 * @brief Returns the function used to compare elements for equality.
+		 * @return The function used to compare elements for equality.
+		 */
+		[[nodiscard]] key_equal key_eq() const {
+			return packed.second();
+		}
+
+	private:
+		compressed_pair<sparse_container_type, hasher> sparse;
+		compressed_pair<packed_container_type, key_equal> packed;
+		float threshold;
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "core/algorithm.hpp"
+#ifndef ENTT_CORE_ALGORITHM_HPP
+#define ENTT_CORE_ALGORITHM_HPP
+
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <utility>
+#include <vector>
+// #include "utility.hpp"
+#ifndef ENTT_CORE_UTILITY_HPP
+#define ENTT_CORE_UTILITY_HPP
+
+#include <utility>
+
+
+namespace entt {
+
+	/*! @brief Identity function object (waiting for C++20). */
+	struct identity {
+		/*! @brief Indicates that this is a transparent function object. */
+		using is_transparent = void;
+
+		/**
+		 * @brief Returns its argument unchanged.
+		 * @tparam Type Type of the argument.
+		 * @param value The actual argument.
+		 * @return The submitted value as-is.
+		 */
+		template<class Type>
+		[[nodiscard]] constexpr Type&& operator()(Type&& value) const ENTT_NOEXCEPT {
+			return std::forward<Type>(value);
+		}
+	};
+
+	/**
+	 * @brief Constant utility to disambiguate overloaded members of a class.
+	 * @tparam Type Type of the desired overload.
+	 * @tparam Class Type of class to which the member belongs.
+	 * @param member A valid pointer to a member.
+	 * @return Pointer to the member.
+	 */
+	template<typename Type, typename Class>
+	[[nodiscard]] constexpr auto overload(Type Class::* member) ENTT_NOEXCEPT {
+		return member;
+	}
+
+	/**
+	 * @brief Constant utility to disambiguate overloaded functions.
+	 * @tparam Func Function type of the desired overload.
+	 * @param func A valid pointer to a function.
+	 * @return Pointer to the function.
+	 */
+	template<typename Func>
+	[[nodiscard]] constexpr auto overload(Func* func) ENTT_NOEXCEPT {
+		return func;
+	}
+
+	/**
+	 * @brief Helper type for visitors.
+	 * @tparam Func Types of function objects.
+	 */
+	template<class... Func>
+	struct overloaded : Func... {
+		using Func::operator()...;
+	};
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Func Types of function objects.
+	 */
+	template<class... Func>
+	overloaded(Func...) -> overloaded<Func...>;
+
+	/**
+	 * @brief Basic implementation of a y-combinator.
+	 * @tparam Func Type of a potentially recursive function.
+	 */
+	template<class Func>
+	struct y_combinator {
+		/**
+		 * @brief Constructs a y-combinator from a given function.
+		 * @param recursive A potentially recursive function.
+		 */
+		y_combinator(Func recursive)
+			: func{ std::move(recursive) } {}
+
+		/**
+		 * @brief Invokes a y-combinator and therefore its underlying function.
+		 * @tparam Args Types of arguments to use to invoke the underlying function.
+		 * @param args Parameters to use to invoke the underlying function.
+		 * @return Return value of the underlying function, if any.
+		 */
+		template<class... Args>
+		decltype(auto) operator()(Args&& ...args) const {
+			return func(*this, std::forward<Args>(args)...);
+		}
+
+		/*! @copydoc operator()() */
+		template<class... Args>
+		decltype(auto) operator()(Args&& ...args) {
+			return func(*this, std::forward<Args>(args)...);
+		}
+
+	private:
+		Func func;
+	};
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @brief Function object to wrap `std::sort` in a class type.
+	 *
+	 * Unfortunately, `std::sort` cannot be passed as template argument to a class
+	 * template or a function template.<br/>
+	 * This class fills the gap by wrapping some flavors of `std::sort` in a
+	 * function object.
+	 */
+	struct std_sort {
+		/**
+		 * @brief Sorts the elements in a range.
+		 *
+		 * Sorts the elements in a range using the given binary comparison function.
+		 *
+		 * @tparam It Type of random access iterator.
+		 * @tparam Compare Type of comparison function object.
+		 * @tparam Args Types of arguments to forward to the sort function.
+		 * @param first An iterator to the first element of the range to sort.
+		 * @param last An iterator past the last element of the range to sort.
+		 * @param compare A valid comparison function object.
+		 * @param args Arguments to forward to the sort function, if any.
+		 */
+		template<typename It, typename Compare = std::less<>, typename... Args>
+		void operator()(It first, It last, Compare compare = Compare{}, Args&& ...args) const {
+			std::sort(std::forward<Args>(args)..., std::move(first), std::move(last), std::move(compare));
+		}
+	};
+
+	/*! @brief Function object for performing insertion sort. */
+	struct insertion_sort {
+		/**
+		 * @brief Sorts the elements in a range.
+		 *
+		 * Sorts the elements in a range using the given binary comparison function.
+		 *
+		 * @tparam It Type of random access iterator.
+		 * @tparam Compare Type of comparison function object.
+		 * @param first An iterator to the first element of the range to sort.
+		 * @param last An iterator past the last element of the range to sort.
+		 * @param compare A valid comparison function object.
+		 */
+		template<typename It, typename Compare = std::less<>>
+		void operator()(It first, It last, Compare compare = Compare{}) const {
+			if (first < last) {
+				for (auto it = first + 1; it < last; ++it) {
+					auto value = std::move(*it);
+					auto pre = it;
+
+					for (; pre > first && compare(value, *(pre - 1)); --pre) {
+						*pre = std::move(*(pre - 1));
+					}
+
+					*pre = std::move(value);
+				}
+			}
+		}
+	};
+
+	/**
+	 * @brief Function object for performing LSD radix sort.
+	 * @tparam Bit Number of bits processed per pass.
+	 * @tparam N Maximum number of bits to sort.
+	 */
+	template<std::size_t Bit, std::size_t N>
+	struct radix_sort {
+		static_assert((N% Bit) == 0, "The maximum number of bits to sort must be a multiple of the number of bits processed per pass");
+
+		/**
+		 * @brief Sorts the elements in a range.
+		 *
+		 * Sorts the elements in a range using the given _getter_ to access the
+		 * actual data to be sorted.
+		 *
+		 * This implementation is inspired by the online book
+		 * [Physically Based Rendering](http://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies.html#RadixSort).
+		 *
+		 * @tparam It Type of random access iterator.
+		 * @tparam Getter Type of _getter_ function object.
+		 * @param first An iterator to the first element of the range to sort.
+		 * @param last An iterator past the last element of the range to sort.
+		 * @param getter A valid _getter_ function object.
+		 */
+		template<typename It, typename Getter = identity>
+		void operator()(It first, It last, Getter getter = Getter{}) const {
+			if (first < last) {
+				static constexpr auto mask = (1 << Bit) - 1;
+				static constexpr auto buckets = 1 << Bit;
+				static constexpr auto passes = N / Bit;
+
+				using value_type = typename std::iterator_traits<It>::value_type;
+				std::vector<value_type> aux(std::distance(first, last));
+
+				auto part = [getter = std::move(getter)](auto from, auto to, auto out, auto start) {
+					std::size_t index[buckets]{};
+					std::size_t count[buckets]{};
+
+					for (auto it = from; it != to; ++it) {
+						++count[(getter(*it) >> start) & mask];
+					}
+
+					for (std::size_t pos{}, end = buckets - 1u; pos < end; ++pos) {
+						index[pos + 1u] = index[pos] + count[pos];
+					}
+
+					for (auto it = from; it != to; ++it) {
+						out[index[(getter(*it) >> start) & mask]++] = std::move(*it);
+					}
+				};
+
+				for (std::size_t pass = 0; pass < (passes & ~1); pass += 2) {
+					part(first, last, aux.begin(), pass * Bit);
+					part(aux.begin(), aux.end(), first, (pass + 1) * Bit);
+				}
+
+				if constexpr (passes & 1) {
+					part(first, last, aux.begin(), (passes - 1) * Bit);
+					std::move(aux.begin(), aux.end(), first);
+				}
+			}
+		}
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "core/any.hpp"
+#ifndef ENTT_CORE_ANY_HPP
+#define ENTT_CORE_ANY_HPP
+
+#include <cstddef>
+#include <memory>
+#include <type_traits>
+#include <utility>
+
+// #include "type_info.hpp"
+#ifndef ENTT_CORE_TYPE_INFO_HPP
+#define ENTT_CORE_TYPE_INFO_HPP
+
+#include <string_view>
+#include <type_traits>
+#include <utility>
+// #include "../config/config.h"
+
+// #include "../core/attribute.h"
+#ifndef ENTT_CORE_ATTRIBUTE_H
+#define ENTT_CORE_ATTRIBUTE_H
+
+#ifndef ENTT_EXPORT
+#    if defined _WIN32 || defined __CYGWIN__ || defined _MSC_VER
+#        define ENTT_EXPORT __declspec(dllexport)
+#        define ENTT_IMPORT __declspec(dllimport)
+#        define ENTT_HIDDEN
+#    elif defined __GNUC__ && __GNUC__ >= 4
+#        define ENTT_EXPORT __attribute__((visibility("default")))
+#        define ENTT_IMPORT __attribute__((visibility("default")))
+#        define ENTT_HIDDEN __attribute__((visibility("hidden")))
+#    else /* Unsupported compiler */
+#        define ENTT_EXPORT
+#        define ENTT_IMPORT
+#        define ENTT_HIDDEN
+#    endif
+#endif
+
+#ifndef ENTT_API
+#    if defined ENTT_API_EXPORT
+#        define ENTT_API ENTT_EXPORT
+#    elif defined ENTT_API_IMPORT
+#        define ENTT_API ENTT_IMPORT
+#    else /* No API */
+#        define ENTT_API
+#    endif
+#endif
+
+#endif
+
+// #include "fwd.hpp"
+
+// #include "hashed_string.hpp"
+#ifndef ENTT_CORE_HASHED_STRING_HPP
+#define ENTT_CORE_HASHED_STRING_HPP
+
+#include <cstddef>
+#include <cstdint>
+// #include "../config/config.h"
+
+// #include "fwd.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename>
+		struct fnv1a_traits;
+
+		template<>
+		struct fnv1a_traits<std::uint32_t> {
+			using type = std::uint32_t;
+			static constexpr std::uint32_t offset = 2166136261;
+			static constexpr std::uint32_t prime = 16777619;
+		};
+
+		template<>
+		struct fnv1a_traits<std::uint64_t> {
+			using type = std::uint64_t;
+			static constexpr std::uint64_t offset = 14695981039346656037ull;
+			static constexpr std::uint64_t prime = 1099511628211ull;
+		};
+
+		template<typename Char>
+		struct basic_hashed_string {
+			using value_type = Char;
+			using size_type = std::size_t;
+			using hash_type = id_type;
+
+			const value_type* repr;
+			size_type length;
+			hash_type hash;
+		};
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Zero overhead unique identifier.
+	  *
+	  * A hashed string is a compile-time tool that allows users to use
+	  * human-readable identifiers in the codebase while using their numeric
+	  * counterparts at runtime.<br/>
+	  * Because of that, a hashed string can also be used in constant expressions if
+	  * required.
+	  *
+	  * @warning
+	  * This class doesn't take ownership of user-supplied strings nor does it make a
+	  * copy of them.
+	  *
+	  * @tparam Char Character type.
+	  */
+	template<typename Char>
+	class basic_hashed_string : internal::basic_hashed_string<Char> {
+		using base_type = internal::basic_hashed_string<Char>;
+		using hs_traits = internal::fnv1a_traits<id_type>;
+
+		struct const_wrapper {
+			// non-explicit constructor on purpose
+			constexpr const_wrapper(const Char* str) ENTT_NOEXCEPT: repr{ str } {}
+			const Char* repr;
+		};
+
+		// Fowler–Noll–Vo hash function v. 1a - the good
+		[[nodiscard]] static constexpr auto helper(const Char* str) ENTT_NOEXCEPT {
+			base_type base{ str, 0u, hs_traits::offset };
+
+			for (; str[base.length]; ++base.length) {
+				base.hash = (base.hash ^ static_cast<hs_traits::type>(str[base.length])) * hs_traits::prime;
+			}
+
+			return base;
+		}
+
+		// Fowler–Noll–Vo hash function v. 1a - the good
+		[[nodiscard]] static constexpr auto helper(const Char* str, const std::size_t len) ENTT_NOEXCEPT {
+			base_type base{ str, len, hs_traits::offset };
+
+			for (size_type pos{}; pos < len; ++pos) {
+				base.hash = (base.hash ^ static_cast<hs_traits::type>(str[pos])) * hs_traits::prime;
+			}
+
+			return base;
+		}
+
+	public:
+		/*! @brief Character type. */
+		using value_type = typename base_type::value_type;
+		/*! @brief Unsigned integer type. */
+		using size_type = typename base_type::size_type;
+		/*! @brief Unsigned integer type. */
+		using hash_type = typename base_type::hash_type;
+
+		/**
+		 * @brief Returns directly the numeric representation of a string view.
+		 * @param str Human-readable identifier.
+		 * @param len Length of the string to hash.
+		 * @return The numeric representation of the string.
+		 */
+		[[nodiscard]] static constexpr hash_type value(const value_type* str, const size_type len) ENTT_NOEXCEPT {
+			return basic_hashed_string{ str, len };
+		}
+
+		/**
+		 * @brief Returns directly the numeric representation of a string.
+		 * @tparam N Number of characters of the identifier.
+		 * @param str Human-readable identifier.
+		 * @return The numeric representation of the string.
+		 */
+		template<std::size_t N>
+		[[nodiscard]] static constexpr hash_type value(const value_type(&str)[N]) ENTT_NOEXCEPT {
+			return basic_hashed_string{ str };
+		}
+
+		/**
+		 * @brief Returns directly the numeric representation of a string.
+		 * @param wrapper Helps achieving the purpose by relying on overloading.
+		 * @return The numeric representation of the string.
+		 */
+		[[nodiscard]] static constexpr hash_type value(const_wrapper wrapper) ENTT_NOEXCEPT {
+			return basic_hashed_string{ wrapper };
+		}
+
+		/*! @brief Constructs an empty hashed string. */
+		constexpr basic_hashed_string() ENTT_NOEXCEPT
+			: base_type{} {}
+
+		/**
+		 * @brief Constructs a hashed string from a string view.
+		 * @param str Human-readable identifier.
+		 * @param len Length of the string to hash.
+		 */
+		constexpr basic_hashed_string(const value_type* str, const size_type len) ENTT_NOEXCEPT
+			: base_type{ helper(str, len) } {}
+
+		/**
+		 * @brief Constructs a hashed string from an array of const characters.
+		 * @tparam N Number of characters of the identifier.
+		 * @param str Human-readable identifier.
+		 */
+		template<std::size_t N>
+		constexpr basic_hashed_string(const value_type(&str)[N]) ENTT_NOEXCEPT
+			: base_type{ helper(str) } {}
+
+		/**
+		 * @brief Explicit constructor on purpose to avoid constructing a hashed
+		 * string directly from a `const value_type *`.
+		 *
+		 * @warning
+		 * The lifetime of the string is not extended nor is it copied.
+		 *
+		 * @param wrapper Helps achieving the purpose by relying on overloading.
+		 */
+		explicit constexpr basic_hashed_string(const_wrapper wrapper) ENTT_NOEXCEPT
+			: base_type{ helper(wrapper.repr) } {}
+
+		/**
+		 * @brief Returns the size a hashed string.
+		 * @return The size of the hashed string.
+		 */
+		[[nodiscard]] constexpr size_type size() const ENTT_NOEXCEPT {
+			return base_type::length;
+		}
+
+		/**
+		 * @brief Returns the human-readable representation of a hashed string.
+		 * @return The string used to initialize the hashed string.
+		 */
+		[[nodiscard]] constexpr const value_type* data() const ENTT_NOEXCEPT {
+			return base_type::repr;
+		}
+
+		/**
+		 * @brief Returns the numeric representation of a hashed string.
+		 * @return The numeric representation of the hashed string.
+		 */
+		[[nodiscard]] constexpr hash_type value() const ENTT_NOEXCEPT {
+			return base_type::hash;
+		}
+
+		/*! @copydoc data */
+		[[nodiscard]] constexpr operator const value_type* () const ENTT_NOEXCEPT {
+			return data();
+		}
+
+		/**
+		 * @brief Returns the numeric representation of a hashed string.
+		 * @return The numeric representation of the hashed string.
+		 */
+		[[nodiscard]] constexpr operator hash_type() const ENTT_NOEXCEPT {
+			return value();
+		}
+	};
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Char Character type.
+	 * @param str Human-readable identifier.
+	 * @param len Length of the string to hash.
+	 */
+	template<typename Char>
+	basic_hashed_string(const Char* str, const std::size_t len) -> basic_hashed_string<Char>;
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Char Character type.
+	 * @tparam N Number of characters of the identifier.
+	 * @param str Human-readable identifier.
+	 */
+	template<typename Char, std::size_t N>
+	basic_hashed_string(const Char(&str)[N]) -> basic_hashed_string<Char>;
+
+	/**
+	 * @brief Compares two hashed strings.
+	 * @tparam Char Character type.
+	 * @param lhs A valid hashed string.
+	 * @param rhs A valid hashed string.
+	 * @return True if the two hashed strings are identical, false otherwise.
+	 */
+	template<typename Char>
+	[[nodiscard]] constexpr bool operator==(const basic_hashed_string<Char>& lhs, const basic_hashed_string<Char>& rhs) ENTT_NOEXCEPT {
+		return lhs.value() == rhs.value();
+	}
+
+	/**
+	 * @brief Compares two hashed strings.
+	 * @tparam Char Character type.
+	 * @param lhs A valid hashed string.
+	 * @param rhs A valid hashed string.
+	 * @return True if the two hashed strings differ, false otherwise.
+	 */
+	template<typename Char>
+	[[nodiscard]] constexpr bool operator!=(const basic_hashed_string<Char>& lhs, const basic_hashed_string<Char>& rhs) ENTT_NOEXCEPT {
+		return !(lhs == rhs);
+	}
+
+	/**
+	 * @brief Compares two hashed strings.
+	 * @tparam Char Character type.
+	 * @param lhs A valid hashed string.
+	 * @param rhs A valid hashed string.
+	 * @return True if the first element is less than the second, false otherwise.
+	 */
+	template<typename Char>
+	[[nodiscard]] constexpr bool operator<(const basic_hashed_string<Char>& lhs, const basic_hashed_string<Char>& rhs) ENTT_NOEXCEPT {
+		return lhs.value() < rhs.value();
+	}
+
+	/**
+	 * @brief Compares two hashed strings.
+	 * @tparam Char Character type.
+	 * @param lhs A valid hashed string.
+	 * @param rhs A valid hashed string.
+	 * @return True if the first element is less than or equal to the second, false
+	 * otherwise.
+	 */
+	template<typename Char>
+	[[nodiscard]] constexpr bool operator<=(const basic_hashed_string<Char>& lhs, const basic_hashed_string<Char>& rhs) ENTT_NOEXCEPT {
+		return !(rhs < lhs);
+	}
+
+	/**
+	 * @brief Compares two hashed strings.
+	 * @tparam Char Character type.
+	 * @param lhs A valid hashed string.
+	 * @param rhs A valid hashed string.
+	 * @return True if the first element is greater than the second, false
+	 * otherwise.
+	 */
+	template<typename Char>
+	[[nodiscard]] constexpr bool operator>(const basic_hashed_string<Char>& lhs, const basic_hashed_string<Char>& rhs) ENTT_NOEXCEPT {
+		return rhs < lhs;
+	}
+
+	/**
+	 * @brief Compares two hashed strings.
+	 * @tparam Char Character type.
+	 * @param lhs A valid hashed string.
+	 * @param rhs A valid hashed string.
+	 * @return True if the first element is greater than or equal to the second,
+	 * false otherwise.
+	 */
+	template<typename Char>
+	[[nodiscard]] constexpr bool operator>=(const basic_hashed_string<Char>& lhs, const basic_hashed_string<Char>& rhs) ENTT_NOEXCEPT {
+		return !(lhs < rhs);
+	}
+
+	/*! @brief Aliases for common character types. */
+	using hashed_string = basic_hashed_string<char>;
+
+	/*! @brief Aliases for common character types. */
+	using hashed_wstring = basic_hashed_string<wchar_t>;
+
+	inline namespace literals {
+
+		/**
+		 * @brief User defined literal for hashed strings.
+		 * @param str The literal without its suffix.
+		 * @return A properly initialized hashed string.
+		 */
+		[[nodiscard]] constexpr hashed_string operator"" _hs(const char* str, std::size_t) ENTT_NOEXCEPT {
+			return hashed_string{ str };
+		}
+
+		/**
+		 * @brief User defined literal for hashed wstrings.
+		 * @param str The literal without its suffix.
+		 * @return A properly initialized hashed wstring.
+		 */
+		[[nodiscard]] constexpr hashed_wstring operator"" _hws(const wchar_t* str, std::size_t) ENTT_NOEXCEPT {
+			return hashed_wstring{ str };
+		}
+
+	} // namespace literals
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		struct ENTT_API type_index final {
+			[[nodiscard]] static id_type next() ENTT_NOEXCEPT {
+				static ENTT_MAYBE_ATOMIC(id_type) value {};
+				return value++;
+			}
+		};
+
+		template<typename Type>
+		[[nodiscard]] constexpr auto stripped_type_name() ENTT_NOEXCEPT {
+#if defined ENTT_PRETTY_FUNCTION
+			std::string_view pretty_function{ ENTT_PRETTY_FUNCTION };
+			auto first = pretty_function.find_first_not_of(' ', pretty_function.find_first_of(ENTT_PRETTY_FUNCTION_PREFIX) + 1);
+			auto value = pretty_function.substr(first, pretty_function.find_last_of(ENTT_PRETTY_FUNCTION_SUFFIX) - first);
+			return value;
+#else
+			return std::string_view{ "" };
+#endif
+		}
+
+		template<typename Type, auto = stripped_type_name<Type>().find_first_of('.')>
+		[[nodiscard]] static constexpr std::string_view type_name(int) ENTT_NOEXCEPT {
+			constexpr auto value = stripped_type_name<Type>();
+			return value;
+		}
+
+		template<typename Type>
+		[[nodiscard]] static std::string_view type_name(char) ENTT_NOEXCEPT {
+			static const auto value = stripped_type_name<Type>();
+			return value;
+		}
+
+		template<typename Type, auto = stripped_type_name<Type>().find_first_of('.')>
+		[[nodiscard]] static constexpr id_type type_hash(int) ENTT_NOEXCEPT {
+			constexpr auto stripped = stripped_type_name<Type>();
+			constexpr auto value = hashed_string::value(stripped.data(), stripped.size());
+			return value;
+		}
+
+		template<typename Type>
+		[[nodiscard]] static id_type type_hash(char) ENTT_NOEXCEPT {
+			static const auto value = [](const auto stripped) {
+				return hashed_string::value(stripped.data(), stripped.size());
+			}(stripped_type_name<Type>());
+			return value;
+		}
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Type sequential identifier.
+	  * @tparam Type Type for which to generate a sequential identifier.
+	  */
+	template<typename Type, typename = void>
+	struct ENTT_API type_index final {
+		/**
+		 * @brief Returns the sequential identifier of a given type.
+		 * @return The sequential identifier of a given type.
+		 */
+		[[nodiscard]] static id_type value() ENTT_NOEXCEPT {
+			static const id_type value = internal::type_index::next();
+			return value;
+		}
+
+		/*! @copydoc value */
+		[[nodiscard]] constexpr operator id_type() const ENTT_NOEXCEPT {
+			return value();
+		}
+	};
+
+	/**
+	 * @brief Type hash.
+	 * @tparam Type Type for which to generate a hash value.
+	 */
+	template<typename Type, typename = void>
+	struct type_hash final {
+		/**
+		 * @brief Returns the numeric representation of a given type.
+		 * @return The numeric representation of the given type.
+		 */
+#if defined ENTT_PRETTY_FUNCTION
+		[[nodiscard]] static constexpr id_type value() ENTT_NOEXCEPT {
+			return internal::type_hash<Type>(0);
+#else
+		[[nodiscard]] static constexpr id_type value() ENTT_NOEXCEPT {
+			return type_index<Type>::value();
+#endif
+		}
+
+		/*! @copydoc value */
+		[[nodiscard]] constexpr operator id_type() const ENTT_NOEXCEPT {
+			return value();
+		}
+		};
+
+	/**
+	 * @brief Type name.
+	 * @tparam Type Type for which to generate a name.
+	 */
+	template<typename Type, typename = void>
+	struct type_name final {
+		/**
+		 * @brief Returns the name of a given type.
+		 * @return The name of the given type.
+		 */
+		[[nodiscard]] static constexpr std::string_view value() ENTT_NOEXCEPT {
+			return internal::type_name<Type>(0);
+		}
+
+		/*! @copydoc value */
+		[[nodiscard]] constexpr operator std::string_view() const ENTT_NOEXCEPT {
+			return value();
+		}
+	};
+
+	/*! @brief Implementation specific information about a type. */
+	struct type_info final {
+		/**
+		 * @brief Constructs a type info object for a given type.
+		 * @tparam Type Type for which to construct a type info object.
+		 */
+		template<typename Type>
+		constexpr type_info(std::in_place_type_t<Type>) ENTT_NOEXCEPT
+			: seq{ type_index<std::remove_cv_t<std::remove_reference_t<Type>>>::value() },
+			identifier{ type_hash<std::remove_cv_t<std::remove_reference_t<Type>>>::value() },
+			alias{ type_name<std::remove_cv_t<std::remove_reference_t<Type>>>::value() } {}
+
+		/**
+		 * @brief Type index.
+		 * @return Type index.
+		 */
+		[[nodiscard]] constexpr id_type index() const ENTT_NOEXCEPT {
+			return seq;
+		}
+
+		/**
+		 * @brief Type hash.
+		 * @return Type hash.
+		 */
+		[[nodiscard]] constexpr id_type hash() const ENTT_NOEXCEPT {
+			return identifier;
+		}
+
+		/**
+		 * @brief Type name.
+		 * @return Type name.
+		 */
+		[[nodiscard]] constexpr std::string_view name() const ENTT_NOEXCEPT {
+			return alias;
+		}
+
+	private:
+		id_type seq;
+		id_type identifier;
+		std::string_view alias;
+	};
+
+	/**
+	 * @brief Compares the contents of two type info objects.
+	 * @param lhs A type info object.
+	 * @param rhs A type info object.
+	 * @return True if the two type info objects are identical, false otherwise.
+	 */
+	[[nodiscard]] inline constexpr bool operator==(const type_info& lhs, const type_info& rhs) ENTT_NOEXCEPT {
+		return lhs.hash() == rhs.hash();
+	}
+
+	/**
+	 * @brief Compares the contents of two type info objects.
+	 * @param lhs A type info object.
+	 * @param rhs A type info object.
+	 * @return True if the two type info objects differ, false otherwise.
+	 */
+	[[nodiscard]] inline constexpr bool operator!=(const type_info& lhs, const type_info& rhs) ENTT_NOEXCEPT {
+		return !(lhs == rhs);
+	}
+
+	/**
+	 * @brief Compares two type info objects.
+	 * @param lhs A valid type info object.
+	 * @param rhs A valid type info object.
+	 * @return True if the first element is less than the second, false otherwise.
+	 */
+	[[nodiscard]] constexpr bool operator<(const type_info& lhs, const type_info& rhs) ENTT_NOEXCEPT {
+		return lhs.index() < rhs.index();
+	}
+
+	/**
+	 * @brief Compares two type info objects.
+	 * @param lhs A valid type info object.
+	 * @param rhs A valid type info object.
+	 * @return True if the first element is less than or equal to the second, false
+	 * otherwise.
+	 */
+	[[nodiscard]] constexpr bool operator<=(const type_info& lhs, const type_info& rhs) ENTT_NOEXCEPT {
+		return !(rhs < lhs);
+	}
+
+	/**
+	 * @brief Compares two type info objects.
+	 * @param lhs A valid type info object.
+	 * @param rhs A valid type info object.
+	 * @return True if the first element is greater than the second, false
+	 * otherwise.
+	 */
+	[[nodiscard]] constexpr bool operator>(const type_info& lhs, const type_info& rhs) ENTT_NOEXCEPT {
+		return rhs < lhs;
+	}
+
+	/**
+	 * @brief Compares two type info objects.
+	 * @param lhs A valid type info object.
+	 * @param rhs A valid type info object.
+	 * @return True if the first element is greater than or equal to the second,
+	 * false otherwise.
+	 */
+	[[nodiscard]] constexpr bool operator>=(const type_info& lhs, const type_info& rhs) ENTT_NOEXCEPT {
+		return !(lhs < rhs);
+	}
+
+	/**
+	 * @brief Returns the type info object associated to a given type.
+	 *
+	 * The returned element refers to an object with static storage duration.<br/>
+	 * The type doesn't need to be a complete type. If the type is a reference, the
+	 * result refers to the referenced type. In all cases, top-level cv-qualifiers
+	 * are ignored.
+	 *
+	 * @tparam Type Type for which to generate a type info object.
+	 * @return A reference to a properly initialized type info object.
+	 */
+	template<typename Type>
+	[[nodiscard]] const type_info& type_id() ENTT_NOEXCEPT {
+		if constexpr (std::is_same_v<Type, std::remove_cv_t<std::remove_reference_t<Type>>>) {
+			static type_info instance{ std::in_place_type<Type> };
+			return instance;
+		}
+		else {
+			return type_id<std::remove_cv_t<std::remove_reference_t<Type>>>();
+		}
+	}
+
+	/*! @copydoc type_id */
+	template<typename Type>
+	[[nodiscard]] const type_info& type_id(Type&&) ENTT_NOEXCEPT {
+		return type_id<std::remove_cv_t<std::remove_reference_t<Type>>>();
+	}
+
+	} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @brief A SBO friendly, type-safe container for single values of any type.
+	 * @tparam Len Size of the storage reserved for the small buffer optimization.
+	 * @tparam Align Optional alignment requirement.
+	 */
+	template<std::size_t Len, std::size_t Align>
+	class basic_any {
+		enum class operation : std::uint8_t {
+			copy,
+			move,
+			transfer,
+			assign,
+			destroy,
+			compare,
+			get
+		};
+
+		enum class policy : std::uint8_t {
+			owner,
+			ref,
+			cref
+		};
+
+		using storage_type = std::aligned_storage_t<Len + !Len, Align>;
+		using vtable_type = const void* (const operation, const basic_any&, const void*);
+
+		template<typename Type>
+		static constexpr bool in_situ = Len && alignof(Type) <= alignof(storage_type) && sizeof(Type) <= sizeof(storage_type) && std::is_nothrow_move_constructible_v<Type>;
+
+		template<typename Type>
+		static const void* basic_vtable([[maybe_unused]] const operation op, [[maybe_unused]] const basic_any& value, [[maybe_unused]] const void* other) {
+			static_assert(!std::is_same_v<Type, void> && std::is_same_v<std::remove_cv_t<std::remove_reference_t<Type>>, Type>, "Invalid type");
+			const Type* element = nullptr;
+
+			if constexpr (in_situ<Type>) {
+				element = value.owner() ? reinterpret_cast<const Type*>(&value.storage) : static_cast<const Type*>(value.instance);
+			}
+			else {
+				element = static_cast<const Type*>(value.instance);
+			}
+
+			switch (op) {
+			case operation::copy:
+				if constexpr (std::is_copy_constructible_v<Type>) {
+					static_cast<basic_any*>(const_cast<void*>(other))->initialize<Type>(*element);
+				}
+				break;
+			case operation::move:
+				if constexpr (in_situ<Type>) {
+					if (value.owner()) {
+						return new(&static_cast<basic_any*>(const_cast<void*>(other))->storage) Type{ std::move(*const_cast<Type*>(element)) };
+					}
+				}
+
+				return (static_cast<basic_any*>(const_cast<void*>(other))->instance = std::exchange(const_cast<basic_any&>(value).instance, nullptr));
+			case operation::transfer:
+				if constexpr (std::is_move_assignable_v<Type>) {
+					*const_cast<Type*>(element) = std::move(*static_cast<Type*>(const_cast<void*>(other)));
+					return other;
+				}
+				[[fallthrough]];
+			case operation::assign:
+				if constexpr (std::is_copy_assignable_v<Type>) {
+					*const_cast<Type*>(element) = *static_cast<const Type*>(other);
+					return other;
+				}
+				break;
+			case operation::destroy:
+				if constexpr (in_situ<Type>) {
+					element->~Type();
+				}
+				else if constexpr (std::is_array_v<Type>) {
+					delete[] element;
+				}
+				else {
+					delete element;
+				}
+				break;
+			case operation::compare:
+				if constexpr (!std::is_function_v<Type> && !std::is_array_v<Type> && is_equality_comparable_v<Type>) {
+					return *static_cast<const Type*>(element) == *static_cast<const Type*>(other) ? other : nullptr;
+				}
+				else {
+					return (element == other) ? other : nullptr;
+				}
+			case operation::get:
+				return element;
+			}
+
+			return nullptr;
+		}
+
+		template<typename Type, typename... Args>
+		void initialize([[maybe_unused]] Args && ...args) {
+			if constexpr (!std::is_void_v<Type>) {
+				info = &type_id<std::remove_cv_t<std::remove_reference_t<Type>>>();
+				vtable = basic_vtable<std::remove_cv_t<std::remove_reference_t<Type>>>;
+
+				if constexpr (std::is_lvalue_reference_v<Type>) {
+					static_assert(sizeof...(Args) == 1u && (std::is_lvalue_reference_v<Args> && ...), "Invalid arguments");
+					mode = std::is_const_v<std::remove_reference_t<Type>> ? policy::cref : policy::ref;
+					instance = (std::addressof(args), ...);
+				}
+				else if constexpr (in_situ<Type>) {
+					if constexpr (sizeof...(Args) != 0u && std::is_aggregate_v<Type>) {
+						new(&storage) Type{ std::forward<Args>(args)... };
+					}
+					else {
+						new(&storage) Type(std::forward<Args>(args)...);
+					}
+				}
+				else {
+					if constexpr (sizeof...(Args) != 0u && std::is_aggregate_v<Type>) {
+						instance = new Type{ std::forward<Args>(args)... };
+					}
+					else {
+						instance = new Type(std::forward<Args>(args)...);
+					}
+				}
+			}
+		}
+
+		basic_any(const basic_any& other, const policy pol) ENTT_NOEXCEPT
+			: instance{ other.data() },
+			info{ other.info },
+			vtable{ other.vtable },
+			mode{ pol } {}
+
+	public:
+		/*! @brief Size of the internal storage. */
+		static constexpr auto length = Len;
+		/*! @brief Alignment requirement. */
+		static constexpr auto alignment = Align;
+
+		/*! @brief Default constructor. */
+		constexpr basic_any() ENTT_NOEXCEPT
+			: instance{},
+			info{ &type_id<void>() },
+			vtable{},
+			mode{ policy::owner } {}
+
+		/**
+		 * @brief Constructs a wrapper by directly initializing the new object.
+		 * @tparam Type Type of object to use to initialize the wrapper.
+		 * @tparam Args Types of arguments to use to construct the new instance.
+		 * @param args Parameters to use to construct the instance.
+		 */
+		template<typename Type, typename... Args>
+		explicit basic_any(std::in_place_type_t<Type>, Args && ...args)
+			: basic_any{} {
+			initialize<Type>(std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Constructs a wrapper from a given value.
+		 * @tparam Type Type of object to use to initialize the wrapper.
+		 * @param value An instance of an object to use to initialize the wrapper.
+		 */
+		template<typename Type, typename = std::enable_if_t<!std::is_same_v<std::decay_t<Type>, basic_any>>>
+		basic_any(Type&& value)
+			: basic_any{} {
+			initialize<std::decay_t<Type>>(std::forward<Type>(value));
+		}
+
+		/**
+		 * @brief Copy constructor.
+		 * @param other The instance to copy from.
+		 */
+		basic_any(const basic_any& other)
+			: basic_any{} {
+			if (other.vtable) {
+				other.vtable(operation::copy, other, this);
+			}
+		}
+
+		/**
+		 * @brief Move constructor.
+		 * @param other The instance to move from.
+		 */
+		basic_any(basic_any&& other) ENTT_NOEXCEPT
+			: instance{},
+			info{ other.info },
+			vtable{ other.vtable },
+			mode{ other.mode } {
+			if (other.vtable) {
+				other.vtable(operation::move, other, this);
+			}
+		}
+
+		/*! @brief Frees the internal storage, whatever it means. */
+		~basic_any() {
+			if (vtable && owner()) {
+				vtable(operation::destroy, *this, nullptr);
+			}
+		}
+
+		/**
+		 * @brief Copy assignment operator.
+		 * @param other The instance to copy from.
+		 * @return This any object.
+		 */
+		basic_any& operator=(const basic_any& other) {
+			reset();
+
+			if (other.vtable) {
+				other.vtable(operation::copy, other, this);
+			}
+
+			return *this;
+		}
+
+		/**
+		 * @brief Move assignment operator.
+		 * @param other The instance to move from.
+		 * @return This any object.
+		 */
+		basic_any& operator=(basic_any&& other) ENTT_NOEXCEPT {
+			reset();
+
+			if (other.vtable) {
+				other.vtable(operation::move, other, this);
+				info = other.info;
+				vtable = other.vtable;
+				mode = other.mode;
+			}
+
+			return *this;
+		}
+
+		/**
+		 * @brief Value assignment operator.
+		 * @tparam Type Type of object to use to initialize the wrapper.
+		 * @param value An instance of an object to use to initialize the wrapper.
+		 * @return This any object.
+		 */
+		template<typename Type>
+		std::enable_if_t<!std::is_same_v<std::decay_t<Type>, basic_any>, basic_any&>
+			operator=(Type&& value) {
+			emplace<std::decay_t<Type>>(std::forward<Type>(value));
+			return *this;
+		}
+
+		/**
+		 * @brief Returns the object type if any, `type_id<void>()` otherwise.
+		 * @return The object type if any, `type_id<void>()` otherwise.
+		 */
+		[[nodiscard]] const type_info& type() const ENTT_NOEXCEPT {
+			return *info;
+		}
+
+		/**
+		 * @brief Returns an opaque pointer to the contained instance.
+		 * @return An opaque pointer the contained instance, if any.
+		 */
+		[[nodiscard]] const void* data() const ENTT_NOEXCEPT {
+			return vtable ? vtable(operation::get, *this, nullptr) : nullptr;
+		}
+
+		/**
+		 * @brief Returns an opaque pointer to the contained instance.
+		 * @param req Expected type.
+		 * @return An opaque pointer the contained instance, if any.
+		 */
+		[[nodiscard]] const void* data(const type_info& req) const ENTT_NOEXCEPT {
+			return *info == req ? data() : nullptr;
+		}
+
+		/**
+		 * @brief Returns an opaque pointer to the contained instance.
+		 * @return An opaque pointer the contained instance, if any.
+		 */
+		[[nodiscard]] void* data() ENTT_NOEXCEPT {
+			return (!vtable || mode == policy::cref) ? nullptr : const_cast<void*>(vtable(operation::get, *this, nullptr));
+		}
+
+		/**
+		 * @brief Returns an opaque pointer to the contained instance.
+		 * @param req Expected type.
+		 * @return An opaque pointer the contained instance, if any.
+		 */
+		[[nodiscard]] void* data(const type_info& req) ENTT_NOEXCEPT {
+			return *info == req ? data() : nullptr;
+		}
+
+		/**
+		 * @brief Replaces the contained object by creating a new instance directly.
+		 * @tparam Type Type of object to use to initialize the wrapper.
+		 * @tparam Args Types of arguments to use to construct the new instance.
+		 * @param args Parameters to use to construct the instance.
+		 */
+		template<typename Type, typename... Args>
+		void emplace(Args && ...args) {
+			reset();
+			initialize<Type>(std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Assigns a value to the contained object without replacing it.
+		 * @param other The value to assign to the contained object.
+		 * @return True in case of success, false otherwise.
+		 */
+		bool assign(const any& other) {
+			if (vtable && mode != policy::cref && *info == *other.info) {
+				return (vtable(operation::assign, *this, other.data()) != nullptr);
+			}
+
+			return false;
+		}
+
+		/*! @copydoc assign */
+		bool assign(any&& other) {
+			if (vtable && mode != policy::cref && *info == *other.info) {
+				if (auto* val = other.data(); val) {
+					return (vtable(operation::transfer, *this, val) != nullptr);
+				}
+				else {
+					return (vtable(operation::assign, *this, std::as_const(other).data()) != nullptr);
+				}
+			}
+
+			return false;
+		}
+
+		/*! @brief Destroys contained object */
+		void reset() {
+			if (vtable && owner()) {
+				vtable(operation::destroy, *this, nullptr);
+			}
+
+			info = &type_id<void>();
+			vtable = nullptr;
+			mode = policy::owner;
+		}
+
+		/**
+		 * @brief Returns false if a wrapper is empty, true otherwise.
+		 * @return False if the wrapper is empty, true otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			return vtable != nullptr;
+		}
+
+		/**
+		 * @brief Checks if two wrappers differ in their content.
+		 * @param other Wrapper with which to compare.
+		 * @return False if the two objects differ in their content, true otherwise.
+		 */
+		bool operator==(const basic_any& other) const ENTT_NOEXCEPT {
+			if (vtable && *info == *other.info) {
+				return (vtable(operation::compare, *this, other.data()) != nullptr);
+			}
+
+			return (!vtable && !other.vtable);
+		}
+
+		/**
+		 * @brief Aliasing constructor.
+		 * @return A wrapper that shares a reference to an unmanaged object.
+		 */
+		[[nodiscard]] basic_any as_ref() ENTT_NOEXCEPT {
+			return basic_any{ *this, (mode == policy::cref ? policy::cref : policy::ref) };
+		}
+
+		/*! @copydoc as_ref */
+		[[nodiscard]] basic_any as_ref() const ENTT_NOEXCEPT {
+			return basic_any{ *this, policy::cref };
+		}
+
+		/**
+		 * @brief Returns true if a wrapper owns its object, false otherwise.
+		 * @return True if the wrapper owns its object, false otherwise.
+		 */
+		[[nodiscard]] bool owner() const ENTT_NOEXCEPT {
+			return (mode == policy::owner);
+		}
+
+	private:
+		union {
+			const void* instance;
+			storage_type storage;
+		};
+		const type_info* info;
+		vtable_type* vtable;
+		policy mode;
+	};
+
+	/**
+	 * @brief Checks if two wrappers differ in their content.
+	 * @tparam Len Size of the storage reserved for the small buffer optimization.
+	 * @tparam Align Alignment requirement.
+	 * @param lhs A wrapper, either empty or not.
+	 * @param rhs A wrapper, either empty or not.
+	 * @return True if the two wrappers differ in their content, false otherwise.
+	 */
+	template<std::size_t Len, std::size_t Align>
+	[[nodiscard]] inline bool operator!=(const basic_any<Len, Align>& lhs, const basic_any<Len, Align>& rhs) ENTT_NOEXCEPT {
+		return !(lhs == rhs);
+	}
+
+	/**
+	 * @brief Performs type-safe access to the contained object.
+	 * @tparam Type Type to which conversion is required.
+	 * @tparam Len Size of the storage reserved for the small buffer optimization.
+	 * @tparam Align Alignment requirement.
+	 * @param data Target any object.
+	 * @return The element converted to the requested type.
+	 */
+	template<typename Type, std::size_t Len, std::size_t Align>
+	Type any_cast(const basic_any<Len, Align>& data) ENTT_NOEXCEPT {
+		const auto* const instance = any_cast<std::remove_reference_t<Type>>(&data);
+		ENTT_ASSERT(instance, "Invalid instance");
+		return static_cast<Type>(*instance);
+	}
+
+	/*! @copydoc any_cast */
+	template<typename Type, std::size_t Len, std::size_t Align>
+	Type any_cast(basic_any<Len, Align>& data) ENTT_NOEXCEPT {
+		// forces const on non-reference types to make them work also with wrappers for const references
+		auto* const instance = any_cast<std::remove_reference_t<const Type>>(&data);
+		ENTT_ASSERT(instance, "Invalid instance");
+		return static_cast<Type>(*instance);
+	}
+
+	/*! @copydoc any_cast */
+	template<typename Type, std::size_t Len, std::size_t Align>
+	Type any_cast(basic_any<Len, Align>&& data) ENTT_NOEXCEPT {
+		if constexpr (std::is_copy_constructible_v<std::remove_cv_t<std::remove_reference_t<Type>>>) {
+			if (auto* const instance = any_cast<std::remove_reference_t<Type>>(&data); instance) {
+				return static_cast<Type>(std::move(*instance));
+			}
+			else {
+				return any_cast<Type>(data);
+			}
+		}
+		else {
+			auto* const instance = any_cast<std::remove_reference_t<Type>>(&data);
+			ENTT_ASSERT(instance, "Invalid instance");
+			return static_cast<Type>(std::move(*instance));
+		}
+	}
+
+	/*! @copydoc any_cast */
+	template<typename Type, std::size_t Len, std::size_t Align>
+	const Type* any_cast(const basic_any<Len, Align>* data) ENTT_NOEXCEPT {
+		const auto& info = type_id<std::remove_cv_t<std::remove_reference_t<Type>>>();
+		return static_cast<const Type*>(data->data(info));
+	}
+
+	/*! @copydoc any_cast */
+	template<typename Type, std::size_t Len, std::size_t Align>
+	Type* any_cast(basic_any<Len, Align>* data) ENTT_NOEXCEPT {
+		const auto& info = type_id<std::remove_cv_t<std::remove_reference_t<Type>>>();
+		// last attempt to make wrappers for const references return their values
+		return static_cast<Type*>(static_cast<constness_as_t<basic_any<Len, Align>, Type>*>(data)->data(info));
+	}
+
+	/**
+	 * @brief Constructs a wrapper from a given type, passing it all arguments.
+	 * @tparam Type Type of object to use to initialize the wrapper.
+	 * @tparam Len Size of the storage reserved for the small buffer optimization.
+	 * @tparam Align Optional alignment requirement.
+	 * @tparam Args Types of arguments to use to construct the new instance.
+	 * @param args Parameters to use to construct the instance.
+	 * @return A properly initialized wrapper for an object of the given type.
+	 */
+	template<typename Type, std::size_t Len = basic_any<>::length, std::size_t Align = basic_any<Len>::alignment, typename... Args>
+	basic_any<Len, Align> make_any(Args && ...args) {
+		return basic_any<Len, Align>{std::in_place_type<Type>, std::forward<Args>(args)...};
+	}
+
+	/**
+	 * @brief Forwards its argument and avoids copies for lvalue references.
+	 * @tparam Len Size of the storage reserved for the small buffer optimization.
+	 * @tparam Align Optional alignment requirement.
+	 * @tparam Type Type of argument to use to construct the new instance.
+	 * @param value Parameter to use to construct the instance.
+	 * @return A properly initialized and not necessarily owning wrapper.
+	 */
+	template<std::size_t Len = basic_any<>::length, std::size_t Align = basic_any<Len>::alignment, typename Type>
+	basic_any<Len, Align> forward_as_any(Type&& value) {
+		return basic_any<Len, Align>{std::in_place_type<std::conditional_t<std::is_rvalue_reference_v<Type>, std::decay_t<Type>, Type>>, std::forward<Type>(value)};
+	}
+
+} // namespace entt
+
+#endif
+// #include "core/enum.hpp"
+#ifndef ENTT_CORE_ENUM_HPP
+#define ENTT_CORE_ENUM_HPP
+
+#include <type_traits>
+// #include "../config/config.h"
+
+
+namespace entt {
+
+	/**
+	 * @brief Enable bitmask support for enum classes.
+	 * @tparam Type The enum type for which to enable bitmask support.
+	 */
+	template<typename Type, typename = void>
+	struct enum_as_bitmask : std::false_type {};
+
+	/*! @copydoc enum_as_bitmask */
+	template<typename Type>
+	struct enum_as_bitmask<Type, std::void_t<decltype(Type::_entt_enum_as_bitmask)>> : std::is_enum<Type> {};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Type The enum class type for which to enable bitmask support.
+	 */
+	template<typename Type>
+	inline constexpr bool enum_as_bitmask_v = enum_as_bitmask<Type>::value;
+
+} // namespace entt
+
+/**
+ * @brief Operator available for enums for which bitmask support is enabled.
+ * @tparam Type Enum class type.
+ * @param lhs The first value to use.
+ * @param rhs The second value to use.
+ * @return The result of invoking the operator on the underlying types of the
+ * two values provided.
+ */
+template<typename Type>
+[[nodiscard]] constexpr std::enable_if_t<entt::enum_as_bitmask_v<Type>, Type>
+operator|(const Type lhs, const Type rhs) ENTT_NOEXCEPT {
+	return static_cast<Type>(static_cast<std::underlying_type_t<Type>>(lhs) | static_cast<std::underlying_type_t<Type>>(rhs));
+}
+
+/*! @copydoc operator| */
+template<typename Type>
+[[nodiscard]] constexpr std::enable_if_t<entt::enum_as_bitmask_v<Type>, Type>
+operator&(const Type lhs, const Type rhs) ENTT_NOEXCEPT {
+	return static_cast<Type>(static_cast<std::underlying_type_t<Type>>(lhs) & static_cast<std::underlying_type_t<Type>>(rhs));
+}
+
+/*! @copydoc operator| */
+template<typename Type>
+[[nodiscard]] constexpr std::enable_if_t<entt::enum_as_bitmask_v<Type>, Type>
+operator^(const Type lhs, const Type rhs) ENTT_NOEXCEPT {
+	return static_cast<Type>(static_cast<std::underlying_type_t<Type>>(lhs) ^ static_cast<std::underlying_type_t<Type>>(rhs));
+}
+
+/**
+ * @brief Operator available for enums for which bitmask support is enabled.
+ * @tparam Type Enum class type.
+ * @param value The value to use.
+ * @return The result of invoking the operator on the underlying types of the
+ * value provided.
+ */
+template<typename Type>
+[[nodiscard]] constexpr std::enable_if_t<entt::enum_as_bitmask_v<Type>, Type>
+operator~(const Type value) ENTT_NOEXCEPT {
+	return static_cast<Type>(~static_cast<std::underlying_type_t<Type>>(value));
+}
+
+/*! @copydoc operator~ */
+template<typename Type>
+[[nodiscard]] constexpr std::enable_if_t<entt::enum_as_bitmask_v<Type>, bool>
+operator!(const Type value) ENTT_NOEXCEPT {
+	return !static_cast<std::underlying_type_t<Type>>(value);
+}
+
+/*! @copydoc operator| */
+template<typename Type>
+constexpr std::enable_if_t<entt::enum_as_bitmask_v<Type>, Type&>
+operator|=(Type& lhs, const Type rhs) ENTT_NOEXCEPT {
+	return (lhs = (lhs | rhs));
+}
+
+/*! @copydoc operator| */
+template<typename Type>
+constexpr std::enable_if_t<entt::enum_as_bitmask_v<Type>, Type&>
+operator&=(Type& lhs, const Type rhs) ENTT_NOEXCEPT {
+	return (lhs = (lhs & rhs));
+}
+
+/*! @copydoc operator| */
+template<typename Type>
+constexpr std::enable_if_t<entt::enum_as_bitmask_v<Type>, Type&>
+operator^=(Type& lhs, const Type rhs) ENTT_NOEXCEPT {
+	return (lhs = (lhs ^ rhs));
+}
+
+#endif
+
+// #include "core/family.hpp"
+#ifndef ENTT_CORE_FAMILY_HPP
+#define ENTT_CORE_FAMILY_HPP
+
+// #include "../config/config.h"
+
+// #include "fwd.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @brief Dynamic identifier generator.
+	 *
+	 * Utility class template that can be used to assign unique identifiers to types
+	 * at runtime. Use different specializations to create separate sets of
+	 * identifiers.
+	 */
+	template<typename...>
+	class family {
+		inline static ENTT_MAYBE_ATOMIC(id_type) identifier {};
+
+	public:
+		/*! @brief Unsigned integer type. */
+		using family_type = id_type;
+
+		/*! @brief Statically generated unique identifier for the given type. */
+		template<typename... Type>
+		// at the time I'm writing, clang crashes during compilation if auto is used instead of family_type
+		inline static const family_type type = identifier++;
+	};
+
+} // namespace entt
+
+#endif
+
+
+// #include "core/ident.hpp"
+#ifndef ENTT_CORE_IDENT_HPP
+#define ENTT_CORE_IDENT_HPP
+
+#include <cstddef>
+#include <type_traits>
+#include <utility>
+// #include "../config/config.h"
+
+// #include "fwd.hpp"
+
+// #include "type_traits.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @brief Types identifiers.
+	 *
+	 * Variable template used to generate identifiers at compile-time for the given
+	 * types. Use the `get` member function to know what's the identifier associated
+	 * to the specific type.
+	 *
+	 * @note
+	 * Identifiers are constant expression and can be used in any context where such
+	 * an expression is required. As an example:
+	 * @code{.cpp}
+	 * using id = entt::identifier<a_type, another_type>;
+	 *
+	 * switch(a_type_identifier) {
+	 * case id::type<a_type>:
+	 *     // ...
+	 *     break;
+	 * case id::type<another_type>:
+	 *     // ...
+	 *     break;
+	 * default:
+	 *     // ...
+	 * }
+	 * @endcode
+	 *
+	 * @tparam Types List of types for which to generate identifiers.
+	 */
+	template<typename... Types>
+	class identifier {
+		template<typename Type, std::size_t... Index>
+		[[nodiscard]] static constexpr id_type get(std::index_sequence<Index...>) ENTT_NOEXCEPT {
+			static_assert((std::is_same_v<Type, Types> || ...), "Invalid type");
+			return (0 + ... + (std::is_same_v<Type, type_list_element_t<Index, type_list<std::decay_t<Types>...>>> ? id_type{ Index } : id_type{}));
+		}
+
+	public:
+		/*! @brief Unsigned integer type. */
+		using identifier_type = id_type;
+
+		/*! @brief Statically generated unique identifier for the given type. */
+		template<typename Type>
+		static constexpr identifier_type type = get<std::decay_t<Type>>(std::index_sequence_for<Types...>{});
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "core/monostate.hpp"
+#ifndef ENTT_CORE_MONOSTATE_HPP
+#define ENTT_CORE_MONOSTATE_HPP
+
+// #include "../config/config.h"
+
+// #include "fwd.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @brief Minimal implementation of the monostate pattern.
+	 *
+	 * A minimal, yet complete configuration system built on top of the monostate
+	 * pattern. Thread safe by design, it works only with basic types like `int`s or
+	 * `bool`s.<br/>
+	 * Multiple types and therefore more than one value can be associated with a
+	 * single key. Because of this, users must pay attention to use the same type
+	 * both during an assignment and when they try to read back their data.
+	 * Otherwise, they can incur in unexpected results.
+	 */
+	template<id_type>
+	struct monostate {
+		/**
+		 * @brief Assigns a value of a specific type to a given key.
+		 * @tparam Type Type of the value to assign.
+		 * @param val User data to assign to the given key.
+		 */
+		template<typename Type>
+		void operator=(Type val) const ENTT_NOEXCEPT {
+			value<Type> = val;
+		}
+
+		/**
+		 * @brief Gets a value of a specific type for a given key.
+		 * @tparam Type Type of the value to get.
+		 * @return Stored value, if any.
+		 */
+		template<typename Type>
+		operator Type() const ENTT_NOEXCEPT {
+			return value<Type>;
+		}
+
+	private:
+		template<typename Type>
+		inline static ENTT_MAYBE_ATOMIC(Type) value {};
+	};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Value Value used to differentiate between different variables.
+	 */
+	template<id_type Value>
+	inline monostate<Value> monostate_v = {};
+
+} // namespace entt
+
+#endif
+
+// #include "core/tuple.hpp"
+#ifndef ENTT_CORE_TUPLE_HPP
+#define ENTT_CORE_TUPLE_HPP
+
+#include <tuple>
+#include <type_traits>
+#include <utility>
+// #include "../config/config.h"
+
+
+namespace entt {
+
+	/**
+	 * @brief Utility function to unwrap tuples of a single element.
+	 * @tparam Type Tuple type of any sizes.
+	 * @param value A tuple object of the given type.
+	 * @return The tuple itself if it contains more than one element, the first
+	 * element otherwise.
+	 */
+	template<typename Type>
+	constexpr decltype(auto) unwrap_tuple(Type&& value) ENTT_NOEXCEPT {
+		if constexpr (std::tuple_size_v<std::remove_reference_t<Type>> == 1u) {
+			return std::get<0>(std::forward<Type>(value));
+		}
+		else {
+			return std::forward<Type>(value);
+		}
+	}
+
+} // namespace entt
+
+#endif
+
+// #include "entity/component.hpp"
+#ifndef ENTT_ENTITY_COMPONENT_HPP
+#define ENTT_ENTITY_COMPONENT_HPP
+
+#include <cstddef>
+#include <type_traits>
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename, typename = void>
+		struct in_place_delete : std::false_type {};
+
+		template<typename Type>
+		struct in_place_delete<Type, std::enable_if_t<Type::in_place_delete>>
+			: std::true_type {};
+
+		template<typename Type, typename = void>
+		struct page_size : std::integral_constant<std::size_t, (ENTT_IGNORE_IF_EMPTY&& std::is_empty_v<Type>) ? 0u : ENTT_PACKED_PAGE> {};
+
+		template<typename Type>
+		struct page_size<Type, std::enable_if_t<std::is_convertible_v<decltype(Type::page_size), std::size_t>>>
+			: std::integral_constant<std::size_t, Type::page_size> {};
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Common way to access various properties of components.
+	  * @tparam Type Type of component.
+	  */
+	template<typename Type, typename = void>
+	struct component_traits {
+		static_assert(std::is_same_v<std::decay_t<Type>, Type>, "Unsupported type");
+
+		/*! @brief Pointer stability, default is `false`. */
+		static constexpr bool in_place_delete = internal::in_place_delete<Type>::value;
+		/*! @brief Page size, default is `ENTT_PACKED_PAGE` for non-empty types. */
+		static constexpr std::size_t page_size = internal::page_size<Type>::value;
+	};
+
+	/**
+	 * @brief Helper variable template.
+	 * @tparam Type Type of component.
+	 */
+	template<class Type>
+	inline constexpr bool ignore_as_empty_v = (component_traits<Type>::page_size == 0u);
+
+} // namespace entt
+
+#endif
+
+// #include "entity/entity.hpp"
+#ifndef ENTT_ENTITY_ENTITY_HPP
+#define ENTT_ENTITY_ENTITY_HPP
+
+#include <cstddef>
+#include <cstdint>
+#include <type_traits>
+// #include "../config/config.h"
+
+// #include "fwd.hpp"
+#ifndef ENTT_ENTITY_FWD_HPP
+#define ENTT_ENTITY_FWD_HPP
+
+#include <memory>
+
+// #include "utility.hpp"
+#ifndef ENTT_ENTITY_UTILITY_HPP
+#define ENTT_ENTITY_UTILITY_HPP
+
+
+
+namespace entt {
+
+	/**
+	 * @brief Alias for exclusion lists.
+	 * @tparam Type List of types.
+	 */
+	template<typename... Type>
+	struct exclude_t : type_list<Type...> {};
+
+	/**
+	 * @brief Variable template for exclusion lists.
+	 * @tparam Type List of types.
+	 */
+	template<typename... Type>
+	inline constexpr exclude_t<Type...> exclude{};
+
+	/**
+	 * @brief Alias for lists of observed components.
+	 * @tparam Type List of types.
+	 */
+	template<typename... Type>
+	struct get_t : type_list<Type...> {};
+
+	/**
+	 * @brief Variable template for lists of observed components.
+	 * @tparam Type List of types.
+	 */
+	template<typename... Type>
+	inline constexpr get_t<Type...> get{};
+
+	/**
+	 * @brief Alias for lists of owned components.
+	 * @tparam Type List of types.
+	 */
+	template<typename... Type>
+	struct owned_t : type_list<Type...> {};
+
+	/**
+	 * @brief Variable template for lists of owned components.
+	 * @tparam Type List of types.
+	 */
+	template<typename... Type>
+	inline constexpr owned_t<Type...> owned{};
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	template<typename Entity, typename = std::allocator<Entity>>
+	class basic_sparse_set;
+
+	template<typename, typename Type, typename = std::allocator<Type>, typename = void>
+	class basic_storage;
+
+	template<typename>
+	class basic_registry;
+
+	template<typename, typename, typename, typename = void>
+	class basic_view;
+
+	template<typename>
+	struct basic_runtime_view;
+
+	template<typename, typename, typename, typename>
+	class basic_group;
+
+	template<typename>
+	class basic_observer;
+
+	template<typename>
+	class basic_organizer;
+
+	template<typename, typename...>
+	struct basic_handle;
+
+	template<typename>
+	class basic_snapshot;
+
+	template<typename>
+	class basic_snapshot_loader;
+
+	template<typename>
+	class basic_continuous_loader;
+
+	/*! @brief Default entity identifier. */
+	enum class entity : id_type {};
+
+	/*! @brief Alias declaration for the most common use case. */
+	using sparse_set = basic_sparse_set<entity>;
+
+	/**
+	 * @brief Alias declaration for the most common use case.
+	 * @tparam Args Other template parameters.
+	 */
+	template<typename... Args>
+	using storage = basic_storage<entity, Args...>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using registry = basic_registry<entity>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using observer = basic_observer<entity>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using organizer = basic_organizer<entity>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using handle = basic_handle<entity>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using const_handle = basic_handle<const entity>;
+
+	/**
+	 * @brief Alias declaration for the most common use case.
+	 * @tparam Args Other template parameters.
+	 */
+	template<typename... Args>
+	using handle_view = basic_handle<entity, Args...>;
+
+	/**
+	 * @brief Alias declaration for the most common use case.
+	 * @tparam Args Other template parameters.
+	 */
+	template<typename... Args>
+	using const_handle_view = basic_handle<const entity, Args...>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using snapshot = basic_snapshot<entity>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using snapshot_loader = basic_snapshot_loader<entity>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using continuous_loader = basic_continuous_loader<entity>;
+
+	/**
+	 * @brief Alias declaration for the most common use case.
+	 * @tparam Get Types of components iterated by the view.
+	 * @tparam Exclude Types of components used to filter the view.
+	 */
+	template<typename Get, typename Exclude = exclude_t<>>
+	using view = basic_view<entity, Get, Exclude>;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using runtime_view = basic_runtime_view<sparse_set>;
+
+	/**
+	 * @brief Alias declaration for the most common use case.
+	 * @tparam Args Other template parameters.
+	 */
+	template<typename... Args>
+	using group = basic_group<entity, Args...>;
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename, typename = void>
+		struct entt_traits;
+
+		template<typename Type>
+		struct entt_traits<Type, std::enable_if_t<std::is_enum_v<Type>>>
+			: entt_traits<std::underlying_type_t<Type>> {};
+
+		template<typename Type>
+		struct entt_traits<Type, std::enable_if_t<std::is_class_v<Type>>>
+			: entt_traits<typename Type::entity_type> {};
+
+		template<>
+		struct entt_traits<std::uint32_t> {
+			using entity_type = std::uint32_t;
+			using version_type = std::uint16_t;
+
+			static constexpr entity_type entity_mask = 0xFFFFF;
+			static constexpr entity_type version_mask = 0xFFF;
+			static constexpr std::size_t entity_shift = 20u;
+		};
+
+		template<>
+		struct entt_traits<std::uint64_t> {
+			using entity_type = std::uint64_t;
+			using version_type = std::uint32_t;
+
+			static constexpr entity_type entity_mask = 0xFFFFFFFF;
+			static constexpr entity_type version_mask = 0xFFFFFFFF;
+			static constexpr std::size_t entity_shift = 32u;
+		};
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Entity traits.
+	  * @tparam Type Type of identifier.
+	  */
+	template<typename Type>
+	class entt_traits : internal::entt_traits<Type> {
+		using base_type = internal::entt_traits<Type>;
+
+	public:
+		/*! @brief Value type. */
+		using value_type = Type;
+		/*! @brief Underlying entity type. */
+		using entity_type = typename base_type::entity_type;
+		/*! @brief Underlying version type. */
+		using version_type = typename base_type::version_type;
+		/*! @brief Reserved identifier. */
+		static constexpr entity_type reserved = base_type::entity_mask | (base_type::version_mask << base_type::entity_shift);
+		/*! @brief Page size, default is `ENTT_SPARSE_PAGE`. */
+		static constexpr auto page_size = ENTT_SPARSE_PAGE;
+
+		/**
+		 * @brief Converts an entity to its underlying type.
+		 * @param value The value to convert.
+		 * @return The integral representation of the given value.
+		 */
+		[[nodiscard]] static constexpr entity_type to_integral(const value_type value) ENTT_NOEXCEPT {
+			return static_cast<entity_type>(value);
+		}
+
+		/**
+		 * @brief Returns the entity part once converted to the underlying type.
+		 * @param value The value to convert.
+		 * @return The integral representation of the entity part.
+		 */
+		[[nodiscard]] static constexpr entity_type to_entity(const value_type value) ENTT_NOEXCEPT {
+			return (to_integral(value) & base_type::entity_mask);
+		}
+
+		/**
+		 * @brief Returns the version part once converted to the underlying type.
+		 * @param value The value to convert.
+		 * @return The integral representation of the version part.
+		 */
+		[[nodiscard]] static constexpr version_type to_version(const value_type value) ENTT_NOEXCEPT {
+			return (to_integral(value) >> base_type::entity_shift);
+		}
+
+		/**
+		 * @brief Constructs an identifier from its parts.
+		 *
+		 * If the version part is not provided, a tombstone is returned.<br/>
+		 * If the entity part is not provided, a null identifier is returned.
+		 *
+		 * @param entity The entity part of the identifier.
+		 * @param version The version part of the identifier.
+		 * @return A properly constructed identifier.
+		 */
+		[[nodiscard]] static constexpr value_type construct(const entity_type entity, const version_type version) ENTT_NOEXCEPT {
+			return value_type{ (entity & base_type::entity_mask) | (static_cast<entity_type>(version) << base_type::entity_shift) };
+		}
+
+		/**
+		 * @brief Combines two identifiers in a single one.
+		 *
+		 * The returned identifier is a copy of the first element except for its
+		 * version, which is taken from the second element.
+		 *
+		 * @param lhs The identifier from which to take the entity part.
+		 * @param rhs The identifier from which to take the version part.
+		 * @return A properly constructed identifier.
+		 */
+		[[nodiscard]] static constexpr value_type combine(const entity_type lhs, const entity_type rhs) ENTT_NOEXCEPT {
+			constexpr auto mask = (base_type::version_mask << base_type::entity_shift);
+			return value_type{ (lhs & base_type::entity_mask) | (rhs & mask) };
+		}
+	};
+
+	/**
+	 * @copydoc entt_traits<Entity>::to_integral
+	 * @tparam Entity The value type.
+	 */
+	template<typename Entity>
+	[[nodiscard]] constexpr typename entt_traits<Entity>::entity_type to_integral(const Entity value) ENTT_NOEXCEPT {
+		return entt_traits<Entity>::to_integral(value);
+	}
+
+	/**
+	 * @copydoc entt_traits<Entity>::to_entity
+	 * @tparam Entity The value type.
+	 */
+	template<typename Entity>
+	[[nodiscard]] constexpr typename entt_traits<Entity>::entity_type to_entity(const Entity value) ENTT_NOEXCEPT {
+		return entt_traits<Entity>::to_entity(value);
+	}
+
+	/**
+	 * @copydoc entt_traits<Entity>::to_version
+	 * @tparam Entity The value type.
+	 */
+	template<typename Entity>
+	[[nodiscard]] constexpr typename entt_traits<Entity>::version_type to_version(const Entity value) ENTT_NOEXCEPT {
+		return entt_traits<Entity>::to_version(value);
+	}
+
+	/*! @brief Null object for all identifiers.  */
+	struct null_t {
+		/**
+		 * @brief Converts the null object to identifiers of any type.
+		 * @tparam Entity Type of identifier.
+		 * @return The null representation for the given type.
+		 */
+		template<typename Entity>
+		[[nodiscard]] constexpr operator Entity() const ENTT_NOEXCEPT {
+			using entity_traits = entt_traits<Entity>;
+			return entity_traits::combine(entity_traits::reserved, entity_traits::reserved);
+		}
+
+		/**
+		 * @brief Compares two null objects.
+		 * @param other A null object.
+		 * @return True in all cases.
+		 */
+		[[nodiscard]] constexpr bool operator==([[maybe_unused]] const null_t other) const ENTT_NOEXCEPT {
+			return true;
+		}
+
+		/**
+		 * @brief Compares two null objects.
+		 * @param other A null object.
+		 * @return False in all cases.
+		 */
+		[[nodiscard]] constexpr bool operator!=([[maybe_unused]] const null_t other) const ENTT_NOEXCEPT {
+			return false;
+		}
+
+		/**
+		 * @brief Compares a null object and an identifier of any type.
+		 * @tparam Entity Type of identifier.
+		 * @param entity Identifier with which to compare.
+		 * @return False if the two elements differ, true otherwise.
+		 */
+		template<typename Entity>
+		[[nodiscard]] constexpr bool operator==(const Entity entity) const ENTT_NOEXCEPT {
+			using entity_traits = entt_traits<Entity>;
+			return entity_traits::to_entity(entity) == entity_traits::to_entity(*this);
+		}
+
+		/**
+		 * @brief Compares a null object and an identifier of any type.
+		 * @tparam Entity Type of identifier.
+		 * @param entity Identifier with which to compare.
+		 * @return True if the two elements differ, false otherwise.
+		 */
+		template<typename Entity>
+		[[nodiscard]] constexpr bool operator!=(const Entity entity) const ENTT_NOEXCEPT {
+			return !(entity == *this);
+		}
+	};
+
+	/**
+	 * @brief Compares a null object and an identifier of any type.
+	 * @tparam Entity Type of identifier.
+	 * @param entity Identifier with which to compare.
+	 * @param other A null object yet to be converted.
+	 * @return False if the two elements differ, true otherwise.
+	 */
+	template<typename Entity>
+	[[nodiscard]] constexpr bool operator==(const Entity entity, const null_t other) ENTT_NOEXCEPT {
+		return other.operator==(entity);
+	}
+
+	/**
+	 * @brief Compares a null object and an identifier of any type.
+	 * @tparam Entity Type of identifier.
+	 * @param entity Identifier with which to compare.
+	 * @param other A null object yet to be converted.
+	 * @return True if the two elements differ, false otherwise.
+	 */
+	template<typename Entity>
+	[[nodiscard]] constexpr bool operator!=(const Entity entity, const null_t other) ENTT_NOEXCEPT {
+		return !(other == entity);
+	}
+
+	/*! @brief Tombstone object for all identifiers.  */
+	struct tombstone_t {
+		/**
+		 * @brief Converts the tombstone object to identifiers of any type.
+		 * @tparam Entity Type of identifier.
+		 * @return The tombstone representation for the given type.
+		 */
+		template<typename Entity>
+		[[nodiscard]] constexpr operator Entity() const ENTT_NOEXCEPT {
+			using entity_traits = entt_traits<Entity>;
+			return entity_traits::combine(entity_traits::reserved, entity_traits::reserved);
+		}
+
+		/**
+		 * @brief Compares two tombstone objects.
+		 * @param other A tombstone object.
+		 * @return True in all cases.
+		 */
+		[[nodiscard]] constexpr bool operator==([[maybe_unused]] const tombstone_t other) const ENTT_NOEXCEPT {
+			return true;
+		}
+
+		/**
+		 * @brief Compares two tombstone objects.
+		 * @param other A tombstone object.
+		 * @return False in all cases.
+		 */
+		[[nodiscard]] constexpr bool operator!=([[maybe_unused]] const tombstone_t other) const ENTT_NOEXCEPT {
+			return false;
+		}
+
+		/**
+		 * @brief Compares a tombstone object and an identifier of any type.
+		 * @tparam Entity Type of identifier.
+		 * @param entity Identifier with which to compare.
+		 * @return False if the two elements differ, true otherwise.
+		 */
+		template<typename Entity>
+		[[nodiscard]] constexpr bool operator==(const Entity entity) const ENTT_NOEXCEPT {
+			using entity_traits = entt_traits<Entity>;
+			return entity_traits::to_version(entity) == entity_traits::to_version(*this);
+		}
+
+		/**
+		 * @brief Compares a tombstone object and an identifier of any type.
+		 * @tparam Entity Type of identifier.
+		 * @param entity Identifier with which to compare.
+		 * @return True if the two elements differ, false otherwise.
+		 */
+		template<typename Entity>
+		[[nodiscard]] constexpr bool operator!=(const Entity entity) const ENTT_NOEXCEPT {
+			return !(entity == *this);
+		}
+	};
+
+	/**
+	 * @brief Compares a tombstone object and an identifier of any type.
+	 * @tparam Entity Type of identifier.
+	 * @param entity Identifier with which to compare.
+	 * @param other A tombstone object yet to be converted.
+	 * @return False if the two elements differ, true otherwise.
+	 */
+	template<typename Entity>
+	[[nodiscard]] constexpr bool operator==(const Entity entity, const tombstone_t other) ENTT_NOEXCEPT {
+		return other.operator==(entity);
+	}
+
+	/**
+	 * @brief Compares a tombstone object and an identifier of any type.
+	 * @tparam Entity Type of identifier.
+	 * @param entity Identifier with which to compare.
+	 * @param other A tombstone object yet to be converted.
+	 * @return True if the two elements differ, false otherwise.
+	 */
+	template<typename Entity>
+	[[nodiscard]] constexpr bool operator!=(const Entity entity, const tombstone_t other) ENTT_NOEXCEPT {
+		return !(other == entity);
+	}
+
+	/**
+	 * @brief Compile-time constant for null entities.
+	 *
+	 * There exist implicit conversions from this variable to identifiers of any
+	 * allowed type. Similarly, there exist comparison operators between the null
+	 * entity and any other identifier.
+	 */
+	inline constexpr null_t null{};
+
+	/**
+	 * @brief Compile-time constant for tombstone entities.
+	 *
+	 * There exist implicit conversions from this variable to identifiers of any
+	 * allowed type. Similarly, there exist comparison operators between the
+	 * tombstone entity and any other identifier.
+	 */
+	inline constexpr tombstone_t tombstone{};
+
+} // namespace entt
+
+#endif
+
+// #include "entity/group.hpp"
+#ifndef ENTT_ENTITY_GROUP_HPP
+#define ENTT_ENTITY_GROUP_HPP
+
+#include <tuple>
+#include <type_traits>
+#include <utility>
+
+// #include "fwd.hpp"
+
+// #include "sparse_set.hpp"
+#ifndef ENTT_ENTITY_SPARSE_SET_HPP
+#define ENTT_ENTITY_SPARSE_SET_HPP
+
+#include <cstddef>
+#include <iterator>
+#include <memory>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename Container>
+		struct sparse_set_iterator final {
+			using value_type = typename Container::value_type;
+			using pointer = typename Container::const_pointer;
+			using reference = typename Container::const_reference;
+			using difference_type = typename Container::difference_type;
+			using iterator_category = std::random_access_iterator_tag;
+
+			sparse_set_iterator() ENTT_NOEXCEPT
+				: packed{},
+				offset{} {}
+
+			sparse_set_iterator(const Container& ref, const difference_type idx) ENTT_NOEXCEPT
+				: packed{ std::addressof(ref) },
+				offset{ idx } {}
+
+			sparse_set_iterator& operator++() ENTT_NOEXCEPT {
+				return --offset, * this;
+			}
+
+			sparse_set_iterator operator++(int) ENTT_NOEXCEPT {
+				sparse_set_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			sparse_set_iterator& operator--() ENTT_NOEXCEPT {
+				return ++offset, * this;
+			}
+
+			sparse_set_iterator operator--(int) ENTT_NOEXCEPT {
+				sparse_set_iterator orig = *this;
+				return operator--(), orig;
+			}
+
+			sparse_set_iterator& operator+=(const difference_type value) ENTT_NOEXCEPT {
+				offset -= value;
+				return *this;
+			}
+
+			sparse_set_iterator operator+(const difference_type value) const ENTT_NOEXCEPT {
+				sparse_set_iterator copy = *this;
+				return (copy += value);
+			}
+
+			sparse_set_iterator& operator-=(const difference_type value) ENTT_NOEXCEPT {
+				return (*this += -value);
+			}
+
+			sparse_set_iterator operator-(const difference_type value) const ENTT_NOEXCEPT {
+				return (*this + -value);
+			}
+
+			[[nodiscard]] reference operator[](const difference_type value) const ENTT_NOEXCEPT {
+				return packed->data()[index() - value];
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return packed->data() + index();
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return *operator->();
+			}
+
+			[[nodiscard]] difference_type index() const ENTT_NOEXCEPT {
+				return offset - 1;
+			}
+
+		private:
+			const Container* packed;
+			difference_type offset;
+		};
+
+		template<typename Type, typename Other>
+		[[nodiscard]] std::ptrdiff_t operator-(const sparse_set_iterator<Type>& lhs, const sparse_set_iterator<Other>& rhs) ENTT_NOEXCEPT {
+			return rhs.index() - lhs.index();
+		}
+
+		template<typename Type, typename Other>
+		[[nodiscard]] bool operator==(const sparse_set_iterator<Type>& lhs, const sparse_set_iterator<Other>& rhs) ENTT_NOEXCEPT {
+			return lhs.index() == rhs.index();
+		}
+
+		template<typename Type, typename Other>
+		[[nodiscard]] bool operator!=(const sparse_set_iterator<Type>& lhs, const sparse_set_iterator<Other>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+		template<typename Type, typename Other>
+		[[nodiscard]] bool operator<(const sparse_set_iterator<Type>& lhs, const sparse_set_iterator<Other>& rhs) ENTT_NOEXCEPT {
+			return lhs.index() > rhs.index();
+		}
+
+		template<typename Type, typename Other>
+		[[nodiscard]] bool operator>(const sparse_set_iterator<Type>& lhs, const sparse_set_iterator<Other>& rhs) ENTT_NOEXCEPT {
+			return lhs.index() < rhs.index();
+		}
+
+		template<typename Type, typename Other>
+		[[nodiscard]] bool operator<=(const sparse_set_iterator<Type>& lhs, const sparse_set_iterator<Other>& rhs) ENTT_NOEXCEPT {
+			return !(lhs > rhs);
+		}
+
+		template<typename Type, typename Other>
+		[[nodiscard]] bool operator>=(const sparse_set_iterator<Type>& lhs, const sparse_set_iterator<Other>& rhs) ENTT_NOEXCEPT {
+			return !(lhs < rhs);
+		}
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /*! @brief Sparse set deletion policy. */
+	enum class deletion_policy : std::uint8_t {
+		/*! @brief Swap-and-pop deletion policy. */
+		swap_and_pop = 0u,
+		/*! @brief In-place deletion policy. */
+		in_place = 1u
+	};
+
+	/**
+	 * @brief Basic sparse set implementation.
+	 *
+	 * Sparse set or packed array or whatever is the name users give it.<br/>
+	 * Two arrays: an _external_ one and an _internal_ one; a _sparse_ one and a
+	 * _packed_ one; one used for direct access through contiguous memory, the other
+	 * one used to get the data through an extra level of indirection.<br/>
+	 * This is largely used by the registry to offer users the fastest access ever
+	 * to the components. Views and groups in general are almost entirely designed
+	 * around sparse sets.
+	 *
+	 * This type of data structure is widely documented in the literature and on the
+	 * web. This is nothing more than a customized implementation suitable for the
+	 * purpose of the framework.
+	 *
+	 * @note
+	 * Internal data structures arrange elements to maximize performance. There are
+	 * no guarantees that entities are returned in the insertion order when iterate
+	 * a sparse set. Do not make assumption on the order in any case.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 */
+	template<typename Entity, typename Allocator>
+	class basic_sparse_set {
+		using alloc_traits = std::allocator_traits<Allocator>;
+		static_assert(std::is_same_v<typename alloc_traits::value_type, Entity>, "Invalid value type");
+		using sparse_container_type = std::vector<typename alloc_traits::pointer, typename alloc_traits::template rebind_alloc<typename alloc_traits::pointer>>;
+		using packed_container_type = std::vector<Entity, Allocator>;
+		using entity_traits = entt_traits<Entity>;
+
+		[[nodiscard]] auto sparse_ptr(const Entity entt) const {
+			const auto pos = static_cast<size_type>(entity_traits::to_entity(entt));
+			const auto page = pos / entity_traits::page_size;
+			return (page < sparse.size() && sparse[page]) ? (sparse[page] + fast_mod(pos, entity_traits::page_size)) : nullptr;
+		}
+
+		[[nodiscard]] auto& sparse_ref(const Entity entt) const {
+			ENTT_ASSERT(sparse_ptr(entt), "Invalid element");
+			const auto pos = static_cast<size_type>(entity_traits::to_entity(entt));
+			return sparse[pos / entity_traits::page_size][fast_mod(pos, entity_traits::page_size)];
+		}
+
+		[[nodiscard]] auto& assure_at_least(const Entity entt) {
+			const auto pos = static_cast<size_type>(entity_traits::to_entity(entt));
+			const auto page = pos / entity_traits::page_size;
+
+			if (!(page < sparse.size())) {
+				sparse.resize(page + 1u, nullptr);
+			}
+
+			if (!sparse[page]) {
+				auto page_allocator{ packed.get_allocator() };
+				sparse[page] = alloc_traits::allocate(page_allocator, entity_traits::page_size);
+				std::uninitialized_fill(sparse[page], sparse[page] + entity_traits::page_size, null);
+			}
+
+			auto& elem = sparse[page][fast_mod(pos, entity_traits::page_size)];
+			ENTT_ASSERT(entity_traits::to_version(elem) == entity_traits::to_version(tombstone), "Slot not available");
+			return elem;
+		}
+
+		void release_sparse_pages() {
+			auto page_allocator{ packed.get_allocator() };
+
+			for (auto&& page : sparse) {
+				if (page != nullptr) {
+					std::destroy(page, page + entity_traits::page_size);
+					alloc_traits::deallocate(page_allocator, page, entity_traits::page_size);
+					page = nullptr;
+				}
+			}
+		}
+
+	private:
+		virtual const void* get_at(const std::size_t) const {
+			return nullptr;
+		}
+
+		virtual void swap_at(const std::size_t, const std::size_t) {}
+		virtual void move_element(const std::size_t, const std::size_t) {}
+
+	protected:
+		/*! @brief Random access iterator type. */
+		using basic_iterator = internal::sparse_set_iterator<packed_container_type>;
+
+		/**
+		 * @brief Erases entities from a sparse set.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 */
+		virtual void swap_and_pop(basic_iterator first, basic_iterator last) {
+			for (; first != last; ++first) {
+				sparse_ref(packed.back()) = entity_traits::combine(static_cast<typename entity_traits::entity_type>(first.index()), entity_traits::to_integral(packed.back()));
+				const auto entt = std::exchange(packed[first.index()], packed.back());
+				// unnecessary but it helps to detect nasty bugs
+				ENTT_ASSERT((packed.back() = tombstone, true), "");
+				// lazy self-assignment guard
+				sparse_ref(entt) = null;
+				packed.pop_back();
+			}
+		}
+
+		/**
+		 * @brief Erases entities from a sparse set.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 */
+		virtual void in_place_pop(basic_iterator first, basic_iterator last) {
+			for (; first != last; ++first) {
+				sparse_ref(*first) = null;
+				packed[first.index()] = std::exchange(free_list, entity_traits::combine(static_cast<typename entity_traits::entity_type>(first.index()), entity_traits::reserved));
+			}
+		}
+
+		/**
+		 * @brief Assigns an entity to a sparse set.
+		 * @param entt A valid identifier.
+		 * @param force_back Force back insertion.
+		 * @return Iterator pointing to the emplaced element.
+		 */
+		virtual basic_iterator try_emplace(const Entity entt, const bool force_back, const void* = nullptr) {
+			ENTT_ASSERT(!contains(entt), "Set already contains entity");
+
+			if (auto& elem = assure_at_least(entt); free_list == null || force_back) {
+				packed.push_back(entt);
+				elem = entity_traits::combine(static_cast<typename entity_traits::entity_type>(packed.size() - 1u), entity_traits::to_integral(entt));
+				return begin();
+			}
+			else {
+				const auto pos = static_cast<size_type>(entity_traits::to_entity(free_list));
+				elem = entity_traits::combine(entity_traits::to_integral(free_list), entity_traits::to_integral(entt));
+				free_list = std::exchange(packed[pos], entt);
+				return --(end() - pos);
+			}
+		}
+
+	public:
+		/*! @brief Allocator type. */
+		using allocator_type = Allocator;
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Underlying version type. */
+		using version_type = typename entity_traits::version_type;
+		/*! @brief Unsigned integer type. */
+		using size_type = typename packed_container_type::size_type;
+		/*! @brief Pointer type to contained entities. */
+		using pointer = typename packed_container_type::const_pointer;
+		/*! @brief Random access iterator type. */
+		using iterator = basic_iterator;
+		/*! @brief Constant random access iterator type. */
+		using const_iterator = iterator;
+		/*! @brief Reverse iterator type. */
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		/*! @brief Constant reverse iterator type. */
+		using const_reverse_iterator = reverse_iterator;
+
+		/*! @brief Default constructor. */
+		basic_sparse_set()
+			: basic_sparse_set{ type_id<void>() } {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator.
+		 * @param allocator The allocator to use.
+		 */
+		explicit basic_sparse_set(const allocator_type& allocator)
+			: basic_sparse_set{ type_id<void>(), deletion_policy::swap_and_pop, allocator } {}
+
+		/**
+		 * @brief Constructs an empty container with the given policy and allocator.
+		 * @param pol Type of deletion policy.
+		 * @param allocator The allocator to use (possibly default-constructed).
+		 */
+		explicit basic_sparse_set(deletion_policy pol, const allocator_type& allocator = {})
+			: basic_sparse_set{ type_id<void>(), pol, allocator } {}
+
+		/**
+		 * @brief Constructs an empty container with the given value type, policy
+		 * and allocator.
+		 * @param value Returned value type, if any.
+		 * @param pol Type of deletion policy.
+		 * @param allocator The allocator to use (possibly default-constructed).
+		 */
+		explicit basic_sparse_set(const type_info& value, deletion_policy pol = deletion_policy::swap_and_pop, const allocator_type& allocator = {})
+			: sparse{ allocator },
+			packed{ allocator },
+			info{ &value },
+			free_list{ tombstone },
+			mode{ pol } {}
+
+		/**
+		 * @brief Move constructor.
+		 * @param other The instance to move from.
+		 */
+		basic_sparse_set(basic_sparse_set&& other) ENTT_NOEXCEPT
+			: sparse{ std::move(other.sparse) },
+			packed{ std::move(other.packed) },
+			info{ other.info },
+			free_list{ std::exchange(other.free_list, tombstone) },
+			mode{ other.mode } {}
+
+		/**
+		 * @brief Allocator-extended move constructor.
+		 * @param other The instance to move from.
+		 * @param allocator The allocator to use.
+		 */
+		basic_sparse_set(basic_sparse_set&& other, const allocator_type& allocator) ENTT_NOEXCEPT
+			: sparse{ std::move(other.sparse), allocator },
+			packed{ std::move(other.packed), allocator },
+			info{ other.info },
+			free_list{ std::exchange(other.free_list, tombstone) },
+			mode{ other.mode } {
+			ENTT_ASSERT(alloc_traits::is_always_equal::value || packed.get_allocator() == other.packed.get_allocator(), "Copying a sparse set is not allowed");
+		}
+
+		/*! @brief Default destructor. */
+		virtual ~basic_sparse_set() {
+			release_sparse_pages();
+		}
+
+		/**
+		 * @brief Move assignment operator.
+		 * @param other The instance to move from.
+		 * @return This sparse set.
+		 */
+		basic_sparse_set& operator=(basic_sparse_set&& other) ENTT_NOEXCEPT {
+			ENTT_ASSERT(alloc_traits::is_always_equal::value || packed.get_allocator() == other.packed.get_allocator(), "Copying a sparse set is not allowed");
+
+			release_sparse_pages();
+			sparse = std::move(other.sparse);
+			packed = std::move(other.packed);
+			info = other.info;
+			free_list = std::exchange(other.free_list, tombstone);
+			mode = other.mode;
+			return *this;
+		}
+
+		/**
+		 * @brief Exchanges the contents with those of a given sparse set.
+		 * @param other Sparse set to exchange the content with.
+		 */
+		void swap(basic_sparse_set& other) {
+			using std::swap;
+			swap(sparse, other.sparse);
+			swap(packed, other.packed);
+			swap(info, other.info);
+			swap(free_list, other.free_list);
+			swap(mode, other.mode);
+		}
+
+		/**
+		 * @brief Returns the associated allocator.
+		 * @return The associated allocator.
+		 */
+		[[nodiscard]] constexpr allocator_type get_allocator() const ENTT_NOEXCEPT {
+			return packed.get_allocator();
+		}
+
+		/**
+		 * @brief Returns the deletion policy of a sparse set.
+		 * @return The deletion policy of the sparse set.
+		 */
+		[[nodiscard]] deletion_policy policy() const ENTT_NOEXCEPT {
+			return mode;
+		}
+
+		/**
+		 * @brief Increases the capacity of a sparse set.
+		 *
+		 * If the new capacity is greater than the current capacity, new storage is
+		 * allocated, otherwise the method does nothing.
+		 *
+		 * @param cap Desired capacity.
+		 */
+		virtual void reserve(const size_type cap) {
+			packed.reserve(cap);
+		}
+
+		/**
+		 * @brief Returns the number of elements that a sparse set has currently
+		 * allocated space for.
+		 * @return Capacity of the sparse set.
+		 */
+		[[nodiscard]] virtual size_type capacity() const ENTT_NOEXCEPT {
+			return packed.capacity();
+		}
+
+		/*! @brief Requests the removal of unused capacity. */
+		virtual void shrink_to_fit() {
+			packed.shrink_to_fit();
+		}
+
+		/**
+		 * @brief Returns the extent of a sparse set.
+		 *
+		 * The extent of a sparse set is also the size of the internal sparse array.
+		 * There is no guarantee that the internal packed array has the same size.
+		 * Usually the size of the internal sparse array is equal or greater than
+		 * the one of the internal packed array.
+		 *
+		 * @return Extent of the sparse set.
+		 */
+		[[nodiscard]] size_type extent() const ENTT_NOEXCEPT {
+			return sparse.size() * entity_traits::page_size;
+		}
+
+		/**
+		 * @brief Returns the number of elements in a sparse set.
+		 *
+		 * The number of elements is also the size of the internal packed array.
+		 * There is no guarantee that the internal sparse array has the same size.
+		 * Usually the size of the internal sparse array is equal or greater than
+		 * the one of the internal packed array.
+		 *
+		 * @return Number of elements.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return packed.size();
+		}
+
+		/**
+		 * @brief Checks whether a sparse set is empty.
+		 * @return True if the sparse set is empty, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return packed.empty();
+		}
+
+		/**
+		 * @brief Direct access to the internal packed array.
+		 * @return A pointer to the internal packed array.
+		 */
+		[[nodiscard]] pointer data() const ENTT_NOEXCEPT {
+			return packed.data();
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning.
+		 *
+		 * The returned iterator points to the first entity of the internal packed
+		 * array. If the sparse set is empty, the returned iterator will be equal to
+		 * `end()`.
+		 *
+		 * @return An iterator to the first entity of the sparse set.
+		 */
+		[[nodiscard]] const_iterator begin() const ENTT_NOEXCEPT {
+			const auto pos = static_cast<typename iterator::difference_type>(packed.size());
+			return iterator{ packed, pos };
+		}
+
+		/*! @copydoc begin */
+		[[nodiscard]] const_iterator cbegin() const ENTT_NOEXCEPT {
+			return begin();
+		}
+
+		/**
+		 * @brief Returns an iterator to the end.
+		 *
+		 * The returned iterator points to the element following the last entity in
+		 * a sparse set. Attempting to dereference the returned iterator results in
+		 * undefined behavior.
+		 *
+		 * @return An iterator to the element following the last entity of a sparse
+		 * set.
+		 */
+		[[nodiscard]] iterator end() const ENTT_NOEXCEPT {
+			return iterator{ packed, {} };
+		}
+
+		/*! @copydoc end */
+		[[nodiscard]] const_iterator cend() const ENTT_NOEXCEPT {
+			return end();
+		}
+
+		/**
+		 * @brief Returns a reverse iterator to the beginning.
+		 *
+		 * The returned iterator points to the first entity of the reversed internal
+		 * packed array. If the sparse set is empty, the returned iterator will be
+		 * equal to `rend()`.
+		 *
+		 * @return An iterator to the first entity of the reversed internal packed
+		 * array.
+		 */
+		[[nodiscard]] const_reverse_iterator rbegin() const ENTT_NOEXCEPT {
+			return std::make_reverse_iterator(end());
+		}
+
+		/*! @copydoc rbegin */
+		[[nodiscard]] const_reverse_iterator crbegin() const ENTT_NOEXCEPT {
+			return rbegin();
+		}
+
+		/**
+		 * @brief Returns a reverse iterator to the end.
+		 *
+		 * The returned iterator points to the element following the last entity in
+		 * the reversed sparse set. Attempting to dereference the returned iterator
+		 * results in undefined behavior.
+		 *
+		 * @return An iterator to the element following the last entity of the
+		 * reversed sparse set.
+		 */
+		[[nodiscard]] reverse_iterator rend() const ENTT_NOEXCEPT {
+			return std::make_reverse_iterator(begin());
+		}
+
+		/*! @copydoc rend */
+		[[nodiscard]] const_reverse_iterator crend() const ENTT_NOEXCEPT {
+			return rend();
+		}
+
+		/**
+		 * @brief Finds an entity.
+		 * @param entt A valid identifier.
+		 * @return An iterator to the given entity if it's found, past the end
+		 * iterator otherwise.
+		 */
+		[[nodiscard]] iterator find(const entity_type entt) const ENTT_NOEXCEPT {
+			return contains(entt) ? --(end() - index(entt)) : end();
+		}
+
+		/**
+		 * @brief Checks if a sparse set contains an entity.
+		 * @param entt A valid identifier.
+		 * @return True if the sparse set contains the entity, false otherwise.
+		 */
+		[[nodiscard]] bool contains(const entity_type entt) const ENTT_NOEXCEPT {
+			const auto elem = sparse_ptr(entt);
+			constexpr auto cap = entity_traits::to_entity(null);
+			// testing versions permits to avoid accessing the packed array
+			return elem && (((~cap & entity_traits::to_integral(entt)) ^ entity_traits::to_integral(*elem)) < cap);
+		}
+
+		/**
+		 * @brief Returns the contained version for an identifier.
+		 * @param entt A valid identifier.
+		 * @return The version for the given identifier if present, the tombstone
+		 * version otherwise.
+		 */
+		[[nodiscard]] version_type current(const entity_type entt) const ENTT_NOEXCEPT {
+			const auto elem = sparse_ptr(entt);
+			constexpr auto fallback = entity_traits::to_version(tombstone);
+			return elem ? entity_traits::to_version(*elem) : fallback;
+		}
+
+		/**
+		 * @brief Returns the position of an entity in a sparse set.
+		 *
+		 * @warning
+		 * Attempting to get the position of an entity that doesn't belong to the
+		 * sparse set results in undefined behavior.
+		 *
+		 * @param entt A valid identifier.
+		 * @return The position of the entity in the sparse set.
+		 */
+		[[nodiscard]] size_type index(const entity_type entt) const ENTT_NOEXCEPT {
+			ENTT_ASSERT(contains(entt), "Set does not contain entity");
+			return static_cast<size_type>(entity_traits::to_entity(sparse_ref(entt)));
+		}
+
+		/**
+		 * @brief Returns the entity at specified location, with bounds checking.
+		 * @param pos The position for which to return the entity.
+		 * @return The entity at specified location if any, a null entity otherwise.
+		 */
+		[[nodiscard]] entity_type at(const size_type pos) const ENTT_NOEXCEPT {
+			return pos < packed.size() ? packed[pos] : null;
+		}
+
+		/**
+		 * @brief Returns the entity at specified location, without bounds checking.
+		 * @param pos The position for which to return the entity.
+		 * @return The entity at specified location.
+		 */
+		[[nodiscard]] entity_type operator[](const size_type pos) const ENTT_NOEXCEPT {
+			ENTT_ASSERT(pos < packed.size(), "Position is out of bounds");
+			return packed[pos];
+		}
+
+		/**
+		 * @brief Returns the element assigned to an entity, if any.
+		 *
+		 * @warning
+		 * Attempting to use an entity that doesn't belong to the sparse set results
+		 * in undefined behavior.
+		 *
+		 * @param entt A valid identifier.
+		 * @return An opaque pointer to the element assigned to the entity, if any.
+		 */
+		const void* get(const entity_type entt) const ENTT_NOEXCEPT {
+			return get_at(index(entt));
+		}
+
+		/*! @copydoc get */
+		void* get(const entity_type entt) ENTT_NOEXCEPT {
+			return const_cast<void*>(std::as_const(*this).get(entt));
+		}
+
+		/**
+		 * @brief Assigns an entity to a sparse set.
+		 *
+		 * @warning
+		 * Attempting to assign an entity that already belongs to the sparse set
+		 * results in undefined behavior.
+		 *
+		 * @param entt A valid identifier.
+		 * @param value Optional opaque value to forward to mixins, if any.
+		 * @return Iterator pointing to the emplaced element in case of success, the
+		 * `end()` iterator otherwise.
+		 */
+		iterator emplace(const entity_type entt, const void* value = nullptr) {
+			return try_emplace(entt, false, value);
+		}
+
+		/**
+		 * @brief Bump the version number of an entity.
+		 *
+		 * @warning
+		 * Attempting to bump the version of an entity that doesn't belong to the
+		 * sparse set results in undefined behavior.
+		 *
+		 * @param entt A valid identifier.
+		 */
+		void bump(const entity_type entt) {
+			auto& entity = sparse_ref(entt);
+			entity = entity_traits::combine(entity_traits::to_integral(entity), entity_traits::to_integral(entt));
+			packed[static_cast<size_type>(entity_traits::to_entity(entity))] = entt;
+		}
+
+		/**
+		 * @brief Assigns one or more entities to a sparse set.
+		 *
+		 * @warning
+		 * Attempting to assign an entity that already belongs to the sparse set
+		 * results in undefined behavior.
+		 *
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @return Iterator pointing to the first element inserted in case of
+		 * success, the `end()` iterator otherwise.
+		 */
+		template<typename It>
+		iterator insert(It first, It last) {
+			for (auto it = first; it != last; ++it) {
+				try_emplace(*it, true);
+			}
+
+			return first == last ? end() : find(*first);
+		}
+
+		/**
+		 * @brief Erases an entity from a sparse set.
+		 *
+		 * @warning
+		 * Attempting to erase an entity that doesn't belong to the sparse set
+		 * results in undefined behavior.
+		 *
+		 * @param entt A valid identifier.
+		 */
+		void erase(const entity_type entt) {
+			const auto it = --(end() - index(entt));
+			(mode == deletion_policy::in_place) ? in_place_pop(it, it + 1u) : swap_and_pop(it, it + 1u);
+		}
+
+		/**
+		 * @brief Erases entities from a set.
+		 *
+		 * @sa erase
+		 *
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 */
+		template<typename It>
+		void erase(It first, It last) {
+			if constexpr (std::is_same_v<It, basic_iterator>) {
+				(mode == deletion_policy::in_place) ? in_place_pop(first, last) : swap_and_pop(first, last);
+			}
+			else {
+				for (; first != last; ++first) {
+					erase(*first);
+				}
+			}
+		}
+
+		/**
+		 * @brief Removes an entity from a sparse set if it exists.
+		 * @param entt A valid identifier.
+		 * @return True if the entity is actually removed, false otherwise.
+		 */
+		bool remove(const entity_type entt) {
+			return contains(entt) && (erase(entt), true);
+		}
+
+		/**
+		 * @brief Removes entities from a sparse set if they exist.
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @return The number of entities actually removed.
+		 */
+		template<typename It>
+		size_type remove(It first, It last) {
+			size_type count{};
+
+			for (; first != last; ++first) {
+				count += remove(*first);
+			}
+
+			return count;
+		}
+
+		/*! @brief Removes all tombstones from the packed array of a sparse set. */
+		void compact() {
+			size_type from = packed.size();
+			for (; from && packed[from - 1u] == tombstone; --from) {}
+
+			for (auto* it = &free_list; *it != null && from; it = std::addressof(packed[entity_traits::to_entity(*it)])) {
+				if (const size_type to = entity_traits::to_entity(*it); to < from) {
+					--from;
+					move_element(from, to);
+
+					using std::swap;
+					swap(packed[from], packed[to]);
+
+					const auto entity = static_cast<typename entity_traits::entity_type>(to);
+					sparse_ref(packed[to]) = entity_traits::combine(entity, entity_traits::to_integral(packed[to]));
+					*it = entity_traits::combine(static_cast<typename entity_traits::entity_type>(from), entity_traits::reserved);
+					for (; from && packed[from - 1u] == tombstone; --from) {}
+				}
+			}
+
+			free_list = tombstone;
+			packed.resize(from);
+		}
+
+		/**
+		 * @brief Swaps two entities in a sparse set.
+		 *
+		 * For what it's worth, this function affects both the internal sparse array
+		 * and the internal packed array. Users should not care of that anyway.
+		 *
+		 * @warning
+		 * Attempting to swap entities that don't belong to the sparse set results
+		 * in undefined behavior.
+		 *
+		 * @param lhs A valid identifier.
+		 * @param rhs A valid identifier.
+		 */
+		void swap_elements(const entity_type lhs, const entity_type rhs) {
+			ENTT_ASSERT(contains(lhs) && contains(rhs), "Set does not contain entities");
+
+			auto& entt = sparse_ref(lhs);
+			auto& other = sparse_ref(rhs);
+
+			const auto from = entity_traits::to_entity(entt);
+			const auto to = entity_traits::to_entity(other);
+
+			// basic no-leak guarantee (with invalid state) if swapping throws
+			swap_at(static_cast<size_type>(from), static_cast<size_type>(to));
+			entt = entity_traits::combine(to, entity_traits::to_integral(packed[from]));
+			other = entity_traits::combine(from, entity_traits::to_integral(packed[to]));
+
+			using std::swap;
+			swap(packed[from], packed[to]);
+		}
+
+		/**
+		 * @brief Sort the first count elements according to the given comparison
+		 * function.
+		 *
+		 * The comparison function object must return `true` if the first element
+		 * is _less_ than the second one, `false` otherwise. The signature of the
+		 * comparison function should be equivalent to the following:
+		 *
+		 * @code{.cpp}
+		 * bool(const Entity, const Entity);
+		 * @endcode
+		 *
+		 * Moreover, the comparison function object shall induce a
+		 * _strict weak ordering_ on the values.
+		 *
+		 * The sort function object must offer a member function template
+		 * `operator()` that accepts three arguments:
+		 *
+		 * * An iterator to the first element of the range to sort.
+		 * * An iterator past the last element of the range to sort.
+		 * * A comparison function to use to compare the elements.
+		 *
+		 * @tparam Compare Type of comparison function object.
+		 * @tparam Sort Type of sort function object.
+		 * @tparam Args Types of arguments to forward to the sort function object.
+		 * @param length Number of elements to sort.
+		 * @param compare A valid comparison function object.
+		 * @param algo A valid sort function object.
+		 * @param args Arguments to forward to the sort function object, if any.
+		 */
+		template<typename Compare, typename Sort = std_sort, typename... Args>
+		void sort_n(const size_type length, Compare compare, Sort algo = Sort{}, Args && ...args) {
+			ENTT_ASSERT(!(length > packed.size()), "Length exceeds the number of elements");
+			ENTT_ASSERT(free_list == null, "Partial sorting with tombstones is not supported");
+
+			algo(packed.rend() - length, packed.rend(), std::move(compare), std::forward<Args>(args)...);
+
+			for (size_type pos{}; pos < length; ++pos) {
+				auto curr = pos;
+				auto next = index(packed[curr]);
+
+				while (curr != next) {
+					const auto idx = index(packed[next]);
+					const auto entt = packed[curr];
+
+					swap_at(next, idx);
+					const auto entity = static_cast<typename entity_traits::entity_type>(curr);
+					sparse_ref(entt) = entity_traits::combine(entity, entity_traits::to_integral(packed[curr]));
+					curr = std::exchange(next, idx);
+				}
+			}
+		}
+
+		/**
+		 * @brief Sort all elements according to the given comparison function.
+		 *
+		 * @sa sort_n
+		 *
+		 * @tparam Compare Type of comparison function object.
+		 * @tparam Sort Type of sort function object.
+		 * @tparam Args Types of arguments to forward to the sort function object.
+		 * @param compare A valid comparison function object.
+		 * @param algo A valid sort function object.
+		 * @param args Arguments to forward to the sort function object, if any.
+		 */
+		template<typename Compare, typename Sort = std_sort, typename... Args>
+		void sort(Compare compare, Sort algo = Sort{}, Args && ...args) {
+			compact();
+			sort_n(packed.size(), std::move(compare), std::move(algo), std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Sort entities according to their order in another sparse set.
+		 *
+		 * Entities that are part of both the sparse sets are ordered internally
+		 * according to the order they have in `other`. All the other entities goes
+		 * to the end of the list and there are no guarantees on their order.<br/>
+		 * In other terms, this function can be used to impose the same order on two
+		 * sets by using one of them as a master and the other one as a slave.
+		 *
+		 * Iterating the sparse set with a couple of iterators returns elements in
+		 * the expected order after a call to `respect`. See `begin` and `end` for
+		 * more details.
+		 *
+		 * @param other The sparse sets that imposes the order of the entities.
+		 */
+		void respect(const basic_sparse_set& other) {
+			compact();
+
+			const auto to = other.end();
+			auto from = other.begin();
+
+			for (size_type pos = packed.size() - 1; pos && from != to; ++from) {
+				if (contains(*from)) {
+					if (*from != packed[pos]) {
+						// basic no-leak guarantee (with invalid state) if swapping throws
+						swap_elements(packed[pos], *from);
+					}
+
+					--pos;
+				}
+			}
+		}
+
+		/*! @brief Clears a sparse set. */
+		void clear() {
+			if (const auto last = end(); free_list == null) {
+				in_place_pop(begin(), last);
+			}
+			else {
+				for (auto&& entity : *this) {
+					// tombstone filter on itself
+					if (const auto it = find(entity); it != last) {
+						in_place_pop(it, it + 1u);
+					}
+				}
+			}
+
+			free_list = tombstone;
+			packed.clear();
+		}
+
+		/**
+		 * @brief Returned value type, if any.
+		 * @return Returned value type, if any.
+		 */
+		const type_info& type() const ENTT_NOEXCEPT {
+			return *info;
+		}
+
+		/*! @brief Forwards variables to mixins, if any. */
+		virtual void bind(any) ENTT_NOEXCEPT {}
+
+	private:
+		sparse_container_type sparse;
+		packed_container_type packed;
+		const type_info* info;
+		entity_type free_list;
+		deletion_policy mode;
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "storage.hpp"
+#ifndef ENTT_ENTITY_STORAGE_HPP
+#define ENTT_ENTITY_STORAGE_HPP
+
+#include <cstddef>
+#include <iterator>
+#include <memory>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
+// #include "../config/config.h"
+
+
+// #include "../core/iterator.hpp"
+
+// #include "../core/memory.hpp"
+
+// #include "../core/type_info.hpp"
+
+// #include "component.hpp"
+
+// #include "entity.hpp"
+
+// #include "fwd.hpp"
+
+// #include "sigh_storage_mixin.hpp"
+#ifndef ENTT_ENTITY_SIGH_STORAGE_MIXIN_HPP
+#define ENTT_ENTITY_SIGH_STORAGE_MIXIN_HPP
+
+#include <utility>
+// #include "../config/config.h"
+
+// #include "../core/any.hpp"
+
+// #include "../signal/sigh.hpp"
+#ifndef ENTT_SIGNAL_SIGH_HPP
+#define ENTT_SIGNAL_SIGH_HPP
+
+#include <algorithm>
+#include <functional>
+#include <type_traits>
+#include <utility>
+#include <vector>
+// #include "delegate.hpp"
+#ifndef ENTT_SIGNAL_DELEGATE_HPP
+#define ENTT_SIGNAL_DELEGATE_HPP
+
+#include <cstddef>
+#include <functional>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+
+// #include "fwd.hpp"
+#ifndef ENTT_SIGNAL_FWD_HPP
+#define ENTT_SIGNAL_FWD_HPP
+
+#include <memory>
+
+namespace entt {
+
+	template<typename>
+	class delegate;
+
+	template<typename = std::allocator<char>>
+	class basic_dispatcher;
+
+	template<typename>
+	class emitter;
+
+	class connection;
+
+	struct scoped_connection;
+
+	template<typename>
+	class sink;
+
+	template<typename Type, typename = std::allocator<Type*>>
+	class sigh;
+
+	/*! @brief Alias declaration for the most common use case. */
+	using dispatcher = basic_dispatcher<>;
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename Ret, typename... Args>
+		auto function_pointer(Ret(*)(Args...)) -> Ret(*)(Args...);
+
+		template<typename Ret, typename Type, typename... Args, typename Other>
+		auto function_pointer(Ret(*)(Type, Args...), Other&&) -> Ret(*)(Args...);
+
+		template<typename Class, typename Ret, typename... Args, typename... Other>
+		auto function_pointer(Ret(Class::*)(Args...), Other&& ...) -> Ret(*)(Args...);
+
+		template<typename Class, typename Ret, typename... Args, typename... Other>
+		auto function_pointer(Ret(Class::*)(Args...) const, Other&& ...) -> Ret(*)(Args...);
+
+		template<typename Class, typename Type, typename... Other>
+		auto function_pointer(Type Class::*, Other&& ...) -> Type(*)();
+
+		template<typename... Type>
+		using function_pointer_t = decltype(internal::function_pointer(std::declval<Type>()...));
+
+		template<typename... Class, typename Ret, typename... Args>
+		[[nodiscard]] constexpr auto index_sequence_for(Ret(*)(Args...)) {
+			return std::index_sequence_for<Class..., Args...>{};
+		}
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /*! @brief Used to wrap a function or a member of a specified type. */
+	template<auto>
+	struct connect_arg_t {};
+
+	/*! @brief Constant of type connect_arg_t used to disambiguate calls. */
+	template<auto Func>
+	inline constexpr connect_arg_t<Func> connect_arg{};
+
+	/**
+	 * @brief Basic delegate implementation.
+	 *
+	 * Primary template isn't defined on purpose. All the specializations give a
+	 * compile-time error unless the template parameter is a function type.
+	 */
+	template<typename>
+	class delegate;
+
+	/**
+	 * @brief Utility class to use to send around functions and members.
+	 *
+	 * Unmanaged delegate for function pointers and members. Users of this class are
+	 * in charge of disconnecting instances before deleting them.
+	 *
+	 * A delegate can be used as a general purpose invoker without memory overhead
+	 * for free functions possibly with payloads and bound or unbound members.
+	 *
+	 * @tparam Ret Return type of a function type.
+	 * @tparam Args Types of arguments of a function type.
+	 */
+	template<typename Ret, typename... Args>
+	class delegate<Ret(Args...)> {
+		template<auto Candidate, std::size_t... Index>
+		[[nodiscard]] auto wrap(std::index_sequence<Index...>) ENTT_NOEXCEPT {
+			return [](const void*, Args... args) -> Ret {
+				[[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
+				return static_cast<Ret>(std::invoke(Candidate, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
+			};
+		}
+
+		template<auto Candidate, typename Type, std::size_t... Index>
+		[[nodiscard]] auto wrap(Type&, std::index_sequence<Index...>) ENTT_NOEXCEPT {
+			return [](const void* payload, Args... args) -> Ret {
+				[[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
+				Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+				return static_cast<Ret>(std::invoke(Candidate, *curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
+			};
+		}
+
+		template<auto Candidate, typename Type, std::size_t... Index>
+		[[nodiscard]] auto wrap(Type*, std::index_sequence<Index...>) ENTT_NOEXCEPT {
+			return [](const void* payload, Args... args) -> Ret {
+				[[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
+				Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+				return static_cast<Ret>(std::invoke(Candidate, curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
+			};
+		}
+
+	public:
+		/*! @brief Function type of the contained target. */
+		using function_type = Ret(const void*, Args...);
+		/*! @brief Function type of the delegate. */
+		using type = Ret(Args...);
+		/*! @brief Return type of the delegate. */
+		using result_type = Ret;
+
+		/*! @brief Default constructor. */
+		delegate() ENTT_NOEXCEPT
+			: instance{ nullptr },
+			fn{ nullptr } {}
+
+		/**
+		 * @brief Constructs a delegate and connects a free function or an unbound
+		 * member.
+		 * @tparam Candidate Function or member to connect to the delegate.
+		 */
+		template<auto Candidate>
+		delegate(connect_arg_t<Candidate>) ENTT_NOEXCEPT {
+			connect<Candidate>();
+		}
+
+		/**
+		 * @brief Constructs a delegate and connects a free function with payload or
+		 * a bound member.
+		 * @tparam Candidate Function or member to connect to the delegate.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid object that fits the purpose.
+		 */
+		template<auto Candidate, typename Type>
+		delegate(connect_arg_t<Candidate>, Type&& value_or_instance) ENTT_NOEXCEPT {
+			connect<Candidate>(std::forward<Type>(value_or_instance));
+		}
+
+		/**
+		 * @brief Constructs a delegate and connects an user defined function with
+		 * optional payload.
+		 * @param function Function to connect to the delegate.
+		 * @param payload User defined arbitrary data.
+		 */
+		delegate(function_type* function, const void* payload = nullptr) ENTT_NOEXCEPT {
+			connect(function, payload);
+		}
+
+		/**
+		 * @brief Connects a free function or an unbound member to a delegate.
+		 * @tparam Candidate Function or member to connect to the delegate.
+		 */
+		template<auto Candidate>
+		void connect() ENTT_NOEXCEPT {
+			instance = nullptr;
+
+			if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Args...>) {
+				fn = [](const void*, Args... args) -> Ret {
+					return Ret(std::invoke(Candidate, std::forward<Args>(args)...));
+				};
+			}
+			else if constexpr (std::is_member_pointer_v<decltype(Candidate)>) {
+				fn = wrap<Candidate>(internal::index_sequence_for<type_list_element_t<0, type_list<Args...>>>(internal::function_pointer_t<decltype(Candidate)>{}));
+			}
+			else {
+				fn = wrap<Candidate>(internal::index_sequence_for(internal::function_pointer_t<decltype(Candidate)>{}));
+			}
+		}
+
+		/**
+		 * @brief Connects a free function with payload or a bound member to a
+		 * delegate.
+		 *
+		 * The delegate isn't responsible for the connected object or the payload.
+		 * Users must always guarantee that the lifetime of the instance overcomes
+		 * the one of the delegate.<br/>
+		 * When used to connect a free function with payload, its signature must be
+		 * such that the instance is the first argument before the ones used to
+		 * define the delegate itself.
+		 *
+		 * @tparam Candidate Function or member to connect to the delegate.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid reference that fits the purpose.
+		 */
+		template<auto Candidate, typename Type>
+		void connect(Type& value_or_instance) ENTT_NOEXCEPT {
+			instance = &value_or_instance;
+
+			if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type&, Args...>) {
+				fn = [](const void* payload, Args... args) -> Ret {
+					Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+					return Ret(std::invoke(Candidate, *curr, std::forward<Args>(args)...));
+				};
+			}
+			else {
+				fn = wrap<Candidate>(value_or_instance, internal::index_sequence_for(internal::function_pointer_t<decltype(Candidate), Type>{}));
+			}
+		}
+
+		/**
+		 * @brief Connects a free function with payload or a bound member to a
+		 * delegate.
+		 *
+		 * @sa connect(Type &)
+		 *
+		 * @tparam Candidate Function or member to connect to the delegate.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid pointer that fits the purpose.
+		 */
+		template<auto Candidate, typename Type>
+		void connect(Type* value_or_instance) ENTT_NOEXCEPT {
+			instance = value_or_instance;
+
+			if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type*, Args...>) {
+				fn = [](const void* payload, Args... args) -> Ret {
+					Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+					return Ret(std::invoke(Candidate, curr, std::forward<Args>(args)...));
+				};
+			}
+			else {
+				fn = wrap<Candidate>(value_or_instance, internal::index_sequence_for(internal::function_pointer_t<decltype(Candidate), Type>{}));
+			}
+		}
+
+		/**
+		 * @brief Connects an user defined function with optional payload to a
+		 * delegate.
+		 *
+		 * The delegate isn't responsible for the connected object or the payload.
+		 * Users must always guarantee that the lifetime of an instance overcomes
+		 * the one of the delegate.<br/>
+		 * The payload is returned as the first argument to the target function in
+		 * all cases.
+		 *
+		 * @param function Function to connect to the delegate.
+		 * @param payload User defined arbitrary data.
+		 */
+		void connect(function_type* function, const void* payload = nullptr) ENTT_NOEXCEPT {
+			instance = payload;
+			fn = function;
+		}
+
+		/**
+		 * @brief Resets a delegate.
+		 *
+		 * After a reset, a delegate cannot be invoked anymore.
+		 */
+		void reset() ENTT_NOEXCEPT {
+			instance = nullptr;
+			fn = nullptr;
+		}
+
+		/**
+		 * @brief Returns the instance or the payload linked to a delegate, if any.
+		 * @return An opaque pointer to the underlying data.
+		 */
+		[[nodiscard]] const void* data() const ENTT_NOEXCEPT {
+			return instance;
+		}
+
+		/**
+		 * @brief Triggers a delegate.
+		 *
+		 * The delegate invokes the underlying function and returns the result.
+		 *
+		 * @warning
+		 * Attempting to trigger an invalid delegate results in undefined
+		 * behavior.
+		 *
+		 * @param args Arguments to use to invoke the underlying function.
+		 * @return The value returned by the underlying function.
+		 */
+		Ret operator()(Args... args) const {
+			ENTT_ASSERT(static_cast<bool>(*this), "Uninitialized delegate");
+			return fn(instance, std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Checks whether a delegate actually stores a listener.
+		 * @return False if the delegate is empty, true otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			// no need to also test instance
+			return !(fn == nullptr);
+		}
+
+		/**
+		 * @brief Compares the contents of two delegates.
+		 * @param other Delegate with which to compare.
+		 * @return False if the two contents differ, true otherwise.
+		 */
+		[[nodiscard]] bool operator==(const delegate<Ret(Args...)>& other) const ENTT_NOEXCEPT {
+			return fn == other.fn && instance == other.instance;
+		}
+
+	private:
+		const void* instance;
+		function_type* fn;
+	};
+
+	/**
+	 * @brief Compares the contents of two delegates.
+	 * @tparam Ret Return type of a function type.
+	 * @tparam Args Types of arguments of a function type.
+	 * @param lhs A valid delegate object.
+	 * @param rhs A valid delegate object.
+	 * @return True if the two contents differ, false otherwise.
+	 */
+	template<typename Ret, typename... Args>
+	[[nodiscard]] bool operator!=(const delegate<Ret(Args...)>& lhs, const delegate<Ret(Args...)>& rhs) ENTT_NOEXCEPT {
+		return !(lhs == rhs);
+	}
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Candidate Function or member to connect to the delegate.
+	 */
+	template<auto Candidate>
+	delegate(connect_arg_t<Candidate>) -> delegate<std::remove_pointer_t<internal::function_pointer_t<decltype(Candidate)>>>;
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Candidate Function or member to connect to the delegate.
+	 * @tparam Type Type of class or type of payload.
+	 */
+	template<auto Candidate, typename Type>
+	delegate(connect_arg_t<Candidate>, Type&&) -> delegate<std::remove_pointer_t<internal::function_pointer_t<decltype(Candidate), Type>>>;
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Ret Return type of a function type.
+	 * @tparam Args Types of arguments of a function type.
+	 */
+	template<typename Ret, typename... Args>
+	delegate(Ret(*)(const void*, Args...), const void* = nullptr) -> delegate<Ret(Args...)>;
+
+} // namespace entt
+
+#endif
+
+// #include "fwd.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @brief Sink class.
+	 *
+	 * Primary template isn't defined on purpose. All the specializations give a
+	 * compile-time error unless the template parameter is a function type.
+	 *
+	 * @tparam Type A valid signal handler type.
+	 */
+	template<typename Type>
+	class sink;
+
+	/**
+	 * @brief Unmanaged signal handler.
+	 *
+	 * Primary template isn't defined on purpose. All the specializations give a
+	 * compile-time error unless the template parameter is a function type.
+	 *
+	 * @tparam Type A valid function type.
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 */
+	template<typename Type, typename Allocator>
+	class sigh;
+
+	/**
+	 * @brief Unmanaged signal handler.
+	 *
+	 * It works directly with references to classes and pointers to member functions
+	 * as well as pointers to free functions. Users of this class are in charge of
+	 * disconnecting instances before deleting them.
+	 *
+	 * This class serves mainly two purposes:
+	 *
+	 * * Creating signals to use later to notify a bunch of listeners.
+	 * * Collecting results from a set of functions like in a voting system.
+	 *
+	 * @tparam Ret Return type of a function type.
+	 * @tparam Args Types of arguments of a function type.
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 */
+	template<typename Ret, typename... Args, typename Allocator>
+	class sigh<Ret(Args...), Allocator> {
+		/*! @brief A sink is allowed to modify a signal. */
+		friend class sink<sigh<Ret(Args...), Allocator>>;
+
+		using alloc_traits = std::allocator_traits<Allocator>;
+		static_assert(std::is_same_v<typename alloc_traits::value_type, Ret(*)(Args...)>, "Invalid value type");
+		using container_type = std::vector<delegate<Ret(Args...)>, typename alloc_traits::template rebind_alloc<delegate<Ret(Args...)>>>;
+
+	public:
+		/*! @brief Allocator type. */
+		using allocator_type = Allocator;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Sink type. */
+		using sink_type = sink<sigh<Ret(Args...), Allocator>>;
+
+		/*! @brief Default constructor. */
+		sigh()
+			: sigh{ allocator_type{} } {}
+
+		/**
+		 * @brief Constructs a signal handler with a given allocator.
+		 * @param allocator The allocator to use.
+		 */
+		explicit sigh(const allocator_type& allocator)
+			: calls{ allocator } {}
+
+		/**
+		 * @brief Copy constructor.
+		 * @param other The instance to copy from.
+		 */
+		sigh(const sigh& other)
+			: calls{ other.calls } {}
+
+		/**
+		 * @brief Allocator-extended copy constructor.
+		 * @param other The instance to copy from.
+		 * @param allocator The allocator to use.
+		 */
+		sigh(const sigh& other, const allocator_type& allocator)
+			: calls{ other.calls, allocator } {}
+
+		/**
+		 * @brief Move constructor.
+		 * @param other The instance to move from.
+		 */
+		sigh(sigh&& other) ENTT_NOEXCEPT
+			: calls{ std::move(other.calls) } {}
+
+		/**
+		 * @brief Allocator-extended move constructor.
+		 * @param other The instance to move from.
+		 * @param allocator The allocator to use.
+		 */
+		sigh(sigh&& other, const allocator_type& allocator) ENTT_NOEXCEPT
+			: calls{ std::move(other.calls), allocator } {}
+
+		/**
+		 * @brief Copy assignment operator.
+		 * @param other The instance to copy from.
+		 * @return This signal handler.
+		 */
+		sigh& operator=(const sigh& other) {
+			calls = other.calls;
+			return *this;
+		}
+
+		/**
+		 * @brief Move assignment operator.
+		 * @param other The instance to move from.
+		 * @return This signal handler.
+		 */
+		sigh& operator=(sigh&& other) ENTT_NOEXCEPT {
+			calls = std::move(other.calls);
+			return *this;
+		}
+
+		/**
+		 * @brief Exchanges the contents with those of a given signal handler.
+		 * @param other Signal handler to exchange the content with.
+		 */
+		void swap(sigh& other) {
+			using std::swap;
+			swap(calls, other.calls);
+		}
+
+		/**
+		 * @brief Returns the associated allocator.
+		 * @return The associated allocator.
+		 */
+		[[nodiscard]] constexpr allocator_type get_allocator() const ENTT_NOEXCEPT {
+			return calls.get_allocator();
+		}
+
+		/**
+		 * @brief Instance type when it comes to connecting member functions.
+		 * @tparam Class Type of class to which the member function belongs.
+		 */
+		template<typename Class>
+		using instance_type = Class*;
+
+		/**
+		 * @brief Number of listeners connected to the signal.
+		 * @return Number of listeners currently connected.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return calls.size();
+		}
+
+		/**
+		 * @brief Returns false if at least a listener is connected to the signal.
+		 * @return True if the signal has no listeners connected, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return calls.empty();
+		}
+
+		/**
+		 * @brief Triggers a signal.
+		 *
+		 * All the listeners are notified. Order isn't guaranteed.
+		 *
+		 * @param args Arguments to use to invoke listeners.
+		 */
+		void publish(Args... args) const {
+			for (auto&& call : std::as_const(calls)) {
+				call(args...);
+			}
+		}
+
+		/**
+		 * @brief Collects return values from the listeners.
+		 *
+		 * The collector must expose a call operator with the following properties:
+		 *
+		 * * The return type is either `void` or such that it's convertible to
+		 *   `bool`. In the second case, a true value will stop the iteration.
+		 * * The list of parameters is empty if `Ret` is `void`, otherwise it
+		 *   contains a single element such that `Ret` is convertible to it.
+		 *
+		 * @tparam Func Type of collector to use, if any.
+		 * @param func A valid function object.
+		 * @param args Arguments to use to invoke listeners.
+		 */
+		template<typename Func>
+		void collect(Func func, Args... args) const {
+			for (auto&& call : calls) {
+				if constexpr (std::is_void_v<Ret>) {
+					if constexpr (std::is_invocable_r_v<bool, Func>) {
+						call(args...);
+						if (func()) { break; }
+					}
+					else {
+						call(args...);
+						func();
+					}
+				}
+				else {
+					if constexpr (std::is_invocable_r_v<bool, Func, Ret>) {
+						if (func(call(args...))) { break; }
+					}
+					else {
+						func(call(args...));
+					}
+				}
+			}
+		}
+
+	private:
+		container_type calls;
+	};
+
+	/**
+	 * @brief Connection class.
+	 *
+	 * Opaque object the aim of which is to allow users to release an already
+	 * estabilished connection without having to keep a reference to the signal or
+	 * the sink that generated it.
+	 */
+	class connection {
+		/*! @brief A sink is allowed to create connection objects. */
+		template<typename>
+		friend class sink;
+
+		connection(delegate<void(void*)> fn, void* ref)
+			: disconnect{ fn }, signal{ ref } {}
+
+	public:
+		/*! @brief Default constructor. */
+		connection() = default;
+
+		/**
+		 * @brief Checks whether a connection is properly initialized.
+		 * @return True if the connection is properly initialized, false otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			return static_cast<bool>(disconnect);
+		}
+
+		/*! @brief Breaks the connection. */
+		void release() {
+			if (disconnect) {
+				disconnect(signal);
+				disconnect.reset();
+			}
+		}
+
+	private:
+		delegate<void(void*)> disconnect;
+		void* signal{};
+	};
+
+	/**
+	 * @brief Scoped connection class.
+	 *
+	 * Opaque object the aim of which is to allow users to release an already
+	 * estabilished connection without having to keep a reference to the signal or
+	 * the sink that generated it.<br/>
+	 * A scoped connection automatically breaks the link between the two objects
+	 * when it goes out of scope.
+	 */
+	struct scoped_connection {
+		/*! @brief Default constructor. */
+		scoped_connection() = default;
+
+		/**
+		 * @brief Constructs a scoped connection from a basic connection.
+		 * @param other A valid connection object.
+		 */
+		scoped_connection(const connection& other)
+			: conn{ other } {}
+
+		/*! @brief Default copy constructor, deleted on purpose. */
+		scoped_connection(const scoped_connection&) = delete;
+
+		/**
+		 * @brief Move constructor.
+		 * @param other The scoped connection to move from.
+		 */
+		scoped_connection(scoped_connection&& other) ENTT_NOEXCEPT
+			: conn{ std::exchange(other.conn, {}) } {}
+
+		/*! @brief Automatically breaks the link on destruction. */
+		~scoped_connection() {
+			conn.release();
+		}
+
+		/**
+		 * @brief Default copy assignment operator, deleted on purpose.
+		 * @return This scoped connection.
+		 */
+		scoped_connection& operator=(const scoped_connection&) = delete;
+
+		/**
+		 * @brief Move assignment operator.
+		 * @param other The scoped connection to move from.
+		 * @return This scoped connection.
+		 */
+		scoped_connection& operator=(scoped_connection&& other) ENTT_NOEXCEPT {
+			conn = std::exchange(other.conn, {});
+			return *this;
+		}
+
+		/**
+		 * @brief Acquires a connection.
+		 * @param other The connection object to acquire.
+		 * @return This scoped connection.
+		 */
+		scoped_connection& operator=(connection other) {
+			conn = std::move(other);
+			return *this;
+		}
+
+		/**
+		 * @brief Checks whether a scoped connection is properly initialized.
+		 * @return True if the connection is properly initialized, false otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			return static_cast<bool>(conn);
+		}
+
+		/*! @brief Breaks the connection. */
+		void release() {
+			conn.release();
+		}
+
+	private:
+		connection conn;
+	};
+
+	/**
+	 * @brief Sink class.
+	 *
+	 * A sink is used to connect listeners to signals and to disconnect them.<br/>
+	 * The function type for a listener is the one of the signal to which it
+	 * belongs.
+	 *
+	 * The clear separation between a signal and a sink permits to store the former
+	 * as private data member without exposing the publish functionality to the
+	 * users of the class.
+	 *
+	 * @warning
+	 * Lifetime of a sink must not overcome that of the signal to which it refers.
+	 * In any other case, attempting to use a sink results in undefined behavior.
+	 *
+	 * @tparam Ret Return type of a function type.
+	 * @tparam Args Types of arguments of a function type.
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 */
+	template<typename Ret, typename... Args, typename Allocator>
+	class sink<sigh<Ret(Args...), Allocator>> {
+		using signal_type = sigh<Ret(Args...), Allocator>;
+		using difference_type = typename signal_type::container_type::difference_type;
+
+		template<auto Candidate, typename Type>
+		static void release(Type value_or_instance, void* signal) {
+			sink{ *static_cast<signal_type*>(signal) }.disconnect<Candidate>(value_or_instance);
+		}
+
+		template<auto Candidate>
+		static void release(void* signal) {
+			sink{ *static_cast<signal_type*>(signal) }.disconnect<Candidate>();
+		}
+
+	public:
+		/**
+		 * @brief Constructs a sink that is allowed to modify a given signal.
+		 * @param ref A valid reference to a signal object.
+		 */
+		sink(sigh<Ret(Args...), Allocator>& ref) ENTT_NOEXCEPT
+			: offset{},
+			signal{ &ref } {}
+
+		/**
+		 * @brief Returns false if at least a listener is connected to the sink.
+		 * @return True if the sink has no listeners connected, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return signal->calls.empty();
+		}
+
+		/**
+		 * @brief Returns a sink that connects before a given free function or an
+		 * unbound member.
+		 * @tparam Function A valid free function pointer.
+		 * @return A properly initialized sink object.
+		 */
+		template<auto Function>
+		[[nodiscard]] sink before() {
+			delegate<Ret(Args...)> call{};
+			call.template connect<Function>();
+
+			const auto& calls = signal->calls;
+			const auto it = std::find(calls.cbegin(), calls.cend(), std::move(call));
+
+			sink other{ *this };
+			other.offset = calls.cend() - it;
+			return other;
+		}
+
+		/**
+		 * @brief Returns a sink that connects before a free function with payload
+		 * or a bound member.
+		 * @tparam Candidate Member or free function to look for.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid object that fits the purpose.
+		 * @return A properly initialized sink object.
+		 */
+		template<auto Candidate, typename Type>
+		[[nodiscard]] sink before(Type&& value_or_instance) {
+			delegate<Ret(Args...)> call{};
+			call.template connect<Candidate>(value_or_instance);
+
+			const auto& calls = signal->calls;
+			const auto it = std::find(calls.cbegin(), calls.cend(), std::move(call));
+
+			sink other{ *this };
+			other.offset = calls.cend() - it;
+			return other;
+		}
+
+		/**
+		 * @brief Returns a sink that connects before a given instance or specific
+		 * payload.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid object that fits the purpose.
+		 * @return A properly initialized sink object.
+		 */
+		template<typename Type>
+		[[nodiscard]] sink before(Type& value_or_instance) {
+			return before(&value_or_instance);
+		}
+
+		/**
+		 * @brief Returns a sink that connects before a given instance or specific
+		 * payload.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid pointer that fits the purpose.
+		 * @return A properly initialized sink object.
+		 */
+		template<typename Type>
+		[[nodiscard]] sink before(Type* value_or_instance) {
+			sink other{ *this };
+
+			if (value_or_instance) {
+				const auto& calls = signal->calls;
+				const auto it = std::find_if(calls.cbegin(), calls.cend(), [value_or_instance](const auto& delegate) {
+					return delegate.data() == value_or_instance;
+				});
+
+				other.offset = calls.cend() - it;
+			}
+
+			return other;
+		}
+
+		/**
+		 * @brief Returns a sink that connects before anything else.
+		 * @return A properly initialized sink object.
+		 */
+		[[nodiscard]] sink before() {
+			sink other{ *this };
+			other.offset = signal->calls.size();
+			return other;
+		}
+
+		/**
+		 * @brief Connects a free function or an unbound member to a signal.
+		 *
+		 * The signal handler performs checks to avoid multiple connections for the
+		 * same function.
+		 *
+		 * @tparam Candidate Function or member to connect to the signal.
+		 * @return A properly initialized connection object.
+		 */
+		template<auto Candidate>
+		connection connect() {
+			disconnect<Candidate>();
+
+			delegate<Ret(Args...)> call{};
+			call.template connect<Candidate>();
+			signal->calls.insert(signal->calls.end() - offset, std::move(call));
+
+			delegate<void(void*)> conn{};
+			conn.template connect<&release<Candidate>>();
+			return { std::move(conn), signal };
+		}
+
+		/**
+		 * @brief Connects a free function with payload or a bound member to a
+		 * signal.
+		 *
+		 * The signal isn't responsible for the connected object or the payload.
+		 * Users must always guarantee that the lifetime of the instance overcomes
+		 * the one of the signal. On the other side, the signal handler performs
+		 * checks to avoid multiple connections for the same function.<br/>
+		 * When used to connect a free function with payload, its signature must be
+		 * such that the instance is the first argument before the ones used to
+		 * define the signal itself.
+		 *
+		 * @tparam Candidate Function or member to connect to the signal.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid object that fits the purpose.
+		 * @return A properly initialized connection object.
+		 */
+		template<auto Candidate, typename Type>
+		connection connect(Type&& value_or_instance) {
+			disconnect<Candidate>(value_or_instance);
+
+			delegate<Ret(Args...)> call{};
+			call.template connect<Candidate>(value_or_instance);
+			signal->calls.insert(signal->calls.end() - offset, std::move(call));
+
+			delegate<void(void*)> conn{};
+			conn.template connect<&release<Candidate, Type>>(value_or_instance);
+			return { std::move(conn), signal };
+		}
+
+		/**
+		 * @brief Disconnects a free function or an unbound member from a signal.
+		 * @tparam Candidate Function or member to disconnect from the signal.
+		 */
+		template<auto Candidate>
+		void disconnect() {
+			auto& calls = signal->calls;
+			delegate<Ret(Args...)> call{};
+			call.template connect<Candidate>();
+			calls.erase(std::remove(calls.begin(), calls.end(), std::move(call)), calls.end());
+		}
+
+		/**
+		 * @brief Disconnects a free function with payload or a bound member from a
+		 * signal.
+		 * @tparam Candidate Function or member to disconnect from the signal.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid object that fits the purpose.
+		 */
+		template<auto Candidate, typename Type>
+		void disconnect(Type&& value_or_instance) {
+			auto& calls = signal->calls;
+			delegate<Ret(Args...)> call{};
+			call.template connect<Candidate>(value_or_instance);
+			calls.erase(std::remove(calls.begin(), calls.end(), std::move(call)), calls.end());
+		}
+
+		/**
+		 * @brief Disconnects free functions with payload or bound members from a
+		 * signal.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid object that fits the purpose.
+		 */
+		template<typename Type>
+		void disconnect(Type& value_or_instance) {
+			disconnect(&value_or_instance);
+		}
+
+		/**
+		 * @brief Disconnects free functions with payload or bound members from a
+		 * signal.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid object that fits the purpose.
+		 */
+		template<typename Type>
+		void disconnect(Type* value_or_instance) {
+			if (value_or_instance) {
+				auto& calls = signal->calls;
+				auto predicate = [value_or_instance](const auto& delegate) { return delegate.data() == value_or_instance; };
+				calls.erase(std::remove_if(calls.begin(), calls.end(), std::move(predicate)), calls.end());
+			}
+		}
+
+		/*! @brief Disconnects all the listeners from a signal. */
+		void disconnect() {
+			signal->calls.clear();
+		}
+
+	private:
+		difference_type offset;
+		signal_type* signal;
+	};
+
+	/**
+	 * @brief Deduction guide.
+	 *
+	 * It allows to deduce the signal handler type of a sink directly from the
+	 * signal it refers to.
+	 *
+	 * @tparam Ret Return type of a function type.
+	 * @tparam Args Types of arguments of a function type.
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 */
+	template<typename Ret, typename... Args, typename Allocator>
+	sink(sigh<Ret(Args...), Allocator>&) -> sink<sigh<Ret(Args...), Allocator>>;
+
+} // namespace entt
+
+#endif
+
+// #include "fwd.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @brief Mixin type used to add signal support to storage types.
+	 *
+	 * The function type of a listener is equivalent to:
+	 *
+	 * @code{.cpp}
+	 * void(basic_registry<entity_type> &, entity_type);
+	 * @endcode
+	 *
+	 * This applies to all signals made available.
+	 *
+	 * @tparam Type The type of the underlying storage.
+	 */
+	template<typename Type>
+	class sigh_storage_mixin final : public Type {
+		using basic_iterator = typename Type::basic_iterator;
+
+		template<typename Func>
+		void notify_destruction(basic_iterator first, basic_iterator last, Func func) {
+			ENTT_ASSERT(owner != nullptr, "Invalid pointer to registry");
+
+			for (; first != last; ++first) {
+				const auto entt = *first;
+				destruction.publish(*owner, entt);
+				const auto it = Type::find(entt);
+				func(it, it + 1u);
+			}
+		}
+
+		void swap_and_pop(basic_iterator first, basic_iterator last) final {
+			notify_destruction(std::move(first), std::move(last), [this](auto... args) { Type::swap_and_pop(args...); });
+		}
+
+		void in_place_pop(basic_iterator first, basic_iterator last) final {
+			notify_destruction(std::move(first), std::move(last), [this](auto... args) { Type::in_place_pop(args...); });
+		}
+
+		basic_iterator try_emplace(const typename Type::entity_type entt, const bool force_back, const void* value) final {
+			ENTT_ASSERT(owner != nullptr, "Invalid pointer to registry");
+			Type::try_emplace(entt, force_back, value);
+			construction.publish(*owner, entt);
+			return Type::find(entt);
+		}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = typename Type::entity_type;
+
+		/*! @brief Inherited constructors. */
+		using Type::Type;
+
+		/**
+		 * @brief Returns a sink object.
+		 *
+		 * The sink returned by this function can be used to receive notifications
+		 * whenever a new instance is created and assigned to an entity.<br/>
+		 * Listeners are invoked after the object has been assigned to the entity.
+		 *
+		 * @sa sink
+		 *
+		 * @return A temporary sink object.
+		 */
+		[[nodiscard]] auto on_construct() ENTT_NOEXCEPT {
+			return sink{ construction };
+		}
+
+		/**
+		 * @brief Returns a sink object.
+		 *
+		 * The sink returned by this function can be used to receive notifications
+		 * whenever an instance is explicitly updated.<br/>
+		 * Listeners are invoked after the object has been updated.
+		 *
+		 * @sa sink
+		 *
+		 * @return A temporary sink object.
+		 */
+		[[nodiscard]] auto on_update() ENTT_NOEXCEPT {
+			return sink{ update };
+		}
+
+		/**
+		 * @brief Returns a sink object.
+		 *
+		 * The sink returned by this function can be used to receive notifications
+		 * whenever an instance is removed from an entity and thus destroyed.<br/>
+		 * Listeners are invoked before the object has been removed from the entity.
+		 *
+		 * @sa sink
+		 *
+		 * @return A temporary sink object.
+		 */
+		[[nodiscard]] auto on_destroy() ENTT_NOEXCEPT {
+			return sink{ destruction };
+		}
+
+		/**
+		 * @brief Assigns entities to a storage.
+		 * @tparam Args Types of arguments to use to construct the object.
+		 * @param entt A valid identifier.
+		 * @param args Parameters to use to initialize the object.
+		 * @return A reference to the newly created object.
+		 */
+		template<typename... Args>
+		decltype(auto) emplace(const entity_type entt, Args && ...args) {
+			ENTT_ASSERT(owner != nullptr, "Invalid pointer to registry");
+			Type::emplace(entt, std::forward<Args>(args)...);
+			construction.publish(*owner, entt);
+			return this->get(entt);
+		}
+
+		/**
+		 * @brief Patches the given instance for an entity.
+		 * @tparam Func Types of the function objects to invoke.
+		 * @param entt A valid identifier.
+		 * @param func Valid function objects.
+		 * @return A reference to the patched instance.
+		 */
+		template<typename... Func>
+		decltype(auto) patch(const entity_type entt, Func && ...func) {
+			ENTT_ASSERT(owner != nullptr, "Invalid pointer to registry");
+			Type::patch(entt, std::forward<Func>(func)...);
+			update.publish(*owner, entt);
+			return this->get(entt);
+		}
+
+		/**
+		 * @brief Assigns entities to a storage.
+		 * @tparam It Type of input iterator.
+		 * @tparam Args Types of arguments to use to construct the objects assigned
+		 * to the entities.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @param args Parameters to use to initialize the objects assigned to the
+		 * entities.
+		 */
+		template<typename It, typename... Args>
+		void insert(It first, It last, Args && ...args) {
+			ENTT_ASSERT(owner != nullptr, "Invalid pointer to registry");
+			Type::insert(first, last, std::forward<Args>(args)...);
+
+			for (auto it = construction.empty() ? last : first; it != last; ++it) {
+				construction.publish(*owner, *it);
+			}
+		}
+
+		/**
+		 * @brief Forwards variables to mixins, if any.
+		 * @param value A variable wrapped in an opaque container.
+		 */
+		void bind(any value) ENTT_NOEXCEPT final {
+			auto* reg = any_cast<basic_registry<entity_type>>(&value);
+			owner = reg ? reg : owner;
+			Type::bind(std::move(value));
+		}
+
+	private:
+		sigh<void(basic_registry<entity_type>&, const entity_type)> construction{};
+		sigh<void(basic_registry<entity_type>&, const entity_type)> destruction{};
+		sigh<void(basic_registry<entity_type>&, const entity_type)> update{};
+		basic_registry<entity_type>* owner{};
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "sparse_set.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename Container>
+		class storage_iterator final {
+			friend storage_iterator<const Container>;
+
+			using container_type = std::remove_const_t<Container>;
+			using alloc_traits = std::allocator_traits<typename container_type::allocator_type>;
+			using comp_traits = component_traits<typename container_type::value_type>;
+
+			using iterator_traits = std::iterator_traits<std::conditional_t<
+				std::is_const_v<Container>,
+				typename alloc_traits::template rebind_traits<typename std::pointer_traits<typename container_type::value_type>::element_type>::const_pointer,
+				typename alloc_traits::template rebind_traits<typename std::pointer_traits<typename container_type::value_type>::element_type>::pointer>>;
+
+		public:
+			using value_type = typename iterator_traits::value_type;
+			using pointer = typename iterator_traits::pointer;
+			using reference = typename iterator_traits::reference;
+			using difference_type = typename iterator_traits::difference_type;
+			using iterator_category = std::random_access_iterator_tag;
+
+			storage_iterator() ENTT_NOEXCEPT = default;
+
+			storage_iterator(Container* ref, difference_type idx) ENTT_NOEXCEPT
+				: packed{ ref },
+				offset{ idx } {}
+
+			template<bool Const = std::is_const_v<Container>, typename = std::enable_if_t<Const>>
+			storage_iterator(const storage_iterator<std::remove_const_t<Container>>& other) ENTT_NOEXCEPT
+				: packed{ other.packed },
+				offset{ other.offset } {}
+
+			storage_iterator& operator++() ENTT_NOEXCEPT {
+				return --offset, * this;
+			}
+
+			storage_iterator operator++(int) ENTT_NOEXCEPT {
+				storage_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			storage_iterator& operator--() ENTT_NOEXCEPT {
+				return ++offset, * this;
+			}
+
+			storage_iterator operator--(int) ENTT_NOEXCEPT {
+				storage_iterator orig = *this;
+				return operator--(), orig;
+			}
+
+			storage_iterator& operator+=(const difference_type value) ENTT_NOEXCEPT {
+				offset -= value;
+				return *this;
+			}
+
+			storage_iterator operator+(const difference_type value) const ENTT_NOEXCEPT {
+				storage_iterator copy = *this;
+				return (copy += value);
+			}
+
+			storage_iterator& operator-=(const difference_type value) ENTT_NOEXCEPT {
+				return (*this += -value);
+			}
+
+			storage_iterator operator-(const difference_type value) const ENTT_NOEXCEPT {
+				return (*this + -value);
+			}
+
+			[[nodiscard]] reference operator[](const difference_type value) const ENTT_NOEXCEPT {
+				const auto pos = index() - value;
+				return (*packed)[pos / comp_traits::page_size][fast_mod(pos, comp_traits::page_size)];
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				const auto pos = index();
+				return (*packed)[pos / comp_traits::page_size] + fast_mod(pos, comp_traits::page_size);
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return *operator->();
+			}
+
+			[[nodiscard]] difference_type index() const ENTT_NOEXCEPT {
+				return offset - 1;
+			}
+
+		private:
+			Container* packed;
+			difference_type offset;
+		};
+
+		template<typename CLhs, typename CRhs>
+		[[nodiscard]] std::ptrdiff_t operator-(const storage_iterator<CLhs>& lhs, const storage_iterator<CRhs>& rhs) ENTT_NOEXCEPT {
+			return rhs.index() - lhs.index();
+		}
+
+		template<typename CLhs, typename CRhs>
+		[[nodiscard]] bool operator==(const storage_iterator<CLhs>& lhs, const storage_iterator<CRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.index() == rhs.index();
+		}
+
+		template<typename CLhs, typename CRhs>
+		[[nodiscard]] bool operator!=(const storage_iterator<CLhs>& lhs, const storage_iterator<CRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+		template<typename CLhs, typename CRhs>
+		[[nodiscard]] bool operator<(const storage_iterator<CLhs>& lhs, const storage_iterator<CRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.index() > rhs.index();
+		}
+
+		template<typename CLhs, typename CRhs>
+		[[nodiscard]] bool operator>(const storage_iterator<CLhs>& lhs, const storage_iterator<CRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.index() < rhs.index();
+		}
+
+		template<typename CLhs, typename CRhs>
+		[[nodiscard]] bool operator<=(const storage_iterator<CLhs>& lhs, const storage_iterator<CRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs > rhs);
+		}
+
+		template<typename CLhs, typename CRhs>
+		[[nodiscard]] bool operator>=(const storage_iterator<CLhs>& lhs, const storage_iterator<CRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs < rhs);
+		}
+
+		template<typename It, typename... Other>
+		class extended_storage_iterator final {
+			template<typename Iter, typename... Args>
+			friend class extended_storage_iterator;
+
+		public:
+			using value_type = decltype(std::tuple_cat(std::make_tuple(*std::declval<It>()), std::forward_as_tuple(*std::declval<Other>()...)));
+			using pointer = input_iterator_pointer<value_type>;
+			using reference = value_type;
+			using difference_type = std::ptrdiff_t;
+			using iterator_category = std::input_iterator_tag;
+
+			extended_storage_iterator() = default;
+
+			extended_storage_iterator(It base, Other... other)
+				: it{ base, other... } {}
+
+			template<typename... Args, typename = std::enable_if_t<(!std::is_same_v<Other, Args> && ...) && (std::is_constructible_v<Other, Args> && ...)>>
+			extended_storage_iterator(const extended_storage_iterator<It, Args...>& other)
+				: it{ other.it } {}
+
+			extended_storage_iterator& operator++() ENTT_NOEXCEPT {
+				return ++std::get<It>(it), (++std::get<Other>(it), ...), * this;
+			}
+
+			extended_storage_iterator operator++(int) ENTT_NOEXCEPT {
+				extended_storage_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return operator*();
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return { *std::get<It>(it), *std::get<Other>(it)... };
+			}
+
+			template<typename... CLhs, typename... CRhs>
+			friend bool operator==(const extended_storage_iterator<CLhs...>&, const extended_storage_iterator<CRhs...>&) ENTT_NOEXCEPT;
+
+		private:
+			std::tuple<It, Other...> it;
+		};
+
+		template<typename... CLhs, typename... CRhs>
+		[[nodiscard]] bool operator==(const extended_storage_iterator<CLhs...>& lhs, const extended_storage_iterator<CRhs...>& rhs) ENTT_NOEXCEPT {
+			return std::get<0>(lhs.it) == std::get<0>(rhs.it);
+		}
+
+		template<typename... CLhs, typename... CRhs>
+		[[nodiscard]] bool operator!=(const extended_storage_iterator<CLhs...>& lhs, const extended_storage_iterator<CRhs...>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Basic storage implementation.
+	  *
+	  * Internal data structures arrange elements to maximize performance. There are
+	  * no guarantees that objects are returned in the insertion order when iterate
+	  * a storage. Do not make assumption on the order in any case.
+	  *
+	  * @warning
+	  * Empty types aren't explicitly instantiated. Therefore, many of the functions
+	  * normally available for non-empty types will not be available for empty ones.
+	  *
+	  * @tparam Entity A valid entity type (see entt_traits for more details).
+	  * @tparam Type Type of objects assigned to the entities.
+	  * @tparam Allocator Type of allocator used to manage memory and elements.
+	  */
+	template<typename Entity, typename Type, typename Allocator, typename>
+	class basic_storage : public basic_sparse_set<Entity, typename std::allocator_traits<Allocator>::template rebind_alloc<Entity>> {
+		static_assert(std::is_move_constructible_v<Type>&& std::is_move_assignable_v<Type>, "The type must be at least move constructible/assignable");
+
+		using alloc_traits = std::allocator_traits<Allocator>;
+		static_assert(std::is_same_v<typename alloc_traits::value_type, Type>, "Invalid value type");
+		using underlying_type = basic_sparse_set<Entity, typename alloc_traits::template rebind_alloc<Entity>>;
+		using container_type = std::vector<typename alloc_traits::pointer, typename alloc_traits::template rebind_alloc<typename alloc_traits::pointer>>;
+		using comp_traits = component_traits<Type>;
+
+		[[nodiscard]] auto& element_at(const std::size_t pos) const {
+			return packed.first()[pos / comp_traits::page_size][fast_mod(pos, comp_traits::page_size)];
+		}
+
+		auto assure_at_least(const std::size_t pos) {
+			auto&& container = packed.first();
+			const auto idx = pos / comp_traits::page_size;
+
+			if (!(idx < container.size())) {
+				auto curr = container.size();
+				container.resize(idx + 1u, nullptr);
+
+				ENTT_TRY{
+					for (const auto last = container.size(); curr < last; ++curr) {
+						container[curr] = alloc_traits::allocate(packed.second(), comp_traits::page_size);
+					}
+				}
+					ENTT_CATCH{
+						container.resize(curr);
+						ENTT_THROW;
+				}
+			}
+
+			return container[idx] + fast_mod(pos, comp_traits::page_size);
+		}
+
+		template<typename... Args>
+		auto emplace_element(const Entity entt, const bool force_back, Args && ...args) {
+			const auto it = base_type::try_emplace(entt, force_back);
+
+			ENTT_TRY{
+				auto elem = assure_at_least(static_cast<size_type>(it.index()));
+				entt::uninitialized_construct_using_allocator(to_address(elem), packed.second(), std::forward<Args>(args)...);
+			}
+				ENTT_CATCH{
+					if constexpr (comp_traits::in_place_delete) {
+						base_type::in_place_pop(it, it + 1u);
+					}
+		 else {
+		  base_type::swap_and_pop(it, it + 1u);
+	  }
+
+	  ENTT_THROW;
+			}
+
+			return it;
+		}
+
+		void shrink_to_size(const std::size_t sz) {
+			for (auto pos = sz, length = base_type::size(); pos < length; ++pos) {
+				if constexpr (comp_traits::in_place_delete) {
+					if (base_type::at(pos) != tombstone) {
+						std::destroy_at(std::addressof(element_at(pos)));
+					}
+				}
+				else {
+					std::destroy_at(std::addressof(element_at(pos)));
+				}
+			}
+
+			auto&& container = packed.first();
+			auto page_allocator{ packed.second() };
+			const auto from = (sz + comp_traits::page_size - 1u) / comp_traits::page_size;
+
+			for (auto pos = from, last = container.size(); pos < last; ++pos) {
+				alloc_traits::deallocate(page_allocator, container[pos], comp_traits::page_size);
+			}
+
+			container.resize(from);
+		}
+
+	private:
+		const void* get_at(const std::size_t pos) const final {
+			return std::addressof(element_at(pos));
+		}
+
+		void swap_at(const std::size_t lhs, const std::size_t rhs) final {
+			using std::swap;
+			swap(element_at(lhs), element_at(rhs));
+		}
+
+		void move_element(const std::size_t from, const std::size_t to) final {
+			auto& elem = element_at(from);
+			entt::uninitialized_construct_using_allocator(to_address(assure_at_least(to)), packed.second(), std::move(elem));
+			std::destroy_at(std::addressof(elem));
+		}
+
+	protected:
+		/**
+		 * @brief Erases elements from a storage.
+		 * @param first An iterator to the first element to erase.
+		 * @param last An iterator past the last element to erase.
+		 */
+		void swap_and_pop(typename underlying_type::basic_iterator first, typename underlying_type::basic_iterator last) override {
+			for (; first != last; ++first) {
+				auto& elem = element_at(base_type::size() - 1u);
+				// destroying on exit allows reentrant destructors
+				[[maybe_unused]] auto unused = std::exchange(element_at(static_cast<size_type>(first.index())), std::move(elem));
+				std::destroy_at(std::addressof(elem));
+				base_type::swap_and_pop(first, first + 1u);
+			}
+		}
+
+		/**
+		 * @brief Erases elements from a storage.
+		 * @param first An iterator to the first element to erase.
+		 * @param last An iterator past the last element to erase.
+		 */
+		void in_place_pop(typename underlying_type::basic_iterator first, typename underlying_type::basic_iterator last) override {
+			for (; first != last; ++first) {
+				base_type::in_place_pop(first, first + 1u);
+				std::destroy_at(std::addressof(element_at(static_cast<size_type>(first.index()))));
+			}
+		}
+
+		/**
+		 * @brief Assigns an entity to a storage.
+		 * @param entt A valid identifier.
+		 * @param value Optional opaque value.
+		 * @param force_back Force back insertion.
+		 * @return Iterator pointing to the emplaced element.
+		 */
+		typename underlying_type::basic_iterator try_emplace([[maybe_unused]] const Entity entt, const bool force_back, const void* value) override {
+			if (value) {
+				if constexpr (std::is_copy_constructible_v<value_type>) {
+					return emplace_element(entt, force_back, *static_cast<const value_type*>(value));
+				}
+				else {
+					return base_type::end();
+				}
+			}
+			else {
+				if constexpr (std::is_default_constructible_v<value_type>) {
+					return emplace_element(entt, force_back);
+				}
+				else {
+					return base_type::end();
+				}
+			}
+		}
+
+	public:
+		/*! @brief Base type. */
+		using base_type = underlying_type;
+		/*! @brief Allocator type. */
+		using allocator_type = Allocator;
+		/*! @brief Type of the objects assigned to entities. */
+		using value_type = Type;
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Pointer type to contained elements. */
+		using pointer = typename container_type::pointer;
+		/*! @brief Constant pointer type to contained elements. */
+		using const_pointer = typename alloc_traits::template rebind_traits<typename alloc_traits::const_pointer>::const_pointer;
+		/*! @brief Random access iterator type. */
+		using iterator = internal::storage_iterator<container_type>;
+		/*! @brief Constant random access iterator type. */
+		using const_iterator = internal::storage_iterator<const container_type>;
+		/*! @brief Reverse iterator type. */
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		/*! @brief Constant reverse iterator type. */
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+		/*! @brief Extended iterable storage proxy. */
+		using iterable = iterable_adaptor<internal::extended_storage_iterator<typename base_type::iterator, iterator>>;
+		/*! @brief Constant extended iterable storage proxy. */
+		using const_iterable = iterable_adaptor<internal::extended_storage_iterator<typename base_type::const_iterator, const_iterator>>;
+
+		/*! @brief Default constructor. */
+		basic_storage()
+			: basic_storage{ allocator_type{} } {}
+
+		/**
+		 * @brief Constructs an empty storage with a given allocator.
+		 * @param allocator The allocator to use.
+		 */
+		explicit basic_storage(const allocator_type& allocator)
+			: base_type{ type_id<value_type>(), deletion_policy{comp_traits::in_place_delete}, allocator },
+			packed{ container_type{allocator}, allocator } {}
+
+		/**
+		 * @brief Move constructor.
+		 * @param other The instance to move from.
+		 */
+		basic_storage(basic_storage&& other) ENTT_NOEXCEPT
+			: base_type{ std::move(other) },
+			packed{ std::move(other.packed) } {}
+
+		/**
+		 * @brief Allocator-extended move constructor.
+		 * @param other The instance to move from.
+		 * @param allocator The allocator to use.
+		 */
+		basic_storage(basic_storage&& other, const allocator_type& allocator) ENTT_NOEXCEPT
+			: base_type{ std::move(other), allocator },
+			packed{ container_type{std::move(other.packed.first()), allocator}, allocator } {
+			ENTT_ASSERT(alloc_traits::is_always_equal::value || packed.second() == other.packed.second(), "Copying a storage is not allowed");
+		}
+
+		/*! @brief Default destructor. */
+		~basic_storage() override {
+			shrink_to_size(0u);
+		}
+
+		/**
+		 * @brief Move assignment operator.
+		 * @param other The instance to move from.
+		 * @return This storage.
+		 */
+		basic_storage& operator=(basic_storage&& other) ENTT_NOEXCEPT {
+			ENTT_ASSERT(alloc_traits::is_always_equal::value || packed.second() == other.packed.second(), "Copying a storage is not allowed");
+
+			shrink_to_size(0u);
+			base_type::operator=(std::move(other));
+			packed.first() = std::move(other.packed.first());
+			propagate_on_container_move_assignment(packed.second(), other.packed.second());
+			return *this;
+		}
+
+		/**
+		 * @brief Exchanges the contents with those of a given storage.
+		 * @param other Storage to exchange the content with.
+		 */
+		void swap(basic_storage& other) {
+			using std::swap;
+			underlying_type::swap(other);
+			propagate_on_container_swap(packed.second(), other.packed.second());
+			swap(packed.first(), other.packed.first());
+		}
+
+		/**
+		 * @brief Returns the associated allocator.
+		 * @return The associated allocator.
+		 */
+		[[nodiscard]] constexpr allocator_type get_allocator() const ENTT_NOEXCEPT {
+			return allocator_type{ packed.second() };
+		}
+
+		/**
+		 * @brief Increases the capacity of a storage.
+		 *
+		 * If the new capacity is greater than the current capacity, new storage is
+		 * allocated, otherwise the method does nothing.
+		 *
+		 * @param cap Desired capacity.
+		 */
+		void reserve(const size_type cap) override {
+			if (cap != 0u) {
+				base_type::reserve(cap);
+				assure_at_least(cap - 1u);
+			}
+		}
+
+		/**
+		 * @brief Returns the number of elements that a storage has currently
+		 * allocated space for.
+		 * @return Capacity of the storage.
+		 */
+		[[nodiscard]] size_type capacity() const ENTT_NOEXCEPT override {
+			return packed.first().size() * comp_traits::page_size;
+		}
+
+		/*! @brief Requests the removal of unused capacity. */
+		void shrink_to_fit() override {
+			base_type::shrink_to_fit();
+			shrink_to_size(base_type::size());
+		}
+
+		/**
+		 * @brief Direct access to the array of objects.
+		 * @return A pointer to the array of objects.
+		 */
+		[[nodiscard]] const_pointer raw() const ENTT_NOEXCEPT {
+			return packed.first().data();
+		}
+
+		/*! @copydoc raw */
+		[[nodiscard]] pointer raw() ENTT_NOEXCEPT {
+			return packed.first().data();
+		}
+
+		/**
+		 * @brief Returns an iterator to the beginning.
+		 *
+		 * The returned iterator points to the first instance of the internal array.
+		 * If the storage is empty, the returned iterator will be equal to `end()`.
+		 *
+		 * @return An iterator to the first instance of the internal array.
+		 */
+		[[nodiscard]] const_iterator cbegin() const ENTT_NOEXCEPT {
+			const auto pos = static_cast<typename iterator::difference_type>(base_type::size());
+			return const_iterator{ &packed.first(), pos };
+		}
+
+		/*! @copydoc cbegin */
+		[[nodiscard]] const_iterator begin() const ENTT_NOEXCEPT {
+			return cbegin();
+		}
+
+		/*! @copydoc begin */
+		[[nodiscard]] iterator begin() ENTT_NOEXCEPT {
+			const auto pos = static_cast<typename iterator::difference_type>(base_type::size());
+			return iterator{ &packed.first(), pos };
+		}
+
+		/**
+		 * @brief Returns an iterator to the end.
+		 *
+		 * The returned iterator points to the element following the last instance
+		 * of the internal array. Attempting to dereference the returned iterator
+		 * results in undefined behavior.
+		 *
+		 * @return An iterator to the element following the last instance of the
+		 * internal array.
+		 */
+		[[nodiscard]] const_iterator cend() const ENTT_NOEXCEPT {
+			return const_iterator{ &packed.first(), {} };
+		}
+
+		/*! @copydoc cend */
+		[[nodiscard]] const_iterator end() const ENTT_NOEXCEPT {
+			return cend();
+		}
+
+		/*! @copydoc end */
+		[[nodiscard]] iterator end() ENTT_NOEXCEPT {
+			return iterator{ &packed.first(), {} };
+		}
+
+		/**
+		 * @brief Returns a reverse iterator to the beginning.
+		 *
+		 * The returned iterator points to the first instance of the reversed
+		 * internal array. If the storage is empty, the returned iterator will be
+		 * equal to `rend()`.
+		 *
+		 * @return An iterator to the first instance of the reversed internal array.
+		 */
+		[[nodiscard]] const_reverse_iterator crbegin() const ENTT_NOEXCEPT {
+			return std::make_reverse_iterator(cend());
+		}
+
+		/*! @copydoc crbegin */
+		[[nodiscard]] const_reverse_iterator rbegin() const ENTT_NOEXCEPT {
+			return crbegin();
+		}
+
+		/*! @copydoc rbegin */
+		[[nodiscard]] reverse_iterator rbegin() ENTT_NOEXCEPT {
+			return std::make_reverse_iterator(end());
+		}
+
+		/**
+		 * @brief Returns a reverse iterator to the end.
+		 *
+		 * The returned iterator points to the element following the last instance
+		 * of the reversed internal array. Attempting to dereference the returned
+		 * iterator results in undefined behavior.
+		 *
+		 * @return An iterator to the element following the last instance of the
+		 * reversed internal array.
+		 */
+		[[nodiscard]] const_reverse_iterator crend() const ENTT_NOEXCEPT {
+			return std::make_reverse_iterator(cbegin());
+		}
+
+		/*! @copydoc crend */
+		[[nodiscard]] const_reverse_iterator rend() const ENTT_NOEXCEPT {
+			return crend();
+		}
+
+		/*! @copydoc rend */
+		[[nodiscard]] reverse_iterator rend() ENTT_NOEXCEPT {
+			return std::make_reverse_iterator(begin());
+		}
+
+		/**
+		 * @brief Returns the object assigned to an entity.
+		 *
+		 * @warning
+		 * Attempting to use an entity that doesn't belong to the storage results in
+		 * undefined behavior.
+		 *
+		 * @param entt A valid identifier.
+		 * @return The object assigned to the entity.
+		 */
+		[[nodiscard]] const value_type& get(const entity_type entt) const ENTT_NOEXCEPT {
+			return element_at(base_type::index(entt));
+		}
+
+		/*! @copydoc get */
+		[[nodiscard]] value_type& get(const entity_type entt) ENTT_NOEXCEPT {
+			return const_cast<value_type&>(std::as_const(*this).get(entt));
+		}
+
+		/**
+		 * @brief Returns the object assigned to an entity as a tuple.
+		 * @param entt A valid identifier.
+		 * @return The object assigned to the entity as a tuple.
+		 */
+		[[nodiscard]] std::tuple<const value_type&> get_as_tuple(const entity_type entt) const ENTT_NOEXCEPT {
+			return std::forward_as_tuple(get(entt));
+		}
+
+		/*! @copydoc get_as_tuple */
+		[[nodiscard]] std::tuple<value_type&> get_as_tuple(const entity_type entt) ENTT_NOEXCEPT {
+			return std::forward_as_tuple(get(entt));
+		}
+
+		/**
+		 * @brief Assigns an entity to a storage and constructs its object.
+		 *
+		 * @warning
+		 * Attempting to use an entity that already belongs to the storage results
+		 * in undefined behavior.
+		 *
+		 * @tparam Args Types of arguments to use to construct the object.
+		 * @param entt A valid identifier.
+		 * @param args Parameters to use to construct an object for the entity.
+		 * @return A reference to the newly created object.
+		 */
+		template<typename... Args>
+		value_type& emplace(const entity_type entt, Args && ...args) {
+			if constexpr (std::is_aggregate_v<value_type>) {
+				const auto it = emplace_element(entt, false, Type{ std::forward<Args>(args)... });
+				return element_at(static_cast<size_type>(it.index()));
+			}
+			else {
+				const auto it = emplace_element(entt, false, std::forward<Args>(args)...);
+				return element_at(static_cast<size_type>(it.index()));
+			}
+		}
+
+		/**
+		 * @brief Updates the instance assigned to a given entity in-place.
+		 * @tparam Func Types of the function objects to invoke.
+		 * @param entt A valid identifier.
+		 * @param func Valid function objects.
+		 * @return A reference to the updated instance.
+		 */
+		template<typename... Func>
+		value_type& patch(const entity_type entt, Func && ...func) {
+			const auto idx = base_type::index(entt);
+			auto& elem = element_at(idx);
+			(std::forward<Func>(func)(elem), ...);
+			return elem;
+		}
+
+		/**
+		 * @brief Assigns one or more entities to a storage and constructs their
+		 * objects from a given instance.
+		 *
+		 * @warning
+		 * Attempting to assign an entity that already belongs to the storage
+		 * results in undefined behavior.
+		 *
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @param value An instance of the object to construct.
+		 */
+		template<typename It>
+		void insert(It first, It last, const value_type& value = {}) {
+			for (; first != last; ++first) {
+				emplace_element(*first, true, value);
+			}
+		}
+
+		/**
+		 * @brief Assigns one or more entities to a storage and constructs their
+		 * objects from a given range.
+		 *
+		 * @sa construct
+		 *
+		 * @tparam EIt Type of input iterator.
+		 * @tparam CIt Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @param from An iterator to the first element of the range of objects.
+		 */
+		template<typename EIt, typename CIt, typename = std::enable_if_t<std::is_same_v<typename std::iterator_traits<CIt>::value_type, value_type>>>
+		void insert(EIt first, EIt last, CIt from) {
+			for (; first != last; ++first, ++from) {
+				emplace_element(*first, true, *from);
+			}
+		}
+
+		/**
+		 * @brief Returns an iterable object to use to _visit_ a storage.
+		 *
+		 * The iterable object returns a tuple that contains the current entity and
+		 * a reference to its component.
+		 *
+		 * @return An iterable object to use to _visit_ the storage.
+		 */
+		[[nodiscard]] iterable each() ENTT_NOEXCEPT {
+			return { internal::extended_storage_iterator{base_type::begin(), begin()}, internal::extended_storage_iterator{base_type::end(), end()} };
+		}
+
+		/*! @copydoc each */
+		[[nodiscard]] const_iterable each() const ENTT_NOEXCEPT {
+			return { internal::extended_storage_iterator{base_type::cbegin(), cbegin()}, internal::extended_storage_iterator{base_type::cend(), cend()} };
+		}
+
+	private:
+		compressed_pair<container_type, allocator_type> packed;
+	};
+
+	/*! @copydoc basic_storage */
+	template<typename Entity, typename Type, typename Allocator>
+	class basic_storage<Entity, Type, Allocator, std::enable_if_t<ignore_as_empty_v<Type>>>
+		: public basic_sparse_set<Entity, typename std::allocator_traits<Allocator>::template rebind_alloc<Entity>> {
+		using alloc_traits = std::allocator_traits<Allocator>;
+		static_assert(std::is_same_v<typename alloc_traits::value_type, Type>, "Invalid value type");
+		using underlying_type = basic_sparse_set<Entity, typename alloc_traits::template rebind_alloc<Entity>>;
+		using comp_traits = component_traits<Type>;
+
+	public:
+		/*! @brief Base type. */
+		using base_type = underlying_type;
+		/*! @brief Allocator type. */
+		using allocator_type = Allocator;
+		/*! @brief Type of the objects assigned to entities. */
+		using value_type = Type;
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Extended iterable storage proxy. */
+		using iterable = iterable_adaptor<internal::extended_storage_iterator<typename base_type::iterator>>;
+		/*! @brief Constant extended iterable storage proxy. */
+		using const_iterable = iterable_adaptor<internal::extended_storage_iterator<typename base_type::const_iterator>>;
+
+		/*! @brief Default constructor. */
+		basic_storage()
+			: basic_storage{ allocator_type{} } {}
+
+		/**
+		 * @brief Constructs an empty container with a given allocator.
+		 * @param allocator The allocator to use.
+		 */
+		explicit basic_storage(const allocator_type& allocator)
+			: base_type{ type_id<value_type>(), deletion_policy{comp_traits::in_place_delete}, allocator } {}
+
+		/**
+		 * @brief Move constructor.
+		 * @param other The instance to move from.
+		 */
+		basic_storage(basic_storage&& other) ENTT_NOEXCEPT = default;
+
+		/**
+		 * @brief Allocator-extended move constructor.
+		 * @param other The instance to move from.
+		 * @param allocator The allocator to use.
+		 */
+		basic_storage(basic_storage&& other, const allocator_type& allocator) ENTT_NOEXCEPT
+			: base_type{ std::move(other), allocator } {}
+
+		/**
+		 * @brief Move assignment operator.
+		 * @param other The instance to move from.
+		 * @return This storage.
+		 */
+		basic_storage& operator=(basic_storage&& other) ENTT_NOEXCEPT = default;
+
+		/**
+		 * @brief Returns the associated allocator.
+		 * @return The associated allocator.
+		 */
+		[[nodiscard]] constexpr allocator_type get_allocator() const ENTT_NOEXCEPT {
+			return allocator_type{ base_type::get_allocator() };
+		}
+
+		/**
+		 * @brief Returns the object assigned to an entity, that is `void`.
+		 *
+		 * @warning
+		 * Attempting to use an entity that doesn't belong to the storage results in
+		 * undefined behavior.
+		 *
+		 * @param entt A valid identifier.
+		 */
+		void get([[maybe_unused]] const entity_type entt) const ENTT_NOEXCEPT {
+			ENTT_ASSERT(base_type::contains(entt), "Storage does not contain entity");
+		}
+
+		/**
+		 * @brief Returns an empty tuple.
+		 *
+		 * @warning
+		 * Attempting to use an entity that doesn't belong to the storage results in
+		 * undefined behavior.
+		 *
+		 * @param entt A valid identifier.
+		 * @return Returns an empty tuple.
+		 */
+		[[nodiscard]] std::tuple<> get_as_tuple([[maybe_unused]] const entity_type entt) const ENTT_NOEXCEPT {
+			ENTT_ASSERT(base_type::contains(entt), "Storage does not contain entity");
+			return std::tuple{};
+		}
+
+		/**
+		 * @brief Assigns an entity to a storage and constructs its object.
+		 *
+		 * @warning
+		 * Attempting to use an entity that already belongs to the storage results
+		 * in undefined behavior.
+		 *
+		 * @tparam Args Types of arguments to use to construct the object.
+		 * @param entt A valid identifier.
+		 */
+		template<typename... Args>
+		void emplace(const entity_type entt, Args&& ...) {
+			base_type::try_emplace(entt, false);
+		}
+
+		/**
+		 * @brief Updates the instance assigned to a given entity in-place.
+		 * @tparam Func Types of the function objects to invoke.
+		 * @param entt A valid identifier.
+		 * @param func Valid function objects.
+		 */
+		template<typename... Func>
+		void patch([[maybe_unused]] const entity_type entt, Func&& ...func) {
+			ENTT_ASSERT(base_type::contains(entt), "Storage does not contain entity");
+			(std::forward<Func>(func)(), ...);
+		}
+
+		/**
+		 * @brief Assigns entities to a storage.
+		 * @tparam It Type of input iterator.
+		 * @tparam Args Types of optional arguments.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 */
+		template<typename It, typename... Args>
+		void insert(It first, It last, Args&& ...) {
+			for (; first != last; ++first) {
+				base_type::try_emplace(*first, true);
+			}
+		}
+
+		/**
+		 * @brief Returns an iterable object to use to _visit_ a storage.
+		 *
+		 * The iterable object returns a tuple that contains the current entity.
+		 *
+		 * @return An iterable object to use to _visit_ the storage.
+		 */
+		[[nodiscard]] iterable each() ENTT_NOEXCEPT {
+			return { internal::extended_storage_iterator{base_type::begin()}, internal::extended_storage_iterator{base_type::end()} };
+		}
+
+		/*! @copydoc each */
+		[[nodiscard]] const_iterable each() const ENTT_NOEXCEPT {
+			return { internal::extended_storage_iterator{base_type::cbegin()}, internal::extended_storage_iterator{base_type::cend()} };
+		}
+	};
+
+	/**
+	 * @brief Provides a common way to access certain properties of storage types.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Type Type of objects managed by the storage class.
+	 */
+	template<typename Entity, typename Type, typename = void>
+	struct storage_traits {
+		/*! @brief Resulting type after component-to-storage conversion. */
+		using storage_type = sigh_storage_mixin<basic_storage<Entity, Type>>;
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "utility.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @brief Group.
+	 *
+	 * Primary template isn't defined on purpose. All the specializations give a
+	 * compile-time error, but for a few reasonable cases.
+	 */
+	template<typename, typename, typename, typename>
+	class basic_group;
+
+	/**
+	 * @brief Non-owning group.
+	 *
+	 * A non-owning group returns all entities and only the entities that have at
+	 * least the given components. Moreover, it's guaranteed that the entity list
+	 * is tightly packed in memory for fast iterations.
+	 *
+	 * @b Important
+	 *
+	 * Iterators aren't invalidated if:
+	 *
+	 * * New instances of the given components are created and assigned to entities.
+	 * * The entity currently pointed is modified (as an example, if one of the
+	 *   given components is removed from the entity to which the iterator points).
+	 * * The entity currently pointed is destroyed.
+	 *
+	 * In all other cases, modifying the pools iterated by the group in any way
+	 * invalidates all the iterators and using them results in undefined behavior.
+	 *
+	 * @note
+	 * Groups share references to the underlying data structures of the registry
+	 * that generated them. Therefore any change to the entities and to the
+	 * components made by means of the registry are immediately reflected by all the
+	 * groups.<br/>
+	 * Moreover, sorting a non-owning group affects all the instances of the same
+	 * group (it means that users don't have to call `sort` on each instance to sort
+	 * all of them because they _share_ entities and components).
+	 *
+	 * @warning
+	 * Lifetime of a group must not overcome that of the registry that generated it.
+	 * In any other case, attempting to use a group results in undefined behavior.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Get Type of components observed by the group.
+	 * @tparam Exclude Types of components used to filter the group.
+	 */
+	template<typename Entity, typename... Get, typename... Exclude>
+	class basic_group<Entity, owned_t<>, get_t<Get...>, exclude_t<Exclude...>> {
+		/*! @brief A registry is allowed to create groups. */
+		friend class basic_registry<Entity>;
+
+		template<typename Comp>
+		using storage_type = constness_as_t<typename storage_traits<Entity, std::remove_const_t<Comp>>::storage_type, Comp>;
+
+		using basic_common_type = std::common_type_t<typename storage_type<Get>::base_type...>;
+
+		struct extended_group_iterator final {
+			using difference_type = std::ptrdiff_t;
+			using value_type = decltype(std::tuple_cat(std::tuple<Entity>{}, std::declval<basic_group>().get({})));
+			using pointer = input_iterator_pointer<value_type>;
+			using reference = value_type;
+			using iterator_category = std::input_iterator_tag;
+
+			extended_group_iterator() = default;
+
+			extended_group_iterator(typename basic_common_type::iterator from, const std::tuple<storage_type<Get>* ...>& args)
+				: it{ from },
+				pools{ args } {}
+
+			extended_group_iterator& operator++() ENTT_NOEXCEPT {
+				return ++it, * this;
+			}
+
+			extended_group_iterator operator++(int) ENTT_NOEXCEPT {
+				extended_group_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				const auto entt = *it;
+				return std::tuple_cat(std::make_tuple(entt), std::get<storage_type<Get>*>(pools)->get_as_tuple(entt)...);
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return operator*();
+			}
+
+			[[nodiscard]] bool operator==(const extended_group_iterator& other) const ENTT_NOEXCEPT {
+				return other.it == it;
+			}
+
+			[[nodiscard]] bool operator!=(const extended_group_iterator& other) const ENTT_NOEXCEPT {
+				return !(*this == other);
+			}
+
+		private:
+			typename basic_common_type::iterator it;
+			std::tuple<storage_type<Get>* ...> pools;
+		};
+
+		basic_group(basic_common_type& ref, storage_type<Get>& ...gpool) ENTT_NOEXCEPT
+			: handler{ &ref },
+			pools{ &gpool... } {}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Common type among all storage types. */
+		using base_type = basic_common_type;
+		/*! @brief Random access iterator type. */
+		using iterator = typename base_type::iterator;
+		/*! @brief Reversed iterator type. */
+		using reverse_iterator = typename base_type::reverse_iterator;
+		/*! @brief Iterable group type. */
+		using iterable = iterable_adaptor<extended_group_iterator>;
+
+		/*! @brief Default constructor to use to create empty, invalid groups. */
+		basic_group() ENTT_NOEXCEPT
+			: handler{} {}
+
+		/**
+		 * @brief Returns a const reference to the underlying handler.
+		 * @return A const reference to the underlying handler.
+		 */
+		const base_type& handle() const ENTT_NOEXCEPT {
+			return *handler;
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Comp Type of component of which to return the storage.
+		 * @return The storage for the given component type.
+		 */
+		template<typename Comp>
+		[[nodiscard]] decltype(auto) storage() const ENTT_NOEXCEPT {
+			return *std::get<storage_type<Comp>*>(pools);
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Comp Index of component of which to return the storage.
+		 * @return The storage for the given component type.
+		 */
+		template<std::size_t Comp>
+		[[nodiscard]] decltype(auto) storage() const ENTT_NOEXCEPT {
+			return *std::get<Comp>(pools);
+		}
+
+		/**
+		 * @brief Returns the number of entities that have the given components.
+		 * @return Number of entities that have the given components.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return *this ? handler->size() : size_type{};
+		}
+
+		/**
+		 * @brief Returns the number of elements that a group has currently
+		 * allocated space for.
+		 * @return Capacity of the group.
+		 */
+		[[nodiscard]] size_type capacity() const ENTT_NOEXCEPT {
+			return *this ? handler->capacity() : size_type{};
+		}
+
+		/*! @brief Requests the removal of unused capacity. */
+		void shrink_to_fit() {
+			if (*this) {
+				handler->shrink_to_fit();
+			}
+		}
+
+		/**
+		 * @brief Checks whether a group is empty.
+		 * @return True if the group is empty, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return !*this || handler->empty();
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity of the group.
+		 *
+		 * The returned iterator points to the first entity of the group. If the
+		 * group is empty, the returned iterator will be equal to `end()`.
+		 *
+		 * @return An iterator to the first entity of the group.
+		 */
+		[[nodiscard]] iterator begin() const ENTT_NOEXCEPT {
+			return *this ? handler->begin() : iterator{};
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity of the group.
+		 *
+		 * The returned iterator points to the entity following the last entity of
+		 * the group. Attempting to dereference the returned iterator results in
+		 * undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity of the
+		 * group.
+		 */
+		[[nodiscard]] iterator end() const ENTT_NOEXCEPT {
+			return *this ? handler->end() : iterator{};
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity of the reversed group.
+		 *
+		 * The returned iterator points to the first entity of the reversed group.
+		 * If the group is empty, the returned iterator will be equal to `rend()`.
+		 *
+		 * @return An iterator to the first entity of the reversed group.
+		 */
+		[[nodiscard]] reverse_iterator rbegin() const ENTT_NOEXCEPT {
+			return *this ? handler->rbegin() : reverse_iterator{};
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity of the reversed
+		 * group.
+		 *
+		 * The returned iterator points to the entity following the last entity of
+		 * the reversed group. Attempting to dereference the returned iterator
+		 * results in undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity of the
+		 * reversed group.
+		 */
+		[[nodiscard]] reverse_iterator rend() const ENTT_NOEXCEPT {
+			return *this ? handler->rend() : reverse_iterator{};
+		}
+
+		/**
+		 * @brief Returns the first entity of the group, if any.
+		 * @return The first entity of the group if one exists, the null entity
+		 * otherwise.
+		 */
+		[[nodiscard]] entity_type front() const ENTT_NOEXCEPT {
+			const auto it = begin();
+			return it != end() ? *it : null;
+		}
+
+		/**
+		 * @brief Returns the last entity of the group, if any.
+		 * @return The last entity of the group if one exists, the null entity
+		 * otherwise.
+		 */
+		[[nodiscard]] entity_type back() const ENTT_NOEXCEPT {
+			const auto it = rbegin();
+			return it != rend() ? *it : null;
+		}
+
+		/**
+		 * @brief Finds an entity.
+		 * @param entt A valid identifier.
+		 * @return An iterator to the given entity if it's found, past the end
+		 * iterator otherwise.
+		 */
+		[[nodiscard]] iterator find(const entity_type entt) const ENTT_NOEXCEPT {
+			const auto it = *this ? handler->find(entt) : iterator{};
+			return it != end() && *it == entt ? it : end();
+		}
+
+		/**
+		 * @brief Returns the identifier that occupies the given position.
+		 * @param pos Position of the element to return.
+		 * @return The identifier that occupies the given position.
+		 */
+		[[nodiscard]] entity_type operator[](const size_type pos) const {
+			return begin()[pos];
+		}
+
+		/**
+		 * @brief Checks if a group is properly initialized.
+		 * @return True if the group is properly initialized, false otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			return handler != nullptr;
+		}
+
+		/**
+		 * @brief Checks if a group contains an entity.
+		 * @param entt A valid identifier.
+		 * @return True if the group contains the given entity, false otherwise.
+		 */
+		[[nodiscard]] bool contains(const entity_type entt) const ENTT_NOEXCEPT {
+			return *this && handler->contains(entt);
+		}
+
+		/**
+		 * @brief Returns the components assigned to the given entity.
+		 *
+		 * Prefer this function instead of `registry::get` during iterations. It has
+		 * far better performance than its counterpart.
+		 *
+		 * @warning
+		 * Attempting to use an invalid component type results in a compilation
+		 * error. Attempting to use an entity that doesn't belong to the group
+		 * results in undefined behavior.
+		 *
+		 * @tparam Comp Types of components to get.
+		 * @param entt A valid identifier.
+		 * @return The components assigned to the entity.
+		 */
+		template<typename... Comp>
+		[[nodiscard]] decltype(auto) get(const entity_type entt) const {
+			ENTT_ASSERT(contains(entt), "Group does not contain entity");
+
+			if constexpr (sizeof...(Comp) == 0) {
+				return std::tuple_cat(std::get<storage_type<Get>*>(pools)->get_as_tuple(entt)...);
+			}
+			else if constexpr (sizeof...(Comp) == 1) {
+				return (std::get<storage_type<Comp>*>(pools)->get(entt), ...);
+			}
+			else {
+				return std::tuple_cat(std::get<storage_type<Comp>*>(pools)->get_as_tuple(entt)...);
+			}
+		}
+
+		/**
+		 * @brief Iterates entities and components and applies the given function
+		 * object to them.
+		 *
+		 * The function object is invoked for each entity. It is provided with the
+		 * entity itself and a set of references to non-empty components. The
+		 * _constness_ of the components is as requested.<br/>
+		 * The signature of the function must be equivalent to one of the following
+		 * forms:
+		 *
+		 * @code{.cpp}
+		 * void(const entity_type, Type &...);
+		 * void(Type &...);
+		 * @endcode
+		 *
+		 * @note
+		 * Empty types aren't explicitly instantiated and therefore they are never
+		 * returned during iterations.
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void each(Func func) const {
+			for (const auto entt : *this) {
+				if constexpr (is_applicable_v < Func, decltype(std::tuple_cat(std::tuple<entity_type>{}, std::declval<basic_group>().get({}))) > ) {
+					std::apply(func, std::tuple_cat(std::make_tuple(entt), get(entt)));
+				}
+				else {
+					std::apply(func, get(entt));
+				}
+			}
+		}
+
+		/**
+		 * @brief Returns an iterable object to use to _visit_ a group.
+		 *
+		 * The iterable object returns tuples that contain the current entity and a
+		 * set of references to its non-empty components. The _constness_ of the
+		 * components is as requested.
+		 *
+		 * @note
+		 * Empty types aren't explicitly instantiated and therefore they are never
+		 * returned during iterations.
+		 *
+		 * @return An iterable object to use to _visit_ the group.
+		 */
+		[[nodiscard]] iterable each() const ENTT_NOEXCEPT {
+			return handler ? iterable{ extended_group_iterator{handler->begin(), pools}, extended_group_iterator{handler->end(), pools} }
+			: iterable{ extended_group_iterator{{}, pools}, extended_group_iterator{{}, pools} };
+		}
+
+		/**
+		 * @brief Sort a group according to the given comparison function.
+		 *
+		 * Sort the group so that iterating it with a couple of iterators returns
+		 * entities and components in the expected order. See `begin` and `end` for
+		 * more details.
+		 *
+		 * The comparison function object must return `true` if the first element
+		 * is _less_ than the second one, `false` otherwise. The signature of the
+		 * comparison function should be equivalent to one of the following:
+		 *
+		 * @code{.cpp}
+		 * bool(std::tuple<Component &...>, std::tuple<Component &...>);
+		 * bool(const Component &..., const Component &...);
+		 * bool(const Entity, const Entity);
+		 * @endcode
+		 *
+		 * Where `Component` are such that they are iterated by the group.<br/>
+		 * Moreover, the comparison function object shall induce a
+		 * _strict weak ordering_ on the values.
+		 *
+		 * The sort function object must offer a member function template
+		 * `operator()` that accepts three arguments:
+		 *
+		 * * An iterator to the first element of the range to sort.
+		 * * An iterator past the last element of the range to sort.
+		 * * A comparison function to use to compare the elements.
+		 *
+		 * @tparam Comp Optional types of components to compare.
+		 * @tparam Compare Type of comparison function object.
+		 * @tparam Sort Type of sort function object.
+		 * @tparam Args Types of arguments to forward to the sort function object.
+		 * @param compare A valid comparison function object.
+		 * @param algo A valid sort function object.
+		 * @param args Arguments to forward to the sort function object, if any.
+		 */
+		template<typename... Comp, typename Compare, typename Sort = std_sort, typename... Args>
+		void sort(Compare compare, Sort algo = Sort{}, Args && ...args) {
+			if (*this) {
+				if constexpr (sizeof...(Comp) == 0) {
+					static_assert(std::is_invocable_v<Compare, const entity_type, const entity_type>, "Invalid comparison function");
+					handler->sort(std::move(compare), std::move(algo), std::forward<Args>(args)...);
+				}
+				else {
+					auto comp = [this, &compare](const entity_type lhs, const entity_type rhs) {
+						if constexpr (sizeof...(Comp) == 1) {
+							return compare((std::get<storage_type<Comp>*>(pools)->get(lhs), ...), (std::get<storage_type<Comp>*>(pools)->get(rhs), ...));
+						}
+						else {
+							return compare(std::forward_as_tuple(std::get<storage_type<Comp>*>(pools)->get(lhs)...), std::forward_as_tuple(std::get<storage_type<Comp>*>(pools)->get(rhs)...));
+						}
+					};
+
+					handler->sort(std::move(comp), std::move(algo), std::forward<Args>(args)...);
+				}
+			}
+		}
+
+		/**
+		 * @brief Sort the shared pool of entities according to the given component.
+		 *
+		 * Non-owning groups of the same type share with the registry a pool of
+		 * entities with its own order that doesn't depend on the order of any pool
+		 * of components. Users can order the underlying data structure so that it
+		 * respects the order of the pool of the given component.
+		 *
+		 * @note
+		 * The shared pool of entities and thus its order is affected by the changes
+		 * to each and every pool that it tracks. Therefore changes to those pools
+		 * can quickly ruin the order imposed to the pool of entities shared between
+		 * the non-owning groups.
+		 *
+		 * @tparam Comp Type of component to use to impose the order.
+		 */
+		template<typename Comp>
+		void sort() const {
+			if (*this) {
+				handler->respect(*std::get<storage_type<Comp>*>(pools));
+			}
+		}
+
+	private:
+		base_type* const handler;
+		const std::tuple<storage_type<Get>* ...> pools;
+	};
+
+	/**
+	 * @brief Owning group.
+	 *
+	 * Owning groups return all entities and only the entities that have at least
+	 * the given components. Moreover:
+	 *
+	 * * It's guaranteed that the entity list is tightly packed in memory for fast
+	 *   iterations.
+	 * * It's guaranteed that the lists of owned components are tightly packed in
+	 *   memory for even faster iterations and to allow direct access.
+	 * * They stay true to the order of the owned components and all instances have
+	 *   the same order in memory.
+	 *
+	 * The more types of components are owned by a group, the faster it is to
+	 * iterate them.
+	 *
+	 * @b Important
+	 *
+	 * Iterators aren't invalidated if:
+	 *
+	 * * New instances of the given components are created and assigned to entities.
+	 * * The entity currently pointed is modified (as an example, if one of the
+	 *   given components is removed from the entity to which the iterator points).
+	 * * The entity currently pointed is destroyed.
+	 *
+	 * In all other cases, modifying the pools iterated by the group in any way
+	 * invalidates all the iterators and using them results in undefined behavior.
+	 *
+	 * @note
+	 * Groups share references to the underlying data structures of the registry
+	 * that generated them. Therefore any change to the entities and to the
+	 * components made by means of the registry are immediately reflected by all the
+	 * groups.
+	 * Moreover, sorting an owning group affects all the instance of the same group
+	 * (it means that users don't have to call `sort` on each instance to sort all
+	 * of them because they share the underlying data structure).
+	 *
+	 * @warning
+	 * Lifetime of a group must not overcome that of the registry that generated it.
+	 * In any other case, attempting to use a group results in undefined behavior.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Owned Types of components owned by the group.
+	 * @tparam Get Types of components observed by the group.
+	 * @tparam Exclude Types of components used to filter the group.
+	 */
+	template<typename Entity, typename... Owned, typename... Get, typename... Exclude>
+	class basic_group<Entity, owned_t<Owned...>, get_t<Get...>, exclude_t<Exclude...>> {
+		/*! @brief A registry is allowed to create groups. */
+		friend class basic_registry<Entity>;
+
+		template<typename Comp>
+		using storage_type = constness_as_t<typename storage_traits<Entity, std::remove_const_t<Comp>>::storage_type, Comp>;
+
+		using basic_common_type = std::common_type_t<typename storage_type<Owned>::base_type..., typename storage_type<Get>::base_type...>;
+
+		class extended_group_iterator final {
+			template<typename Type>
+			auto index_to_element(storage_type<Type>& cpool) const {
+				if constexpr (ignore_as_empty_v<std::remove_const_t<Type>>) {
+					return std::make_tuple();
+				}
+				else {
+					return std::forward_as_tuple(cpool.rbegin()[it.index()]);
+				}
+			}
+
+		public:
+			using difference_type = std::ptrdiff_t;
+			using value_type = decltype(std::tuple_cat(std::tuple<Entity>{}, std::declval<basic_group>().get({})));
+			using pointer = input_iterator_pointer<value_type>;
+			using reference = value_type;
+			using iterator_category = std::input_iterator_tag;
+
+			extended_group_iterator() = default;
+
+			template<typename... Other>
+			extended_group_iterator(typename basic_common_type::iterator from, const std::tuple<storage_type<Owned> * ..., storage_type<Get> * ...>& cpools)
+				: it{ from },
+				pools{ cpools } {}
+
+			extended_group_iterator& operator++() ENTT_NOEXCEPT {
+				return ++it, * this;
+			}
+
+			extended_group_iterator operator++(int) ENTT_NOEXCEPT {
+				extended_group_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return std::tuple_cat(
+					std::make_tuple(*it),
+					index_to_element<Owned>(*std::get<storage_type<Owned>*>(pools))...,
+					std::get<storage_type<Get>*>(pools)->get_as_tuple(*it)...);
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return operator*();
+			}
+
+			[[nodiscard]] bool operator==(const extended_group_iterator& other) const ENTT_NOEXCEPT {
+				return other.it == it;
+			}
+
+			[[nodiscard]] bool operator!=(const extended_group_iterator& other) const ENTT_NOEXCEPT {
+				return !(*this == other);
+			}
+
+		private:
+			typename basic_common_type::iterator it;
+			std::tuple<storage_type<Owned>* ..., storage_type<Get>* ...> pools;
+		};
+
+		basic_group(const std::size_t& extent, storage_type<Owned> & ...opool, storage_type<Get> & ...gpool) ENTT_NOEXCEPT
+			: pools{ &opool..., &gpool... },
+			length{ &extent } {}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Common type among all storage types. */
+		using base_type = basic_common_type;
+		/*! @brief Random access iterator type. */
+		using iterator = typename base_type::iterator;
+		/*! @brief Reversed iterator type. */
+		using reverse_iterator = typename base_type::reverse_iterator;
+		/*! @brief Iterable group type. */
+		using iterable = iterable_adaptor<extended_group_iterator>;
+
+		/*! @brief Default constructor to use to create empty, invalid groups. */
+		basic_group() ENTT_NOEXCEPT
+			: length{} {}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Comp Type of component of which to return the storage.
+		 * @return The storage for the given component type.
+		 */
+		template<typename Comp>
+		[[nodiscard]] decltype(auto) storage() const ENTT_NOEXCEPT {
+			return *std::get<storage_type<Comp>*>(pools);
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Comp Index of component of which to return the storage.
+		 * @return The storage for the given component type.
+		 */
+		template<std::size_t Comp>
+		[[nodiscard]] decltype(auto) storage() const ENTT_NOEXCEPT {
+			return *std::get<Comp>(pools);
+		}
+
+		/**
+		 * @brief Returns the number of entities that have the given components.
+		 * @return Number of entities that have the given components.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return *this ? *length : size_type{};
+		}
+
+		/**
+		 * @brief Checks whether a group is empty.
+		 * @return True if the group is empty, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return !*this || !*length;
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity of the group.
+		 *
+		 * The returned iterator points to the first entity of the group. If the
+		 * group is empty, the returned iterator will be equal to `end()`.
+		 *
+		 * @return An iterator to the first entity of the group.
+		 */
+		[[nodiscard]] iterator begin() const ENTT_NOEXCEPT {
+			return *this ? (std::get<0>(pools)->base_type::end() - *length) : iterator{};
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity of the group.
+		 *
+		 * The returned iterator points to the entity following the last entity of
+		 * the group. Attempting to dereference the returned iterator results in
+		 * undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity of the
+		 * group.
+		 */
+		[[nodiscard]] iterator end() const ENTT_NOEXCEPT {
+			return *this ? std::get<0>(pools)->base_type::end() : iterator{};
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity of the reversed group.
+		 *
+		 * The returned iterator points to the first entity of the reversed group.
+		 * If the group is empty, the returned iterator will be equal to `rend()`.
+		 *
+		 * @return An iterator to the first entity of the reversed group.
+		 */
+		[[nodiscard]] reverse_iterator rbegin() const ENTT_NOEXCEPT {
+			return *this ? std::get<0>(pools)->base_type::rbegin() : reverse_iterator{};
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity of the reversed
+		 * group.
+		 *
+		 * The returned iterator points to the entity following the last entity of
+		 * the reversed group. Attempting to dereference the returned iterator
+		 * results in undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity of the
+		 * reversed group.
+		 */
+		[[nodiscard]] reverse_iterator rend() const ENTT_NOEXCEPT {
+			return *this ? (std::get<0>(pools)->base_type::rbegin() + *length) : reverse_iterator{};
+		}
+
+		/**
+		 * @brief Returns the first entity of the group, if any.
+		 * @return The first entity of the group if one exists, the null entity
+		 * otherwise.
+		 */
+		[[nodiscard]] entity_type front() const ENTT_NOEXCEPT {
+			const auto it = begin();
+			return it != end() ? *it : null;
+		}
+
+		/**
+		 * @brief Returns the last entity of the group, if any.
+		 * @return The last entity of the group if one exists, the null entity
+		 * otherwise.
+		 */
+		[[nodiscard]] entity_type back() const ENTT_NOEXCEPT {
+			const auto it = rbegin();
+			return it != rend() ? *it : null;
+		}
+
+		/**
+		 * @brief Finds an entity.
+		 * @param entt A valid identifier.
+		 * @return An iterator to the given entity if it's found, past the end
+		 * iterator otherwise.
+		 */
+		[[nodiscard]] iterator find(const entity_type entt) const ENTT_NOEXCEPT {
+			const auto it = *this ? std::get<0>(pools)->find(entt) : iterator{};
+			return it != end() && it >= begin() && *it == entt ? it : end();
+		}
+
+		/**
+		 * @brief Returns the identifier that occupies the given position.
+		 * @param pos Position of the element to return.
+		 * @return The identifier that occupies the given position.
+		 */
+		[[nodiscard]] entity_type operator[](const size_type pos) const {
+			return begin()[pos];
+		}
+
+		/**
+		 * @brief Checks if a group is properly initialized.
+		 * @return True if the group is properly initialized, false otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			return length != nullptr;
+		}
+
+		/**
+		 * @brief Checks if a group contains an entity.
+		 * @param entt A valid identifier.
+		 * @return True if the group contains the given entity, false otherwise.
+		 */
+		[[nodiscard]] bool contains(const entity_type entt) const ENTT_NOEXCEPT {
+			return *this && std::get<0>(pools)->contains(entt) && (std::get<0>(pools)->index(entt) < (*length));
+		}
+
+		/**
+		 * @brief Returns the components assigned to the given entity.
+		 *
+		 * Prefer this function instead of `registry::get` during iterations. It has
+		 * far better performance than its counterpart.
+		 *
+		 * @warning
+		 * Attempting to use an invalid component type results in a compilation
+		 * error. Attempting to use an entity that doesn't belong to the group
+		 * results in undefined behavior.
+		 *
+		 * @tparam Comp Types of components to get.
+		 * @param entt A valid identifier.
+		 * @return The components assigned to the entity.
+		 */
+		template<typename... Comp>
+		[[nodiscard]] decltype(auto) get(const entity_type entt) const {
+			ENTT_ASSERT(contains(entt), "Group does not contain entity");
+
+			if constexpr (sizeof...(Comp) == 0) {
+				return std::tuple_cat(std::get<storage_type<Owned>*>(pools)->get_as_tuple(entt)..., std::get<storage_type<Get>*>(pools)->get_as_tuple(entt)...);
+			}
+			else if constexpr (sizeof...(Comp) == 1) {
+				return (std::get<storage_type<Comp>*>(pools)->get(entt), ...);
+			}
+			else {
+				return std::tuple_cat(std::get<storage_type<Comp>*>(pools)->get_as_tuple(entt)...);
+			}
+		}
+
+		/**
+		 * @brief Iterates entities and components and applies the given function
+		 * object to them.
+		 *
+		 * The function object is invoked for each entity. It is provided with the
+		 * entity itself and a set of references to non-empty components. The
+		 * _constness_ of the components is as requested.<br/>
+		 * The signature of the function must be equivalent to one of the following
+		 * forms:
+		 *
+		 * @code{.cpp}
+		 * void(const entity_type, Type &...);
+		 * void(Type &...);
+		 * @endcode
+		 *
+		 * @note
+		 * Empty types aren't explicitly instantiated and therefore they are never
+		 * returned during iterations.
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void each(Func func) const {
+			for (auto args : each()) {
+				if constexpr (is_applicable_v < Func, decltype(std::tuple_cat(std::tuple<entity_type>{}, std::declval<basic_group>().get({}))) > ) {
+					std::apply(func, args);
+				}
+				else {
+					std::apply([&func](auto, auto && ...less) { func(std::forward<decltype(less)>(less)...); }, args);
+				}
+			}
+		}
+
+		/**
+		 * @brief Returns an iterable object to use to _visit_ a group.
+		 *
+		 * The iterable object returns tuples that contain the current entity and a
+		 * set of references to its non-empty components. The _constness_ of the
+		 * components is as requested.
+		 *
+		 * @note
+		 * Empty types aren't explicitly instantiated and therefore they are never
+		 * returned during iterations.
+		 *
+		 * @return An iterable object to use to _visit_ the group.
+		 */
+		[[nodiscard]] iterable each() const ENTT_NOEXCEPT {
+			iterator last = length ? std::get<0>(pools)->basic_common_type::end() : iterator{};
+			return { extended_group_iterator{last - *length, pools}, extended_group_iterator{last, pools} };
+		}
+
+		/**
+		 * @brief Sort a group according to the given comparison function.
+		 *
+		 * Sort the group so that iterating it with a couple of iterators returns
+		 * entities and components in the expected order. See `begin` and `end` for
+		 * more details.
+		 *
+		 * The comparison function object must return `true` if the first element
+		 * is _less_ than the second one, `false` otherwise. The signature of the
+		 * comparison function should be equivalent to one of the following:
+		 *
+		 * @code{.cpp}
+		 * bool(std::tuple<Component &...>, std::tuple<Component &...>);
+		 * bool(const Component &, const Component &);
+		 * bool(const Entity, const Entity);
+		 * @endcode
+		 *
+		 * Where `Component` are either owned types or not but still such that they
+		 * are iterated by the group.<br/>
+		 * Moreover, the comparison function object shall induce a
+		 * _strict weak ordering_ on the values.
+		 *
+		 * The sort function object must offer a member function template
+		 * `operator()` that accepts three arguments:
+		 *
+		 * * An iterator to the first element of the range to sort.
+		 * * An iterator past the last element of the range to sort.
+		 * * A comparison function to use to compare the elements.
+		 *
+		 * @tparam Comp Optional types of components to compare.
+		 * @tparam Compare Type of comparison function object.
+		 * @tparam Sort Type of sort function object.
+		 * @tparam Args Types of arguments to forward to the sort function object.
+		 * @param compare A valid comparison function object.
+		 * @param algo A valid sort function object.
+		 * @param args Arguments to forward to the sort function object, if any.
+		 */
+		template<typename... Comp, typename Compare, typename Sort = std_sort, typename... Args>
+		void sort(Compare compare, Sort algo = Sort{}, Args && ...args) const {
+			auto* cpool = std::get<0>(pools);
+
+			if constexpr (sizeof...(Comp) == 0) {
+				static_assert(std::is_invocable_v<Compare, const entity_type, const entity_type>, "Invalid comparison function");
+				cpool->sort_n(*length, std::move(compare), std::move(algo), std::forward<Args>(args)...);
+			}
+			else {
+				auto comp = [this, &compare](const entity_type lhs, const entity_type rhs) {
+					if constexpr (sizeof...(Comp) == 1) {
+						return compare((std::get<storage_type<Comp>*>(pools)->get(lhs), ...), (std::get<storage_type<Comp>*>(pools)->get(rhs), ...));
+					}
+					else {
+						return compare(std::forward_as_tuple(std::get<storage_type<Comp>*>(pools)->get(lhs)...), std::forward_as_tuple(std::get<storage_type<Comp>*>(pools)->get(rhs)...));
+					}
+				};
+
+				cpool->sort_n(*length, std::move(comp), std::move(algo), std::forward<Args>(args)...);
+			}
+
+			[this](auto* head, auto * ...other) {
+				for (auto next = *length; next; --next) {
+					const auto pos = next - 1;
+					[[maybe_unused]] const auto entt = head->data()[pos];
+					(other->swap_elements(other->data()[pos], entt), ...);
+				}
+			}(std::get<storage_type<Owned>*>(pools)...);
+		}
+
+	private:
+		const std::tuple<storage_type<Owned>* ..., storage_type<Get>* ...> pools;
+		const size_type* const length;
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "entity/handle.hpp"
+#ifndef ENTT_ENTITY_HANDLE_HPP
+#define ENTT_ENTITY_HANDLE_HPP
+
+#include <tuple>
+#include <type_traits>
+#include <utility>
+// #include "../config/config.h"
+
+// #include "../core/type_traits.hpp"
+
+// #include "fwd.hpp"
+
+// #include "registry.hpp"
+#ifndef ENTT_ENTITY_REGISTRY_HPP
+#define ENTT_ENTITY_REGISTRY_HPP
+
+#include <algorithm>
+#include <cstddef>
+#include <iterator>
+#include <memory>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
+// #include "runtime_view.hpp"
+#ifndef ENTT_ENTITY_RUNTIME_VIEW_HPP
+#define ENTT_ENTITY_RUNTIME_VIEW_HPP
+
+#include <algorithm>
+#include <iterator>
+#include <type_traits>
+#include <utility>
+#include <vector>
+// #include "../config/config.h"
+
+// #include "entity.hpp"
+
+// #include "fwd.hpp"
+
+// #include "sparse_set.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename Set>
+		class runtime_view_iterator final {
+			using iterator_type = typename Set::iterator;
+
+			[[nodiscard]] bool valid() const {
+				return (!tombstone_check || *it != tombstone)
+					&& std::all_of(++pools->begin(), pools->end(), [entt = *it](const auto* curr) { return curr->contains(entt); })
+					&& std::none_of(filter->cbegin(), filter->cend(), [entt = *it](const auto* curr) { return curr && curr->contains(entt); });
+			}
+
+		public:
+			using difference_type = typename iterator_type::difference_type;
+			using value_type = typename iterator_type::value_type;
+			using pointer = typename iterator_type::pointer;
+			using reference = typename iterator_type::reference;
+			using iterator_category = std::bidirectional_iterator_tag;
+
+			runtime_view_iterator() ENTT_NOEXCEPT
+				: pools{},
+				filter{},
+				it{},
+				tombstone_check{} {}
+
+			runtime_view_iterator(const std::vector<const Set*>& cpools, const std::vector<const Set*>& ignore, iterator_type curr) ENTT_NOEXCEPT
+				: pools{ &cpools },
+				filter{ &ignore },
+				it{ curr },
+				tombstone_check{ pools->size() == 1u && (*pools)[0u]->policy() == deletion_policy::in_place } {
+				if (it != (*pools)[0]->end() && !valid()) {
+					++(*this);
+				}
+			}
+
+			runtime_view_iterator& operator++() {
+				while (++it != (*pools)[0]->end() && !valid()) {}
+				return *this;
+			}
+
+			runtime_view_iterator operator++(int) {
+				runtime_view_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			runtime_view_iterator& operator--() {
+				while (--it != (*pools)[0]->begin() && !valid()) {}
+				return *this;
+			}
+
+			runtime_view_iterator operator--(int) {
+				runtime_view_iterator orig = *this;
+				return operator--(), orig;
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return it.operator->();
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return *operator->();
+			}
+
+			[[nodiscard]] bool operator==(const runtime_view_iterator& other) const ENTT_NOEXCEPT {
+				return it == other.it;
+			}
+
+			[[nodiscard]] bool operator!=(const runtime_view_iterator& other) const ENTT_NOEXCEPT {
+				return !(*this == other);
+			}
+
+		private:
+			const std::vector<const Set*>* pools;
+			const std::vector<const Set*>* filter;
+			iterator_type it;
+			bool tombstone_check;
+		};
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Runtime view implementation.
+	  *
+	  * Primary template isn't defined on purpose. All the specializations give a
+	  * compile-time error, but for a few reasonable cases.
+	  */
+	template<typename>
+	struct basic_runtime_view;
+
+	/**
+	 * @brief Generic runtime view.
+	 *
+	 * Runtime views iterate over those entities that have at least all the given
+	 * components in their bags. During initialization, a runtime view looks at the
+	 * number of entities available for each component and picks up a reference to
+	 * the smallest set of candidate entities in order to get a performance boost
+	 * when iterate.<br/>
+	 * Order of elements during iterations are highly dependent on the order of the
+	 * underlying data structures. See sparse_set and its specializations for more
+	 * details.
+	 *
+	 * @b Important
+	 *
+	 * Iterators aren't invalidated if:
+	 *
+	 * * New instances of the given components are created and assigned to entities.
+	 * * The entity currently pointed is modified (as an example, if one of the
+	 *   given components is removed from the entity to which the iterator points).
+	 * * The entity currently pointed is destroyed.
+	 *
+	 * In all the other cases, modifying the pools of the given components in any
+	 * way invalidates all the iterators and using them results in undefined
+	 * behavior.
+	 *
+	 * @note
+	 * Views share references to the underlying data structures of the registry that
+	 * generated them. Therefore any change to the entities and to the components
+	 * made by means of the registry are immediately reflected by the views, unless
+	 * a pool was missing when the view was built (in this case, the view won't
+	 * have a valid reference and won't be updated accordingly).
+	 *
+	 * @warning
+	 * Lifetime of a view must not overcome that of the registry that generated it.
+	 * In any other case, attempting to use a view results in undefined behavior.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Allocator Type of allocator used to manage memory and elements.
+	 */
+	template<typename Entity, typename Allocator>
+	struct basic_runtime_view<basic_sparse_set<Entity, Allocator>> {
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Common type among all storage types. */
+		using base_type = basic_sparse_set<Entity, Allocator>;
+		/*! @brief Bidirectional iterator type. */
+		using iterator = internal::runtime_view_iterator<base_type>;
+
+		/*! @brief Default constructor to use to create empty, invalid views. */
+		basic_runtime_view() ENTT_NOEXCEPT
+			: pools{},
+			filter{} {}
+
+		/**
+		 * @brief Appends an opaque storage object to a runtime view.
+		 * @param base An opaque reference to a storage object.
+		 * @return This runtime view.
+		 */
+		basic_runtime_view& iterate(const base_type& base) {
+			if (pools.empty() || !(base.size() < pools[0u]->size())) {
+				pools.push_back(&base);
+			}
+			else {
+				pools.push_back(std::exchange(pools[0u], &base));
+			}
+
+			return *this;
+		}
+
+		/**
+		 * @brief Adds an opaque storage object as a filter of a runtime view.
+		 * @param base An opaque reference to a storage object.
+		 * @return This runtime view.
+		 */
+		basic_runtime_view& exclude(const base_type& base) {
+			filter.push_back(&base);
+			return *this;
+		}
+
+		/**
+		 * @brief Estimates the number of entities iterated by the view.
+		 * @return Estimated number of entities iterated by the view.
+		 */
+		[[nodiscard]] size_type size_hint() const {
+			return pools.empty() ? size_type{} : pools.front()->size();
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity that has the given
+		 * components.
+		 *
+		 * The returned iterator points to the first entity that has the given
+		 * components. If the view is empty, the returned iterator will be equal to
+		 * `end()`.
+		 *
+		 * @return An iterator to the first entity that has the given components.
+		 */
+		[[nodiscard]] iterator begin() const {
+			return pools.empty() ? iterator{} : iterator{ pools, filter, pools[0]->begin() };
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity that has the
+		 * given components.
+		 *
+		 * The returned iterator points to the entity following the last entity that
+		 * has the given components. Attempting to dereference the returned iterator
+		 * results in undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity that has the
+		 * given components.
+		 */
+		[[nodiscard]] iterator end() const {
+			return pools.empty() ? iterator{} : iterator{ pools, filter, pools[0]->end() };
+		}
+
+		/**
+		 * @brief Checks if a view contains an entity.
+		 * @param entt A valid identifier.
+		 * @return True if the view contains the given entity, false otherwise.
+		 */
+		[[nodiscard]] bool contains(const entity_type entt) const {
+			return !pools.empty()
+				&& std::all_of(pools.cbegin(), pools.cend(), [entt](const auto* curr) { return curr->contains(entt); })
+				&& std::none_of(filter.cbegin(), filter.cend(), [entt](const auto* curr) { return curr && curr->contains(entt); });
+		}
+
+		/**
+		 * @brief Iterates entities and applies the given function object to them.
+		 *
+		 * The function object is invoked for each entity. It is provided only with
+		 * the entity itself. To get the components, users can use the registry with
+		 * which the view was built.<br/>
+		 * The signature of the function should be equivalent to the following:
+		 *
+		 * @code{.cpp}
+		 * void(const entity_type);
+		 * @endcode
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void each(Func func) const {
+			for (const auto entity : *this) {
+				func(entity);
+			}
+		}
+
+	private:
+		std::vector<const base_type*> pools;
+		std::vector<const base_type*> filter;
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "sparse_set.hpp"
+
+// #include "storage.hpp"
+
+// #include "utility.hpp"
+
+// #include "view.hpp"
+#ifndef ENTT_ENTITY_VIEW_HPP
+#define ENTT_ENTITY_VIEW_HPP
+
+#include <algorithm>
+#include <array>
+#include <iterator>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+// #include "../config/config.h"
+
+// #include "../core/iterator.hpp"
+
+// #include "../core/type_traits.hpp"
+
+// #include "component.hpp"
+
+// #include "entity.hpp"
+
+// #include "fwd.hpp"
+
+// #include "sparse_set.hpp"
+
+// #include "storage.hpp"
+
+// #include "utility.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename Type, std::size_t Component, std::size_t Exclude>
+		class view_iterator final {
+			using iterator_type = typename Type::const_iterator;
+
+			[[nodiscard]] bool valid() const ENTT_NOEXCEPT {
+				return ((Component != 0u) || (*it != tombstone))
+					&& std::apply([entt = *it](const auto * ...curr) { return (curr->contains(entt) && ...); }, pools)
+					&& std::apply([entt = *it](const auto * ...curr) { return (!curr->contains(entt) && ...); }, filter);
+			}
+
+		public:
+			using value_type = typename iterator_type::value_type;
+			using pointer = typename iterator_type::pointer;
+			using reference = typename iterator_type::reference;
+			using difference_type = typename iterator_type::difference_type;
+			using iterator_category = std::forward_iterator_tag;
+
+			view_iterator() ENTT_NOEXCEPT = default;
+
+			view_iterator(iterator_type curr, iterator_type to, std::array<const Type*, Component> all_of, std::array<const Type*, Exclude> none_of) ENTT_NOEXCEPT
+				: it{ curr },
+				last{ to },
+				pools{ all_of },
+				filter{ none_of } {
+				if (it != last && !valid()) {
+					++(*this);
+				}
+			}
+
+			view_iterator& operator++() ENTT_NOEXCEPT {
+				while (++it != last && !valid()) {}
+				return *this;
+			}
+
+			view_iterator operator++(int) ENTT_NOEXCEPT {
+				view_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return &*it;
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return *operator->();
+			}
+
+			template<typename LhsType, auto... LhsArgs, typename RhsType, auto... RhsArgs>
+			friend bool operator==(const view_iterator<LhsType, LhsArgs...>&, const view_iterator<RhsType, RhsArgs...>&) ENTT_NOEXCEPT;
+
+		private:
+			iterator_type it;
+			iterator_type last;
+			std::array<const Type*, Component> pools;
+			std::array<const Type*, Exclude> filter;
+		};
+
+		template<typename LhsType, auto... LhsArgs, typename RhsType, auto... RhsArgs>
+		[[nodiscard]] bool operator==(const view_iterator<LhsType, LhsArgs...>& lhs, const view_iterator<RhsType, RhsArgs...>& rhs) ENTT_NOEXCEPT {
+			return lhs.it == rhs.it;
+		}
+
+		template<typename LhsType, auto... LhsArgs, typename RhsType, auto... RhsArgs>
+		[[nodiscard]] bool operator!=(const view_iterator<LhsType, LhsArgs...>& lhs, const view_iterator<RhsType, RhsArgs...>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+		template<typename It, typename... Storage>
+		struct extended_view_iterator final {
+			using difference_type = std::ptrdiff_t;
+			using value_type = decltype(std::tuple_cat(std::make_tuple(*std::declval<It>()), std::declval<Storage>().get_as_tuple({})...));
+			using pointer = input_iterator_pointer<value_type>;
+			using reference = value_type;
+			using iterator_category = std::input_iterator_tag;
+
+			extended_view_iterator() = default;
+
+			extended_view_iterator(It from, std::tuple<Storage* ...> storage)
+				: it{ from },
+				pools{ storage } {}
+
+			extended_view_iterator& operator++() ENTT_NOEXCEPT {
+				return ++it, * this;
+			}
+
+			extended_view_iterator operator++(int) ENTT_NOEXCEPT {
+				extended_view_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return std::apply([entt = *it](auto * ...curr) { return std::tuple_cat(std::make_tuple(entt), curr->get_as_tuple(entt)...); }, pools);
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return operator*();
+			}
+
+			template<typename... Lhs, typename... Rhs>
+			friend bool operator==(const extended_view_iterator<Lhs...>&, const extended_view_iterator<Rhs...>&) ENTT_NOEXCEPT;
+
+		private:
+			It it;
+			std::tuple<Storage* ...> pools;
+		};
+
+		template<typename... Lhs, typename... Rhs>
+		[[nodiscard]] bool operator==(const extended_view_iterator<Lhs...>& lhs, const extended_view_iterator<Rhs...>& rhs) ENTT_NOEXCEPT {
+			return lhs.it == rhs.it;
+		}
+
+		template<typename... Lhs, typename... Rhs>
+		[[nodiscard]] bool operator!=(const extended_view_iterator<Lhs...>& lhs, const extended_view_iterator<Rhs...>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief View implementation.
+	  *
+	  * Primary template isn't defined on purpose. All the specializations give a
+	  * compile-time error, but for a few reasonable cases.
+	  */
+	template<typename, typename, typename, typename>
+	class basic_view;
+
+	/**
+	 * @brief Multi component view.
+	 *
+	 * Multi component views iterate over those entities that have at least all the
+	 * given components in their bags. During initialization, a multi component view
+	 * looks at the number of entities available for each component and uses the
+	 * smallest set in order to get a performance boost when iterate.
+	 *
+	 * @b Important
+	 *
+	 * Iterators aren't invalidated if:
+	 *
+	 * * New instances of the given components are created and assigned to entities.
+	 * * The entity currently pointed is modified (as an example, if one of the
+	 *   given components is removed from the entity to which the iterator points).
+	 * * The entity currently pointed is destroyed.
+	 *
+	 * In all other cases, modifying the pools iterated by the view in any way
+	 * invalidates all the iterators and using them results in undefined behavior.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Component Types of components iterated by the view.
+	 * @tparam Exclude Types of components used to filter the view.
+	 */
+	template<typename Entity, typename... Component, typename... Exclude>
+	class basic_view<Entity, get_t<Component...>, exclude_t<Exclude...>> {
+		template<typename, typename, typename, typename>
+		friend class basic_view;
+
+		template<typename Comp>
+		using storage_type = constness_as_t<typename storage_traits<Entity, std::remove_const_t<Comp>>::storage_type, Comp>;
+
+		template<std::size_t... Index>
+		[[nodiscard]] auto pools_to_array(std::index_sequence<Index...>) const ENTT_NOEXCEPT {
+			std::size_t pos{};
+			std::array<const base_type*, sizeof...(Component) - 1u> other{};
+			(static_cast<void>(std::get<Index>(pools) == view ? void() : void(other[pos++] = std::get<Index>(pools))), ...);
+			return other;
+		}
+
+		template<std::size_t Comp, std::size_t Other, typename... Args>
+		[[nodiscard]] auto dispatch_get(const std::tuple<Entity, Args...>& curr) const {
+			if constexpr (Comp == Other) {
+				return std::forward_as_tuple(std::get<Args>(curr)...);
+			}
+			else {
+				return std::get<Other>(pools)->get_as_tuple(std::get<0>(curr));
+			}
+		}
+
+		template<std::size_t Comp, typename Func, std::size_t... Index>
+		void each(Func func, std::index_sequence<Index...>) const {
+			for (const auto curr : std::get<Comp>(pools)->each()) {
+				const auto entt = std::get<0>(curr);
+
+				if (((sizeof...(Component) != 1u) || (entt != tombstone))
+					&& ((Comp == Index || std::get<Index>(pools)->contains(entt)) && ...)
+					&& std::apply([entt](const auto * ...cpool) { return (!cpool->contains(entt) && ...); }, filter)) {
+					if constexpr (is_applicable_v < Func, decltype(std::tuple_cat(std::tuple<entity_type>{}, std::declval<basic_view>().get({}))) > ) {
+						std::apply(func, std::tuple_cat(std::make_tuple(entt), dispatch_get<Comp, Index>(curr)...));
+					}
+					else {
+						std::apply(func, std::tuple_cat(dispatch_get<Comp, Index>(curr)...));
+					}
+				}
+			}
+		}
+
+		template<typename Func, std::size_t... Index>
+		void pick_and_each(Func func, std::index_sequence<Index...> seq) const {
+			((std::get<Index>(pools) == view ? each<Index>(std::move(func), seq) : void()), ...);
+		}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Common type among all storage types. */
+		using base_type = std::common_type_t<typename storage_type<Component>::base_type...>;
+		/*! @brief Bidirectional iterator type. */
+		using iterator = internal::view_iterator<base_type, sizeof...(Component) - 1u, sizeof...(Exclude)>;
+		/*! @brief Iterable view type. */
+		using iterable = iterable_adaptor<internal::extended_view_iterator<iterator, storage_type<Component>...>>;
+
+		/*! @brief Default constructor to use to create empty, invalid views. */
+		basic_view() ENTT_NOEXCEPT
+			: pools{},
+			filter{},
+			view{} {}
+
+		/**
+		 * @brief Constructs a multi-type view from a set of storage classes.
+		 * @param component The storage for the types to iterate.
+		 * @param epool The storage for the types used to filter the view.
+		 */
+		basic_view(storage_type<Component> & ...component, const storage_type<Exclude> & ...epool) ENTT_NOEXCEPT
+			: pools{ &component... },
+			filter{ &epool... },
+			view{ (std::min)({&static_cast<const base_type&>(component)...}, [](auto* lhs, auto* rhs) { return lhs->size() < rhs->size(); }) } {}
+
+		/**
+		 * @brief Creates a new view driven by a given component in its iterations.
+		 * @tparam Comp Type of component used to drive the iteration.
+		 * @return A new view driven by the given component in its iterations.
+		 */
+		template<typename Comp>
+		[[nodiscard]] basic_view use() const ENTT_NOEXCEPT {
+			basic_view other{ *this };
+			other.view = std::get<storage_type<Comp>*>(pools);
+			return other;
+		}
+
+		/**
+		 * @brief Creates a new view driven by a given component in its iterations.
+		 * @tparam Comp Index of the component used to drive the iteration.
+		 * @return A new view driven by the given component in its iterations.
+		 */
+		template<std::size_t Comp>
+		[[nodiscard]] basic_view use() const ENTT_NOEXCEPT {
+			basic_view other{ *this };
+			other.view = std::get<Comp>(pools);
+			return other;
+		}
+
+		/**
+		 * @brief Returns the leading storage of a view.
+		 * @return The leading storage of the view.
+		 */
+		const base_type& handle() const ENTT_NOEXCEPT {
+			return *view;
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Comp Type of component of which to return the storage.
+		 * @return The storage for the given component type.
+		 */
+		template<typename Comp>
+		[[nodiscard]] decltype(auto) storage() const ENTT_NOEXCEPT {
+			return *std::get<storage_type<Comp>*>(pools);
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Comp Index of component of which to return the storage.
+		 * @return The storage for the given component type.
+		 */
+		template<std::size_t Comp>
+		[[nodiscard]] decltype(auto) storage() const ENTT_NOEXCEPT {
+			return *std::get<Comp>(pools);
+		}
+
+		/**
+		 * @brief Estimates the number of entities iterated by the view.
+		 * @return Estimated number of entities iterated by the view.
+		 */
+		[[nodiscard]] size_type size_hint() const ENTT_NOEXCEPT {
+			return view->size();
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity of the view.
+		 *
+		 * The returned iterator points to the first entity of the view. If the view
+		 * is empty, the returned iterator will be equal to `end()`.
+		 *
+		 * @return An iterator to the first entity of the view.
+		 */
+		[[nodiscard]] iterator begin() const ENTT_NOEXCEPT {
+			return iterator{ view->begin(), view->end(), pools_to_array(std::index_sequence_for<Component...>{}), filter };
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity of the view.
+		 *
+		 * The returned iterator points to the entity following the last entity of
+		 * the view. Attempting to dereference the returned iterator results in
+		 * undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity of the view.
+		 */
+		[[nodiscard]] iterator end() const ENTT_NOEXCEPT {
+			return iterator{ view->end(), view->end(), pools_to_array(std::index_sequence_for<Component...>{}), filter };
+		}
+
+		/**
+		 * @brief Returns the first entity of the view, if any.
+		 * @return The first entity of the view if one exists, the null entity
+		 * otherwise.
+		 */
+		[[nodiscard]] entity_type front() const ENTT_NOEXCEPT {
+			const auto it = begin();
+			return it != end() ? *it : null;
+		}
+
+		/**
+		 * @brief Returns the last entity of the view, if any.
+		 * @return The last entity of the view if one exists, the null entity
+		 * otherwise.
+		 */
+		[[nodiscard]] entity_type back() const ENTT_NOEXCEPT {
+			auto it = view->rbegin();
+			for (const auto last = view->rend(); it != last && !contains(*it); ++it) {}
+			return it == view->rend() ? null : *it;
+		}
+
+		/**
+		 * @brief Finds an entity.
+		 * @param entt A valid identifier.
+		 * @return An iterator to the given entity if it's found, past the end
+		 * iterator otherwise.
+		 */
+		[[nodiscard]] iterator find(const entity_type entt) const ENTT_NOEXCEPT {
+			return contains(entt) ? iterator{ view->find(entt), view->end(), pools_to_array(std::index_sequence_for<Component...>{}), filter } : end();
+		}
+
+		/**
+		 * @brief Returns the components assigned to the given entity.
+		 * @param entt A valid identifier.
+		 * @return The components assigned to the given entity.
+		 */
+		[[nodiscard]] decltype(auto) operator[](const entity_type entt) const {
+			return get<Component...>(entt);
+		}
+
+		/**
+		 * @brief Checks if a view is properly initialized.
+		 * @return True if the view is properly initialized, false otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			return view != nullptr;
+		}
+
+		/**
+		 * @brief Checks if a view contains an entity.
+		 * @param entt A valid identifier.
+		 * @return True if the view contains the given entity, false otherwise.
+		 */
+		[[nodiscard]] bool contains(const entity_type entt) const ENTT_NOEXCEPT {
+			return std::apply([entt](const auto * ...curr) { return (curr->contains(entt) && ...); }, pools)
+				&& std::apply([entt](const auto * ...curr) { return (!curr->contains(entt) && ...); }, filter);
+		}
+
+		/**
+		 * @brief Returns the components assigned to the given entity.
+		 *
+		 * @warning
+		 * Attempting to use an entity that doesn't belong to the view results in
+		 * undefined behavior.
+		 *
+		 * @tparam Comp Types of components to get.
+		 * @param entt A valid identifier.
+		 * @return The components assigned to the entity.
+		 */
+		template<typename... Comp>
+		[[nodiscard]] decltype(auto) get(const entity_type entt) const {
+			ENTT_ASSERT(contains(entt), "View does not contain entity");
+
+			if constexpr (sizeof...(Comp) == 0) {
+				return std::apply([entt](auto * ...curr) { return std::tuple_cat(curr->get_as_tuple(entt)...); }, pools);
+			}
+			else if constexpr (sizeof...(Comp) == 1) {
+				return (std::get<storage_type<Comp>*>(pools)->get(entt), ...);
+			}
+			else {
+				return std::tuple_cat(std::get<storage_type<Comp>*>(pools)->get_as_tuple(entt)...);
+			}
+		}
+
+		/**
+		 * @brief Returns the components assigned to the given entity.
+		 *
+		 * @warning
+		 * Attempting to use an entity that doesn't belong to the view results in
+		 * undefined behavior.
+		 *
+		 * @tparam First Index of a component to get.
+		 * @tparam Other Indexes of other components to get.
+		 * @param entt A valid identifier.
+		 * @return The components assigned to the entity.
+		 */
+		template<std::size_t First, std::size_t... Other>
+		[[nodiscard]] decltype(auto) get(const entity_type entt) const {
+			ENTT_ASSERT(contains(entt), "View does not contain entity");
+
+			if constexpr (sizeof...(Other) == 0) {
+				return std::get<First>(pools)->get(entt);
+			}
+			else {
+				return std::tuple_cat(std::get<First>(pools)->get_as_tuple(entt), std::get<Other>(pools)->get_as_tuple(entt)...);
+			}
+		}
+
+		/**
+		 * @brief Iterates entities and components and applies the given function
+		 * object to them.
+		 *
+		 * The function object is invoked for each entity. It is provided with the
+		 * entity itself and a set of references to non-empty components. The
+		 * _constness_ of the components is as requested.<br/>
+		 * The signature of the function must be equivalent to one of the following
+		 * forms:
+		 *
+		 * @code{.cpp}
+		 * void(const entity_type, Type &...);
+		 * void(Type &...);
+		 * @endcode
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void each(Func func) const {
+			pick_and_each(std::move(func), std::index_sequence_for<Component...>{});
+		}
+
+		/**
+		 * @brief Returns an iterable object to use to _visit_ a view.
+		 *
+		 * The iterable object returns a tuple that contains the current entity and
+		 * a set of references to its non-empty components. The _constness_ of the
+		 * components is as requested.
+		 *
+		 * @return An iterable object to use to _visit_ the view.
+		 */
+		[[nodiscard]] iterable each() const ENTT_NOEXCEPT {
+			return { internal::extended_view_iterator{begin(), pools}, internal::extended_view_iterator{end(), pools} };
+		}
+
+		/**
+		 * @brief Combines two views in a _more specific_ one (friend function).
+		 * @tparam Get Component list of the view to combine with.
+		 * @tparam Excl Filter list of the view to combine with.
+		 * @param other The view to combine with.
+		 * @return A more specific view.
+		 */
+		template<typename... Get, typename... Excl>
+		[[nodiscard]] auto operator|(const basic_view<Entity, get_t<Get...>, exclude_t<Excl...>>& other) const ENTT_NOEXCEPT {
+			using view_type = basic_view<Entity, get_t<Component..., Get...>, exclude_t<Exclude..., Excl...>>;
+			return std::make_from_tuple<view_type>(std::tuple_cat(
+				std::apply([](auto * ...curr) { return std::forward_as_tuple(*curr...); }, pools),
+				std::apply([](auto * ...curr) { return std::forward_as_tuple(*curr...); }, other.pools),
+				std::apply([](const auto * ...curr) { return std::forward_as_tuple(static_cast<const storage_type<Exclude>&>(*curr)...); }, filter),
+				std::apply([](const auto * ...curr) { return std::forward_as_tuple(static_cast<const storage_type<Excl>&>(*curr)...); }, other.filter)));
+		}
+
+	private:
+		std::tuple<storage_type<Component>* ...> pools;
+		std::array<const base_type*, sizeof...(Exclude)> filter;
+		const base_type* view;
+	};
+
+	/**
+	 * @brief Single component view specialization.
+	 *
+	 * Single component views are specialized in order to get a boost in terms of
+	 * performance. This kind of views can access the underlying data structure
+	 * directly and avoid superfluous checks.
+	 *
+	 * @b Important
+	 *
+	 * Iterators aren't invalidated if:
+	 *
+	 * * New instances of the given component are created and assigned to entities.
+	 * * The entity currently pointed is modified (as an example, the given
+	 *   component is removed from the entity to which the iterator points).
+	 * * The entity currently pointed is destroyed.
+	 *
+	 * In all other cases, modifying the pool iterated by the view in any way
+	 * invalidates all the iterators and using them results in undefined behavior.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Component Type of component iterated by the view.
+	 */
+	template<typename Entity, typename Component>
+	class basic_view<Entity, get_t<Component>, exclude_t<>, std::void_t<std::enable_if_t<!component_traits<std::remove_const_t<Component>>::in_place_delete>>> {
+		template<typename, typename, typename, typename>
+		friend class basic_view;
+
+		using storage_type = constness_as_t<typename storage_traits<Entity, std::remove_const_t<Component>>::storage_type, Component>;
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Common type among all storage types. */
+		using base_type = typename storage_type::base_type;
+		/*! @brief Random access iterator type. */
+		using iterator = typename base_type::iterator;
+		/*! @brief Reversed iterator type. */
+		using reverse_iterator = typename base_type::reverse_iterator;
+		/*! @brief Iterable view type. */
+		using iterable = decltype(std::declval<storage_type>().each());
+
+		/*! @brief Default constructor to use to create empty, invalid views. */
+		basic_view() ENTT_NOEXCEPT
+			: pools{},
+			filter{},
+			view{} {}
+
+		/**
+		 * @brief Constructs a single-type view from a storage class.
+		 * @param ref The storage for the type to iterate.
+		 */
+		basic_view(storage_type& ref) ENTT_NOEXCEPT
+			: pools{ &ref },
+			filter{},
+			view{ &ref } {}
+
+		/**
+		 * @brief Returns the leading storage of a view.
+		 * @return The leading storage of the view.
+		 */
+		const base_type& handle() const ENTT_NOEXCEPT {
+			return *view;
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Comp Type of component of which to return the storage.
+		 * @return The storage for the given component type.
+		 */
+		template<typename Comp = Component>
+		[[nodiscard]] decltype(auto) storage() const ENTT_NOEXCEPT {
+			static_assert(std::is_same_v<Comp, Component>, "Invalid component type");
+			return *std::get<0>(pools);
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Comp Index of component of which to return the storage.
+		 * @return The storage for the given component type.
+		 */
+		template<std::size_t Comp>
+		[[nodiscard]] decltype(auto) storage() const ENTT_NOEXCEPT {
+			return *std::get<Comp>(pools);
+		}
+
+		/**
+		 * @brief Returns the number of entities that have the given component.
+		 * @return Number of entities that have the given component.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return view->size();
+		}
+
+		/**
+		 * @brief Checks whether a view is empty.
+		 * @return True if the view is empty, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return view->empty();
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity of the view.
+		 *
+		 * The returned iterator points to the first entity of the view. If the view
+		 * is empty, the returned iterator will be equal to `end()`.
+		 *
+		 * @return An iterator to the first entity of the view.
+		 */
+		[[nodiscard]] iterator begin() const ENTT_NOEXCEPT {
+			return view->begin();
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity of the view.
+		 *
+		 * The returned iterator points to the entity following the last entity of
+		 * the view. Attempting to dereference the returned iterator results in
+		 * undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity of the view.
+		 */
+		[[nodiscard]] iterator end() const ENTT_NOEXCEPT {
+			return view->end();
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity of the reversed view.
+		 *
+		 * The returned iterator points to the first entity of the reversed view. If
+		 * the view is empty, the returned iterator will be equal to `rend()`.
+		 *
+		 * @return An iterator to the first entity of the reversed view.
+		 */
+		[[nodiscard]] reverse_iterator rbegin() const ENTT_NOEXCEPT {
+			return view->rbegin();
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity of the reversed
+		 * view.
+		 *
+		 * The returned iterator points to the entity following the last entity of
+		 * the reversed view. Attempting to dereference the returned iterator
+		 * results in undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity of the
+		 * reversed view.
+		 */
+		[[nodiscard]] reverse_iterator rend() const ENTT_NOEXCEPT {
+			return view->rend();
+		}
+
+		/**
+		 * @brief Returns the first entity of the view, if any.
+		 * @return The first entity of the view if one exists, the null entity
+		 * otherwise.
+		 */
+		[[nodiscard]] entity_type front() const ENTT_NOEXCEPT {
+			return empty() ? null : *begin();
+		}
+
+		/**
+		 * @brief Returns the last entity of the view, if any.
+		 * @return The last entity of the view if one exists, the null entity
+		 * otherwise.
+		 */
+		[[nodiscard]] entity_type back() const ENTT_NOEXCEPT {
+			return empty() ? null : *rbegin();
+		}
+
+		/**
+		 * @brief Finds an entity.
+		 * @param entt A valid identifier.
+		 * @return An iterator to the given entity if it's found, past the end
+		 * iterator otherwise.
+		 */
+		[[nodiscard]] iterator find(const entity_type entt) const ENTT_NOEXCEPT {
+			return contains(entt) ? view->find(entt) : end();
+		}
+
+		/**
+		 * @brief Returns the identifier that occupies the given position.
+		 * @param pos Position of the element to return.
+		 * @return The identifier that occupies the given position.
+		 */
+		[[nodiscard]] entity_type operator[](const size_type pos) const {
+			return begin()[pos];
+		}
+
+		/**
+		 * @brief Returns the component assigned to the given entity.
+		 * @param entt A valid identifier.
+		 * @return The component assigned to the given entity.
+		 */
+		[[nodiscard]] decltype(auto) operator[](const entity_type entt) const {
+			return get<Component>(entt);
+		}
+
+		/**
+		 * @brief Checks if a view is properly initialized.
+		 * @return True if the view is properly initialized, false otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			return view != nullptr;
+		}
+
+		/**
+		 * @brief Checks if a view contains an entity.
+		 * @param entt A valid identifier.
+		 * @return True if the view contains the given entity, false otherwise.
+		 */
+		[[nodiscard]] bool contains(const entity_type entt) const ENTT_NOEXCEPT {
+			return view->contains(entt);
+		}
+
+		/**
+		 * @brief Returns the component assigned to the given entity.
+		 *
+		 * @warning
+		 * Attempting to use an entity that doesn't belong to the view results in
+		 * undefined behavior.
+		 *
+		 * @tparam Comp Type or index of the component to get.
+		 * @param entt A valid identifier.
+		 * @return The component assigned to the entity.
+		 */
+		template<typename... Comp>
+		[[nodiscard]] decltype(auto) get(const entity_type entt) const {
+			ENTT_ASSERT(contains(entt), "View does not contain entity");
+
+			if constexpr (sizeof...(Comp) == 0) {
+				return std::get<0>(pools)->get_as_tuple(entt);
+			}
+			else {
+				static_assert(std::is_same_v<Comp..., Component>, "Invalid component type");
+				return std::get<0>(pools)->get(entt);
+			}
+		}
+
+		/*! @copydoc get */
+		template<std::size_t Comp>
+		[[nodiscard]] decltype(auto) get(const entity_type entt) const {
+			ENTT_ASSERT(contains(entt), "View does not contain entity");
+			return std::get<0>(pools)->get(entt);
+		}
+
+		/**
+		 * @brief Iterates entities and components and applies the given function
+		 * object to them.
+		 *
+		 * The function object is invoked for each entity. It is provided with the
+		 * entity itself and a reference to the component if it's a non-empty one.
+		 * The _constness_ of the component is as requested.<br/>
+		 * The signature of the function must be equivalent to one of the following
+		 * forms:
+		 *
+		 * @code{.cpp}
+		 * void(const entity_type, Component &);
+		 * void(Component &);
+		 * @endcode
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void each(Func func) const {
+			if constexpr (is_applicable_v<Func, decltype(*each().begin())>) {
+				for (const auto pack : each()) {
+					std::apply(func, pack);
+				}
+			}
+			else if constexpr (std::is_invocable_v<Func, Component&>) {
+				for (auto&& component : *std::get<0>(pools)) {
+					func(component);
+				}
+			}
+			else if constexpr (std::is_invocable_v<Func, Entity>) {
+				for (auto entity : *view) {
+					func(entity);
+				}
+			}
+			else {
+				for (size_type pos{}, last = size(); pos < last; ++pos) {
+					func();
+				}
+			}
+		}
+
+		/**
+		 * @brief Returns an iterable object to use to _visit_ a view.
+		 *
+		 * The iterable object returns a tuple that contains the current entity and
+		 * a reference to its component if it's a non-empty one. The _constness_ of
+		 * the component is as requested.
+		 *
+		 * @return An iterable object to use to _visit_ the view.
+		 */
+		[[nodiscard]] iterable each() const ENTT_NOEXCEPT {
+			return std::get<0>(pools)->each();
+		}
+
+		/**
+		 * @brief Combines two views in a _more specific_ one (friend function).
+		 * @tparam Get Component list of the view to combine with.
+		 * @tparam Excl Filter list of the view to combine with.
+		 * @param other The view to combine with.
+		 * @return A more specific view.
+		 */
+		template<typename... Get, typename... Excl>
+		[[nodiscard]] auto operator|(const basic_view<Entity, get_t<Get...>, exclude_t<Excl...>>& other) const ENTT_NOEXCEPT {
+			using view_type = basic_view<Entity, get_t<Component, Get...>, exclude_t<Excl...>>;
+			return std::make_from_tuple<view_type>(std::tuple_cat(
+				std::forward_as_tuple(*std::get<0>(pools)),
+				std::apply([](auto * ...curr) { return std::forward_as_tuple(*curr...); }, other.pools),
+				std::apply([](const auto * ...curr) { return std::forward_as_tuple(static_cast<const typename view_type::template storage_type<Excl>&>(*curr)...); }, other.filter)));
+		}
+
+	private:
+		std::tuple<storage_type*> pools;
+		std::array<const base_type*, 0u> filter;
+		const base_type* view;
+	};
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Storage Type of storage classes used to create the view.
+	 * @param storage The storage for the types to iterate.
+	 */
+	template<typename... Storage>
+	basic_view(Storage& ...storage) -> basic_view<std::common_type_t<typename Storage::entity_type...>, get_t<constness_as_t<typename Storage::value_type, Storage>...>, exclude_t<>>;
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename It>
+		class storage_proxy_iterator final {
+			template<typename Other>
+			friend class storage_proxy_iterator;
+
+			using mapped_type = std::remove_reference_t<decltype(std::declval<It>()->second)>;
+
+		public:
+			using value_type = std::pair<id_type, constness_as_t<typename mapped_type::element_type, mapped_type>&>;
+			using pointer = input_iterator_pointer<value_type>;
+			using reference = value_type;
+			using difference_type = std::ptrdiff_t;
+			using iterator_category = std::input_iterator_tag;
+
+			storage_proxy_iterator() ENTT_NOEXCEPT
+				: it{} {}
+
+			storage_proxy_iterator(const It iter) ENTT_NOEXCEPT
+				: it{ iter } {}
+
+			template<typename Other, typename = std::enable_if_t<!std::is_same_v<It, Other>&& std::is_constructible_v<It, Other>>>
+			storage_proxy_iterator(const storage_proxy_iterator<Other>& other) ENTT_NOEXCEPT
+				: it{ other.it } {}
+
+			storage_proxy_iterator& operator++() ENTT_NOEXCEPT {
+				return ++it, * this;
+			}
+
+			storage_proxy_iterator operator++(int) ENTT_NOEXCEPT {
+				storage_proxy_iterator orig = *this;
+				return ++(*this), orig;
+			}
+
+			storage_proxy_iterator& operator--() ENTT_NOEXCEPT {
+				return --it, * this;
+			}
+
+			storage_proxy_iterator operator--(int) ENTT_NOEXCEPT {
+				storage_proxy_iterator orig = *this;
+				return operator--(), orig;
+			}
+
+			storage_proxy_iterator& operator+=(const difference_type value) ENTT_NOEXCEPT {
+				it += value;
+				return *this;
+			}
+
+			storage_proxy_iterator operator+(const difference_type value) const ENTT_NOEXCEPT {
+				storage_proxy_iterator copy = *this;
+				return (copy += value);
+			}
+
+			storage_proxy_iterator& operator-=(const difference_type value) ENTT_NOEXCEPT {
+				return (*this += -value);
+			}
+
+			storage_proxy_iterator operator-(const difference_type value) const ENTT_NOEXCEPT {
+				return (*this + -value);
+			}
+
+			[[nodiscard]] reference operator[](const difference_type value) const ENTT_NOEXCEPT {
+				return { it[value].first, *it[value].second };
+			}
+
+			[[nodiscard]] reference operator*() const ENTT_NOEXCEPT {
+				return { it->first, *it->second };
+			}
+
+			[[nodiscard]] pointer operator->() const ENTT_NOEXCEPT {
+				return operator*();
+			}
+
+			template<typename ILhs, typename IRhs>
+			friend std::ptrdiff_t operator-(const storage_proxy_iterator<ILhs>&, const storage_proxy_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+			template<typename ILhs, typename IRhs>
+			friend bool operator==(const storage_proxy_iterator<ILhs>&, const storage_proxy_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+			template<typename ILhs, typename IRhs>
+			friend bool operator<(const storage_proxy_iterator<ILhs>&, const storage_proxy_iterator<IRhs>&) ENTT_NOEXCEPT;
+
+		private:
+			It it;
+		};
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] std::ptrdiff_t operator-(const storage_proxy_iterator<ILhs>& lhs, const storage_proxy_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it - rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator==(const storage_proxy_iterator<ILhs>& lhs, const storage_proxy_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it == rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator!=(const storage_proxy_iterator<ILhs>& lhs, const storage_proxy_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs == rhs);
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator<(const storage_proxy_iterator<ILhs>& lhs, const storage_proxy_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return lhs.it < rhs.it;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator>(const storage_proxy_iterator<ILhs>& lhs, const storage_proxy_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return rhs < lhs;
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator<=(const storage_proxy_iterator<ILhs>& lhs, const storage_proxy_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs > rhs);
+		}
+
+		template<typename ILhs, typename IRhs>
+		[[nodiscard]] bool operator>=(const storage_proxy_iterator<ILhs>& lhs, const storage_proxy_iterator<IRhs>& rhs) ENTT_NOEXCEPT {
+			return !(lhs < rhs);
+		}
+
+		struct registry_context {
+			template<typename Type, typename... Args>
+			Type& emplace_hint(const id_type id, Args&& ...args) {
+				return any_cast<Type&>(data.try_emplace(id, std::in_place_type<Type>, std::forward<Args>(args)...).first->second);
+			}
+
+			template<typename Type, typename... Args>
+			Type& emplace(Args&& ...args) {
+				return emplace_hint<Type>(type_id<Type>().hash(), std::forward<Args>(args)...);
+			}
+
+			template<typename Type>
+			bool erase(const id_type id = type_id<Type>().hash()) {
+				const auto it = data.find(id);
+				return it != data.end() && it->second.type() == type_id<Type>() ? (data.erase(it), true) : false;
+			}
+
+			template<typename Type>
+			[[nodiscard]] std::add_const_t<Type>& at(const id_type id = type_id<Type>().hash()) const {
+				return any_cast<std::add_const_t<Type>&>(data.at(id));
+			}
+
+			template<typename Type>
+			[[nodiscard]] Type& at(const id_type id = type_id<Type>().hash()) {
+				return any_cast<Type&>(data.at(id));
+			}
+
+			template<typename Type>
+			[[nodiscard]] std::add_const_t<Type>* find(const id_type id = type_id<Type>().hash()) const {
+				const auto it = data.find(id);
+				return it != data.cend() ? any_cast<std::add_const_t<Type>>(&it->second) : nullptr;
+			}
+
+			template<typename Type>
+			[[nodiscard]] Type* find(const id_type id = type_id<Type>().hash()) {
+				const auto it = data.find(id);
+				return it != data.end() ? any_cast<Type>(&it->second) : nullptr;
+			}
+
+			template<typename Type>
+			[[nodiscard]] bool contains(const id_type id = type_id<Type>().hash()) const {
+				const auto it = data.find(id);
+				return it != data.end() && it->second.type() == type_id<Type>();
+			}
+
+		private:
+			dense_map<id_type, basic_any<0u>, identity> data;
+		};
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Fast and reliable entity-component system.
+	  * @tparam Entity A valid entity type (see entt_traits for more details).
+	  */
+	template<typename Entity>
+	class basic_registry {
+		using entity_traits = entt_traits<Entity>;
+		using basic_common_type = basic_sparse_set<Entity>;
+
+		template<typename Component>
+		using storage_type = typename storage_traits<Entity, Component>::storage_type;
+
+		template<typename...>
+		struct group_handler;
+
+		template<typename... Exclude, typename... Get, typename... Owned>
+		struct group_handler<exclude_t<Exclude...>, get_t<Get...>, Owned...> {
+			// nasty workaround for an issue with the toolset v141 that doesn't accept a fold expression here
+			static_assert(!std::disjunction_v<std::bool_constant<component_traits<Owned>::in_place_delete>...>, "Groups do not support in-place delete");
+			std::conditional_t<sizeof...(Owned) == 0, basic_common_type, std::size_t> current{};
+
+			template<typename Component>
+			void maybe_valid_if(basic_registry& owner, const Entity entt) {
+				[[maybe_unused]] const auto cpools = std::forward_as_tuple(owner.assure<Owned>()...);
+
+				const auto is_valid = ((std::is_same_v<Component, Owned> || std::get<storage_type<Owned>&>(cpools).contains(entt)) && ...)
+					&& ((std::is_same_v<Component, Get> || owner.assure<Get>().contains(entt)) && ...)
+					&& ((std::is_same_v<Component, Exclude> || !owner.assure<Exclude>().contains(entt)) && ...);
+
+				if constexpr (sizeof...(Owned) == 0) {
+					if (is_valid && !current.contains(entt)) {
+						current.emplace(entt);
+					}
+				}
+				else {
+					if (is_valid && !(std::get<0>(cpools).index(entt) < current)) {
+						const auto pos = current++;
+						(std::get<storage_type<Owned>&>(cpools).swap_elements(std::get<storage_type<Owned>&>(cpools).data()[pos], entt), ...);
+					}
+				}
+			}
+
+			void discard_if([[maybe_unused]] basic_registry& owner, const Entity entt) {
+				if constexpr (sizeof...(Owned) == 0) {
+					current.remove(entt);
+				}
+				else {
+					if (const auto cpools = std::forward_as_tuple(owner.assure<Owned>()...); std::get<0>(cpools).contains(entt) && (std::get<0>(cpools).index(entt) < current)) {
+						const auto pos = --current;
+						(std::get<storage_type<Owned>&>(cpools).swap_elements(std::get<storage_type<Owned>&>(cpools).data()[pos], entt), ...);
+					}
+				}
+			}
+		};
+
+		struct group_data {
+			std::size_t size;
+			std::unique_ptr<void, void (*)(void*)> group;
+			bool (*owned)(const id_type) ENTT_NOEXCEPT;
+			bool (*get)(const id_type) ENTT_NOEXCEPT;
+			bool (*exclude)(const id_type) ENTT_NOEXCEPT;
+		};
+
+		template<typename Component>
+		[[nodiscard]] auto& assure(const id_type id = type_hash<Component>::value()) {
+			static_assert(std::is_same_v<Component, std::decay_t<Component>>, "Non-decayed types not allowed");
+			auto&& cpool = pools[id];
+
+			if (!cpool) {
+				cpool.reset(new storage_type<Component>{});
+				cpool->bind(forward_as_any(*this));
+			}
+
+			ENTT_ASSERT(cpool->type() == type_id<Component>(), "Unexpected type");
+			return static_cast<storage_type<Component>&>(*cpool);
+		}
+
+		template<typename Component>
+		[[nodiscard]] const auto& assure(const id_type id = type_hash<Component>::value()) const {
+			static_assert(std::is_same_v<Component, std::decay_t<Component>>, "Non-decayed types not allowed");
+
+			if (const auto it = pools.find(id); it != pools.cend()) {
+				ENTT_ASSERT(it->second->type() == type_id<Component>(), "Unexpected type");
+				return static_cast<const storage_type<Component>&>(*it->second);
+			}
+
+			static storage_type<Component> placeholder{};
+			return placeholder;
+		}
+
+		auto generate_identifier(const std::size_t pos) ENTT_NOEXCEPT {
+			ENTT_ASSERT(pos < entity_traits::to_integral(null), "No entities available");
+			return entity_traits::combine(static_cast<typename entity_traits::entity_type>(pos), {});
+		}
+
+		auto recycle_identifier() ENTT_NOEXCEPT {
+			ENTT_ASSERT(free_list != null, "No entities available");
+			const auto curr = entity_traits::to_entity(free_list);
+			free_list = entity_traits::combine(entity_traits::to_integral(entities[curr]), tombstone);
+			return (entities[curr] = entity_traits::combine(curr, entity_traits::to_integral(entities[curr])));
+		}
+
+		auto release_entity(const Entity entity, const typename entity_traits::version_type version) {
+			const typename entity_traits::version_type vers = version + (version == entity_traits::to_version(tombstone));
+			entities[entity_traits::to_entity(entity)] = entity_traits::construct(entity_traits::to_integral(free_list), vers);
+			free_list = entity_traits::combine(entity_traits::to_integral(entity), tombstone);
+			return vers;
+		}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Underlying version type. */
+		using version_type = typename entity_traits::version_type;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Common type among all storage types. */
+		using base_type = basic_common_type;
+		/*! @brief Context type. */
+		using context = internal::registry_context;
+
+		/*! @brief Default constructor. */
+		basic_registry()
+			: pools{},
+			groups{},
+			entities{},
+			free_list{ tombstone },
+			vars{} {}
+
+		/**
+		 * @brief Allocates enough memory upon construction to store `count` pools.
+		 * @param count The number of pools to allocate memory for.
+		 */
+		basic_registry(const size_type count)
+			: pools{},
+			groups{},
+			entities{},
+			free_list{ tombstone },
+			vars{} {
+			pools.reserve(count);
+		}
+
+		/**
+		 * @brief Move constructor.
+		 * @param other The instance to move from.
+		 */
+		basic_registry(basic_registry&& other)
+			: pools{ std::move(other.pools) },
+			groups{ std::move(other.groups) },
+			entities{ std::move(other.entities) },
+			free_list{ other.free_list },
+			vars{ std::move(other.vars) } {
+			for (auto&& curr : pools) {
+				curr.second->bind(forward_as_any(*this));
+			}
+		}
+
+		/**
+		 * @brief Move assignment operator.
+		 * @param other The instance to move from.
+		 * @return This registry.
+		 */
+		basic_registry& operator = (basic_registry& other) {
+			pools = std::move(other.pools);
+			groups = std::move(other.groups);
+			entities = std::move(other.entities);
+			free_list = other.free_list;
+			vars = std::move(other.vars);
+
+			for (auto&& curr : pools) {
+				curr.second->bind(forward_as_any(*this));
+			}
+
+			return *this;
+		}
+
+		/**
+		 * @brief Returns an iterable object to use to _visit_ a registry.
+		 *
+		 * The iterable object returns a pair that contains the name and a reference
+		 * to the current storage.
+		 *
+		 * @return An iterable object to use to _visit_ the registry.
+		 */
+		[[nodiscard]] auto storage() ENTT_NOEXCEPT {
+			return iterable_adaptor{ internal::storage_proxy_iterator{pools.begin()}, internal::storage_proxy_iterator{pools.end()} };
+		}
+
+		/*! @copydoc storage */
+		[[nodiscard]] auto storage() const ENTT_NOEXCEPT {
+			return iterable_adaptor{ internal::storage_proxy_iterator{pools.cbegin()}, internal::storage_proxy_iterator{pools.cend()} };
+		}
+
+		/**
+		 * @brief Finds the storage associated with a given name, if any.
+		 * @param id Name used to map the storage within the registry.
+		 * @return An iterator to the given storage if it's found, past the end
+		 * iterator otherwise.
+		 */
+		[[nodiscard]] auto storage(const id_type id) {
+			return internal::storage_proxy_iterator{ pools.find(id) };
+		}
+
+		/**
+		 * @brief Finds the storage associated with a given name, if any.
+		 * @param id Name used to map the storage within the registry.
+		 * @return An iterator to the given storage if it's found, past the end
+		 * iterator otherwise.
+		 */
+		[[nodiscard]] auto storage(const id_type id) const {
+			return internal::storage_proxy_iterator{ pools.find(id) };
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 * @tparam Component Type of component of which to return the storage.
+		 * @param id Optional name used to map the storage within the registry.
+		 * @return The storage for the given component type.
+		 */
+		template<typename Component>
+		decltype(auto) storage(const id_type id = type_hash<std::remove_const_t<Component>>::value()) {
+			if constexpr (std::is_const_v<Component>) {
+				return std::as_const(*this).template storage<std::remove_const_t<Component>>(id);
+			}
+			else {
+				return assure<Component>(id);
+			}
+		}
+
+		/**
+		 * @brief Returns the storage for a given component type.
+		 *
+		 * @warning
+		 * If a storage for the given component doesn't exist yet, a temporary
+		 * placeholder is returned instead.
+		 *
+		 * @tparam Component Type of component of which to return the storage.
+		 * @param id Optional name used to map the storage within the registry.
+		 * @return The storage for the given component type.
+		 */
+		template<typename Component>
+		decltype(auto) storage(const id_type id = type_hash<std::remove_const_t<Component>>::value()) const {
+			return assure<std::remove_const_t<Component>>(id);
+		}
+
+		/**
+		 * @brief Returns the number of entities created so far.
+		 * @return Number of entities created so far.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return entities.size();
+		}
+
+		/**
+		 * @brief Returns the number of entities still in use.
+		 * @return Number of entities still in use.
+		 */
+		[[nodiscard]] size_type alive() const {
+			auto sz = entities.size();
+
+			for (auto curr = free_list; curr != null; --sz) {
+				curr = entities[entity_traits::to_entity(curr)];
+			}
+
+			return sz;
+		}
+
+		/**
+		 * @brief Increases the capacity (number of entities) of the registry.
+		 * @param cap Desired capacity.
+		 */
+		void reserve(const size_type cap) {
+			entities.reserve(cap);
+		}
+
+		/**
+		 * @brief Returns the number of entities that a registry has currently
+		 * allocated space for.
+		 * @return Capacity of the registry.
+		 */
+		[[nodiscard]] size_type capacity() const ENTT_NOEXCEPT {
+			return entities.capacity();
+		}
+
+		/**
+		 * @brief Checks whether the registry is empty (no entities still in use).
+		 * @return True if the registry is empty, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const {
+			return !alive();
+		}
+
+		/**
+		 * @brief Direct access to the list of entities of a registry.
+		 *
+		 * The returned pointer is such that range `[data(), data() + size())` is
+		 * always a valid range, even if the registry is empty.
+		 *
+		 * @warning
+		 * This list contains both valid and destroyed entities and isn't suitable
+		 * for direct use.
+		 *
+		 * @return A pointer to the array of entities.
+		 */
+		[[nodiscard]] const entity_type* data() const ENTT_NOEXCEPT {
+			return entities.data();
+		}
+
+		/**
+		 * @brief Returns the head of the list of released entities.
+		 *
+		 * This function is intended for use in conjunction with `assign`.<br/>
+		 * The returned entity has an invalid identifier in all cases.
+		 *
+		 * @return The head of the list of released entities.
+		 */
+		[[nodiscard]] entity_type released() const ENTT_NOEXCEPT {
+			return free_list;
+		}
+
+		/**
+		 * @brief Checks if an identifier refers to a valid entity.
+		 * @param entity An identifier, either valid or not.
+		 * @return True if the identifier is valid, false otherwise.
+		 */
+		[[nodiscard]] bool valid(const entity_type entity) const {
+			const auto pos = size_type(entity_traits::to_entity(entity));
+			return (pos < entities.size() && entities[pos] == entity);
+		}
+
+		/**
+		 * @brief Returns the actual version for an identifier.
+		 * @param entity A valid identifier.
+		 * @return The version for the given identifier if valid, the tombstone
+		 * version otherwise.
+		 */
+		[[nodiscard]] version_type current(const entity_type entity) const {
+			const auto pos = size_type(entity_traits::to_entity(entity));
+			return entity_traits::to_version(pos < entities.size() ? entities[pos] : tombstone);
+		}
+
+		/**
+		 * @brief Creates a new entity or recycles a destroyed one.
+		 * @return A valid identifier.
+		 */
+		[[nodiscard]] entity_type create() {
+			return (free_list == null) ? entities.emplace_back(generate_identifier(entities.size())) : recycle_identifier();
+		}
+
+		/**
+		 * @copybrief create
+		 *
+		 * If the requested entity isn't in use, the suggested identifier is used.
+		 * Otherwise, a new identifier is generated.
+		 *
+		 * @param hint Required identifier.
+		 * @return A valid identifier.
+		 */
+		[[nodiscard]] entity_type create(const entity_type hint) {
+			const auto length = entities.size();
+
+			if (hint == null || hint == tombstone) {
+				return create();
+			}
+			else if (const auto req = entity_traits::to_entity(hint); !(req < length)) {
+				entities.resize(size_type(req) + 1u, null);
+
+				for (auto pos = length; pos < req; ++pos) {
+					release_entity(generate_identifier(pos), {});
+				}
+
+				return (entities[req] = hint);
+			}
+			else if (const auto curr = entity_traits::to_entity(entities[req]); req == curr) {
+				return create();
+			}
+			else {
+				auto* it = &free_list;
+				for (; entity_traits::to_entity(*it) != req; it = &entities[entity_traits::to_entity(*it)]) {}
+				*it = entity_traits::combine(curr, entity_traits::to_integral(*it));
+				return (entities[req] = hint);
+			}
+		}
+
+		/**
+		 * @brief Assigns each element in a range an identifier.
+		 *
+		 * @sa create
+		 *
+		 * @tparam It Type of forward iterator.
+		 * @param first An iterator to the first element of the range to generate.
+		 * @param last An iterator past the last element of the range to generate.
+		 */
+		template<typename It>
+		void create(It first, It last) {
+			for (; free_list != null && first != last; ++first) {
+				*first = recycle_identifier();
+			}
+
+			const auto length = entities.size();
+			entities.resize(length + std::distance(first, last), null);
+
+			for (auto pos = length; first != last; ++first, ++pos) {
+				*first = entities[pos] = generate_identifier(pos);
+			}
+		}
+
+		/**
+		 * @brief Assigns identifiers to an empty registry.
+		 *
+		 * This function is intended for use in conjunction with `data`, `size` and
+		 * `destroyed`.<br/>
+		 * Don't try to inject ranges of randomly generated entities nor the _wrong_
+		 * head for the list of destroyed entities. There is no guarantee that a
+		 * registry will continue to work properly in this case.
+		 *
+		 * @warning
+		 * There must be no entities still alive for this to work properly.
+		 *
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @param destroyed The head of the list of destroyed entities.
+		 */
+		template<typename It>
+		void assign(It first, It last, const entity_type destroyed) {
+			ENTT_ASSERT(!alive(), "Entities still alive");
+			entities.assign(first, last);
+			free_list = destroyed;
+		}
+
+		/**
+		 * @brief Releases an identifier.
+		 *
+		 * The version is updated and the identifier can be recycled at any time.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity results in undefined behavior.
+		 *
+		 * @param entity A valid identifier.
+		 * @return The version of the recycled entity.
+		 */
+		version_type release(const entity_type entity) {
+			return release(entity, static_cast<version_type>(entity_traits::to_version(entity) + 1u));
+		}
+
+		/**
+		 * @brief Releases an identifier.
+		 *
+		 * The suggested version or the valid version closest to the suggested one
+		 * is used instead of the implicitly generated version.
+		 *
+		 * @sa release
+		 *
+		 * @param entity A valid identifier.
+		 * @param version A desired version upon destruction.
+		 * @return The version actually assigned to the entity.
+		 */
+		version_type release(const entity_type entity, const version_type version) {
+			ENTT_ASSERT(orphan(entity), "Non-orphan entity");
+			return release_entity(entity, version);
+		}
+
+		/**
+		 * @brief Releases all identifiers in a range.
+		 *
+		 * @sa release
+		 *
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 */
+		template<typename It>
+		void release(It first, It last) {
+			for (; first != last; ++first) {
+				release(*first);
+			}
+		}
+
+		/**
+		 * @brief Destroys an entity and releases its identifier.
+		 *
+		 * @sa release
+		 *
+		 * @warning
+		 * Adding or removing components to an entity that is being destroyed can
+		 * result in undefined behavior. Attempting to use an invalid entity results
+		 * in undefined behavior.
+		 *
+		 * @param entity A valid identifier.
+		 * @return The version of the recycled entity.
+		 */
+		version_type destroy(const entity_type entity) {
+			return destroy(entity, static_cast<version_type>(entity_traits::to_version(entity) + 1u));
+		}
+
+		/**
+		 * @brief Destroys an entity and releases its identifier.
+		 *
+		 * The suggested version or the valid version closest to the suggested one
+		 * is used instead of the implicitly generated version.
+		 *
+		 * @sa destroy
+		 *
+		 * @param entity A valid identifier.
+		 * @param version A desired version upon destruction.
+		 * @return The version actually assigned to the entity.
+		 */
+		version_type destroy(const entity_type entity, const version_type version) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+
+			for (size_type pos = pools.size(); pos; --pos) {
+				pools.begin()[pos - 1u].second->remove(entity);
+			}
+
+			return release_entity(entity, version);
+		}
+
+		/**
+		 * @brief Destroys all entities in a range and releases their identifiers.
+		 *
+		 * @sa destroy
+		 *
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 */
+		template<typename It>
+		void destroy(It first, It last) {
+			for (; first != last; ++first) {
+				destroy(*first);
+			}
+		}
+
+		/**
+		 * @brief Assigns the given component to an entity.
+		 *
+		 * The component must have a proper constructor or be of aggregate type.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity or to assign a component to an entity
+		 * that already owns it results in undefined behavior.
+		 *
+		 * @tparam Component Type of component to create.
+		 * @tparam Args Types of arguments to use to construct the component.
+		 * @param entity A valid identifier.
+		 * @param args Parameters to use to initialize the component.
+		 * @return A reference to the newly created component.
+		 */
+		template<typename Component, typename... Args>
+		decltype(auto) emplace(const entity_type entity, Args && ...args) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return assure<Component>().emplace(entity, std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Assigns each entity in a range the given component.
+		 *
+		 * @sa emplace
+		 *
+		 * @tparam Component Type of component to create.
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @param value An instance of the component to assign.
+		 */
+		template<typename Component, typename It>
+		void insert(It first, It last, const Component& value = {}) {
+			ENTT_ASSERT(std::all_of(first, last, [this](const auto entity) { return valid(entity); }), "Invalid entity");
+			assure<Component>().insert(first, last, value);
+		}
+
+		/**
+		 * @brief Assigns each entity in a range the given components.
+		 *
+		 * @sa emplace
+		 *
+		 * @tparam Component Type of component to create.
+		 * @tparam EIt Type of input iterator.
+		 * @tparam CIt Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @param from An iterator to the first element of the range of components.
+		 */
+		template<typename Component, typename EIt, typename CIt, typename = std::enable_if_t<std::is_same_v<typename std::iterator_traits<CIt>::value_type, Component>>>
+		void insert(EIt first, EIt last, CIt from) {
+			ENTT_ASSERT(std::all_of(first, last, [this](const auto entity) { return valid(entity); }), "Invalid entity");
+			assure<Component>().insert(first, last, from);
+		}
+
+		/**
+		 * @brief Assigns or replaces the given component for an entity.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity results in undefined behavior.
+		 *
+		 * @tparam Component Type of component to assign or replace.
+		 * @tparam Args Types of arguments to use to construct the component.
+		 * @param entity A valid identifier.
+		 * @param args Parameters to use to initialize the component.
+		 * @return A reference to the newly created component.
+		 */
+		template<typename Component, typename... Args>
+		decltype(auto) emplace_or_replace(const entity_type entity, Args && ...args) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			auto& cpool = assure<Component>();
+
+			return cpool.contains(entity)
+				? cpool.patch(entity, [&args...](auto & ...curr) { ((curr = Component{ std::forward<Args>(args)... }), ...); })
+				: cpool.emplace(entity, std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Patches the given component for an entity.
+		 *
+		 * The signature of the function should be equivalent to the following:
+		 *
+		 * @code{.cpp}
+		 * void(Component &);
+		 * @endcode
+		 *
+		 * @note
+		 * Empty types aren't explicitly instantiated and therefore they are never
+		 * returned. However, this function can be used to trigger an update signal
+		 * for them.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity or to patch a component of an entity
+		 * that doesn't own it results in undefined behavior.
+		 *
+		 * @tparam Component Type of component to patch.
+		 * @tparam Func Types of the function objects to invoke.
+		 * @param entity A valid identifier.
+		 * @param func Valid function objects.
+		 * @return A reference to the patched component.
+		 */
+		template<typename Component, typename... Func>
+		decltype(auto) patch(const entity_type entity, Func && ...func) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return assure<Component>().patch(entity, std::forward<Func>(func)...);
+		}
+
+		/**
+		 * @brief Replaces the given component for an entity.
+		 *
+		 * The component must have a proper constructor or be of aggregate type.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity or to replace a component of an
+		 * entity that doesn't own it results in undefined behavior.
+		 *
+		 * @tparam Component Type of component to replace.
+		 * @tparam Args Types of arguments to use to construct the component.
+		 * @param entity A valid identifier.
+		 * @param args Parameters to use to initialize the component.
+		 * @return A reference to the component being replaced.
+		 */
+		template<typename Component, typename... Args>
+		decltype(auto) replace(const entity_type entity, Args && ...args) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return assure<Component>().patch(entity, [&args...](auto & ...curr) { ((curr = Component{ std::forward<Args>(args)... }), ...); });
+		}
+
+		/**
+		 * @brief Removes the given components from an entity.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity results in undefined behavior.
+		 *
+		 * @tparam Component Type of component to remove.
+		 * @tparam Other Other types of components to remove.
+		 * @param entity A valid identifier.
+		 * @return The number of components actually removed.
+		 */
+		template<typename Component, typename... Other>
+		size_type remove(const entity_type entity) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return (assure<Component>().remove(entity) + ... + assure<Other>().remove(entity));
+		}
+
+		/**
+		 * @brief Removes the given components from all the entities in a range.
+		 *
+		 * @sa remove
+		 *
+		 * @tparam Component Type of component to remove.
+		 * @tparam Other Other types of components to remove.
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 * @return The number of components actually removed.
+		 */
+		template<typename Component, typename... Other, typename It>
+		size_type remove(It first, It last) {
+			if constexpr (sizeof...(Other) == 0u) {
+				ENTT_ASSERT(std::all_of(first, last, [this](const auto entity) { return valid(entity); }), "Invalid entity");
+				return assure<Component>().remove(std::move(first), std::move(last));
+			}
+			else {
+				size_type count{};
+
+				for (auto cpools = std::forward_as_tuple(assure<Component>(), assure<Other>()...); first != last; ++first) {
+					ENTT_ASSERT(valid(*first), "Invalid entity");
+					count += std::apply([entt = *first](auto & ...curr) { return (curr.remove(entt) + ... + 0u); }, cpools);
+				}
+
+				return count;
+			}
+		}
+
+		/**
+		 * @brief Erases the given components from an entity.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity or to erase a component from an
+		 * entity that doesn't own it results in undefined behavior.
+		 *
+		 * @tparam Component Types of components to erase.
+		 * @tparam Other Other types of components to erase.
+		 * @param entity A valid identifier.
+		 */
+		template<typename Component, typename... Other>
+		void erase(const entity_type entity) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			(assure<Component>().erase(entity), (assure<Other>().erase(entity), ...));
+		}
+
+		/**
+		 * @brief Erases the given components from all the entities in a range.
+		 *
+		 * @sa erase
+		 *
+		 * @tparam Component Types of components to erase.
+		 * @tparam Other Other types of components to erase.
+		 * @tparam It Type of input iterator.
+		 * @param first An iterator to the first element of the range of entities.
+		 * @param last An iterator past the last element of the range of entities.
+		 */
+		template<typename Component, typename... Other, typename It>
+		void erase(It first, It last) {
+			if constexpr (sizeof...(Other) == 0u) {
+				ENTT_ASSERT(std::all_of(first, last, [this](const auto entity) { return valid(entity); }), "Invalid entity");
+				assure<Component>().erase(std::move(first), std::move(last));
+			}
+			else {
+				for (auto cpools = std::forward_as_tuple(assure<Component>(), assure<Other>()...); first != last; ++first) {
+					ENTT_ASSERT(valid(*first), "Invalid entity");
+					std::apply([entt = *first](auto & ...curr) { (curr.erase(entt), ...); }, cpools);
+				}
+			}
+		}
+
+		/**
+		 * @brief Removes all tombstones from a registry or only the pools for the
+		 * given components.
+		 * @tparam Component Types of components for which to clear all tombstones.
+		 */
+		template<typename... Component>
+		void compact() {
+			if constexpr (sizeof...(Component) == 0) {
+				for (auto&& curr : pools) {
+					curr.second->compact();
+				}
+			}
+			else {
+				(assure<Component>().compact(), ...);
+			}
+		}
+
+		/**
+		 * @brief Checks if an entity has all the given components.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity results in undefined behavior.
+		 *
+		 * @tparam Component Components for which to perform the check.
+		 * @param entity A valid identifier.
+		 * @return True if the entity has all the components, false otherwise.
+		 */
+		template<typename... Component>
+		[[nodiscard]] bool all_of(const entity_type entity) const {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return (assure<std::remove_const_t<Component>>().contains(entity) && ...);
+		}
+		/**
+		 * @brief Checks if an entity has at least one of the given components.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity results in undefined behavior.
+		 *
+		 * @tparam Component Components for which to perform the check.
+		 * @param entity A valid identifier.
+		 * @return True if the entity has at least one of the given components,
+		 * false otherwise.
+		 */
+		template<typename... Component>
+		[[nodiscard]] bool any_of(const entity_type entity) const {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return (assure<std::remove_const_t<Component>>().contains(entity) || ...);
+		}
+
+		/**
+		 * @brief Returns references to the given components for an entity.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity or to get a component from an entity
+		 * that doesn't own it results in undefined behavior.
+		 *
+		 * @tparam Component Types of components to get.
+		 * @param entity A valid identifier.
+		 * @return References to the components owned by the entity.
+		 */
+		template<typename... Component>
+		[[nodiscard]] decltype(auto) get([[maybe_unused]] const entity_type entity) const {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return view<Component...>().template get<const Component...>(entity);
+		}
+
+		/*! @copydoc get */
+		template<typename... Component>
+		[[nodiscard]] decltype(auto) get([[maybe_unused]] const entity_type entity) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return view<Component...>().template get<Component...>(entity);
+		}
+
+		/**
+		 * @brief Returns a reference to the given component for an entity.
+		 *
+		 * In case the entity doesn't own the component, the parameters provided are
+		 * used to construct it.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity results in undefined behavior.
+		 *
+		 * @tparam Component Type of component to get.
+		 * @tparam Args Types of arguments to use to construct the component.
+		 * @param entity A valid identifier.
+		 * @param args Parameters to use to initialize the component.
+		 * @return Reference to the component owned by the entity.
+		 */
+		template<typename Component, typename... Args>
+		[[nodiscard]] decltype(auto) get_or_emplace(const entity_type entity, Args && ...args) {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			auto& cpool = assure<Component>();
+			return cpool.contains(entity) ? cpool.get(entity) : cpool.emplace(entity, std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Returns pointers to the given components for an entity.
+		 *
+		 * @warning
+		 * Attempting to use an invalid entity results in undefined behavior.
+		 *
+		 * @note
+		 * The registry retains ownership of the pointed-to components.
+		 *
+		 * @tparam Component Types of components to get.
+		 * @param entity A valid identifier.
+		 * @return Pointers to the components owned by the entity.
+		 */
+		template<typename... Component>
+		[[nodiscard]] auto try_get([[maybe_unused]] const entity_type entity) const {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+
+			if constexpr (sizeof...(Component) == 1) {
+				const auto& cpool = assure<std::remove_const_t<Component>...>();
+				return cpool.contains(entity) ? std::addressof(cpool.get(entity)) : nullptr;
+			}
+			else {
+				return std::make_tuple(try_get<Component>(entity)...);
+			}
+		}
+
+		/*! @copydoc try_get */
+		template<typename... Component>
+		[[nodiscard]] auto try_get([[maybe_unused]] const entity_type entity) {
+			if constexpr (sizeof...(Component) == 1) {
+				return (const_cast<Component*>(std::as_const(*this).template try_get<Component>(entity)), ...);
+			}
+			else {
+				return std::make_tuple(try_get<Component>(entity)...);
+			}
+		}
+
+		/**
+		 * @brief Clears a whole registry or the pools for the given components.
+		 * @tparam Component Types of components to remove from their entities.
+		 */
+		template<typename... Component>
+		void clear() {
+			if constexpr (sizeof...(Component) == 0) {
+				for (auto&& curr : pools) {
+					curr.second->clear();
+				}
+
+				each([this](const auto entity) { this->release(entity); });
+			}
+			else {
+				(assure<Component>().clear(), ...);
+			}
+		}
+
+		/**
+		 * @brief Iterates all the entities that are still in use.
+		 *
+		 * The signature of the function should be equivalent to the following:
+		 *
+		 * @code{.cpp}
+		 * void(const Entity);
+		 * @endcode
+		 *
+		 * It's not defined whether entities created during iteration are returned.
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void each(Func func) const {
+			if (free_list == null) {
+				for (auto pos = entities.size(); pos; --pos) {
+					func(entities[pos - 1]);
+				}
+			}
+			else {
+				for (auto pos = entities.size(); pos; --pos) {
+					if (const auto entity = entities[pos - 1]; entity_traits::to_entity(entity) == (pos - 1)) {
+						func(entity);
+					}
+				}
+			}
+		}
+
+		/**
+		 * @brief Checks if an entity has components assigned.
+		 * @param entity A valid identifier.
+		 * @return True if the entity has no components assigned, false otherwise.
+		 */
+		[[nodiscard]] bool orphan(const entity_type entity) const {
+			ENTT_ASSERT(valid(entity), "Invalid entity");
+			return std::none_of(pools.cbegin(), pools.cend(), [entity](auto&& curr) { return curr.second->contains(entity); });
+		}
+
+		/**
+		 * @brief Returns a sink object for the given component.
+		 *
+		 * Use this function to receive notifications whenever a new instance of the
+		 * given component is created and assigned to an entity.<br/>
+		 * The function type for a listener is equivalent to:
+		 *
+		 * @code{.cpp}
+		 * void(basic_registry<Entity> &, Entity);
+		 * @endcode
+		 *
+		 * Listeners are invoked **after** assigning the component to the entity.
+		 *
+		 * @sa sink
+		 *
+		 * @tparam Component Type of component of which to get the sink.
+		 * @return A temporary sink object.
+		 */
+		template<typename Component>
+		[[nodiscard]] auto on_construct() {
+			return assure<Component>().on_construct();
+		}
+
+		/**
+		 * @brief Returns a sink object for the given component.
+		 *
+		 * Use this function to receive notifications whenever an instance of the
+		 * given component is explicitly updated.<br/>
+		 * The function type for a listener is equivalent to:
+		 *
+		 * @code{.cpp}
+		 * void(basic_registry<Entity> &, Entity);
+		 * @endcode
+		 *
+		 * Listeners are invoked **after** updating the component.
+		 *
+		 * @sa sink
+		 *
+		 * @tparam Component Type of component of which to get the sink.
+		 * @return A temporary sink object.
+		 */
+		template<typename Component>
+		[[nodiscard]] auto on_update() {
+			return assure<Component>().on_update();
+		}
+
+		/**
+		 * @brief Returns a sink object for the given component.
+		 *
+		 * Use this function to receive notifications whenever an instance of the
+		 * given component is removed from an entity and thus destroyed.<br/>
+		 * The function type for a listener is equivalent to:
+		 *
+		 * @code{.cpp}
+		 * void(basic_registry<Entity> &, Entity);
+		 * @endcode
+		 *
+		 * Listeners are invoked **before** removing the component from the entity.
+		 *
+		 * @sa sink
+		 *
+		 * @tparam Component Type of component of which to get the sink.
+		 * @return A temporary sink object.
+		 */
+		template<typename Component>
+		[[nodiscard]] auto on_destroy() {
+			return assure<Component>().on_destroy();
+		}
+
+		/**
+		 * @brief Returns a view for the given components.
+		 *
+		 * Views are created on the fly and share with the registry its internal
+		 * data structures. Feel free to discard them after the use.<br/>
+		 * Creating and destroying a view is an incredibly cheap operation. As a
+		 * rule of thumb, storing a view should never be an option.
+		 *
+		 * @tparam Component Type of component used to construct the view.
+		 * @tparam Other Other types of components used to construct the view.
+		 * @tparam Exclude Types of components used to filter the view.
+		 * @return A newly created view.
+		 */
+		template<typename Component, typename... Other, typename... Exclude>
+		[[nodiscard]] basic_view<entity_type, get_t<std::add_const_t<Component>, std::add_const_t<Other>...>, exclude_t<Exclude...>> view(exclude_t<Exclude...> = {}) const {
+			return { assure<std::remove_const_t<Component>>(), assure<std::remove_const_t<Other>>()..., assure<Exclude>()... };
+		}
+
+		/*! @copydoc view */
+		template<typename Component, typename... Other, typename... Exclude>
+		[[nodiscard]] basic_view<entity_type, get_t<Component, Other...>, exclude_t<Exclude...>> view(exclude_t<Exclude...> = {}) {
+			return { assure<std::remove_const_t<Component>>(), assure<std::remove_const_t<Other>>()..., assure<Exclude>()... };
+		}
+
+		/**
+		 * @brief Returns a group for the given components.
+		 *
+		 * Groups are created on the fly and share with the registry its internal
+		 * data structures. Feel free to discard them after the use.<br/>
+		 * Creating and destroying a group is an incredibly cheap operation. As a
+		 * rule of thumb, storing a group should never be an option.
+		 *
+		 * Groups support exclusion lists and can own types of components. The more
+		 * types are owned by a group, the faster it is to iterate entities and
+		 * components.<br/>
+		 * However, groups also affect some features of the registry such as the
+		 * creation and destruction of components.
+		 *
+		 * @note
+		 * Pools of components that are owned by a group cannot be sorted anymore.
+		 * The group takes the ownership of the pools and arrange components so as
+		 * to iterate them as fast as possible.
+		 *
+		 * @tparam Owned Types of components owned by the group.
+		 * @tparam Get Types of components observed by the group.
+		 * @tparam Exclude Types of components used to filter the group.
+		 * @return A newly created group.
+		 */
+		template<typename... Owned, typename... Get, typename... Exclude>
+		[[nodiscard]] basic_group<entity_type, owned_t<Owned...>, get_t<Get...>, exclude_t<Exclude...>> group(get_t<Get...>, exclude_t<Exclude...> = {}) {
+			static_assert(sizeof...(Owned) + sizeof...(Get) > 0, "Exclusion-only groups are not supported");
+			static_assert(sizeof...(Owned) + sizeof...(Get) + sizeof...(Exclude) > 1, "Single component groups are not allowed");
+
+			using handler_type = group_handler<exclude_t<std::remove_const_t<Exclude>...>, get_t<std::remove_const_t<Get>...>, std::remove_const_t<Owned>...>;
+
+			const auto cpools = std::forward_as_tuple(assure<std::remove_const_t<Owned>>()..., assure<std::remove_const_t<Get>>()...);
+			constexpr auto size = sizeof...(Owned) + sizeof...(Get) + sizeof...(Exclude);
+			handler_type* handler = nullptr;
+
+			auto it = std::find_if(groups.cbegin(), groups.cend(), [size](const auto& gdata) {
+				return gdata.size == size
+					&& (gdata.owned(type_hash<std::remove_const_t<Owned>>::value()) && ...)
+					&& (gdata.get(type_hash<std::remove_const_t<Get>>::value()) && ...)
+					&& (gdata.exclude(type_hash<Exclude>::value()) && ...);
+			});
+
+			if (it != groups.cend()) {
+				handler = static_cast<handler_type*>(it->group.get());
+			}
+			else {
+				group_data candidate = {
+					size,
+					{new handler_type{}, [](void* instance) { delete static_cast<handler_type*>(instance); }},
+					[]([[maybe_unused]] const id_type ctype) ENTT_NOEXCEPT { return ((ctype == type_hash<std::remove_const_t<Owned>>::value()) || ...); },
+					[]([[maybe_unused]] const id_type ctype) ENTT_NOEXCEPT { return ((ctype == type_hash<std::remove_const_t<Get>>::value()) || ...); },
+					[]([[maybe_unused]] const id_type ctype) ENTT_NOEXCEPT { return ((ctype == type_hash<Exclude>::value()) || ...); },
+				};
+
+				handler = static_cast<handler_type*>(candidate.group.get());
+
+				const void* maybe_valid_if = nullptr;
+				const void* discard_if = nullptr;
+
+				if constexpr (sizeof...(Owned) == 0) {
+					groups.push_back(std::move(candidate));
+				}
+				else {
+					[[maybe_unused]] auto has_conflict = [size](const auto& gdata) {
+						const auto overlapping = (0u + ... + gdata.owned(type_hash<std::remove_const_t<Owned>>::value()));
+						const auto sz = overlapping + (0u + ... + gdata.get(type_hash<std::remove_const_t<Get>>::value())) + (0u + ... + gdata.exclude(type_hash<Exclude>::value()));
+						return !overlapping || ((sz == size) || (sz == gdata.size));
+					};
+
+					ENTT_ASSERT(std::all_of(groups.cbegin(), groups.cend(), std::move(has_conflict)), "Conflicting groups");
+
+					const auto next = std::find_if_not(groups.cbegin(), groups.cend(), [size](const auto& gdata) {
+						return !(0u + ... + gdata.owned(type_hash<std::remove_const_t<Owned>>::value())) || (size > gdata.size);
+					});
+
+					const auto prev = std::find_if(std::make_reverse_iterator(next), groups.crend(), [](const auto& gdata) {
+						return (0u + ... + gdata.owned(type_hash<std::remove_const_t<Owned>>::value()));
+					});
+
+					maybe_valid_if = (next == groups.cend() ? maybe_valid_if : next->group.get());
+					discard_if = (prev == groups.crend() ? discard_if : prev->group.get());
+					groups.insert(next, std::move(candidate));
+				}
+
+				(on_construct<std::remove_const_t<Owned>>().before(maybe_valid_if).template connect<&handler_type::template maybe_valid_if<std::remove_const_t<Owned>>>(*handler), ...);
+				(on_construct<std::remove_const_t<Get>>().before(maybe_valid_if).template connect<&handler_type::template maybe_valid_if<std::remove_const_t<Get>>>(*handler), ...);
+				(on_destroy<Exclude>().before(maybe_valid_if).template connect<&handler_type::template maybe_valid_if<Exclude>>(*handler), ...);
+
+				(on_destroy<std::remove_const_t<Owned>>().before(discard_if).template connect<&handler_type::discard_if>(*handler), ...);
+				(on_destroy<std::remove_const_t<Get>>().before(discard_if).template connect<&handler_type::discard_if>(*handler), ...);
+				(on_construct<Exclude>().before(discard_if).template connect<&handler_type::discard_if>(*handler), ...);
+
+				if constexpr (sizeof...(Owned) == 0) {
+					for (const auto entity : view<Owned..., Get...>(exclude<Exclude...>)) {
+						handler->current.emplace(entity);
+					}
+				}
+				else {
+					// we cannot iterate backwards because we want to leave behind valid entities in case of owned types
+					for (auto* first = std::get<0>(cpools).data(), *last = first + std::get<0>(cpools).size(); first != last; ++first) {
+						handler->template maybe_valid_if<type_list_element_t<0, type_list<std::remove_const_t<Owned>...>>>(*this, *first);
+					}
+				}
+			}
+
+			return { handler->current, std::get<storage_type<std::remove_const_t<Owned>>&>(cpools)..., std::get<storage_type<std::remove_const_t<Get>>&>(cpools)... };
+		}
+
+		/*! @copydoc group */
+		template<typename... Owned, typename... Get, typename... Exclude>
+		[[nodiscard]] basic_group<entity_type, owned_t<std::add_const_t<Owned>...>, get_t<std::add_const_t<Get>...>, exclude_t<Exclude...>> group_if_exists(get_t<Get...>, exclude_t<Exclude...> = {}) const {
+			auto it = std::find_if(groups.cbegin(), groups.cend(), [](const auto& gdata) {
+				return gdata.size == (sizeof...(Owned) + sizeof...(Get) + sizeof...(Exclude))
+					&& (gdata.owned(type_hash<std::remove_const_t<Owned>>::value()) && ...)
+					&& (gdata.get(type_hash<std::remove_const_t<Get>>::value()) && ...)
+					&& (gdata.exclude(type_hash<Exclude>::value()) && ...);
+			});
+
+			if (it == groups.cend()) {
+				return {};
+			}
+			else {
+				using handler_type = group_handler<exclude_t<std::remove_const_t<Exclude>...>, get_t<std::remove_const_t<Get>...>, std::remove_const_t<Owned>...>;
+				return { static_cast<handler_type*>(it->group.get())->current, assure<std::remove_const_t<Owned>>()..., assure<std::remove_const_t<Get>>()... };
+			}
+		}
+
+		/*! @copydoc group */
+		template<typename... Owned, typename... Exclude>
+		[[nodiscard]] basic_group<entity_type, owned_t<Owned...>, get_t<>, exclude_t<Exclude...>> group(exclude_t<Exclude...> = {}) {
+			return group<Owned...>(get_t<>{}, exclude<Exclude...>);
+		}
+
+		/*! @copydoc group */
+		template<typename... Owned, typename... Exclude>
+		[[nodiscard]] basic_group<entity_type, owned_t<std::add_const_t<Owned>...>, get_t<>, exclude_t<Exclude...>> group_if_exists(exclude_t<Exclude...> = {}) const {
+			return group_if_exists<std::add_const_t<Owned>...>(get_t<>{}, exclude<Exclude...>);
+		}
+
+		/**
+		 * @brief Checks whether the given components belong to any group.
+		 * @tparam Component Types of components in which one is interested.
+		 * @return True if the pools of the given components are _free_, false
+		 * otherwise.
+		 */
+		template<typename... Component>
+		[[nodiscard]] bool owned() const {
+			return std::any_of(groups.cbegin(), groups.cend(), [](auto&& gdata) { return (gdata.owned(type_hash<std::remove_const_t<Component>>::value()) || ...); });
+		}
+
+		/**
+		 * @brief Checks whether a group can be sorted.
+		 * @tparam Owned Types of components owned by the group.
+		 * @tparam Get Types of components observed by the group.
+		 * @tparam Exclude Types of components used to filter the group.
+		 * @return True if the group can be sorted, false otherwise.
+		 */
+		template<typename... Owned, typename... Get, typename... Exclude>
+		[[nodiscard]] bool sortable(const basic_group<entity_type, owned_t<Owned...>, get_t<Get...>, exclude_t<Exclude...>>&) ENTT_NOEXCEPT {
+			constexpr auto size = sizeof...(Owned) + sizeof...(Get) + sizeof...(Exclude);
+			auto pred = [size](const auto& gdata) { return (0u + ... + gdata.owned(type_hash<std::remove_const_t<Owned>>::value())) && (size < gdata.size); };
+			return std::find_if(groups.cbegin(), groups.cend(), std::move(pred)) == groups.cend();
+		}
+
+		/**
+		 * @brief Sorts the elements of a given component.
+		 *
+		 * The order remains valid until a component of the given type is assigned
+		 * to or removed from an entity.<br/>
+		 * The comparison function object returns `true` if the first element is
+		 * _less_ than the second one, `false` otherwise. Its signature is also
+		 * equivalent to one of the following:
+		 *
+		 * @code{.cpp}
+		 * bool(const Entity, const Entity);
+		 * bool(const Component &, const Component &);
+		 * @endcode
+		 *
+		 * Moreover, it shall induce a _strict weak ordering_ on the values.<br/>
+		 * The sort function object offers an `operator()` that accepts:
+		 *
+		 * * An iterator to the first element of the range to sort.
+		 * * An iterator past the last element of the range to sort.
+		 * * A comparison function object to use to compare the elements.
+		 *
+		 * The comparison function object hasn't necessarily the type of the one
+		 * passed along with the other parameters to this member function.
+		 *
+		 * @warning
+		 * Pools of components owned by a group cannot be sorted.
+		 *
+		 * @tparam Component Type of components to sort.
+		 * @tparam Compare Type of comparison function object.
+		 * @tparam Sort Type of sort function object.
+		 * @tparam Args Types of arguments to forward to the sort function object.
+		 * @param compare A valid comparison function object.
+		 * @param algo A valid sort function object.
+		 * @param args Arguments to forward to the sort function object, if any.
+		 */
+		template<typename Component, typename Compare, typename Sort = std_sort, typename... Args>
+		void sort(Compare compare, Sort algo = Sort{}, Args && ...args) {
+			ENTT_ASSERT(!owned<Component>(), "Cannot sort owned storage");
+			auto& cpool = assure<Component>();
+
+			if constexpr (std::is_invocable_v < Compare, decltype(cpool.get({})), decltype(cpool.get({})) > ) {
+				auto comp = [&cpool, compare = std::move(compare)](const auto lhs, const auto rhs) { return compare(std::as_const(cpool.get(lhs)), std::as_const(cpool.get(rhs))); };
+				cpool.sort(std::move(comp), std::move(algo), std::forward<Args>(args)...);
+			}
+			else {
+				cpool.sort(std::move(compare), std::move(algo), std::forward<Args>(args)...);
+			}
+		}
+
+		/**
+		 * @brief Sorts two pools of components in the same way.
+		 *
+		 * Being `To` and `From` the two sets, after invoking this function an
+		 * iterator for `To` returns elements according to the following rules:
+		 *
+		 * * All entities in `To` that are also in `From` are returned first
+		 *   according to the order they have in `From`.
+		 * * All entities in `To` that are not in `From` are returned in no
+		 *   particular order after all the other entities.
+		 *
+		 * Any subsequent change to `From` won't affect the order in `To`.
+		 *
+		 * @warning
+		 * Pools of components owned by a group cannot be sorted.
+		 *
+		 * @tparam To Type of components to sort.
+		 * @tparam From Type of components to use to sort.
+		 */
+		template<typename To, typename From>
+		void sort() {
+			ENTT_ASSERT(!owned<To>(), "Cannot sort owned storage");
+			assure<To>().respect(assure<From>());
+		}
+
+		/**
+		 * @brief Returns the context object, that is, a general purpose container.
+		 * @return The context object, that is, a general purpose container.
+		 */
+		context& ctx() ENTT_NOEXCEPT {
+			return vars;
+		}
+
+		/*! @copydoc ctx */
+		const context& ctx() const ENTT_NOEXCEPT {
+			return vars;
+		}
+
+	private:
+		dense_map<id_type, std::unique_ptr<base_type>, identity> pools;
+		std::vector<group_data> groups;
+		std::vector<entity_type> entities;
+		entity_type free_list;
+		context vars;
+	};
+
+} // namespace entt
+
+#endif
+
+
+namespace entt {
+
+	/**
+	 * @brief Non-owning handle to an entity.
+	 *
+	 * Tiny wrapper around a registry and an entity.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Type Types to which to restrict the scope of a handle.
+	 */
+	template<typename Entity, typename... Type>
+	struct basic_handle {
+		/*! @brief Type of registry accepted by the handle. */
+		using registry_type = constness_as_t<basic_registry<std::remove_const_t<Entity>>, Entity>;
+		/*! @brief Underlying entity identifier. */
+		using entity_type = typename registry_type::entity_type;
+		/*! @brief Underlying version type. */
+		using version_type = typename registry_type::version_type;
+		/*! @brief Unsigned integer type. */
+		using size_type = typename registry_type::size_type;
+
+		/*! @brief Constructs an invalid handle. */
+		basic_handle() ENTT_NOEXCEPT
+			: reg{},
+			entt{ null } {}
+
+		/**
+		 * @brief Constructs a handle from a given registry and entity.
+		 * @param ref An instance of the registry class.
+		 * @param value A valid identifier.
+		 */
+		basic_handle(registry_type& ref, entity_type value) ENTT_NOEXCEPT
+			: reg{ &ref },
+			entt{ value } {}
+
+		/**
+		 * @brief Constructs a const handle from a non-const one.
+		 * @tparam Other A valid entity type (see entt_traits for more details).
+		 * @tparam Args Scope of the handle to construct.
+		 * @return A const handle referring to the same registry and the same
+		 * entity.
+		 */
+		template<typename Other, typename... Args>
+		operator basic_handle<Other, Args...>() const ENTT_NOEXCEPT {
+			static_assert(std::is_same_v<Other, Entity> || std::is_same_v<std::remove_const_t<Other>, Entity>, "Invalid conversion between different handles");
+			static_assert((sizeof...(Type) == 0 || ((sizeof...(Args) != 0 && sizeof...(Args) <= sizeof...(Type)) && ... && (type_list_contains_v<type_list<Type...>, Args>))), "Invalid conversion between different handles");
+
+			return reg ? basic_handle<Other, Args...>{*reg, entt} : basic_handle<Other, Args...>{};
+		}
+
+		/**
+		 * @brief Converts a handle to its underlying entity.
+		 * @return The contained identifier.
+		 */
+		[[nodiscard]] operator entity_type() const ENTT_NOEXCEPT {
+			return entity();
+		}
+
+		/**
+		 * @brief Checks if a handle refers to non-null registry pointer and entity.
+		 * @return True if the handle refers to non-null registry and entity, false otherwise.
+		 */
+		[[nodiscard]] explicit operator bool() const ENTT_NOEXCEPT {
+			return reg && reg->valid(entt);
+		}
+
+		/**
+		 * @brief Checks if a handle refers to a valid entity or not.
+		 * @return True if the handle refers to a valid entity, false otherwise.
+		 */
+		[[nodiscard]] bool valid() const {
+			return reg->valid(entt);
+		}
+
+		/**
+		 * @brief Returns a pointer to the underlying registry, if any.
+		 * @return A pointer to the underlying registry, if any.
+		 */
+		[[nodiscard]] registry_type* registry() const ENTT_NOEXCEPT {
+			return reg;
+		}
+
+		/**
+		 * @brief Returns the entity associated with a handle.
+		 * @return The entity associated with the handle.
+		 */
+		[[nodiscard]] entity_type entity() const ENTT_NOEXCEPT {
+			return entt;
+		}
+
+		/**
+		 * @brief Destroys the entity associated with a handle.
+		 * @sa basic_registry::destroy
+		 */
+		void destroy() {
+			reg->destroy(entt);
+		}
+
+		/**
+		 * @brief Destroys the entity associated with a handle.
+		 * @sa basic_registry::destroy
+		 * @param version A desired version upon destruction.
+		 */
+		void destroy(const version_type version) {
+			reg->destroy(entt, version);
+		}
+
+		/**
+		 * @brief Assigns the given component to a handle.
+		 * @sa basic_registry::emplace
+		 * @tparam Component Type of component to create.
+		 * @tparam Args Types of arguments to use to construct the component.
+		 * @param args Parameters to use to initialize the component.
+		 * @return A reference to the newly created component.
+		 */
+		template<typename Component, typename... Args>
+		decltype(auto) emplace(Args&& ...args) const {
+			static_assert(((sizeof...(Type) == 0) || ... || std::is_same_v<Component, Type>), "Invalid type");
+			return reg->template emplace<Component>(entt, std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Assigns or replaces the given component for a handle.
+		 * @sa basic_registry::emplace_or_replace
+		 * @tparam Component Type of component to assign or replace.
+		 * @tparam Args Types of arguments to use to construct the component.
+		 * @param args Parameters to use to initialize the component.
+		 * @return A reference to the newly created component.
+		 */
+		template<typename Component, typename... Args>
+		decltype(auto) emplace_or_replace(Args && ...args) const {
+			static_assert(((sizeof...(Type) == 0) || ... || std::is_same_v<Component, Type>), "Invalid type");
+			return reg->template emplace_or_replace<Component>(entt, std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Patches the given component for a handle.
+		 * @sa basic_registry::patch
+		 * @tparam Component Type of component to patch.
+		 * @tparam Func Types of the function objects to invoke.
+		 * @param func Valid function objects.
+		 * @return A reference to the patched component.
+		 */
+		template<typename Component, typename... Func>
+		decltype(auto) patch(Func && ...func) const {
+			static_assert(((sizeof...(Type) == 0) || ... || std::is_same_v<Component, Type>), "Invalid type");
+			return reg->template patch<Component>(entt, std::forward<Func>(func)...);
+		}
+
+		/**
+		 * @brief Replaces the given component for a handle.
+		 * @sa basic_registry::replace
+		 * @tparam Component Type of component to replace.
+		 * @tparam Args Types of arguments to use to construct the component.
+		 * @param args Parameters to use to initialize the component.
+		 * @return A reference to the component being replaced.
+		 */
+		template<typename Component, typename... Args>
+		decltype(auto) replace(Args && ...args) const {
+			static_assert(((sizeof...(Type) == 0) || ... || std::is_same_v<Component, Type>), "Invalid type");
+			return reg->template replace<Component>(entt, std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Removes the given components from a handle.
+		 * @sa basic_registry::remove
+		 * @tparam Component Types of components to remove.
+		 * @return The number of components actually removed.
+		 */
+		template<typename... Component>
+		size_type remove() const {
+			static_assert(sizeof...(Type) == 0 || (type_list_contains_v<type_list<Type...>, Component> && ...), "Invalid type");
+			return reg->template remove<Component...>(entt);
+		}
+
+		/**
+		 * @brief Erases the given components from a handle.
+		 * @sa basic_registry::erase
+		 * @tparam Component Types of components to erase.
+		 */
+		template<typename... Component>
+		void erase() const {
+			static_assert(sizeof...(Type) == 0 || (type_list_contains_v<type_list<Type...>, Component> && ...), "Invalid type");
+			reg->template erase<Component...>(entt);
+		}
+
+		/**
+		 * @brief Checks if a handle has all the given components.
+		 * @sa basic_registry::all_of
+		 * @tparam Component Components for which to perform the check.
+		 * @return True if the handle has all the components, false otherwise.
+		 */
+		template<typename... Component>
+		[[nodiscard]] decltype(auto) all_of() const {
+			return reg->template all_of<Component...>(entt);
+		}
+
+		/**
+		 * @brief Checks if a handle has at least one of the given components.
+		 * @sa basic_registry::any_of
+		 * @tparam Component Components for which to perform the check.
+		 * @return True if the handle has at least one of the given components,
+		 * false otherwise.
+		 */
+		template<typename... Component>
+		[[nodiscard]] decltype(auto) any_of() const {
+			return reg->template any_of<Component...>(entt);
+		}
+
+		/**
+		 * @brief Returns references to the given components for a handle.
+		 * @sa basic_registry::get
+		 * @tparam Component Types of components to get.
+		 * @return References to the components owned by the handle.
+		 */
+		template<typename... Component>
+		[[nodiscard]] decltype(auto) get() const {
+			static_assert(sizeof...(Type) == 0 || (type_list_contains_v<type_list<Type...>, Component> && ...), "Invalid type");
+			return reg->template get<Component...>(entt);
+		}
+
+		/**
+		 * @brief Returns a reference to the given component for a handle.
+		 * @sa basic_registry::get_or_emplace
+		 * @tparam Component Type of component to get.
+		 * @tparam Args Types of arguments to use to construct the component.
+		 * @param args Parameters to use to initialize the component.
+		 * @return Reference to the component owned by the handle.
+		 */
+		template<typename Component, typename... Args>
+		[[nodiscard]] decltype(auto) get_or_emplace(Args && ...args) const {
+			static_assert(((sizeof...(Type) == 0) || ... || std::is_same_v<Component, Type>), "Invalid type");
+			return reg->template get_or_emplace<Component>(entt, std::forward<Args>(args)...);
+		}
+
+		/**
+		 * @brief Returns pointers to the given components for a handle.
+		 * @sa basic_registry::try_get
+		 * @tparam Component Types of components to get.
+		 * @return Pointers to the components owned by the handle.
+		 */
+		template<typename... Component>
+		[[nodiscard]] auto try_get() const {
+			static_assert(sizeof...(Type) == 0 || (type_list_contains_v<type_list<Type...>, Component> && ...), "Invalid type");
+			return reg->template try_get<Component...>(entt);
+		}
+
+		/**
+		 * @brief Checks if a handle has components assigned.
+		 * @return True if the handle has no components assigned, false otherwise.
+		 */
+		[[nodiscard]] bool orphan() const {
+			return reg->orphan(entt);
+		}
+
+		/**
+		 * @brief Visits a handle and returns the pools for its components.
+		 *
+		 * The signature of the function should be equivalent to the following:
+		 *
+		 * @code{.cpp}
+		 * void(id_type, const basic_sparse_set<entity_type> &);
+		 * @endcode
+		 *
+		 * Returned pools are those that contain the entity associated with the
+		 * handle.
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void visit(Func&& func) const {
+			for (auto [id, storage] : reg->storage()) {
+				if (storage.contains(entt)) {
+					func(id, storage);
+				}
+			}
+		}
+
+	private:
+		registry_type* reg;
+		entity_type entt;
+	};
+
+	/**
+	 * @brief Compares two handles.
+	 * @tparam Args Scope of the first handle.
+	 * @tparam Other Scope of the second handle.
+	 * @param lhs A valid handle.
+	 * @param rhs A valid handle.
+	 * @return True if both handles refer to the same registry and the same
+	 * entity, false otherwise.
+	 */
+	template<typename... Args, typename... Other>
+	[[nodiscard]] bool operator==(const basic_handle<Args...>& lhs, const basic_handle<Other...>& rhs) ENTT_NOEXCEPT {
+		return lhs.registry() == rhs.registry() && lhs.entity() == rhs.entity();
+	}
+
+	/**
+	 * @brief Compares two handles.
+	 * @tparam Args Scope of the first handle.
+	 * @tparam Other Scope of the second handle.
+	 * @param lhs A valid handle.
+	 * @param rhs A valid handle.
+	 * @return False if both handles refer to the same registry and the same
+	 * entity, true otherwise.
+	 */
+	template<typename... Args, typename... Other>
+	[[nodiscard]] bool operator!=(const basic_handle<Args...>& lhs, const basic_handle<Other...>& rhs) ENTT_NOEXCEPT {
+		return !(lhs == rhs);
+	}
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	basic_handle(basic_registry<Entity>&, Entity) -> basic_handle<Entity>;
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	basic_handle(const basic_registry<Entity>&, Entity) -> basic_handle<const Entity>;
+
+} // namespace entt
+
+#endif
+
+// #include "entity/helper.hpp"
+#ifndef ENTT_ENTITY_HELPER_HPP
+#define ENTT_ENTITY_HELPER_HPP
+
+#include <type_traits>
+
+namespace entt {
+
+	/**
+	 * @brief Converts a registry to a view.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	struct as_view {
+		/*! @brief Underlying entity identifier. */
+		using entity_type = std::remove_const_t<Entity>;
+		/*! @brief Type of registry to convert. */
+		using registry_type = constness_as_t<basic_registry<entity_type>, Entity>;
+
+		/**
+		 * @brief Constructs a converter for a given registry.
+		 * @param source A valid reference to a registry.
+		 */
+		as_view(registry_type& source) ENTT_NOEXCEPT: reg{ source } {}
+
+		/**
+		 * @brief Conversion function from a registry to a view.
+		 * @tparam Exclude Types of components used to filter the view.
+		 * @tparam Component Type of components used to construct the view.
+		 * @return A newly created view.
+		 */
+		template<typename Exclude, typename... Component>
+		operator basic_view<entity_type, get_t<Component...>, Exclude>() const {
+			return reg.template view<Component...>(Exclude{});
+		}
+
+	private:
+		registry_type& reg;
+	};
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	as_view(basic_registry<Entity>&) -> as_view<Entity>;
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	as_view(const basic_registry<Entity>&) -> as_view<const Entity>;
+
+	/**
+	 * @brief Converts a registry to a group.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	struct as_group {
+		/*! @brief Underlying entity identifier. */
+		using entity_type = std::remove_const_t<Entity>;
+		/*! @brief Type of registry to convert. */
+		using registry_type = constness_as_t<basic_registry<entity_type>, Entity>;
+
+		/**
+		 * @brief Constructs a converter for a given registry.
+		 * @param source A valid reference to a registry.
+		 */
+		as_group(registry_type& source) ENTT_NOEXCEPT: reg{ source } {}
+
+		/**
+		 * @brief Conversion function from a registry to a group.
+		 * @tparam Get Types of components observed by the group.
+		 * @tparam Exclude Types of components used to filter the group.
+		 * @tparam Owned Types of components owned by the group.
+		 * @return A newly created group.
+		 */
+		template<typename Get, typename Exclude, typename... Owned>
+		operator basic_group<entity_type, owned_t<Owned...>, Get, Exclude>() const {
+			if constexpr (std::is_const_v<registry_type>) {
+				return reg.template group_if_exists<Owned...>(Get{}, Exclude{});
+			}
+			else {
+				return reg.template group<Owned...>(Get{}, Exclude{});
+			}
+		}
+
+	private:
+		registry_type& reg;
+	};
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	as_group(basic_registry<Entity>&) -> as_group<Entity>;
+
+	/**
+	 * @brief Deduction guide.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	as_group(const basic_registry<Entity>&) -> as_group<const Entity>;
+
+	/**
+	 * @brief Helper to create a listener that directly invokes a member function.
+	 * @tparam Member Member function to invoke on a component of the given type.
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @param reg A registry that contains the given entity and its components.
+	 * @param entt Entity from which to get the component.
+	 */
+	template<auto Member, typename Entity = entity>
+	void invoke(basic_registry<Entity>& reg, const Entity entt) {
+		static_assert(std::is_member_function_pointer_v<decltype(Member)>, "Invalid pointer to non-static member function");
+		delegate<void(basic_registry<Entity>&, const Entity)> func;
+		func.template connect<Member>(reg.template get<member_class_t<decltype(Member)>>(entt));
+		func(reg, entt);
+	}
+
+	/**
+	 * @brief Returns the entity associated with a given component.
+	 *
+	 * @warning
+	 * Currently, this function only works correctly with the default pool as it
+	 * makes assumptions about how the components are laid out.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 * @tparam Component Type of component.
+	 * @param reg A registry that contains the given entity and its components.
+	 * @param instance A valid component instance.
+	 * @return The entity associated with the given component.
+	 */
+	template<typename Entity, typename Component>
+	Entity to_entity(const basic_registry<Entity>& reg, const Component& instance) {
+		const auto& storage = reg.template storage<Component>();
+		const typename basic_registry<Entity>::base_type& base = storage;
+		const auto* addr = std::addressof(instance);
+
+		for (auto it = base.rbegin(), last = base.rend(); it < last; it += ENTT_PACKED_PAGE) {
+			if (const auto dist = (addr - std::addressof(storage.get(*it))); dist >= 0 && dist < ENTT_PACKED_PAGE) {
+				return *(it + dist);
+			}
+		}
+
+		return null;
+	}
+
+} // namespace entt
+
+#endif
+
+// #include "entity/observer.hpp"
+#ifndef ENTT_ENTITY_OBSERVER_HPP
+#define ENTT_ENTITY_OBSERVER_HPP
+
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <type_traits>
+#include <utility>
+// #include "../config/config.h"
+
+// #include "../core/type_traits.hpp"
+
+// #include "../signal/delegate.hpp"
+
+// #include "entity.hpp"
+
+// #include "fwd.hpp"
+
+// #include "registry.hpp"
+
+// #include "storage.hpp"
+
+// #include "utility.hpp"
+
+
+namespace entt {
+
+	/*! @brief Grouping matcher. */
+	template<typename...>
+	struct matcher {};
+
+	/**
+	 * @brief Collector.
+	 *
+	 * Primary template isn't defined on purpose. All the specializations give a
+	 * compile-time error, but for a few reasonable cases.
+	 */
+	template<typename...>
+	struct basic_collector;
+
+	/**
+	 * @brief Collector.
+	 *
+	 * A collector contains a set of rules (literally, matchers) to use to track
+	 * entities.<br/>
+	 * Its main purpose is to generate a descriptor that allows an observer to know
+	 * how to connect to a registry.
+	 */
+	template<>
+	struct basic_collector<> {
+		/**
+		 * @brief Adds a grouping matcher to the collector.
+		 * @tparam AllOf Types of components tracked by the matcher.
+		 * @tparam NoneOf Types of components used to filter out entities.
+		 * @return The updated collector.
+		 */
+		template<typename... AllOf, typename... NoneOf>
+		static constexpr auto group(exclude_t<NoneOf...> = {}) ENTT_NOEXCEPT {
+			return basic_collector<matcher<type_list<>, type_list<>, type_list<NoneOf...>, AllOf...>>{};
+		}
+
+		/**
+		 * @brief Adds an observing matcher to the collector.
+		 * @tparam AnyOf Type of component for which changes should be detected.
+		 * @return The updated collector.
+		 */
+		template<typename AnyOf>
+		static constexpr auto update() ENTT_NOEXCEPT {
+			return basic_collector<matcher<type_list<>, type_list<>, AnyOf>>{};
+		}
+	};
+
+	/**
+	 * @brief Collector.
+	 * @copydetails basic_collector<>
+	 * @tparam Reject Untracked types used to filter out entities.
+	 * @tparam Require Untracked types required by the matcher.
+	 * @tparam Rule Specific details of the current matcher.
+	 * @tparam Other Other matchers.
+	 */
+	template<typename... Reject, typename... Require, typename... Rule, typename... Other>
+	struct basic_collector<matcher<type_list<Reject...>, type_list<Require...>, Rule...>, Other...> {
+		/*! @brief Current matcher. */
+		using current_type = matcher<type_list<Reject...>, type_list<Require...>, Rule...>;
+
+		/**
+		 * @brief Adds a grouping matcher to the collector.
+		 * @tparam AllOf Types of components tracked by the matcher.
+		 * @tparam NoneOf Types of components used to filter out entities.
+		 * @return The updated collector.
+		 */
+		template<typename... AllOf, typename... NoneOf>
+		static constexpr auto group(exclude_t<NoneOf...> = {}) ENTT_NOEXCEPT {
+			return basic_collector<matcher<type_list<>, type_list<>, type_list<NoneOf...>, AllOf...>, current_type, Other...>{};
+		}
+
+		/**
+		 * @brief Adds an observing matcher to the collector.
+		 * @tparam AnyOf Type of component for which changes should be detected.
+		 * @return The updated collector.
+		 */
+		template<typename AnyOf>
+		static constexpr auto update() ENTT_NOEXCEPT {
+			return basic_collector<matcher<type_list<>, type_list<>, AnyOf>, current_type, Other...>{};
+		}
+
+		/**
+		 * @brief Updates the filter of the last added matcher.
+		 * @tparam AllOf Types of components required by the matcher.
+		 * @tparam NoneOf Types of components used to filter out entities.
+		 * @return The updated collector.
+		 */
+		template<typename... AllOf, typename... NoneOf>
+		static constexpr auto where(exclude_t<NoneOf...> = {}) ENTT_NOEXCEPT {
+			using extended_type = matcher<type_list<Reject..., NoneOf...>, type_list<Require..., AllOf...>, Rule...>;
+			return basic_collector<extended_type, Other...>{};
+		}
+	};
+
+	/*! @brief Variable template used to ease the definition of collectors. */
+	inline constexpr basic_collector<> collector{};
+
+	/**
+	 * @brief Observer.
+	 *
+	 * An observer returns all the entities and only the entities that fit the
+	 * requirements of at least one matcher. Moreover, it's guaranteed that the
+	 * entity list is tightly packed in memory for fast iterations.<br/>
+	 * In general, observers don't stay true to the order of any set of components.
+	 *
+	 * Observers work mainly with two types of matchers, provided through a
+	 * collector:
+	 *
+	 * * Observing matcher: an observer will return at least all the living entities
+	 *   for which one or more of the given components have been updated and not yet
+	 *   destroyed.
+	 * * Grouping matcher: an observer will return at least all the living entities
+	 *   that would have entered the given group if it existed and that would have
+	 *   not yet left it.
+	 *
+	 * If an entity respects the requirements of multiple matchers, it will be
+	 * returned once and only once by the observer in any case.
+	 *
+	 * Matchers support also filtering by means of a _where_ clause that accepts
+	 * both a list of types and an exclusion list.<br/>
+	 * Whenever a matcher finds that an entity matches its requirements, the
+	 * condition of the filter is verified before to register the entity itself.
+	 * Moreover, a registered entity isn't returned by the observer if the condition
+	 * set by the filter is broken in the meantime.
+	 *
+	 * @b Important
+	 *
+	 * Iterators aren't invalidated if:
+	 *
+	 * * New instances of the given components are created and assigned to entities.
+	 * * The entity currently pointed is modified (as an example, if one of the
+	 *   given components is removed from the entity to which the iterator points).
+	 * * The entity currently pointed is destroyed.
+	 *
+	 * In all the other cases, modifying the pools of the given components in any
+	 * way invalidates all the iterators and using them results in undefined
+	 * behavior.
+	 *
+	 * @warning
+	 * Lifetime of an observer doesn't necessarily have to overcome that of the
+	 * registry to which it is connected. However, the observer must be disconnected
+	 * from the registry before being destroyed to avoid crashes due to dangling
+	 * pointers.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	class basic_observer {
+		using payload_type = std::uint32_t;
+
+		template<typename>
+		struct matcher_handler;
+
+		template<typename... Reject, typename... Require, typename AnyOf>
+		struct matcher_handler<matcher<type_list<Reject...>, type_list<Require...>, AnyOf>> {
+			template<std::size_t Index>
+			static void maybe_valid_if(basic_observer& obs, basic_registry<Entity>& reg, const Entity entt) {
+				if (reg.template all_of<Require...>(entt) && !reg.template any_of<Reject...>(entt)) {
+					if (!obs.storage.contains(entt)) {
+						obs.storage.emplace(entt);
+					}
+
+					obs.storage.get(entt) |= (1 << Index);
+				}
+			}
+
+			template<std::size_t Index>
+			static void discard_if(basic_observer& obs, basic_registry<Entity>&, const Entity entt) {
+				if (obs.storage.contains(entt) && !(obs.storage.get(entt) &= (~(1 << Index)))) {
+					obs.storage.erase(entt);
+				}
+			}
+
+			template<std::size_t Index>
+			static void connect(basic_observer& obs, basic_registry<Entity>& reg) {
+				(reg.template on_destroy<Require>().template connect<&discard_if<Index>>(obs), ...);
+				(reg.template on_construct<Reject>().template connect<&discard_if<Index>>(obs), ...);
+				reg.template on_update<AnyOf>().template connect<&maybe_valid_if<Index>>(obs);
+				reg.template on_destroy<AnyOf>().template connect<&discard_if<Index>>(obs);
+			}
+
+			static void disconnect(basic_observer& obs, basic_registry<Entity>& reg) {
+				(reg.template on_destroy<Require>().disconnect(obs), ...);
+				(reg.template on_construct<Reject>().disconnect(obs), ...);
+				reg.template on_update<AnyOf>().disconnect(obs);
+				reg.template on_destroy<AnyOf>().disconnect(obs);
+			}
+		};
+
+		template<typename... Reject, typename... Require, typename... NoneOf, typename... AllOf>
+		struct matcher_handler<matcher<type_list<Reject...>, type_list<Require...>, type_list<NoneOf...>, AllOf...>> {
+			template<std::size_t Index, typename... Ignore>
+			static void maybe_valid_if(basic_observer& obs, basic_registry<Entity>& reg, const Entity entt) {
+				auto condition = [&reg, entt]() {
+					if constexpr (sizeof...(Ignore) == 0) {
+						return reg.template all_of<AllOf..., Require...>(entt) && !reg.template any_of<NoneOf..., Reject...>(entt);
+					}
+					else {
+						return reg.template all_of<AllOf..., Require...>(entt) && ((std::is_same_v<Ignore..., NoneOf> || !reg.template any_of<NoneOf>(entt)) && ...) && !reg.template any_of<Reject...>(entt);
+					}
+				};
+
+				if (condition()) {
+					if (!obs.storage.contains(entt)) {
+						obs.storage.emplace(entt);
+					}
+
+					obs.storage.get(entt) |= (1 << Index);
+				}
+			}
+
+			template<std::size_t Index>
+			static void discard_if(basic_observer& obs, basic_registry<Entity>&, const Entity entt) {
+				if (obs.storage.contains(entt) && !(obs.storage.get(entt) &= (~(1 << Index)))) {
+					obs.storage.erase(entt);
+				}
+			}
+
+			template<std::size_t Index>
+			static void connect(basic_observer& obs, basic_registry<Entity>& reg) {
+				(reg.template on_destroy<Require>().template connect<&discard_if<Index>>(obs), ...);
+				(reg.template on_construct<Reject>().template connect<&discard_if<Index>>(obs), ...);
+				(reg.template on_construct<AllOf>().template connect<&maybe_valid_if<Index>>(obs), ...);
+				(reg.template on_destroy<NoneOf>().template connect<&maybe_valid_if<Index, NoneOf>>(obs), ...);
+				(reg.template on_destroy<AllOf>().template connect<&discard_if<Index>>(obs), ...);
+				(reg.template on_construct<NoneOf>().template connect<&discard_if<Index>>(obs), ...);
+			}
+
+			static void disconnect(basic_observer& obs, basic_registry<Entity>& reg) {
+				(reg.template on_destroy<Require>().disconnect(obs), ...);
+				(reg.template on_construct<Reject>().disconnect(obs), ...);
+				(reg.template on_construct<AllOf>().disconnect(obs), ...);
+				(reg.template on_destroy<NoneOf>().disconnect(obs), ...);
+				(reg.template on_destroy<AllOf>().disconnect(obs), ...);
+				(reg.template on_construct<NoneOf>().disconnect(obs), ...);
+			}
+		};
+
+		template<typename... Matcher>
+		static void disconnect(basic_registry<Entity>& reg, basic_observer& obs) {
+			(matcher_handler<Matcher>::disconnect(obs, reg), ...);
+		}
+
+		template<typename... Matcher, std::size_t... Index>
+		void connect(basic_registry<Entity>& reg, std::index_sequence<Index...>) {
+			static_assert(sizeof...(Matcher) < std::numeric_limits<payload_type>::digits, "Too many matchers");
+			(matcher_handler<Matcher>::template connect<Index>(*this, reg), ...);
+			release.template connect<&basic_observer::disconnect<Matcher...>>(reg);
+		}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Random access iterator type. */
+		using iterator = typename basic_sparse_set<Entity>::iterator;
+
+		/*! @brief Default constructor. */
+		basic_observer()
+			: release{},
+			storage{} {}
+
+		/*! @brief Default copy constructor, deleted on purpose. */
+		basic_observer(const basic_observer&) = delete;
+		/*! @brief Default move constructor, deleted on purpose. */
+		basic_observer(basic_observer&&) = delete;
+
+		/**
+		 * @brief Creates an observer and connects it to a given registry.
+		 * @tparam Matcher Types of matchers to use to initialize the observer.
+		 * @param reg A valid reference to a registry.
+		 */
+		template<typename... Matcher>
+		basic_observer(basic_registry<entity_type>& reg, basic_collector<Matcher...>)
+			: basic_observer{} {
+			connect<Matcher...>(reg, std::index_sequence_for<Matcher...>{});
+		}
+
+		/*! @brief Default destructor. */
+		~basic_observer() = default;
+
+		/**
+		 * @brief Default copy assignment operator, deleted on purpose.
+		 * @return This observer.
+		 */
+		basic_observer& operator=(const basic_observer&) = delete;
+
+		/**
+		 * @brief Default move assignment operator, deleted on purpose.
+		 * @return This observer.
+		 */
+		basic_observer& operator=(basic_observer&&) = delete;
+
+		/**
+		 * @brief Connects an observer to a given registry.
+		 * @tparam Matcher Types of matchers to use to initialize the observer.
+		 * @param reg A valid reference to a registry.
+		 */
+		template<typename... Matcher>
+		void connect(basic_registry<entity_type>& reg, basic_collector<Matcher...>) {
+			disconnect();
+			connect<Matcher...>(reg, std::index_sequence_for<Matcher...>{});
+			storage.clear();
+		}
+
+		/*! @brief Disconnects an observer from the registry it keeps track of. */
+		void disconnect() {
+			if (release) {
+				release(*this);
+				release.reset();
+			}
+		}
+
+		/**
+		 * @brief Returns the number of elements in an observer.
+		 * @return Number of elements.
+		 */
+		[[nodiscard]] size_type size() const ENTT_NOEXCEPT {
+			return storage.size();
+		}
+
+		/**
+		 * @brief Checks whether an observer is empty.
+		 * @return True if the observer is empty, false otherwise.
+		 */
+		[[nodiscard]] bool empty() const ENTT_NOEXCEPT {
+			return storage.empty();
+		}
+
+		/**
+		 * @brief Direct access to the list of entities of the observer.
+		 *
+		 * The returned pointer is such that range `[data(), data() + size())` is
+		 * always a valid range, even if the container is empty.
+		 *
+		 * @note
+		 * Entities are in the reverse order as returned by the `begin`/`end`
+		 * iterators.
+		 *
+		 * @return A pointer to the array of entities.
+		 */
+		[[nodiscard]] const entity_type* data() const ENTT_NOEXCEPT {
+			return storage.data();
+		}
+
+		/**
+		 * @brief Returns an iterator to the first entity of the observer.
+		 *
+		 * The returned iterator points to the first entity of the observer. If the
+		 * container is empty, the returned iterator will be equal to `end()`.
+		 *
+		 * @return An iterator to the first entity of the observer.
+		 */
+		[[nodiscard]] iterator begin() const ENTT_NOEXCEPT {
+			return storage.basic_sparse_set<entity_type>::begin();
+		}
+
+		/**
+		 * @brief Returns an iterator that is past the last entity of the observer.
+		 *
+		 * The returned iterator points to the entity following the last entity of
+		 * the observer. Attempting to dereference the returned iterator results in
+		 * undefined behavior.
+		 *
+		 * @return An iterator to the entity following the last entity of the
+		 * observer.
+		 */
+		[[nodiscard]] iterator end() const ENTT_NOEXCEPT {
+			return storage.basic_sparse_set<entity_type>::end();
+		}
+
+		/*! @brief Clears the underlying container. */
+		void clear() ENTT_NOEXCEPT {
+			storage.clear();
+		}
+
+		/**
+		 * @brief Iterates entities and applies the given function object to them.
+		 *
+		 * The function object is invoked for each entity.<br/>
+		 * The signature of the function must be equivalent to the following form:
+		 *
+		 * @code{.cpp}
+		 * void(const entity_type);
+		 * @endcode
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void each(Func func) const {
+			for (const auto entity : *this) {
+				func(entity);
+			}
+		}
+
+		/**
+		 * @brief Iterates entities and applies the given function object to them,
+		 * then clears the observer.
+		 *
+		 * @sa each
+		 *
+		 * @tparam Func Type of the function object to invoke.
+		 * @param func A valid function object.
+		 */
+		template<typename Func>
+		void each(Func func) {
+			std::as_const(*this).each(std::move(func));
+			clear();
+		}
+
+	private:
+		delegate<void(basic_observer&)> release;
+		basic_storage<entity_type, payload_type> storage;
+	};
+
+} // namespace entt
+
+#endif
+
+// #include "entity/organizer.hpp"
+#ifndef ENTT_ENTITY_ORGANIZER_HPP
+#define ENTT_ENTITY_ORGANIZER_HPP
+
+#include <algorithm>
+#include <cstddef>
+#include <type_traits>
+#include <utility>
+#include <vector>
+// #include "../container/dense_map.hpp"
+
+// #include "../core/type_info.hpp"
+
+// #include "../core/type_traits.hpp"
+
+// #include "../core/utility.hpp"
+
+// #include "fwd.hpp"
+
+// #include "helper.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @cond TURN_OFF_DOXYGEN
+	 * Internal details not to be documented.
+	 */
+
+	namespace internal {
+
+		template<typename>
+		struct is_view : std::false_type {};
+
+		template<typename Entity, typename... Component, typename... Exclude>
+		struct is_view<basic_view<Entity, get_t<Component...>, exclude_t<Exclude...>>> : std::true_type {};
+
+		template<typename Type>
+		inline constexpr bool is_view_v = is_view<Type>::value;
+
+		template<typename Type, typename Override>
+		struct unpack_type {
+			using ro = std::conditional_t<
+				type_list_contains_v<Override, std::add_const_t<Type>> || (std::is_const_v<Type> && !type_list_contains_v<Override, std::remove_const_t<Type>>),
+				type_list<std::remove_const_t<Type>>,
+				type_list<>>;
+
+			using rw = std::conditional_t<
+				type_list_contains_v<Override, std::remove_const_t<Type>> || (!std::is_const_v<Type> && !type_list_contains_v<Override, std::add_const_t<Type>>),
+				type_list<Type>,
+				type_list<>>;
+		};
+
+		template<typename Entity, typename... Override>
+		struct unpack_type<basic_registry<Entity>, type_list<Override...>> {
+			using ro = type_list<>;
+			using rw = type_list<>;
+		};
+
+		template<typename Entity, typename... Override>
+		struct unpack_type<const basic_registry<Entity>, type_list<Override...>>
+			: unpack_type<basic_registry<Entity>, type_list<Override...>> {};
+
+		template<typename Entity, typename... Component, typename... Exclude, typename... Override>
+		struct unpack_type<basic_view<Entity, get_t<Component...>, exclude_t<Exclude...>>, type_list<Override...>> {
+			using ro = type_list_cat_t<type_list<Exclude...>, typename unpack_type<Component, type_list<Override...>>::ro...>;
+			using rw = type_list_cat_t<typename unpack_type<Component, type_list<Override...>>::rw...>;
+		};
+
+		template<typename Entity, typename... Component, typename... Exclude, typename... Override>
+		struct unpack_type<const basic_view<Entity, get_t<Component...>, exclude_t<Exclude...>>, type_list<Override...>>
+			: unpack_type<basic_view<Entity, get_t<Component...>, exclude_t<Exclude...>>, type_list<Override...>> {};
+
+		template<typename, typename>
+		struct resource_traits;
+
+		template<typename... Args, typename... Req>
+		struct resource_traits<type_list<Args...>, type_list<Req...>> {
+			using args = type_list<std::remove_const_t<Args>...>;
+			using ro = type_list_cat_t<typename unpack_type<Args, type_list<Req...>>::ro..., typename unpack_type<Req, type_list<>>::ro...>;
+			using rw = type_list_cat_t<typename unpack_type<Args, type_list<Req...>>::rw..., typename unpack_type<Req, type_list<>>::rw...>;
+		};
+
+		template<typename... Req, typename Ret, typename... Args>
+		resource_traits<type_list<std::remove_reference_t<Args>...>, type_list<Req...>> free_function_to_resource_traits(Ret(*)(Args...));
+
+		template<typename... Req, typename Ret, typename Type, typename... Args>
+		resource_traits<type_list<std::remove_reference_t<Args>...>, type_list<Req...>> constrained_function_to_resource_traits(Ret(*)(Type&, Args...));
+
+		template<typename... Req, typename Ret, typename Class, typename... Args>
+		resource_traits<type_list<std::remove_reference_t<Args>...>, type_list<Req...>> constrained_function_to_resource_traits(Ret(Class::*)(Args...));
+
+		template<typename... Req, typename Ret, typename Class, typename... Args>
+		resource_traits<type_list<std::remove_reference_t<Args>...>, type_list<Req...>> constrained_function_to_resource_traits(Ret(Class::*)(Args...) const);
+
+	} // namespace internal
+
+	/**
+	 * Internal details not to be documented.
+	 * @endcond
+	 */
+
+	 /**
+	  * @brief Utility class for creating a static task graph.
+	  *
+	  * This class offers minimal support (but sufficient in many cases) for creating
+	  * an execution graph from functions and their requirements on resources.<br/>
+	  * Note that the resulting tasks aren't executed in any case. This isn't the
+	  * goal of the tool. Instead, they are returned to the user in the form of a
+	  * graph that allows for safe execution.
+	  *
+	  * @tparam Entity A valid entity type (see entt_traits for more details).
+	  */
+	template<typename Entity>
+	class basic_organizer final {
+		using callback_type = void(const void*, basic_registry<Entity>&);
+		using prepare_type = void(basic_registry<Entity>&);
+
+		struct vertex_data final {
+			std::size_t ro_count{};
+			std::size_t rw_count{};
+			const char* name{};
+			const void* payload{};
+			callback_type* callback{};
+			prepare_type* prepare{};
+			const type_info* info{};
+		};
+
+		template<typename Type>
+		[[nodiscard]] static decltype(auto) extract(basic_registry<Entity>& reg) {
+			if constexpr (std::is_same_v<Type, basic_registry<Entity>>) {
+				return reg;
+			}
+			else if constexpr (internal::is_view_v<Type>) {
+				return as_view{ reg };
+			}
+			else {
+				return reg.ctx().template emplace<std::remove_reference_t<Type>>();
+			}
+		}
+
+		template<typename... Args>
+		[[nodiscard]] static auto to_args(basic_registry<Entity>& reg, type_list<Args...>) {
+			return std::tuple<decltype(extract<Args>(reg))...>(extract<Args>(reg)...);
+		}
+
+		template<typename... Type>
+		static std::size_t fill_dependencies(type_list<Type...>, [[maybe_unused]] const type_info** buffer, [[maybe_unused]] const std::size_t count) {
+			if constexpr (sizeof...(Type) == 0u) {
+				return {};
+			}
+			else {
+				const type_info* info[sizeof...(Type)]{ &type_id<Type>()... };
+				const auto length = (std::min)(count, sizeof...(Type));
+				std::copy_n(info, length, buffer);
+				return length;
+			}
+		}
+
+		template<typename... RO, typename... RW>
+		void track_dependencies(std::size_t index, const bool requires_registry, type_list<RO...>, type_list<RW...>) {
+			dependencies[type_hash<basic_registry<Entity>>::value()].emplace_back(index, requires_registry || (sizeof...(RO) + sizeof...(RW) == 0u));
+			(dependencies[type_hash<RO>::value()].emplace_back(index, false), ...);
+			(dependencies[type_hash<RW>::value()].emplace_back(index, true), ...);
+		}
+
+		[[nodiscard]] std::vector<bool> adjacency_matrix() {
+			const auto length = vertices.size();
+			std::vector<bool> edges(length * length, false);
+
+			// creates the adjacency matrix
+			for (const auto& deps : dependencies) {
+				const auto last = deps.second.cend();
+				auto it = deps.second.cbegin();
+
+				while (it != last) {
+					if (it->second) {
+						// rw item
+						if (auto curr = it++; it != last) {
+							if (it->second) {
+								edges[curr->first * length + it->first] = true;
+							}
+							else {
+								if (const auto next = std::find_if(it, last, [](const auto& elem) { return elem.second; }); next != last) {
+									for (; it != next; ++it) {
+										edges[curr->first * length + it->first] = true;
+										edges[it->first * length + next->first] = true;
+									}
+								}
+								else {
+									for (; it != next; ++it) {
+										edges[curr->first * length + it->first] = true;
+									}
+								}
+							}
+						}
+					}
+					else {
+						// ro item, possibly only on first iteration
+						if (const auto next = std::find_if(it, last, [](const auto& elem) { return elem.second; }); next != last) {
+							for (; it != next; ++it) {
+								edges[it->first * length + next->first] = true;
+							}
+						}
+						else {
+							it = last;
+						}
+					}
+				}
+			}
+
+			// computes the transitive closure
+			for (std::size_t vk{}; vk < length; ++vk) {
+				for (std::size_t vi{}; vi < length; ++vi) {
+					for (std::size_t vj{}; vj < length; ++vj) {
+						edges[vi * length + vj] = edges[vi * length + vj] || (edges[vi * length + vk] && edges[vk * length + vj]);
+					}
+				}
+			}
+
+			// applies the transitive reduction
+			for (std::size_t vert{}; vert < length; ++vert) {
+				edges[vert * length + vert] = false;
+			}
+
+			for (std::size_t vj{}; vj < length; ++vj) {
+				for (std::size_t vi{}; vi < length; ++vi) {
+					if (edges[vi * length + vj]) {
+						for (std::size_t vk{}; vk < length; ++vk) {
+							if (edges[vj * length + vk]) {
+								edges[vi * length + vk] = false;
+							}
+						}
+					}
+				}
+			}
+
+			return edges;
+		}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+		/*! @brief Unsigned integer type. */
+		using size_type = std::size_t;
+		/*! @brief Raw task function type. */
+		using function_type = callback_type;
+
+		/*! @brief Vertex type of a task graph defined as an adjacency list. */
+		struct vertex {
+			/**
+			 * @brief Constructs a vertex of the task graph.
+			 * @param vtype True if the vertex is a top-level one, false otherwise.
+			 * @param data The data associated with the vertex.
+			 * @param edges The indices of the children in the adjacency list.
+			 */
+			vertex(const bool vtype, vertex_data data, std::vector<std::size_t> edges)
+				: is_top_level{ vtype },
+				node{ std::move(data) },
+				reachable{ std::move(edges) } {}
+
+			/**
+			 * @brief Fills a buffer with the type info objects for the writable
+			 * resources of a vertex.
+			 * @param buffer A buffer pre-allocated by the user.
+			 * @param length The length of the user-supplied buffer.
+			 * @return The number of type info objects written to the buffer.
+			 */
+			size_type ro_dependency(const type_info** buffer, const std::size_t length) const ENTT_NOEXCEPT {
+				return node.dependency(false, buffer, length);
+			}
+
+			/**
+			 * @brief Fills a buffer with the type info objects for the read-only
+			 * resources of a vertex.
+			 * @param buffer A buffer pre-allocated by the user.
+			 * @param length The length of the user-supplied buffer.
+			 * @return The number of type info objects written to the buffer.
+			 */
+			size_type rw_dependency(const type_info** buffer, const std::size_t length) const ENTT_NOEXCEPT {
+				return node.dependency(true, buffer, length);
+			}
+
+			/**
+			 * @brief Returns the number of read-only resources of a vertex.
+			 * @return The number of read-only resources of the vertex.
+			 */
+			size_type ro_count() const ENTT_NOEXCEPT {
+				return node.ro_count;
+			}
+
+			/**
+			 * @brief Returns the number of writable resources of a vertex.
+			 * @return The number of writable resources of the vertex.
+			 */
+			size_type rw_count() const ENTT_NOEXCEPT {
+				return node.rw_count;
+			}
+
+			/**
+			 * @brief Checks if a vertex is also a top-level one.
+			 * @return True if the vertex is a top-level one, false otherwise.
+			 */
+			bool top_level() const ENTT_NOEXCEPT {
+				return is_top_level;
+			}
+
+			/**
+			 * @brief Returns a type info object associated with a vertex.
+			 * @return A properly initialized type info object.
+			 */
+			const type_info& info() const ENTT_NOEXCEPT {
+				return *node.info;
+			}
+
+			/**
+			 * @brief Returns a user defined name associated with a vertex, if any.
+			 * @return The user defined name associated with the vertex, if any.
+			 */
+			const char* name() const ENTT_NOEXCEPT {
+				return node.name;
+			}
+
+			/**
+			 * @brief Returns the function associated with a vertex.
+			 * @return The function associated with the vertex.
+			 */
+			function_type* callback() const ENTT_NOEXCEPT {
+				return node.callback;
+			}
+
+			/**
+			 * @brief Returns the payload associated with a vertex, if any.
+			 * @return The payload associated with the vertex, if any.
+			 */
+			const void* data() const ENTT_NOEXCEPT {
+				return node.payload;
+			}
+
+			/**
+			 * @brief Returns the list of nodes reachable from a given vertex.
+			 * @return The list of nodes reachable from the vertex.
+			 */
+			const std::vector<std::size_t>& children() const ENTT_NOEXCEPT {
+				return reachable;
+			}
+
+			/**
+			 * @brief Prepares a registry and assures that all required resources
+			 * are properly instantiated before using them.
+			 * @param reg A valid registry.
+			 */
+			void prepare(basic_registry<entity_type>& reg) const {
+				node.prepare ? node.prepare(reg) : void();
+			}
+
+		private:
+			bool is_top_level;
+			vertex_data node;
+			std::vector<std::size_t> reachable;
+		};
+
+		/**
+		 * @brief Adds a free function to the task list.
+		 * @tparam Candidate Function to add to the task list.
+		 * @tparam Req Additional requirements and/or override resource access mode.
+		 * @param name Optional name to associate with the task.
+		 */
+		template<auto Candidate, typename... Req>
+		void emplace(const char* name = nullptr) {
+			using resource_type = decltype(internal::free_function_to_resource_traits<Req...>(Candidate));
+			constexpr auto requires_registry = type_list_contains_v<typename resource_type::args, basic_registry<entity_type>>;
+
+			callback_type* callback = +[](const void*, basic_registry<entity_type>& reg) {
+				std::apply(Candidate, to_args(reg, typename resource_type::args{}));
+			};
+
+			vertex_data vdata{
+				resource_type::ro::size,
+				resource_type::rw::size,
+				name,
+				nullptr,
+				callback,
+				+[](const bool rw, const type_info** buffer, const std::size_t length) { return rw ? fill_dependencies(typename resource_type::rw{}, buffer, length) : fill_dependencies(typename resource_type::ro{}, buffer, length); },
+				+[](basic_registry<entity_type>& reg) { void(to_args(reg, typename resource_type::args{})); },
+				&type_id<std::integral_constant<decltype(Candidate), Candidate>>() };
+
+			track_dependencies(vertices.size(), requires_registry, typename resource_type::ro{}, typename resource_type::rw{});
+			vertices.push_back(std::move(vdata));
+		}
+
+		/**
+		 * @brief Adds a free function with payload or a member function with an
+		 * instance to the task list.
+		 * @tparam Candidate Function or member to add to the task list.
+		 * @tparam Req Additional requirements and/or override resource access mode.
+		 * @tparam Type Type of class or type of payload.
+		 * @param value_or_instance A valid object that fits the purpose.
+		 * @param name Optional name to associate with the task.
+		 */
+		template<auto Candidate, typename... Req, typename Type>
+		void emplace(Type& value_or_instance, const char* name = nullptr) {
+			using resource_type = decltype(internal::constrained_function_to_resource_traits<Req...>(Candidate));
+			constexpr auto requires_registry = type_list_contains_v<typename resource_type::args, basic_registry<entity_type>>;
+
+			callback_type* callback = +[](const void* payload, basic_registry<entity_type>& reg) {
+				Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+				std::apply(Candidate, std::tuple_cat(std::forward_as_tuple(*curr), to_args(reg, typename resource_type::args{})));
+			};
+
+			vertex_data vdata{
+				resource_type::ro::size,
+				resource_type::rw::size,
+				name,
+				&value_or_instance,
+				callback,
+				+[](const bool rw, const type_info** buffer, const std::size_t length) { return rw ? fill_dependencies(typename resource_type::rw{}, buffer, length) : fill_dependencies(typename resource_type::ro{}, buffer, length); },
+				+[](basic_registry<entity_type>& reg) { void(to_args(reg, typename resource_type::args{})); },
+				&type_id<std::integral_constant<decltype(Candidate), Candidate>>() };
+
+			track_dependencies(vertices.size(), requires_registry, typename resource_type::ro{}, typename resource_type::rw{});
+			vertices.push_back(std::move(vdata));
+		}
+
+		/**
+		 * @brief Adds an user defined function with optional payload to the task
+		 * list.
+		 * @tparam Req Additional requirements and/or override resource access mode.
+		 * @param func Function to add to the task list.
+		 * @param payload User defined arbitrary data.
+		 * @param name Optional name to associate with the task.
+		 */
+		template<typename... Req>
+		void emplace(function_type* func, const void* payload = nullptr, const char* name = nullptr) {
+			using resource_type = internal::resource_traits<type_list<>, type_list<Req...>>;
+			track_dependencies(vertices.size(), true, typename resource_type::ro{}, typename resource_type::rw{});
+
+			vertex_data vdata{
+				resource_type::ro::size,
+				resource_type::rw::size,
+				name,
+				payload,
+				func,
+				+[](const bool rw, const type_info** buffer, const std::size_t length) { return rw ? fill_dependencies(typename resource_type::rw{}, buffer, length) : fill_dependencies(typename resource_type::ro{}, buffer, length); },
+				nullptr,
+				&type_id<void>() };
+
+			vertices.push_back(std::move(vdata));
+		}
+
+		/**
+		 * @brief Generates a task graph for the current content.
+		 * @return The adjacency list of the task graph.
+		 */
+		std::vector<vertex> graph() {
+			const auto edges = adjacency_matrix();
+
+			// creates the adjacency list
+			std::vector<vertex> adjacency_list{};
+			adjacency_list.reserve(vertices.size());
+
+			for (std::size_t col{}, length = vertices.size(); col < length; ++col) {
+				std::vector<std::size_t> reachable{};
+				const auto row = col * length;
+				bool is_top_level = true;
+
+				for (std::size_t next{}; next < length; ++next) {
+					if (edges[row + next]) {
+						reachable.push_back(next);
+					}
+				}
+
+				for (std::size_t next{}; next < length && is_top_level; ++next) {
+					is_top_level = !edges[next * length + col];
+				}
+
+				adjacency_list.emplace_back(is_top_level, vertices[col], std::move(reachable));
+			}
+
+			return adjacency_list;
+		}
+
+		/*! @brief Erases all elements from a container. */
+		void clear() {
+			dependencies.clear();
+			vertices.clear();
+		}
+
+	private:
+		dense_map<id_type, std::vector<std::pair<std::size_t, bool>>, identity> dependencies;
+		std::vector<vertex_data> vertices;
+	};
+
+} // namespace entt
+
+#endif
+
+
+// #include "entity/snapshot.hpp"
+#ifndef ENTT_ENTITY_SNAPSHOT_HPP
+#define ENTT_ENTITY_SNAPSHOT_HPP
+
+#include <array>
+#include <cstddef>
+#include <iterator>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
+// #include "../config/config.h"
+
+// #include "../container/dense_map.hpp"
+
+// #include "../core/type_traits.hpp"
+
+// #include "component.hpp"
+
+// #include "entity.hpp"
+
+// #include "fwd.hpp"
+
+// #include "registry.hpp"
+
+
+namespace entt {
+
+	/**
+	 * @brief Utility class to create snapshots from a registry.
+	 *
+	 * A _snapshot_ can be either a dump of the entire registry or a narrower
+	 * selection of components of interest.<br/>
+	 * This type can be used in both cases if provided with a correctly configured
+	 * output archive.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	class basic_snapshot {
+		using entity_traits = entt_traits<Entity>;
+
+		template<typename Component, typename Archive, typename It>
+		void get(Archive& archive, std::size_t sz, It first, It last) const {
+			const auto view = reg->template view<std::add_const_t<Component>>();
+			archive(typename entity_traits::entity_type(sz));
+
+			while (first != last) {
+				const auto entt = *(first++);
+
+				if (reg->template all_of<Component>(entt)) {
+					std::apply(archive, std::tuple_cat(std::make_tuple(entt), view.get(entt)));
+				}
+			}
+		}
+
+		template<typename... Component, typename Archive, typename It, std::size_t... Index>
+		void component(Archive& archive, It first, It last, std::index_sequence<Index...>) const {
+			std::array<std::size_t, sizeof...(Index)> size{};
+			auto begin = first;
+
+			while (begin != last) {
+				const auto entt = *(begin++);
+				((reg->template all_of<Component>(entt) ? ++size[Index] : 0u), ...);
+			}
+
+			(get<Component>(archive, size[Index], first, last), ...);
+		}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+
+		/**
+		 * @brief Constructs an instance that is bound to a given registry.
+		 * @param source A valid reference to a registry.
+		 */
+		basic_snapshot(const basic_registry<entity_type>& source) ENTT_NOEXCEPT
+			: reg{ &source } {}
+
+		/*! @brief Default move constructor. */
+		basic_snapshot(basic_snapshot&&) ENTT_NOEXCEPT = default;
+
+		/*! @brief Default move assignment operator. @return This snapshot. */
+		basic_snapshot& operator=(basic_snapshot&&) ENTT_NOEXCEPT = default;
+
+		/**
+		 * @brief Puts aside all the entities from the underlying registry.
+		 *
+		 * Entities are serialized along with their versions. Destroyed entities are
+		 * taken in consideration as well by this function.
+		 *
+		 * @tparam Archive Type of output archive.
+		 * @param archive A valid reference to an output archive.
+		 * @return An object of this type to continue creating the snapshot.
+		 */
+		template<typename Archive>
+		const basic_snapshot& entities(Archive& archive) const {
+			const auto sz = reg->size();
+
+			archive(typename entity_traits::entity_type(sz + 1u));
+			archive(reg->released());
+
+			for (auto first = reg->data(), last = first + sz; first != last; ++first) {
+				archive(*first);
+			}
+
+			return *this;
+		}
+
+		/**
+		 * @brief Puts aside the given components.
+		 *
+		 * Each instance is serialized together with the entity to which it belongs.
+		 * Entities are serialized along with their versions.
+		 *
+		 * @tparam Component Types of components to serialize.
+		 * @tparam Archive Type of output archive.
+		 * @param archive A valid reference to an output archive.
+		 * @return An object of this type to continue creating the snapshot.
+		 */
+		template<typename... Component, typename Archive>
+		const basic_snapshot& component(Archive& archive) const {
+			if constexpr (sizeof...(Component) == 1u) {
+				const auto view = reg->template view<const Component...>();
+				(component<Component>(archive, view.rbegin(), view.rend()), ...);
+				return *this;
+			}
+			else {
+				(component<Component>(archive), ...);
+				return *this;
+			}
+		}
+
+		/**
+		 * @brief Puts aside the given components for the entities in a range.
+		 *
+		 * Each instance is serialized together with the entity to which it belongs.
+		 * Entities are serialized along with their versions.
+		 *
+		 * @tparam Component Types of components to serialize.
+		 * @tparam Archive Type of output archive.
+		 * @tparam It Type of input iterator.
+		 * @param archive A valid reference to an output archive.
+		 * @param first An iterator to the first element of the range to serialize.
+		 * @param last An iterator past the last element of the range to serialize.
+		 * @return An object of this type to continue creating the snapshot.
+		 */
+		template<typename... Component, typename Archive, typename It>
+		const basic_snapshot& component(Archive& archive, It first, It last) const {
+			component<Component...>(archive, first, last, std::index_sequence_for<Component...>{});
+			return *this;
+		}
+
+	private:
+		const basic_registry<entity_type>* reg;
+	};
+
+	/**
+	 * @brief Utility class to restore a snapshot as a whole.
+	 *
+	 * A snapshot loader requires that the destination registry be empty and loads
+	 * all the data at once while keeping intact the identifiers that the entities
+	 * originally had.<br/>
+	 * An example of use is the implementation of a save/restore utility.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	class basic_snapshot_loader {
+		using entity_traits = entt_traits<Entity>;
+
+		template<typename Type, typename Archive>
+		void assign(Archive& archive) const {
+			typename entity_traits::entity_type length{};
+			entity_type entt;
+
+			archive(length);
+
+			if constexpr (ignore_as_empty_v<Type>) {
+				while (length--) {
+					archive(entt);
+					const auto entity = reg->valid(entt) ? entt : reg->create(entt);
+					ENTT_ASSERT(entity == entt, "Entity not available for use");
+					reg->template emplace<Type>(entt);
+				}
+			}
+			else {
+				Type instance;
+
+				while (length--) {
+					archive(entt, instance);
+					const auto entity = reg->valid(entt) ? entt : reg->create(entt);
+					ENTT_ASSERT(entity == entt, "Entity not available for use");
+					reg->template emplace<Type>(entt, std::move(instance));
+				}
+			}
+		}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+
+		/**
+		 * @brief Constructs an instance that is bound to a given registry.
+		 * @param source A valid reference to a registry.
+		 */
+		basic_snapshot_loader(basic_registry<entity_type>& source) ENTT_NOEXCEPT
+			: reg{ &source } {
+			// restoring a snapshot as a whole requires a clean registry
+			ENTT_ASSERT(reg->empty(), "Registry must be empty");
+		}
+
+		/*! @brief Default move constructor. */
+		basic_snapshot_loader(basic_snapshot_loader&&) ENTT_NOEXCEPT = default;
+
+		/*! @brief Default move assignment operator. @return This loader. */
+		basic_snapshot_loader& operator=(basic_snapshot_loader&&) ENTT_NOEXCEPT = default;
+
+		/**
+		 * @brief Restores entities that were in use during serialization.
+		 *
+		 * This function restores the entities that were in use during serialization
+		 * and gives them the versions they originally had.
+		 *
+		 * @tparam Archive Type of input archive.
+		 * @param archive A valid reference to an input archive.
+		 * @return A valid loader to continue restoring data.
+		 */
+		template<typename Archive>
+		const basic_snapshot_loader& entities(Archive& archive) const {
+			typename entity_traits::entity_type length{};
+
+			archive(length);
+			std::vector<entity_type> all(length);
+
+			for (std::size_t pos{}; pos < length; ++pos) {
+				archive(all[pos]);
+			}
+
+			reg->assign(++all.cbegin(), all.cend(), all[0u]);
+
+			return *this;
+		}
+
+		/**
+		 * @brief Restores components and assigns them to the right entities.
+		 *
+		 * The template parameter list must be exactly the same used during
+		 * serialization. In the event that the entity to which the component is
+		 * assigned doesn't exist yet, the loader will take care to create it with
+		 * the version it originally had.
+		 *
+		 * @tparam Component Types of components to restore.
+		 * @tparam Archive Type of input archive.
+		 * @param archive A valid reference to an input archive.
+		 * @return A valid loader to continue restoring data.
+		 */
+		template<typename... Component, typename Archive>
+		const basic_snapshot_loader& component(Archive& archive) const {
+			(assign<Component>(archive), ...);
+			return *this;
+		}
+
+		/**
+		 * @brief Destroys those entities that have no components.
+		 *
+		 * In case all the entities were serialized but only part of the components
+		 * was saved, it could happen that some of the entities have no components
+		 * once restored.<br/>
+		 * This functions helps to identify and destroy those entities.
+		 *
+		 * @return A valid loader to continue restoring data.
+		 */
+		const basic_snapshot_loader& orphans() const {
+			reg->each([this](const auto entt) {
+				if (reg->orphan(entt)) {
+					reg->release(entt);
+				}
+			});
+
+			return *this;
+		}
+
+	private:
+		basic_registry<entity_type>* reg;
+	};
+
+	/**
+	 * @brief Utility class for _continuous loading_.
+	 *
+	 * A _continuous loader_ is designed to load data from a source registry to a
+	 * (possibly) non-empty destination. The loader can accommodate in a registry
+	 * more than one snapshot in a sort of _continuous loading_ that updates the
+	 * destination one step at a time.<br/>
+	 * Identifiers that entities originally had are not transferred to the target.
+	 * Instead, the loader maps remote identifiers to local ones while restoring a
+	 * snapshot.<br/>
+	 * An example of use is the implementation of a client-server applications with
+	 * the requirement of transferring somehow parts of the representation side to
+	 * side.
+	 *
+	 * @tparam Entity A valid entity type (see entt_traits for more details).
+	 */
+	template<typename Entity>
+	class basic_continuous_loader {
+		using entity_traits = entt_traits<Entity>;
+
+		void destroy(Entity entt) {
+			if (const auto it = remloc.find(entt); it == remloc.cend()) {
+				const auto local = reg->create();
+				remloc.emplace(entt, std::make_pair(local, true));
+				reg->destroy(local);
+			}
+		}
+
+		void restore(Entity entt) {
+			const auto it = remloc.find(entt);
+
+			if (it == remloc.cend()) {
+				const auto local = reg->create();
+				remloc.emplace(entt, std::make_pair(local, true));
+			}
+			else {
+				if (!reg->valid(remloc[entt].first)) {
+					remloc[entt].first = reg->create();
+				}
+
+				// set the dirty flag
+				remloc[entt].second = true;
+			}
+		}
+
+		template<typename Container>
+		auto update(int, Container& container) -> decltype(typename Container::mapped_type{}, void()) {
+			// map like container
+			Container other;
+
+			for (auto&& pair : container) {
+				using first_type = std::remove_const_t<typename std::decay_t<decltype(pair)>::first_type>;
+				using second_type = typename std::decay_t<decltype(pair)>::second_type;
+
+				if constexpr (std::is_same_v<first_type, entity_type> && std::is_same_v<second_type, entity_type>) {
+					other.emplace(map(pair.first), map(pair.second));
+				}
+				else if constexpr (std::is_same_v<first_type, entity_type>) {
+					other.emplace(map(pair.first), std::move(pair.second));
+				}
+				else {
+					static_assert(std::is_same_v<second_type, entity_type>, "Neither the key nor the value are of entity type");
+					other.emplace(std::move(pair.first), map(pair.second));
+				}
+			}
+
+			using std::swap;
+			swap(container, other);
+		}
+
+		template<typename Container>
+		auto update(char, Container& container) -> decltype(typename Container::value_type{}, void()) {
+			// vector like container
+			static_assert(std::is_same_v<typename Container::value_type, entity_type>, "Invalid value type");
+
+			for (auto&& entt : container) {
+				entt = map(entt);
+			}
+		}
+
+		template<typename Other, typename Type, typename Member>
+		void update([[maybe_unused]] Other& instance, [[maybe_unused]] Member Type::* member) {
+			if constexpr (!std::is_same_v<Other, Type>) {
+				return;
+			}
+			else if constexpr (std::is_same_v<Member, entity_type>) {
+				instance.*member = map(instance.*member);
+			}
+			else {
+				// maybe a container? let's try...
+				update(0, instance.*member);
+			}
+		}
+
+		template<typename Component>
+		void remove_if_exists() {
+			for (auto&& ref : remloc) {
+				const auto local = ref.second.first;
+
+				if (reg->valid(local)) {
+					reg->template remove<Component>(local);
+				}
+			}
+		}
+
+		template<typename Other, typename Archive, typename... Type, typename... Member>
+		void assign(Archive& archive, [[maybe_unused]] Member Type::* ...member) {
+			typename entity_traits::entity_type length{};
+			entity_type entt;
+
+			archive(length);
+
+			if constexpr (ignore_as_empty_v<Other>) {
+				while (length--) {
+					archive(entt);
+					restore(entt);
+					reg->template emplace_or_replace<Other>(map(entt));
+				}
+			}
+			else {
+				Other instance;
+
+				while (length--) {
+					archive(entt, instance);
+					(update(instance, member), ...);
+					restore(entt);
+					reg->template emplace_or_replace<Other>(map(entt), std::move(instance));
+				}
+			}
+		}
+
+	public:
+		/*! @brief Underlying entity identifier. */
+		using entity_type = Entity;
+
+		/**
+		 * @brief Constructs an instance that is bound to a given registry.
+		 * @param source A valid reference to a registry.
+		 */
+		basic_continuous_loader(basic_registry<entity_type>& source) ENTT_NOEXCEPT
+			: reg{ &source } {}
+
+		/*! @brief Default move constructor. */
+		basic_continuous_loader(basic_continuous_loader&&) = default;
+
+		/*! @brief Default move assignment operator. @return This loader. */
+		basic_continuous_loader& operator=(basic_continuous_loader&&) = default;
+
+		/**
+		 * @brief Restores entities that were in use during serialization.
+		 *
+		 * This function restores the entities that were in use during serialization
+		 * and creates local counterparts for them if required.
+		 *
+		 * @tparam Archive Type of input archive.
+		 * @param archive A valid reference to an input archive.
+		 * @return A non-const reference to this loader.
+		 */
+		template<typename Archive>
+		basic_continuous_loader& entities(Archive& archive) {
+			typename entity_traits::entity_type length{};
+			entity_type entt{};
+
+			archive(length);
+			// discards the head of the list of destroyed entities
+			archive(entt);
+
+			for (std::size_t pos{}, last = length - 1u; pos < last; ++pos) {
+				archive(entt);
+
+				if (const auto entity = entity_traits::to_entity(entt); entity == pos) {
+					restore(entt);
+				}
+				else {
+					destroy(entt);
+				}
+			}
+
+			return *this;
+		}
+
+		/**
+		 * @brief Restores components and assigns them to the right entities.
+		 *
+		 * The template parameter list must be exactly the same used during
+		 * serialization. In the event that the entity to which the component is
+		 * assigned doesn't exist yet, the loader will take care to create a local
+		 * counterpart for it.<br/>
+		 * Members can be either data members of type entity_type or containers of
+		 * entities. In both cases, the loader will visit them and update the
+		 * entities by replacing each one with its local counterpart.
+		 *
+		 * @tparam Component Type of component to restore.
+		 * @tparam Archive Type of input archive.
+		 * @tparam Type Types of components to update with local counterparts.
+		 * @tparam Member Types of members to update with their local counterparts.
+		 * @param archive A valid reference to an input archive.
+		 * @param member Members to update with their local counterparts.
+		 * @return A non-const reference to this loader.
+		 */
+		template<typename... Component, typename Archive, typename... Type, typename... Member>
+		basic_continuous_loader& component(Archive& archive, Member Type::* ...member) {
+			(remove_if_exists<Component>(), ...);
+			(assign<Component>(archive, member...), ...);
+			return *this;
+		}
+
+		/**
+		 * @brief Helps to purge entities that no longer have a conterpart.
+		 *
+		 * Users should invoke this member function after restoring each snapshot,
+		 * unless they know exactly what they are doing.
+		 *
+		 * @return A non-const reference to this loader.
+		 */
+		basic_continuous_loader& shrink() {
+			auto it = remloc.begin();
+
+			while (it != remloc.cend()) {
+				const auto local = it->second.first;
+				bool& dirty = it->second.second;
+
+				if (dirty) {
+					dirty = false;
+					++it;
+				}
+				else {
+					if (reg->valid(local)) {
+						reg->destroy(local);
+					}
+
+					it = remloc.erase(it);
+				}
+			}
+
+			return *this;
+		}
+
+		/**
+		 * @brief Destroys those entities that have no components.
+		 *
+		 * In case all the entities were serialized but only part of the components
+		 * was saved, it could happen that some of the entities have no components
+		 * once restored.<br/>
+		 * This functions helps to identify and destroy those entities.
+		 *
+		 * @return A non-const reference to this loader.
+		 */
+		basic_continuous_loader& orphans() {
+			reg->each([this](const auto entt) {
+				if (reg->orphan(entt)) {
+					reg->release(entt);
+				}
+			});
+
+			return *this;
+		}
+
+		/**
+		 * @brief Tests if a loader knows about a given entity.
+		 * @param entt A valid identifier.
+		 * @return True if `entity` is managed by the loader, false otherwise.
+		 */
+		[[nodiscard]] bool contains(entity_type entt) const ENTT_NOEXCEPT {
+			return (remloc.find(entt) != remloc.cend());
+		}
+
+		/**
+		 * @brief Returns the identifier to which an entity refers.
+		 * @param entt A valid identifier.
+		 * @return The local identifier if any, the null entity otherwise.
+		 */
+		[[nodiscard]] entity_type map(entity_type entt) const ENTT_NOEXCEPT {
+			const auto it = remloc.find(entt);
+			entity_type other = null;
+
+			if (it != remloc.cend()) {
+				other = it->second.first;
+			}
+
+			return other;
+		}
+
+	private:
+		dense_map<entity_type, std::pair<entity_type, bool>> remloc;
+		basic_registry<entity_type>* reg;
+	};
+
+} // namespace entt
+
+#endif

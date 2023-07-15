@@ -1,26 +1,26 @@
 #ifndef LOG_H
 #define LOG_H
 #include <Engine/Core/Config.h>
-namespace GeometricEngine
+#include "String.h"
+enum ELogCategory
 {
+	Error,
+	Warning,
+	Log
+};
+class GEOMETRIC_API LogConsole
+{
+public:
+	static void MsgString(const String&);
+	static void Msg(ELogCategory, const String& );
+};
+static void LOG(const String& Format)
+{
+	LogConsole::MsgString(Format);
+}
 
-	enum class TypeLogConsole
-	{
-		Warning,
-		Error,
-		Fatal,
-		Log
-	};
-	class GEOMETRIC_API LogConsole
-	{
-	public:
-		static void Msg(const CHAR* );
-		static void MsgFormat(const CHAR*, const CHAR*);
-		static void MsgFormatArgs(const CHAR*, ...);
-	};
-
-
-	#define LOG(x)	LogConsole::Msg(x)
-
+static void LOG(ELogCategory Category, const String& Format)
+{
+	LogConsole::Msg(Category, Format);
 }
 #endif // !LOG_H

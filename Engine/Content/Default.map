@@ -1,0 +1,18 @@
+{
+    "Actors": [
+        {
+            "Components": {
+                "Name": "Square",
+                "Transform": {
+                    "Position": "0.000000 0.000000",
+                    "Rotation": 0.0,
+                    "Scale": "1.000000 1.000000"
+                },
+                "SpriteRenderer": {
+                    "Texture": "../../Content/Textures/Engine/Sprites/Square.png",
+                    "Color": "1.000000 1.000000 1.000000 1.000000"
+                }
+            }
+        }
+    ]
+}

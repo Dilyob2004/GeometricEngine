@@ -1,50 +1,45 @@
-#ifndef MATRIX4_H
-#define MATRIX4_H
-#include <Engine/Core/Config.h>
+#pragma once
+#include <Engine/Math/Vector3.h>
 #include <Engine/Math/Vector4.h>
-#include <Engine/Math/Matrix3.h>
-namespace GeometricEngine
+
+
+class FMatrix3;
+class FMatrix4
 {
-    class GEOMETRIC_API Matrix4f
-    {
-    public:
-        Matrix4f();
+public:
+    FMatrix4();
+    FMatrix4(F32 x);
+    FMatrix4(const FMatrix4& x);
+    FMatrix4(const FMatrix3& x);
 
-        Matrix4f(F32 x);
+    FMatrix4(   const Vector4f &column1,
+                const Vector4f &column2,
+                const Vector4f &column3,
+                const Vector4f &column4);
 
-        Matrix4f(const Matrix4f& x);
-        Matrix4f(const Matrix3f& x);
+    FMatrix4(   F32 m00, F32 m01, F32 m02, F32 m03,
+                F32 m10, F32 m11, F32 m12, F32 m13,
+                F32 m20, F32 m21, F32 m22, F32 m23,
+                F32 m30, F32 m31, F32 m32, F32 m33);
 
-        Matrix4f(const Vector4f &column1,
-                 const Vector4f &column2,
-                 const Vector4f &column3,
-                 const Vector4f &column4);
+    ~FMatrix4();
+    Vector4f& operator[](const S32& i);
+    const Vector4f& operator[](S32 i) const;
 
-        Matrix4f(F32 m00, F32 m01, F32 m02, F32 m03,
-                 F32 m10, F32 m11, F32 m12, F32 m13,
-                 F32 m20, F32 m21, F32 m22, F32 m23,
-                 F32 m30, F32 m31, F32 m32, F32 m33);
+	FMatrix4& operator=(FMatrix4 const& m);
 
-        ~Matrix4f();
-        Vector4f& operator[](const S32& i);
-        const Vector4f& operator[](S32 i) const;
+    static const FMatrix4 Zero;
+    static const FMatrix4 Identity;
 
-		Matrix4f& operator=(Matrix4f const& m);
+private:
+    Vector4f Column[4];
+};
+bool operator == (const FMatrix4& m1, const FMatrix4& m2);
 
-        static const Matrix4f Zero;
-        static const Matrix4f Identity;
+bool operator != (const FMatrix4& m1, const FMatrix4& m2);
 
-    private:
-        Vector4f Column[4];
-    };
+FMatrix4 operator * (const FMatrix4& m1, const F32 &x);
+FMatrix4 operator * (const F32 &x, const FMatrix4& m1);
+FMatrix4 operator * (const FMatrix4& m1, const FMatrix4 &m2);
 
-    GEOMETRIC_API bool operator == (const Matrix4f& m1, const Matrix4f& m2);
-    GEOMETRIC_API bool operator != (const Matrix4f& m1, const Matrix4f& m2);
-	GEOMETRIC_API Matrix4f operator*(const Matrix4f& m1, const F32 &x);
-	GEOMETRIC_API Matrix4f operator*(const F32 &x, const Matrix4f& m1);
-	GEOMETRIC_API Matrix4f operator*(const Matrix4f& m1, const Matrix4f &m2);
-
-
-}
-
-#endif // MATRIX4_H
+Vector3f operator * (const FMatrix4& Matrix, const Vector3f& Vector);

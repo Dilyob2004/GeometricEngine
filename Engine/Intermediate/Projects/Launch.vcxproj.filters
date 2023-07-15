@@ -3,4 +3,27 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\Launch\Launch.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{e764331c-9093-4950-9356-5fe5bab935eb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\Content\Logo\Ico\32x32.ico">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="..\..\Content\Logo\Ico\256x256.ico">
+      <Filter>Resources</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

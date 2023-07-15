@@ -5,37 +5,36 @@
 #include <Engine/RHI/DynamicRHI.h>
 #include <dxgi.h>
 #include <d3d11_4.h>
-namespace GeometricEngine
+
+class DX11DynamicRHI;
+class DX11Viewport : public RHIViewport
 {
-	class DX11DynamicRHI;
-	class DX11Viewport : public RHIViewport
-	{
-	public:
-		DX11Viewport();
-		DX11Viewport(const DX11DynamicRHI*, const RHIViewportDefinition&);
-		~DX11Viewport();
+public:
+	DX11Viewport();
+	DX11Viewport(const DX11DynamicRHI*, const RHIViewportDefinition&);
+	~DX11Viewport();
 
-		void Resize(const DX11DynamicRHI*, U32, U32, bool);
-		void Present();
+	void Resize(const DX11DynamicRHI*, U32, U32, bool);
+	void Present();
 
-		void WaitForNextFrame();
+	void WaitForNextFrame();
 
-		RHITexture2D* GetBackBufferView() const { return BackBuffer; }
-		IDXGISwapChain* GetDXGISwapChain() const { return DXGISwapChain; }
+	RHIRenderTarget* GetBackBufferView() const { return BackBuffer; }
+	IDXGISwapChain* GetDXGISwapChain() const { return DXGISwapChain; }
 
 
-		RHIViewportDefinition GetDefinition() const { return Definition; }
-	private:
-		ID3D11Device5* DXDevice5;
-		ID3D11DeviceContext4* DXDeviceContext4;
+	RHIViewportDefinition GetDefinition() const { return Definition; }
+private:
+	ID3D11Device5* DXDevice5;
+	ID3D11DeviceContext4* DXDeviceContext4;
 
-		IDXGISwapChain* DXGISwapChain;
-		RHIViewportDefinition Definition;
-		RHITexture2D* BackBuffer;
+	IDXGISwapChain* DXGISwapChain;
+	RHIViewportDefinition Definition;
+	RHIRenderTarget* BackBuffer;
 
-		ID3D11Fence* Fence ;
-		U64 FenceValue;
-		HANDLE FenceEvent;
-	};
-}
+	ID3D11Fence* Fence ;
+	U64 FenceValue;
+	HANDLE FenceEvent;
+};
+
 #endif // !DXSWAPCHAIN_H

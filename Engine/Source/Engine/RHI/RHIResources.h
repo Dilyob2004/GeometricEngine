@@ -1,274 +1,312 @@
 #ifndef RHIVIEWPORT_H
 #define RHIVIEWPORT_H
 #include "RHIUtilities.h"
-#include <Engine/Core/Misc/StringView.h>
+#include <Engine/Core/Misc/String.h>
 #include <Engine/Core/Containers/Array.h>
-namespace GeometricEngine
+#include <Engine/Core/Misc/StringView.h>
+#include <float.h>
+
+struct RHIViewportDefinition
+{
+	RHIViewportDefinition()
+		: Width(800)
+		, Height(600)
+		, Format(RHIPixelFormat::R8G8BA8_UNORM)
+		, RefreshRateNum(60)
+		, FullScreen(false)
+		, VSync(true)
+		, HandleWindow(NULL)
+	{
+	}
+	U32 Width;
+	U32 Height;
+	U32 RefreshRateNum;
+	bool FullScreen;
+	bool VSync;
+	RHIPixelFormat Format;
+	void* HandleWindow;
+};
+
+struct RHIRasterizerStateDefinition
+{
+	RHIRasterizerStateDefinition()
+		: FillMode(RHIRasterizerFillMode::Solid)
+		, CullMode(RHIRasterizerCullMode::None)
+		, DepthBias(0)
+		, SlopeScaleDepthBias(0)
+		, EnableMSAA(true)
+		, EnableLineAA(false)
+	{
+	}
+	RHIRasterizerFillMode FillMode;
+	RHIRasterizerCullMode CullMode;
+	float DepthBias;
+	float SlopeScaleDepthBias;
+	bool EnableMSAA;
+	bool EnableLineAA;
+};
+struct RHIBlendStateDefinition
 {
 
-	struct RHIViewportDefinition
+	struct Attachment
 	{
-		RHIViewportDefinition()
-			: Width(800)
-			, Height(600)
-			, Format(RHIPixelFormat::R8G8BA8_UNORM)
-			, RefreshRateNum(60)
-			, FullScreen(false)
-			, VSync(true)
-			, HandleWindow(NULL)
+		Attachment()
+			: ColorBlendOperation(RHIBlendOperation::Add)
+			, ColorBlendSrc(RHIBlendFactor::SourceAlpha)
+			, ColorBlendDest(RHIBlendFactor::InverseSourceAlpha)
+
+			, AlphaBlendOperation(RHIBlendOperation::Add)
+			, AlphaBlendSrc(RHIBlendFactor::One)
+			, AlphaBlendDest(RHIBlendFactor::InverseSourceAlpha)
+
+			, ColorWriteMask(RTWM_RGBA)
 		{
 		}
-		U32 Width;
-		U32 Height;
-		U32 RefreshRateNum;
-		bool FullScreen;
-		bool VSync;
-		RHIPixelFormat Format;
-		void* HandleWindow;
+		RHIBlendOperation ColorBlendOperation;
+		RHIBlendFactor ColorBlendSrc;
+		RHIBlendFactor ColorBlendDest;
+		RHIBlendOperation AlphaBlendOperation;
+		RHIBlendFactor AlphaBlendSrc;
+		RHIBlendFactor AlphaBlendDest;
+		RHIRenderTargetWriteMask ColorWriteMask;
 	};
-
-	struct RHIRasterizerStateDefinition
+	RHIBlendStateDefinition() 
+		: RenderTarget()
+		, EnabledIndependentBlend(false)
 	{
-		RHIRasterizerStateDefinition()
-			: FillMode(RHIRasterizerFillMode::Solid)
-			, CullMode(RHIRasterizerCullMode::None)
-			, DepthBias(0)
-			, SlopeScaleDepthBias(0)
-			, EnableMSAA(true)
-			, EnableLineAA(false)
-		{
-		}
-		RHIRasterizerFillMode FillMode;
-		RHIRasterizerCullMode CullMode;
-		float DepthBias;
-		float SlopeScaleDepthBias;
-		bool EnableMSAA;
-		bool EnableLineAA;
-	};
-	struct RHIBlendStateDefinition
+	}
+	RHIBlendStateDefinition(const Attachment& ColorAttachment)
 	{
-
-		struct Attachment
-		{
-			Attachment()
-				: ColorBlendOperation(RHIBlendOperation::Add)
-				, ColorBlendSrc(RHIBlendFactor::SourceAlpha)
-				, ColorBlendDest(RHIBlendFactor::InverseSourceAlpha)
-
-				, AlphaBlendOperation(RHIBlendOperation::Add)
-				, AlphaBlendSrc(RHIBlendFactor::One)
-				, AlphaBlendDest(RHIBlendFactor::InverseSourceAlpha)
-
-				, ColorWriteMask(RTWM_RGBA)
-			{
-			}
-			RHIBlendOperation ColorBlendOperation;
-			RHIBlendFactor ColorBlendSrc;
-			RHIBlendFactor ColorBlendDest;
-			RHIBlendOperation AlphaBlendOperation;
-			RHIBlendFactor AlphaBlendSrc;
-			RHIBlendFactor AlphaBlendDest;
-			RHIRenderTargetWriteMask ColorWriteMask;
-		};
-		RHIBlendStateDefinition() 
-			: RenderTarget()
-			, EnabledIndependentBlend(false)
-		{
-		}
-		RHIBlendStateDefinition(const Attachment& ColorAttachment)
-		{
-			RenderTarget = ColorAttachment;
-			EnabledIndependentBlend = false;
-		}
+		RenderTarget = ColorAttachment;
+		EnabledIndependentBlend = false;
+	}
 
 
-		bool EnabledIndependentBlend;
-		Attachment RenderTarget;
-	};
-	struct RHIDepthStencilStateDefinition
+	bool EnabledIndependentBlend;
+	Attachment RenderTarget;
+};
+struct RHIDepthStencilStateDefinition
+{
+	RHIDepthStencilStateDefinition()
+		: EnabledDepthWrite(true)
+		, DepthTest(RHICompareFunction::LessEqual)
+		, EnabledFrontFaceStencil(false)
+		, FFStencilTest(RHICompareFunction::Always)
+		, FFStencilFailOp(RHIDepthStencilOperation::Keep)
+		, FFDepthFailOp(RHIDepthStencilOperation::Keep)
+		, FFPassFailOp(RHIDepthStencilOperation::Keep)
+		, EnabledBackFaceStencil(false)
+		, BFStencilTest(RHICompareFunction::Always)
+		, BFStencilFailOp(RHIDepthStencilOperation::Keep)
+		, BFDepthFailOp(RHIDepthStencilOperation::Keep)
+		, BFPassFailOp(RHIDepthStencilOperation::Keep)
+		, StencilReadMask(0xFF)
+		, StencilWriteMask(0xFF)
 	{
-		RHIDepthStencilStateDefinition()
-			: EnabledDepthWrite(true)
-			, DepthTest(RHICompareFunction::LessEqual)
-			, EnabledFrontFaceStencil(false)
-			, FFStencilTest(RHICompareFunction::Always)
-			, FFStencilFailOp(RHIDepthStencilOperation::Keep)
-			, FFDepthFailOp(RHIDepthStencilOperation::Keep)
-			, FFPassFailOp(RHIDepthStencilOperation::Keep)
-			, EnabledBackFaceStencil(false)
-			, BFStencilTest(RHICompareFunction::Always)
-			, BFStencilFailOp(RHIDepthStencilOperation::Keep)
-			, BFDepthFailOp(RHIDepthStencilOperation::Keep)
-			, BFPassFailOp(RHIDepthStencilOperation::Keep)
-			, StencilReadMask(0xFF)
-			, StencilWriteMask(0xFF)
-		{
-		}
-		bool EnabledDepthWrite;
-		RHICompareFunction DepthTest;
+	}
+	bool EnabledDepthWrite;
+	RHICompareFunction DepthTest;
 
-		bool EnabledFrontFaceStencil;
-		RHICompareFunction FFStencilTest;
-		RHIDepthStencilOperation FFStencilFailOp;
-		RHIDepthStencilOperation FFDepthFailOp;
-		RHIDepthStencilOperation FFPassFailOp;
+	bool EnabledFrontFaceStencil;
+	RHICompareFunction FFStencilTest;
+	RHIDepthStencilOperation FFStencilFailOp;
+	RHIDepthStencilOperation FFDepthFailOp;
+	RHIDepthStencilOperation FFPassFailOp;
 
-		bool EnabledBackFaceStencil;
-		RHICompareFunction BFStencilTest;
-		RHIDepthStencilOperation BFStencilFailOp;
-		RHIDepthStencilOperation BFDepthFailOp;
-		RHIDepthStencilOperation BFPassFailOp;
+	bool EnabledBackFaceStencil;
+	RHICompareFunction BFStencilTest;
+	RHIDepthStencilOperation BFStencilFailOp;
+	RHIDepthStencilOperation BFDepthFailOp;
+	RHIDepthStencilOperation BFPassFailOp;
 
-		U8 StencilReadMask;
-		U8 StencilWriteMask;
-	};
-	struct RHISamplerStateDefinition
+	U8 StencilReadMask;
+	U8 StencilWriteMask;
+};
+struct RHISamplerStateDefinition
+{
+	RHISamplerStateDefinition()
+		: MinLod(0)
+		, MaxLod(FLT_MAX)
+		, MipBias(0)
+		, MaxAnisotropy(0)
+		, Filter(RHISamplerFiler::Bilinear)
+		, AddressModeU(RHISamplerAddressMode::Clamp)
+		, AddressModeV(RHISamplerAddressMode::Clamp)
+		, AddressModeW(RHISamplerAddressMode::Clamp)
+		, BorderColor(RHISamplerBorderColor::OpaqueWhite)
+		, SamplerComarisonFunc(RHISamplerCompareFunc::Never)
 	{
-		RHISamplerStateDefinition()
-			: MinLod(0)
-			, MaxLod(FLT_MAX)
-			, MipBias(0)
-			, MaxAnisotropy(0)
-			, Filter(RHISamplerFiler::Bilinear)
-			, AddressModeU(RHISamplerAddressMode::Wrap)
-			, AddressModeV(RHISamplerAddressMode::Wrap)
-			, AddressModeW(RHISamplerAddressMode::Wrap)
-			, BorderColor(RHISamplerBorderColor::OpaqueWhite)
-			, SamplerComarisonFunc(RHISamplerCompareFunc::Never)
-		{
-		}
-		F32 MinLod;
-		F32 MaxLod;
-		F32 MipBias;
-		I32 MaxAnisotropy;
-		RHISamplerFiler Filter;
-		RHISamplerAddressMode AddressModeU;
-		RHISamplerAddressMode AddressModeV;
-		RHISamplerAddressMode AddressModeW;
-		RHISamplerBorderColor BorderColor;
-		RHISamplerCompareFunc SamplerComarisonFunc;
-	};
-	struct RHITextureDefinition
+	}
+	F32 MinLod;
+	F32 MaxLod;
+	F32 MipBias;
+	I32 MaxAnisotropy;
+	RHISamplerFiler Filter;
+	RHISamplerAddressMode AddressModeU;
+	RHISamplerAddressMode AddressModeV;
+	RHISamplerAddressMode AddressModeW;
+	RHISamplerBorderColor BorderColor;
+	RHISamplerCompareFunc SamplerComarisonFunc;
+};
+struct BufferElement
+{
+	BufferElement()
+		: BufferName((""))
+		, BufferType(ShaderElementType::None)
 	{
-		RHITextureDefinition()
-			: Width(1)
-			, Height(1)
-			, Data(NULL)
-			, Samples(1)
-			, MipLevels(1)
-			, Usage(RHIUsage::Default)
-			, Format(RHIPixelFormat::R8G8BA8_UNORM)
-			, Flags(-1)
-		{
-		}
-		U32 Width;
-		U32 Height;
-		U32 MipLevels;
-		U32 Samples;
-		U8* Data;
-		RHIUsage Usage;
-		RHIPixelFormat Format;
-		U32 Flags;
-	};
-	struct BufferElement
+	}
+	BufferElement(const StringView& Name, ShaderElementType Type)
+		: BufferName(Name)
+		, BufferType(Type)
 	{
-		BufferElement()
-			: BufferName("")
-			, BufferType(ShaderElementType::None)
-		{
-		}
-		BufferElement(const StringView& Name, ShaderElementType Type)
-			: BufferName(Name)
-			, BufferType(Type)
-		{
-		}
-		FORCEINLINE bool operator == (const BufferElement& Other ) const
-		{
-			return (BufferName == Other.BufferName && BufferType == Other.BufferType);
-		}
-		FORCEINLINE bool operator != (const BufferElement& Other) const
-		{
-			return !(*this == Other);
-		}
-		StringView			BufferName;
-		ShaderElementType	BufferType;
-	};
-
-	class RHITexture
+	}
+	FORCEINLINE bool operator == (const BufferElement& Other) const
 	{
-	public:
-		RHITexture()
-			: NumMipmaps(1)
-			, NumSamples(0)
-			, Format(RHIPixelFormat::NONE)
-			, Flags(TF_None)
-		{
-		}
-		RHITexture(U32 Mipmaps, U32 Samples, RHIPixelFormat EFormat, U32 EFlags)
-			: NumMipmaps(Mipmaps)
-			, NumSamples(Samples)
-			, Format(EFormat)
-			, Flags(EFlags)
-		{
-		}
-		virtual ~RHITexture() {}
-		U32 GetNumMipmaps() const { return NumMipmaps; }
-		U32 GetNumSamples() const { return NumSamples; }
-		RHIPixelFormat GetFormat() const { return Format; }
-		U32 GetFlags() const { return Flags; }
-
-	private:
-		U32 NumMipmaps, NumSamples;
-		RHIPixelFormat Format;
-		U32 Flags;
-	};
-	class RHITexture2D : public RHITexture
+		return (BufferName == Other.BufferName && BufferType == Other.BufferType);
+	}
+	FORCEINLINE bool operator != (const BufferElement& Other) const
 	{
-	public:
-		RHITexture2D()
-			: RHITexture()
-			, Width(0)
-			, Height(0)
-		{
-		}
-		RHITexture2D(U32 UWidth, U32 UHeight, U32 Mipmaps, U32 Samples, RHIPixelFormat EFormat, U32 EFlags) 
-			: RHITexture(Mipmaps, Samples, EFormat, EFlags)
-			, Width(UWidth)
-			, Height(UHeight)
-		{
-		}
+		return !(*this == Other);
+	}
+	StringView			BufferName;
+	ShaderElementType	BufferType;
+};
 
-		virtual void SafeRelease() { }
-		U32 GetWidth() const { return Width; }
-		U32 GetHeight() const { return Height; }
-		virtual void* GetHandle() { return NULL; }
-	private:
-		U32 Width, Height;
-	};
-	class RHIViewport { public: virtual ~RHIViewport(){} };
-
-	class RHIPixelShader { public: virtual ~RHIPixelShader() {} };
-	class RHIVertexShader { public: virtual ~RHIVertexShader() {} };
-
-	class RHIVertexBuffer { public: virtual ~RHIVertexBuffer() {} };
-	class RHIIndexBuffer { public: virtual ~RHIIndexBuffer() {} };
-	class RHIUniformBuffer { public: virtual ~RHIUniformBuffer() {} };
-
-	class RHIBuffer { public: virtual ~RHIBuffer() {} };
-	class RHISamplerState { public: virtual ~RHISamplerState() {} };
-
-	class RHIPipelineState { public: virtual ~RHIPipelineState() {} };
-
-
-	struct RHIPipelineStateDefinition
+struct RHITextureDefinition
+{
+	RHITextureDefinition()
+		: Width(1)
+		, Height(1)
+		, Samples(1)
+		, MipLevels(1)
+		, Usage(RHIUsage::Default)
+		, Format(RHIPixelFormat::R8G8BA8_UNORM)
 	{
-		RHIDepthStencilStateDefinition DepthStencilStateDefinition;
-		RHIBlendStateDefinition  BlendStateDefinition;
-		RHIRasterizerStateDefinition RasterizerStateDefinition;
-		TVector<BufferElement> VertexParameters;
+	}
+	U32 Width;
+	U32 Height;
+	U32 MipLevels;
+	U32 Samples;
+	RHIUsage Usage;
+	RHIPixelFormat Format;
+};
 
-		RHIPixelShader* PixelShader;
-		RHIVertexShader* VertexShader;
-	};
-}
+class GEOMETRIC_API RHITexture
+{
+public:
+	RHITexture()
+		: NumMipmaps(1)
+		, NumSamples(1)
+		, Format(RHIPixelFormat::NONE)
+	{
+	}
+	RHITexture(U32 Mipmaps, U32 Samples, RHIPixelFormat EFormat)
+		: NumMipmaps(Mipmaps)
+		, NumSamples(Samples)
+		, Format(EFormat)
+	{
+	}
+	virtual ~RHITexture() {}
+	U32 GetNumMipmaps() const { return NumMipmaps; }
+	U32 GetNumSamples() const { return NumSamples; }
+	RHIPixelFormat GetFormat() const { return Format; }
+
+private:
+	U32 NumMipmaps, NumSamples;
+	RHIPixelFormat Format;
+};
+
+class RHITexture2D : public RHITexture
+{
+public:
+	RHITexture2D()
+		: RHITexture()
+		, Width(0)
+		, Height(0)
+	{
+	}
+	RHITexture2D(U32 UWidth, U32 UHeight, U32 Mipmaps, U32 Samples, RHIPixelFormat EFormat) 
+		: RHITexture(Mipmaps, Samples, EFormat)
+		, Width(UWidth)
+		, Height(UHeight)
+	{
+	}
+
+	virtual void SafeRelease() { }
+	U32 GetWidth() const { return Width; }
+	U32 GetHeight() const { return Height; }
+	virtual void* GetHandle() { return NULL; }
+private:
+	U32 Width, Height;
+};
+
+class RHIRenderTarget : public RHITexture
+{
+public:
+	RHIRenderTarget()
+		: RHITexture()
+		, Width(0)
+		, Height(0)
+	{
+	}
+	RHIRenderTarget(U32 UWidth, U32 UHeight, U32 Mipmaps, U32 Samples, RHIPixelFormat EFormat)
+		: RHITexture(Mipmaps, Samples, EFormat)
+		, Width(UWidth)
+		, Height(UHeight)
+	{
+	}
+	virtual void SafeRelease() { }
+	U32 GetWidth() const { return Width; }
+	U32 GetHeight() const { return Height; }
+	virtual void* GetHandle() { return NULL; }
+private:
+	U32 Width, Height;
+};
+
+class RHIDepthTarget : public RHITexture
+{
+public:
+	RHIDepthTarget()
+		: RHITexture()
+		, Width(0)
+		, Height(0)
+	{
+	}
+	RHIDepthTarget(U32 UWidth, U32 UHeight, U32 Mipmaps, U32 Samples, RHIPixelFormat EFormat)
+		: RHITexture(Mipmaps, Samples, EFormat)
+		, Width(UWidth)
+		, Height(UHeight)
+	{
+	}
+	virtual void SafeRelease() { }
+	U32 GetWidth() const { return Width; }
+	U32 GetHeight() const { return Height; }
+	virtual void* GetHandle() { return NULL; }
+private:
+	U32 Width, Height;
+};
+
+class RHIViewport { public: virtual ~RHIViewport(){} };
+
+class RHIPixelShader { public: virtual ~RHIPixelShader() {} };
+class RHIVertexShader { public: virtual ~RHIVertexShader() {} };
+
+class RHIVertexBuffer { public: virtual ~RHIVertexBuffer() {} };
+class RHIIndexBuffer { public: virtual ~RHIIndexBuffer() {} };
+class RHIUniformBuffer { public: virtual ~RHIUniformBuffer() {} };
+
+class RHISamplerState { public: virtual ~RHISamplerState() {} };
+class RHIPipelineState { public: virtual ~RHIPipelineState() {} };
+
+
+struct RHIPipelineStateDefinition
+{
+	RHIDepthStencilStateDefinition DepthStencilStateDefinition;
+	RHIBlendStateDefinition  BlendStateDefinition;
+	RHIRasterizerStateDefinition RasterizerStateDefinition;
+	TArray<BufferElement> VertexParameters;
+
+	RHIPixelShader* PixelShader = NULL;
+	RHIVertexShader* VertexShader = NULL;
+};
 #endif // !RHIVIEWPORT_H
